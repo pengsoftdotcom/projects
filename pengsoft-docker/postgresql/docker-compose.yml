@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+  adminer:
+    image: ${ADMINER_IMAGE}
+    restart: always
+    environment:
+      TZ: ${TZ}
+    ports:
+      - 12345:8080
+  postgresql:
+    image: ${DATABASE_IMAGE}
+    restart: always
+    volumes:
+     - ./data:${DATABASE_DATA}
+    environment:
+      TZ: ${TZ}
+      PGDATA: ${DATABASE_DATA}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+    ports:
+      - 5432:5432

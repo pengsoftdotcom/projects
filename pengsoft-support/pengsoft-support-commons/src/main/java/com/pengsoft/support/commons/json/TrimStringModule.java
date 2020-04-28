@@ -1,0 +1,37 @@
+package com.pengsoft.support.commons.json;
+
+/**
+ * @author dang.peng@pengsoft.com
+ * @since 1.0.0
+ */
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import org.apache.commons.lang3.StringUtils;
+
+import java.io.IOException;
+
+/**
+ * 读取string类型字段的时候调用trim()
+ *
+ * @author dang.peng@cqlonglian.com
+ */
+public class TrimStringModule extends SimpleModule {
+
+    private static final long serialVersionUID = -1271293571021657058L;
+
+    public TrimStringModule() {
+        addDeserializer(String.class, new StdScalarDeserializer<>(String.class) {
+
+            private static final long serialVersionUID = -5710192522337823004L;
+
+            @Override
+            public String deserialize(final JsonParser jp, final DeserializationContext ctxt) throws IOException {
+                return StringUtils.trim(jp.getValueAsString());
+            }
+        });
+    }
+
+}

@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<artifactId>pengsoft-support</artifactId>
+		<groupId>com.pengsoft.support</groupId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<groupId>com.pengsoft.security</groupId>
+	<artifactId>pengsoft-security</artifactId>
+	<packaging>pom</packaging>
+	<modules>
+		<module>pengsoft-security-domain</module>
+		<module>pengsoft-security-biz</module>
+		<module>pengsoft-security-starter</module>
+		<module>pengsoft-security-test</module>
+		<module>pengsoft-security-commons</module>
+	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.pengsoft.support</groupId>
+				<artifactId>pengsoft-support</artifactId>
+				<version>${project.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.pengsoft.security</groupId>
+				<artifactId>pengsoft-security-commons</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.pengsoft.security</groupId>
+				<artifactId>pengsoft-security-domain</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.pengsoft.security</groupId>
+				<artifactId>pengsoft-security-biz</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.pengsoft.security</groupId>
+				<artifactId>pengsoft-security-starter</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.pengsoft.security</groupId>
+				<artifactId>pengsoft-security-test</artifactId>
+				<version>${project.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>javax.servlet-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+</project>

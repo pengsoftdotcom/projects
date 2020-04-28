@@ -1,0 +1,20 @@
+version: "3.7"
+services:
+  redisadmin:
+    image: ${REDIS_ADMIN_IMAGE}
+    restart: always
+    environment:
+      TZ: ${TZ}
+      REDIS_1_HOST: redis
+    ports:
+      - 12347:80
+  redis:
+    image: ${REDIS_IMAGE}
+    restart: always
+    volumes:
+      - ./conf/redis.conf:/usr/local/etc/redis/redis.conf
+      - ./data:/data
+    environment:
+      TZ: ${TZ}
+    ports:
+      - 6379:6379
