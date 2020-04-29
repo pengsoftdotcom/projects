@@ -6,11 +6,11 @@ package com.pengsoft.support.commons.exception;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public class MissingConfgurationException extends RuntimeException {
+public class MissingConfigurationException extends RuntimeException {
 
     private static final long serialVersionUID = 7049692874095706163L;
 
-    public MissingConfgurationException(final String message) {
+    public MissingConfigurationException(final String message) {
         super(message);
     }
 
