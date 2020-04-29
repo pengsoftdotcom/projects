@@ -1,8 +1,9 @@
 package com.pengsoft.support.domain.util;
 
-import java.io.Serializable;
-
 import com.pengsoft.support.domain.entity.Beanable;
+
+import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * The entity utility methods.
@@ -35,4 +36,11 @@ public class EntityUtils {
         return !eq(b1, b2);
     }
 
+    public static <T extends Beanable<? extends Serializable>> boolean isPersisted(final T bean) {
+        return Optional.ofNullable(bean).filter(b -> b.getId() != null && b.getCreatedAt() != null).isPresent();
+    }
+
+    public static <T extends Beanable<? extends Serializable>> boolean isNotPersisted(final T bean) {
+        return !isPersisted(bean);
+    }
 }

@@ -38,6 +38,11 @@ public class Authority extends Bean implements Codable<String> {
     @Size(max = 255)
     private String remark;
 
+    public Authority(@NotBlank @Size(max = 255) final String code) {
+        this.code = code;
+        this.name = code;
+    }
+
     @Override
     public String getCode() {
         return code;

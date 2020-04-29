@@ -4,9 +4,11 @@ import com.pengsoft.security.biz.service.RoleService;
 import com.pengsoft.security.domain.entity.Authority;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.support.biz.facade.TreeBeanFacadeImpl;
+import com.pengsoft.support.domain.entity.Beanable;
 import org.springframework.stereotype.Service;
 
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +20,11 @@ import java.util.Optional;
  */
 @Service
 public class RoleFacadeImpl extends TreeBeanFacadeImpl<RoleService, Role, String> implements RoleFacade {
+
+    @Override
+    public Role saveEntityAdmin(Class<? extends Beanable<? extends Serializable>> entityClass) {
+        return getService().saveEntityAdmin(entityClass);
+    }
 
     @Override
     public void grantAuthorities(final Role role, final List<Authority> authorities) {

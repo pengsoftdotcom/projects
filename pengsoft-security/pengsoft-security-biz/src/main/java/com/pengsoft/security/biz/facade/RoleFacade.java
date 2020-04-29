@@ -11,4 +11,6 @@ import com.pengsoft.support.biz.facade.TreeBeanFacade;
  * @since 1.0.0
  */
 public interface RoleFacade extends TreeBeanFacade<RoleService, Role, String>, RoleService {
+
+
 }

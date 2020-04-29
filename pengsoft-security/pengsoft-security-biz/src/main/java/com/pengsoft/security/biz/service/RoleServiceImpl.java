@@ -7,7 +7,6 @@ import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.RoleAuthority;
 import com.pengsoft.security.domain.util.SecurityUtils;
 import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
-import com.pengsoft.support.commons.exception.MissingConfgurationException;
 import com.pengsoft.support.domain.entity.Beanable;
 import com.pengsoft.support.domain.util.EntityUtils;
 import org.springframework.context.annotation.Primary;
@@ -47,13 +46,17 @@ public class RoleServiceImpl extends TreeBeanServiceImpl<RoleRepository, Role, S
 
     @Override
     public Role saveEntityAdmin(final Class<? extends Beanable<? extends Serializable>> entityClass) {
+        final var admin = createRoleIfNotExists(null, Role.ADMIN);
         final var moduleAdminCode = SecurityUtils.getModuleAdminCode(entityClass);
-        final var moduleAdmin = findOneByCode(moduleAdminCode)
-                .orElseThrow(() -> new MissingConfgurationException("the module admin of " + entityClass.getName() + " is missing"));
+        final var moduleAdmin = createRoleIfNotExists(admin, moduleAdminCode);
         final var entityAdminCode = SecurityUtils.getEntityAdminCode(entityClass);
-        final var optional = findOneByCode(entityAdminCode);
-        if (optional.isEmpty()) {
+        return createRoleIfNotExists(moduleAdmin, entityAdminCode);
+    }
 
+    private Role createRoleIfNotExists(final Role parent, final String code) {
+        final Optional<Role> optional = findOneByCode(code);
+        if (optional.isEmpty()) {
+            return save(new Role(parent, code));
         } else {
             return optional.get();
         }

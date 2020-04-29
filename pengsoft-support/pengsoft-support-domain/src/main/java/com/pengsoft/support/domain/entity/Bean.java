@@ -1,6 +1,7 @@
 package com.pengsoft.support.domain.entity;
 
 import com.pengsoft.support.commons.util.DateUtils;
+import com.pengsoft.support.commons.util.StringUtils;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.TypeDef;
@@ -100,9 +101,9 @@ public class Bean implements Beanable<String> {
         final var builder = new StringBuilder();
         builder.append(getClass().getSimpleName());
         if (this instanceof Codable) {
-            builder.append(":" + ((Codable) this).getCode());
+            builder.append(StringUtils.GLOBAL_SEPARATOR + ((Codable) this).getCode());
         }
-        builder.append(":" + getId().toString());
+        builder.append(StringUtils.GLOBAL_SEPARATOR + getId().toString());
         return builder.toString();
     }
 

@@ -12,9 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 
-import static com.pengsoft.support.commons.util.StringUtils.ESCAPES;
-import static com.pengsoft.support.commons.util.StringUtils.PACKAGE_SEPARATOR;
-import static com.pengsoft.support.commons.util.StringUtils.UNDERCROSS;
+import static com.pengsoft.support.commons.util.StringUtils.*;
 
 /**
  * Security utility methods.
@@ -32,7 +30,7 @@ public class SecurityUtils {
     /**
      * Returns {@link UserDetails}
      */
-    public static UserDetails getPrincipal() {
+    private static UserDetails getPrincipal() {
         final SecurityContext context = SecurityContextHolder.getContext();
         if (context != null) {
             final Authentication authentication = context.getAuthentication();
@@ -54,7 +52,7 @@ public class SecurityUtils {
      * @param expressionString The raw expression string to parse.
      * @param clazz            The class the caller would like the result to be
      */
-    public static <T> T get(final String expressionString, final Class<T> clazz) {
+    private static <T> T get(final String expressionString, final Class<T> clazz) {
         final var userDetails = getPrincipal();
         if (userDetails == null) {
             return null;
@@ -138,8 +136,8 @@ public class SecurityUtils {
      * @param entityClass The entity class.
      * @return The entity code.
      */
-    public static String getModuleCodeFromEntityClass(final Class<? extends Beanable<? extends Serializable>> entityClass) {
-        return getModuleCodeFromPackageName(entityClass.getPackageName(), "entity").replaceAll(ESCAPES + PACKAGE_SEPARATOR, UNDERCROSS);
+    private static String getModuleCodeFromEntityClass(final Class<? extends Beanable<? extends Serializable>> entityClass) {
+        return getModuleCodeFromPackageName(entityClass.getPackageName(), "entity.entity").replaceAll(ESCAPES + PACKAGE_SEPARATOR, UNDERCROSS);
     }
 
     /**
@@ -149,7 +147,7 @@ public class SecurityUtils {
      * @param subPackageName The sub-package name.
      * @return The module code.
      */
-    public static String getModuleCodeFromPackageName(final String packageName, final String subPackageName) {
+    private static String getModuleCodeFromPackageName(final String packageName, final String subPackageName) {
         return StringUtils.substringAfter(StringUtils.substringBetween(packageName, "com" + PACKAGE_SEPARATOR, PACKAGE_SEPARATOR + subPackageName), PACKAGE_SEPARATOR);
     }
 
@@ -159,8 +157,20 @@ public class SecurityUtils {
      * @param entityClass The entity class.
      * @return The entity code.
      */
-    public static String getEntityCodeFromEntityClass(final Class<? extends Beanable<? extends Serializable>> entityClass) {
+    private static String getEntityCodeFromEntityClass(final Class<? extends Beanable<? extends Serializable>> entityClass) {
         return StringUtils.camelCaseToSnakeCase(entityClass.getSimpleName(), false);
+    }
+
+    /**
+     * Returns the entity admin authority code prefix by given entity class.
+     *
+     * @param entityClass The entity class.
+     * @return The entity admin authority code prefix.
+     */
+    public static String getEntityAdminAuthorityCodePrefixFromEntityClass(final Class<? extends Beanable<? extends Serializable>> entityClass) {
+        final var moduleCode = getModuleCodeFromEntityClass(entityClass);
+        final var entityCode = getEntityCodeFromEntityClass(entityClass);
+        return StringUtils.join(new String[]{moduleCode, entityCode}, StringUtils.GLOBAL_SEPARATOR);
     }
 
 }
