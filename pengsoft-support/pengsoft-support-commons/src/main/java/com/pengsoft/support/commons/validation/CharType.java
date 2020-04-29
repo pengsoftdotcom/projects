@@ -19,6 +19,6 @@ public enum CharType {
     /**
      * "-", "_", "@"
      */
-    SEPARATOR;
+    SEPARATOR
 
 }

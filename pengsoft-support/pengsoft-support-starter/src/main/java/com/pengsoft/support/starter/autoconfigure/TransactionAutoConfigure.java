@@ -1,10 +1,6 @@
 package com.pengsoft.support.starter.autoconfigure;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.stream.Collectors;
-
+import com.pengsoft.support.starter.autoconfigure.properties.TransactionAutoConfigureProperties;
 import org.springframework.aop.Advisor;
 import org.springframework.aop.aspectj.AspectJExpressionPointcut;
 import org.springframework.aop.support.DefaultPointcutAdvisor;
@@ -19,7 +15,9 @@ import org.springframework.transaction.interceptor.RuleBasedTransactionAttribute
 import org.springframework.transaction.interceptor.TransactionAttribute;
 import org.springframework.transaction.interceptor.TransactionInterceptor;
 
-import com.pengsoft.support.starter.autoconfigure.properties.TransactionAutoConfigureProperties;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
 /**
  * Transaction auto configure.
@@ -36,7 +34,7 @@ public class TransactionAutoConfigure {
      */
     @Bean
     public TransactionInterceptor transactionAdvice(final TransactionManager transactionManager,
-            final TransactionAutoConfigureProperties properties) {
+                                                    final TransactionAutoConfigureProperties properties) {
         final var readOnlyTransaction = new RuleBasedTransactionAttribute();
         readOnlyTransaction.setReadOnly(true);
         readOnlyTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_NOT_SUPPORTED);
@@ -66,7 +64,7 @@ public class TransactionAutoConfigure {
         expressions.add("execution(public * com..biz.service.*Service.*(..))");
         expressions.add("execution(public * com..biz.facade.*Facade.*(..))");
         expressions.add("execution(public * com..biz.aspect.*Aspect.*(..))");
-        pointcut.setExpression(expressions.stream().collect(Collectors.joining("||")));
+        pointcut.setExpression(String.join("||", expressions));
         return new DefaultPointcutAdvisor(pointcut, transactionAdvice);
     }
 

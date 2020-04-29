@@ -43,11 +43,13 @@ public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beana
         return repository;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Class<T> getEntityClass() {
         return (Class<T>) getGenericType(getClass(), 1);
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Class<ID> getIdClass() {
         return (Class<ID>) getGenericType(getClass(), 2);

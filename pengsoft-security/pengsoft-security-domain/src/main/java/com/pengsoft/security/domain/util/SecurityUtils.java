@@ -12,7 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
 
-import static com.pengsoft.support.commons.util.StringUtils.*;
+import static com.pengsoft.support.commons.util.StringUtils.ESCAPES;
+import static com.pengsoft.support.commons.util.StringUtils.PACKAGE_SEPARATOR;
+import static com.pengsoft.support.commons.util.StringUtils.UNDERCROSS;
 
 /**
  * Security utility methods.
@@ -22,6 +24,7 @@ import static com.pengsoft.support.commons.util.StringUtils.*;
  */
 public class SecurityUtils {
 
+    public static final String ADMIN = "admin";
     private static final SpelExpressionParser parser = new SpelExpressionParser();
 
     private SecurityUtils() {
@@ -115,7 +118,7 @@ public class SecurityUtils {
      */
     public static String getModuleAdminCode(final Class<? extends Beanable<? extends Serializable>> entityClass) {
         final var moduleCode = getModuleCodeFromEntityClass(entityClass).replaceAll(ESCAPES + PACKAGE_SEPARATOR, UNDERCROSS);
-        return moduleCode + StringUtils.UNDERCROSS + "admin";
+        return StringUtils.join(new String[]{moduleCode, ADMIN}, StringUtils.UNDERCROSS);
     }
 
     /**
@@ -127,7 +130,7 @@ public class SecurityUtils {
     public static String getEntityAdminCode(final Class<? extends Beanable<? extends Serializable>> entityClass) {
         final var moduleCode = getModuleCodeFromEntityClass(entityClass);
         final var entityCode = getEntityCodeFromEntityClass(entityClass);
-        return StringUtils.join(new String[]{moduleCode, entityCode, "admin"}, UNDERCROSS);
+        return StringUtils.join(new String[]{moduleCode, entityCode, ADMIN}, UNDERCROSS);
     }
 
     /**
@@ -137,7 +140,7 @@ public class SecurityUtils {
      * @return The entity code.
      */
     private static String getModuleCodeFromEntityClass(final Class<? extends Beanable<? extends Serializable>> entityClass) {
-        return getModuleCodeFromPackageName(entityClass.getPackageName(), "entity.entity").replaceAll(ESCAPES + PACKAGE_SEPARATOR, UNDERCROSS);
+        return getModuleCodeFromPackageName(entityClass.getPackageName(), "domain.entity").replaceAll(ESCAPES + PACKAGE_SEPARATOR, UNDERCROSS);
     }
 
     /**

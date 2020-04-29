@@ -101,7 +101,7 @@ public class Bean implements Beanable<String> {
         final var builder = new StringBuilder();
         builder.append(getClass().getSimpleName());
         if (this instanceof Codable) {
-            builder.append(StringUtils.GLOBAL_SEPARATOR + ((Codable) this).getCode());
+            builder.append(StringUtils.GLOBAL_SEPARATOR + ((Codable<>) this).getCode());
         }
         builder.append(StringUtils.GLOBAL_SEPARATOR + getId().toString());
         return builder.toString();

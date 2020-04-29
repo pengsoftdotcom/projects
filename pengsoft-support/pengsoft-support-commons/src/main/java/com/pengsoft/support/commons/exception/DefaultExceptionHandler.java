@@ -66,7 +66,7 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
         final var code = e.getCode();
         final var args = e.getArgs();
         final var text = messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
-        return new ResponseEntity(Map.of("code", code, "text", text), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(Map.of("code", code, "text", text), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(Exception.class)

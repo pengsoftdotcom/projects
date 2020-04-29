@@ -45,6 +45,7 @@ public class QueryDslUtils {
      *
      * @param entityClass The entity class
      */
+    @SuppressWarnings("unchecked")
     public static <Q extends EntityPathBase<T>, T extends Beanable<ID>, ID extends Serializable> Class<Q> getQueryClass(final Class<T> entityClass) {
         final int index = entityClass.getName().lastIndexOf('.');
         try {
@@ -111,8 +112,9 @@ public class QueryDslUtils {
      *
      * @param entityClass The entity class
      */
-    public static <T extends Beanable<ID>, ID extends Serializable> NumberPath<?> getIdNumberPath(final Class<T> entityClass) {
-        return (NumberPath<?>) getPath(entityClass, PATH_ID);
+    @SuppressWarnings("unchecked")
+    public static <T extends Beanable<ID>, ID extends Serializable> NumberPath<Long> getIdNumberPath(final Class<T> entityClass) {
+        return (NumberPath<Long>) getPath(entityClass, PATH_ID);
     }
 
     /**
@@ -120,6 +122,7 @@ public class QueryDslUtils {
      *
      * @param entityClass The entity class
      */
+    @SuppressWarnings("unchecked")
     public static <T extends TreeBeanable<T, ID>, ID extends Serializable> EntityPathBase<T> getParentPath(final Class<T> entityClass) {
         return (EntityPathBase<T>) getPath(entityClass, PATH_PARENT);
     }

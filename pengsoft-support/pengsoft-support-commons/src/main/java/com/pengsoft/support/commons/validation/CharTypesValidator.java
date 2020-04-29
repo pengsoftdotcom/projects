@@ -1,12 +1,11 @@
 package com.pengsoft.support.commons.validation;
 
-import java.util.Arrays;
-import java.util.stream.Collectors;
+import org.apache.commons.lang3.StringUtils;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
-import org.apache.commons.lang3.StringUtils;
+import java.util.Arrays;
+import java.util.stream.Collectors;
 
 /**
  * Password validator.
@@ -35,9 +34,7 @@ public class CharTypesValidator implements ConstraintValidator<CharTypes, String
                 return false;
             }
             // check if the number of char types that 'value' contains greater or equals than configured.
-            if (types.stream().filter(type -> allowedTypes.stream().anyMatch(type::equals)).count() >= charTypes.count()) {
-                return true;
-            }
+            return types.stream().filter(type -> allowedTypes.stream().anyMatch(type::equals)).count() >= charTypes.count();
         }
         return false;
     }
@@ -46,10 +43,10 @@ public class CharTypesValidator implements ConstraintValidator<CharTypes, String
 
         final var characterType = Character.getType(ch);
         var charType = switch (characterType) {
-        case Character.DECIMAL_DIGIT_NUMBER -> CharType.DIGIT;
-        case Character.UPPERCASE_LETTER -> CharType.UPPERCASE_LETTER;
-        case Character.LOWERCASE_LETTER -> CharType.LOWERCASE_LETTER;
-        default -> CharType.PUNCTUATION;
+            case Character.DECIMAL_DIGIT_NUMBER -> CharType.DIGIT;
+            case Character.UPPERCASE_LETTER -> CharType.UPPERCASE_LETTER;
+            case Character.LOWERCASE_LETTER -> CharType.LOWERCASE_LETTER;
+            default -> CharType.PUNCTUATION;
         };
         if (charType == CharType.PUNCTUATION && separator.chars().anyMatch(s -> s == ch)) {
             charType = CharType.SEPARATOR;

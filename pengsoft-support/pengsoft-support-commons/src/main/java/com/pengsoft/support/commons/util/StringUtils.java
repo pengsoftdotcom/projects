@@ -21,6 +21,13 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     public static final String ESCAPES = "\\";
 
     /**
+     * @see #equals(CharSequence, CharSequence)
+     */
+    public static boolean notEquals(final CharSequence cs1, final CharSequence cs2) {
+        return !equals(cs1, cs2);
+    }
+
+    /**
      * Camel case to the other case.
      *
      * @param name        The camel case name.
@@ -64,5 +71,6 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
     public static String camelCaseToSnakeCase(final String name, final boolean isUpperCase) {
         return camelCaseTo(name, UNDERCROSS, isUpperCase);
     }
+
 
 }

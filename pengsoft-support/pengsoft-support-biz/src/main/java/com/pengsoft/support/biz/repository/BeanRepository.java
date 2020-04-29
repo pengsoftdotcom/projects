@@ -29,7 +29,7 @@ public interface BeanRepository<Q extends EntityPathBase<T>, T extends Beanable<
     @Override
     default void customize(final QuerydslBindings bindings, final Q root) {
         final var entityClass = getEnityClass(root);
-        Class<?> idType = null;
+        Class<?> idType;
         try {
             final var idField = entityClass.getField("id");
             idType = idField.getType();

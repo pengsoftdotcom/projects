@@ -9,6 +9,8 @@ import com.pengsoft.support.biz.facade.BeanFacadeImpl;
 import com.pengsoft.support.commons.exception.MissingConfgurationException;
 import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.entity.Beanable;
+import com.pengsoft.support.domain.entity.Enable;
+import com.pengsoft.support.domain.entity.Sortable;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.stereotype.Service;
@@ -42,7 +44,7 @@ public class AuthorityFacadeImpl extends BeanFacadeImpl<AuthorityService, Author
     public List<Authority> saveEntityAdminAuthorities(final Class<? extends Beanable<? extends Serializable>> entityClass) {
         final var entityAdminCode = SecurityUtils.getEntityAdminCode(entityClass);
         final var entityAdmin = roleService.findOneByCode(entityAdminCode)
-                .orElseThrow(() -> new MissingConfgurationException("'" + entityClass.getClass().getName() + "' entity admin not found"));
+                .orElseThrow(() -> new MissingConfgurationException("'" + entityClass.getName() + "' entity admin not found"));
 
         Class<?> apiClass = null;
         try {
@@ -50,23 +52,22 @@ public class AuthorityFacadeImpl extends BeanFacadeImpl<AuthorityService, Author
         } catch (final ClassNotFoundException e) {
             throw new IllegalArgumentException("get api class from '" + entityClass.getName() + "' error", e);
         }
-        final var authorityCodePrefix = SecurityUtils.getEntityAdminAuthorityCodePrefixFromEntityClass(entityClass);
+        final var authorityCodePrefix = SecurityUtils.getEntityAdminAuthorityCodePrefixFromEntityClass(entityClass) + StringUtils.GLOBAL_SEPARATOR;
         final var authorities = new ArrayList<Authority>();
-        authorities.addAll(getAuthoritiesFromApi(apiClass, RequestMapping.class, authorityCodePrefix));
-        authorities.addAll(getAuthoritiesFromApi(apiClass, GetMapping.class, authorityCodePrefix));
-        authorities.addAll(getAuthoritiesFromApi(apiClass, PostMapping.class, authorityCodePrefix));
-        authorities.addAll(getAuthoritiesFromApi(apiClass, PutMapping.class, authorityCodePrefix));
-        authorities.addAll(getAuthoritiesFromApi(apiClass, DeleteMapping.class, authorityCodePrefix));
+        authorities.addAll(getAuthoritiesFromApi(apiClass, entityClass, RequestMapping.class, authorityCodePrefix));
+        authorities.addAll(getAuthoritiesFromApi(apiClass, entityClass, GetMapping.class, authorityCodePrefix));
+        authorities.addAll(getAuthoritiesFromApi(apiClass, entityClass, PostMapping.class, authorityCodePrefix));
+        authorities.addAll(getAuthoritiesFromApi(apiClass, entityClass, PutMapping.class, authorityCodePrefix));
+        authorities.addAll(getAuthoritiesFromApi(apiClass, entityClass, DeleteMapping.class, authorityCodePrefix));
         roleService.grantAuthorities(entityAdmin, authorities);
         return authorities;
     }
 
-    private List<Authority> getAuthoritiesFromApi(final Class<?> apiClass, final Class<? extends Annotation> mappingClass, final String authorityCodePrefix) {
+    private List<Authority> getAuthoritiesFromApi(final Class<?> apiClass, final Class<? extends Beanable<? extends Serializable>> entityClass, final Class<? extends Annotation> mappingClass, final String authorityCodePrefix) {
         final var authorities = new ArrayList<Authority>();
         MethodUtils.getMethodsListWithAnnotation(apiClass, mappingClass, true, false).stream()
                 .filter(method -> method.getAnnotation(Authenticated.class) == null)
-                .distinct()
-                .forEach(method -> {
+                .map(method -> {
                     String authorityCode = null;
                     try {
                         authorityCode = authorityCodePrefix + ((String[]) MethodUtils.invokeMethod(method.getAnnotation(mappingClass), "value"))[0];
@@ -75,8 +76,22 @@ public class AuthorityFacadeImpl extends BeanFacadeImpl<AuthorityService, Author
                     } catch (final Exception e) {
                         throw new IllegalArgumentException("No value() method on mapping class or return value is empty");
                     }
-                    addAuthority(authorities, authorityCode);
-                });
+                    return authorityCode;
+                })
+                .filter(authorityCode -> {
+                    if (StringUtils.endsWith(authorityCode, StringUtils.GLOBAL_SEPARATOR + "sort")
+                            && !Sortable.class.isAssignableFrom(getEntityClass())) {
+                        return false;
+                    }
+                    if (StringUtils.endsWith(authorityCode, StringUtils.GLOBAL_SEPARATOR + "enable")
+                            || StringUtils.endsWith(authorityCode, StringUtils.GLOBAL_SEPARATOR + "disable")
+                            && !Enable.class.isAssignableFrom(entityClass)) {
+                        return false;
+                    }
+                    return true;
+                })
+                .distinct()
+                .forEach(authorityCode -> addAuthority(authorities, authorityCode));
         return authorities;
 
     }
