@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.NullSerializer;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.User;
-import com.pengsoft.security.domain.json.GrantedAuthorityCollectionSerializer;
+import com.pengsoft.security.domain.json.GrantedAuthorityListSerializer;
 import com.pengsoft.security.domain.json.RoleCollectionSerializer;
 import com.pengsoft.security.domain.json.RoleSerializer;
 import com.pengsoft.support.commons.util.DateUtils;
@@ -25,7 +25,7 @@ public class DefaultUserDetails implements UserDetails {
 
     private static final long serialVersionUID = -6285842987366925156L;
     @JsonSerialize(using = RoleCollectionSerializer.class)
-    private List<Role> roles;
+    private final List<Role> roles;
 
     @JsonIgnoreProperties({"id", "dateTimeCreated", "dateTimeUpdated", "version"})
     private User currentUser;
@@ -33,16 +33,19 @@ public class DefaultUserDetails implements UserDetails {
     @JsonSerialize(using = RoleSerializer.class)
     private Role currentRole;
 
-    @JsonSerialize(using = GrantedAuthorityCollectionSerializer.class)
+    @JsonSerialize(using = GrantedAuthorityListSerializer.class)
     private Collection<? extends GrantedAuthority> authorities;
 
-    public DefaultUserDetails() {
+    public DefaultUserDetails(final User currentUser, final List<Role> roles) {
+        this.currentUser = currentUser;
+        this.roles = roles;
     }
 
-    public DefaultUserDetails(final User user, final List<Role> roles, final Role majorRole) {
+    public DefaultUserDetails(final User currentUser, final List<Role> roles, final Role majorRole, final List<GrantedAuthority> authorities) {
         this.roles = roles;
-        currentUser = user;
+        this.currentUser = currentUser;
         currentRole = majorRole;
+        this.authorities = authorities;
     }
 
     public List<Role> getRoles() {

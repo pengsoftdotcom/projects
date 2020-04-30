@@ -6,18 +6,18 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 import org.springframework.security.core.GrantedAuthority;
 
 import java.io.IOException;
-import java.util.Collection;
+import java.util.List;
 
 /**
- * The {@link JsonSerializer} of {@link GrantedAuthority} collection.
+ * The {@link JsonSerializer} of {@link GrantedAuthority} list.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public class GrantedAuthorityCollectionSerializer extends JsonSerializer<Collection<? extends GrantedAuthority>> {
+public class GrantedAuthorityListSerializer extends JsonSerializer<List<GrantedAuthority>> {
 
     @Override
-    public void serialize(final Collection<? extends GrantedAuthority> authorities, final JsonGenerator gen, final SerializerProvider serializers)
+    public void serialize(final List<GrantedAuthority> authorities, final JsonGenerator gen, final SerializerProvider serializers)
             throws IOException {
         gen.writeStartArray();
         for (final GrantedAuthority authority : authorities) {

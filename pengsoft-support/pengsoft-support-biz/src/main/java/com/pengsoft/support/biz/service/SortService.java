@@ -3,7 +3,6 @@ package com.pengsoft.support.biz.service;
 import com.pengsoft.support.domain.entity.Sortable;
 
 import javax.validation.constraints.NotEmpty;
-import java.io.Serializable;
 import java.util.Map;
 
 /**
@@ -19,6 +18,6 @@ public interface SortService {
      *
      * @param sortInfo {key: entity, value: sequence}
      */
-    void sort(@NotEmpty Map<? extends Sortable<? extends Serializable>, Long> sortInfo);
+    void sort(@NotEmpty Map<? extends Sortable, Long> sortInfo);
 
 }

@@ -3,7 +3,7 @@ package com.pengsoft.support.biz.service;
 import com.google.common.collect.Lists;
 import com.pengsoft.support.biz.repository.BeanRepository;
 import com.pengsoft.support.domain.entity.Beanable;
-import com.pengsoft.support.domain.entity.Codable;
+import com.pengsoft.support.domain.entity.Codeable;
 import com.pengsoft.support.domain.entity.Sortable;
 import com.querydsl.core.types.Predicate;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
@@ -36,6 +36,7 @@ public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beana
 
     @Inject
     private R repository;
+    
     @Inject
     private MessageSource messageSource;
 
@@ -60,7 +61,7 @@ public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beana
      *
      * @param code The message template, also the entity property path.
      * @param args The message arguments.
-     * @return
+     * @return The new instance.
      */
     protected ConstraintViolationException newInstanceOfConstraintViolationException(final String code, final Object... args) {
         final var message = messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
@@ -118,11 +119,11 @@ public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beana
     /**
      * Returns the default sort.
      */
-    protected Sort getDefaultSort() {
+    Sort getDefaultSort() {
         final var entityClass = getEntityClass();
         if (Sortable.class.isAssignableFrom(entityClass)) {
             return Sort.by(Direction.ASC, "sequence");
-        } else if (Codable.class.isAssignableFrom(entityClass)) {
+        } else if (Codeable.class.isAssignableFrom(entityClass)) {
             return Sort.by(Direction.ASC, "code");
         } else {
             return Sort.by(Direction.DESC, "updatedAt");

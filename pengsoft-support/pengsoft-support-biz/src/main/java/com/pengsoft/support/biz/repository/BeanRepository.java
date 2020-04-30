@@ -28,8 +28,8 @@ public interface BeanRepository<Q extends EntityPathBase<T>, T extends Beanable<
 
     @Override
     default void customize(final QuerydslBindings bindings, final Q root) {
-        final var entityClass = getEnityClass(root);
-        Class<?> idType;
+        final var entityClass = getEntityClass(root);
+        Class<?> idType = null;
         try {
             final var idField = entityClass.getField("id");
             idType = idField.getType();
@@ -45,7 +45,7 @@ public interface BeanRepository<Q extends EntityPathBase<T>, T extends Beanable<
         }
     }
 
-    default Class<? extends T> getEnityClass(final Q root) {
+    default Class<? extends T> getEntityClass(final Q root) {
         return root.getType();
     }
 

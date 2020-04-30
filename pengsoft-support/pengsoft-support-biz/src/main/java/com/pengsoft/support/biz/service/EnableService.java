@@ -2,7 +2,6 @@ package com.pengsoft.support.biz.service;
 
 import com.pengsoft.support.domain.entity.Enable;
 
-import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -18,14 +17,14 @@ public interface EnableService {
      *
      * @param enable {@link Enable}
      */
-    <T extends Enable<? extends Serializable>> void enable(T enable);
+    <T extends Enable> void enable(T enable);
 
     /**
      * Set the value of the all entities' 'enabled' field to true.
      *
      * @param enables A collection of {@link Enable}.
      */
-    default <T extends Enable<? extends Serializable>> void enable(final List<T> enables) {
+    default <T extends Enable> void enable(final List<T> enables) {
         enables.forEach(this::enable);
     }
 
@@ -34,14 +33,14 @@ public interface EnableService {
      *
      * @param enable {@link Enable}
      */
-    <T extends Enable<? extends Serializable>> void disable(T enable);
+    <T extends Enable> void disable(T enable);
 
     /**
      * Set the value of the all entities' 'enabled' field to true.
      *
      * @param enables A collection of {@link Enable}.
      */
-    default <T extends Enable<? extends Serializable>> void disable(final List<T> enables) {
+    default <T extends Enable> void disable(final List<T> enables) {
         enables.forEach(this::disable);
     }
 

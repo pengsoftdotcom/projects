@@ -1,7 +1,8 @@
 package com.pengsoft.security.domain.entity;
 
+import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.entity.Bean;
-import com.pengsoft.support.domain.entity.Codable;
+import com.pengsoft.support.domain.entity.Codeable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -23,7 +24,7 @@ import javax.validation.constraints.Size;
         @Index(name = "i_authority_code", columnList = "code", unique = true),
         @Index(name = "i_authority_name", columnList = "name", unique = true)
 })
-public class Authority extends Bean implements Codable<String> {
+public class Authority extends Bean implements Codeable {
 
     private static final long serialVersionUID = -4116533377602985015L;
 
@@ -40,7 +41,7 @@ public class Authority extends Bean implements Codable<String> {
 
     public Authority(@NotBlank @Size(max = 255) final String code) {
         this.code = code;
-        this.name = code;
+        this.name = StringUtils.replace(code, StringUtils.GLOBAL_SEPARATOR, StringUtils.SPACE);
     }
 
     @Override

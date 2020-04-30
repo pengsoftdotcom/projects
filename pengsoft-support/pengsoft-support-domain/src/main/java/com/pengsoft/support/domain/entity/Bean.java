@@ -81,7 +81,7 @@ public class Bean implements Beanable<String> {
      * Before create.
      */
     @PrePersist
-    public void prePresist() {
+    public void prePersist() {
         final var now = DateUtils.currentDateTime();
         setCreatedAt(now);
         setUpdatedAt(now);
@@ -100,10 +100,10 @@ public class Bean implements Beanable<String> {
     public String toString() {
         final var builder = new StringBuilder();
         builder.append(getClass().getSimpleName());
-        if (this instanceof Codable) {
-            builder.append(StringUtils.GLOBAL_SEPARATOR + ((Codable<>) this).getCode());
+        if (this instanceof Codeable) {
+            builder.append(StringUtils.GLOBAL_SEPARATOR).append(((Codeable) this).getCode());
         }
-        builder.append(StringUtils.GLOBAL_SEPARATOR + getId().toString());
+        builder.append(StringUtils.GLOBAL_SEPARATOR).append(getId());
         return builder.toString();
     }
 

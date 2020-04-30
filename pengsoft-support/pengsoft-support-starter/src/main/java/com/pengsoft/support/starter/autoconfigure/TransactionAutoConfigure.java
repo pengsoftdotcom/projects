@@ -43,12 +43,12 @@ public class TransactionAutoConfigure {
         requiredTransaction.setRollbackRules(Collections.singletonList(new RollbackRuleAttribute(Exception.class)));
         requiredTransaction.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
-        final var transacationAttributes = new HashMap<String, TransactionAttribute>(16);
-        properties.getReadonly().forEach(property -> transacationAttributes.put(property, readOnlyTransaction));
-        properties.getRequired().forEach(property -> transacationAttributes.put(property, requiredTransaction));
+        final var transactionAttributes = new HashMap<String, TransactionAttribute>(16);
+        properties.getReadonly().forEach(property -> transactionAttributes.put(property, readOnlyTransaction));
+        properties.getRequired().forEach(property -> transactionAttributes.put(property, requiredTransaction));
 
         final var transactionAttributeSource = new NameMatchTransactionAttributeSource();
-        transactionAttributeSource.setNameMap(transacationAttributes);
+        transactionAttributeSource.setNameMap(transactionAttributes);
 
         return new TransactionInterceptor(transactionManager, transactionAttributeSource);
     }

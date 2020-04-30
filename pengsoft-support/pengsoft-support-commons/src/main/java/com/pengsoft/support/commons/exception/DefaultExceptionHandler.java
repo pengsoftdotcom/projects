@@ -21,7 +21,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * The defualt exception handler.
+ * The default exception handler.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
@@ -38,7 +38,7 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
     private MessageSource messageSource;
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Object> handleConstraintViolationException(final ConstraintViolationException e) {
+    public static ResponseEntity<Object> handleConstraintViolationException(final ConstraintViolationException e) {
         final var body = e.getConstraintViolations().stream().collect(Collectors.toMap(
                 cv -> {
                     var propertyPath = cv.getPropertyPath().toString();
@@ -62,7 +62,7 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(BusinessException.class)
-    public ResponseEntity handleBusinessException(final BusinessException e) {
+    public ResponseEntity<Object> handleBusinessException(final BusinessException e) {
         final var code = e.getCode();
         final var args = e.getArgs();
         final var text = messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
@@ -70,7 +70,7 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(Exception.class)
-    public ResponseEntity<Object> handleUnexpectException(final Exception e) {
+    public static ResponseEntity<Object> handleUnexpectedException(final Exception e) {
         log.error("An unexpected exception occurred.", e);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }

@@ -14,7 +14,7 @@ public interface Beanable<ID extends Serializable> extends Serializable {
     /**
      * Get the value of the entity's 'id' field.
      *
-     * @Return id
+     * @return id
      */
     ID getId();
 
@@ -28,7 +28,7 @@ public interface Beanable<ID extends Serializable> extends Serializable {
     /**
      * Get the value of the entity's 'createdAt' field.
      *
-     * @Return create datetime
+     * @return create datetime
      */
     LocalDateTime getCreatedAt();
 
@@ -42,7 +42,7 @@ public interface Beanable<ID extends Serializable> extends Serializable {
     /**
      * Get the value of the entity's 'updatedAt' field.
      *
-     * @Return update datetime
+     * @return update datetime
      */
     LocalDateTime getUpdatedAt();
 
@@ -56,7 +56,7 @@ public interface Beanable<ID extends Serializable> extends Serializable {
     /**
      * Get the value of the entity's 'version' field.
      *
-     * @Return version
+     * @return version
      */
     long getVersion();
 

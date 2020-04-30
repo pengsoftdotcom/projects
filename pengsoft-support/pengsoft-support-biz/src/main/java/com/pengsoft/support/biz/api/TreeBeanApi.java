@@ -19,12 +19,12 @@ import java.util.List;
 public class TreeBeanApi<F extends TreeBeanFacade<?, T, ID>, T extends TreeBeanable<T, ID>, ID extends Serializable> extends BeanApi<F, T, ID> {
 
     @GetMapping("find-all-by-parent")
-    public List<?> findAllByParent(final Predicate predicate, final Sort sort) {
+    public List<T> findAllByParent(final Predicate predicate, final Sort sort) {
         return getFacade().findAllByParent(predicate, sort);
     }
 
     @GetMapping("find-all-exclude-self-and-its-children-by-parent")
-    public List<?> findAllExcludeSelfAndSelfChildrenByParent(@RequestParam(value = "self.id", required = false) final T self, final Predicate predicate, final Sort sort) {
+    public List<T> findAllExcludeSelfAndSelfChildrenByParent(@RequestParam(value = "self.id", required = false) final T self, final Predicate predicate, final Sort sort) {
         return getFacade().findAllExcludeSelfAndItsChildrenByParent(self, predicate, sort);
     }
 

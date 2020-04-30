@@ -35,7 +35,7 @@ import java.util.Locale;
         @Index(name = "i_user_username", columnList = "username", unique = true),
         @Index(name = "i_user_expired_at", columnList = "expiredAt")
 })
-public class User extends Bean implements Enable<String> {
+public class User extends Bean implements Enable {
 
     private static final long serialVersionUID = 4025683878971039742L;
 

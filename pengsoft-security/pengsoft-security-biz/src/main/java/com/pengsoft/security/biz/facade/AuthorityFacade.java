@@ -6,7 +6,6 @@ import com.pengsoft.support.biz.facade.BeanFacade;
 import com.pengsoft.support.domain.entity.Beanable;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * The facade interface of {@link Authority}
@@ -20,8 +19,7 @@ public interface AuthorityFacade extends BeanFacade<AuthorityService, Authority,
      * Save the authorities of entity admin.
      *
      * @param entityClass The entity class
-     * @return The authorities of entity admin.
      */
-    List<Authority> saveEntityAdminAuthorities(Class<? extends Beanable<? extends Serializable>> entityClass);
+    void saveEntityAdminAuthorities(Class<? extends Beanable<? extends Serializable>> entityClass);
 
 }

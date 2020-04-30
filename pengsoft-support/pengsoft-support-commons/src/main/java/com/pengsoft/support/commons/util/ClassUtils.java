@@ -14,8 +14,8 @@ public class ClassUtils extends org.apache.commons.lang3.ClassUtils {
      * Return the generic type of the superclass.
      *
      * @param superclass the superclass
-     * @param index the index of arguments.
-     * @return
+     * @param index      the index of arguments.
+     * @return The generic type.
      */
     public static Class<?> getGenericType(final Class<?> superclass, final int index) {
         final var genericSuperclass = superclass.getGenericSuperclass();

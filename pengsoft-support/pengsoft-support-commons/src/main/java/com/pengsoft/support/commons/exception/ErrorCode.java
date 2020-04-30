@@ -8,6 +8,10 @@ package com.pengsoft.support.commons.exception;
  */
 public class ErrorCode {
 
+    private ErrorCode() {
+
+    }
+
     /**
      * {} is not exists: {}
      */

@@ -24,6 +24,8 @@ import java.util.stream.Collectors;
 @ActiveProfiles("security")
 public class UserApiTest extends BaseApiTest {
 
+    public static final String PASSWORD = "123123";
+
     @Test
     public void save() throws Exception {
         final var user = new User();
@@ -39,7 +41,7 @@ public class UserApiTest extends BaseApiTest {
     @Test
     @WithUserDetails(value = "admin")
     public void changePassword() throws Exception {
-        final var content = Map.of("oldPassword", "123123", "newPassword", "123123").entrySet().stream()
+        final var content = Map.of("oldPassword", PASSWORD, "newPassword", PASSWORD).entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&"));
         getMockMvc().perform(MockMvcRequestBuilders
@@ -51,7 +53,7 @@ public class UserApiTest extends BaseApiTest {
 
     @Test
     public void resetPassword() throws Exception {
-        final var content = Map.of("id", "45d11b4d-49ad-49fd-bf7c-6e79fcdafe41", "password", "123123").entrySet().stream()
+        final var content = Map.of("id", "45d11b4d-49ad-49fd-bf7c-6e79fcdafe41", "password", PASSWORD).entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&"));
         getMockMvc().perform(MockMvcRequestBuilders
@@ -63,7 +65,7 @@ public class UserApiTest extends BaseApiTest {
 
     @Test
     public void findAllUserRolesByUser() throws Exception {
-        final var content = Map.of("id", "d25c711b-2589-4494-8b30-a3cab864774e").entrySet().stream()
+        final var content = Map.of("id", "6c0bfff5-5c48-4aec-b224-1e9d97a1692a").entrySet().stream()
                 .map(entry -> entry.getKey() + "=" + entry.getValue())
                 .collect(Collectors.joining("&"));
         getMockMvc().perform(MockMvcRequestBuilders

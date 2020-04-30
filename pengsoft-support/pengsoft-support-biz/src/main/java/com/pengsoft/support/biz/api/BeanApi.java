@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import javax.inject.Inject;
 import java.io.Serializable;
+import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -56,7 +57,6 @@ public class BeanApi<F extends BeanFacade<?, T, ID>, T extends Beanable<ID>, ID 
         facade.delete(facade.findAll(predicate, Sort.unsorted()));
     }
 
-    @SuppressWarnings("unchecked")
     @PutMapping("sort")
     public void sort(@RequestBody final Map<ID, Long> sortInfo) {
         final var entityClass = facade.getEntityClass();
@@ -71,11 +71,11 @@ public class BeanApi<F extends BeanFacade<?, T, ID>, T extends Beanable<ID>, ID 
             throw new NotImplementedException("not implemented for id class: " + idClass.getName());
         }
         final List<T> beans = facade.findAll(predicate, Sort.unsorted());
-        sortService.sort(beans.stream().collect(Collectors.toMap(sortable -> (Sortable<ID>) sortable, sortable -> sortInfo.get(sortable.getId()))));
+        sortService.sort(beans.stream().collect(Collectors.toMap(sortable -> (Sortable) sortable, sortable -> sortInfo.get(sortable.getId()))));
     }
 
     @GetMapping("find-one")
-    public T findOne(final Predicate predicate) throws Exception {
+    public T findOne(final Predicate predicate) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
         Optional<T> optional = Optional.empty();
         if (QueryDslUtils.contains(predicate, getFacade().getEntityClass(), "id")) {
             optional = facade.findOne(predicate);

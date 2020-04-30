@@ -27,13 +27,13 @@ public class UserServiceTest extends BaseServiceTest<UserService> {
 
     @Test
     public void init() {
-        getService().resetPassword(createIfNotExists("admin", "!@#123qwe").getId(), "123123");
+        getService().resetPassword(createIfNotExists().getId(), "123123");
     }
 
-    private User createIfNotExists(final String username, final String password) {
-        final var optional = getService().findOneByUsername(username);
+    private User createIfNotExists() {
+        final var optional = getService().findOneByUsername(Role.ADMIN);
         if (optional.isEmpty()) {
-            return getService().save(new User(username, password));
+            return getService().save(new User(Role.ADMIN, "!@#123qwe"));
         } else {
             return optional.get();
         }
@@ -41,7 +41,7 @@ public class UserServiceTest extends BaseServiceTest<UserService> {
 
     @Test
     public void grantRoles() {
-        getService().findOneByUsername("admin").ifPresent(user -> roleRepository.findOneByCode(Role.ADMIN).map(List::of).ifPresent(roles -> getService().grantRoles(user, roles)));
+        getService().findOneByUsername(Role.ADMIN).ifPresent(user -> roleRepository.findOneByCode(Role.ADMIN).map(List::of).ifPresent(roles -> getService().grantRoles(user, roles)));
     }
 
 }

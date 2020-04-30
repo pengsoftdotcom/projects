@@ -13,6 +13,10 @@ import java.util.Optional;
  */
 public class EntityUtils {
 
+    private EntityUtils() {
+        
+    }
+
     public static boolean eq(final Beanable<? extends Serializable> b1, final Beanable<? extends Serializable> b2) {
         if (b1 == b2) {
             return true;

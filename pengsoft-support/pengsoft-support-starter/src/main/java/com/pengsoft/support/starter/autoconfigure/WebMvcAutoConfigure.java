@@ -72,7 +72,7 @@ public class WebMvcAutoConfigure implements WebMvcConfigurer {
     }
 
     @Bean
-    public ObjectMapper objectMapper() {
+    private static ObjectMapper objectMapper() {
         return new ObjectMapper();
     }
 

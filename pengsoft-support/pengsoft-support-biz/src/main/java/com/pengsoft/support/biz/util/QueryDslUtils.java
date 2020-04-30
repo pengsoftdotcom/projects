@@ -34,8 +34,6 @@ public class QueryDslUtils {
 
     private static final String PATH_PARENT_ID = "parent.id";
 
-    private static final String PATH_PARENT_IDS = "parent_ids";
-
     private QueryDslUtils() {
 
     }
@@ -247,26 +245,28 @@ public class QueryDslUtils {
      * @param conjunction     if true, use 'and'
      */
     public static Predicate merge(Predicate sourcePredicate, Predicate targetPredicate, final boolean conjunction) {
-        if (isNotBlank(sourcePredicate) && isNotBlank(targetPredicate)) {
-            if (sourcePredicate instanceof BooleanExpression) {
-                if (conjunction) {
-                    targetPredicate = ((BooleanExpression) sourcePredicate).and(targetPredicate);
-                } else {
-                    targetPredicate = ((BooleanExpression) sourcePredicate).or(targetPredicate);
-                }
-                return targetPredicate;
-            } else if (targetPredicate instanceof BooleanExpression) {
-                if (conjunction) {
-                    sourcePredicate = ((BooleanExpression) targetPredicate).and(sourcePredicate);
-                } else {
-                    sourcePredicate = ((BooleanExpression) targetPredicate).or(sourcePredicate);
-                }
-                return sourcePredicate;
+        if (sourcePredicate == null) {
+            sourcePredicate = new BooleanBuilder();
+        }
+        if (targetPredicate == null) {
+            targetPredicate = new BooleanBuilder();
+        }
+        if (sourcePredicate instanceof BooleanExpression) {
+            if (conjunction) {
+                targetPredicate = ((BooleanExpression) sourcePredicate).and(targetPredicate);
             } else {
-                throw new IllegalArgumentException("source or target predicate is not an instance of BooleanExpression");
+                targetPredicate = ((BooleanExpression) sourcePredicate).or(targetPredicate);
             }
+            return targetPredicate;
+        } else if (targetPredicate instanceof BooleanExpression) {
+            if (conjunction) {
+                sourcePredicate = ((BooleanExpression) targetPredicate).and(sourcePredicate);
+            } else {
+                sourcePredicate = ((BooleanExpression) targetPredicate).or(sourcePredicate);
+            }
+            return sourcePredicate;
         } else {
-            return isBlank(targetPredicate) ? sourcePredicate : targetPredicate;
+            throw new IllegalArgumentException("source or target predicate is not an instance of BooleanExpression");
         }
     }
 

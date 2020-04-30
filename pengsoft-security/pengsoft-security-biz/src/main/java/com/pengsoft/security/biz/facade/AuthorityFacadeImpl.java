@@ -6,7 +6,7 @@ import com.pengsoft.security.commons.annotation.Authenticated;
 import com.pengsoft.security.domain.entity.Authority;
 import com.pengsoft.security.domain.util.SecurityUtils;
 import com.pengsoft.support.biz.facade.BeanFacadeImpl;
-import com.pengsoft.support.commons.exception.MissingConfgurationException;
+import com.pengsoft.support.commons.exception.MissingConfigurationException;
 import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.entity.Beanable;
 import com.pengsoft.support.domain.entity.Enable;
@@ -41,12 +41,12 @@ public class AuthorityFacadeImpl extends BeanFacadeImpl<AuthorityService, Author
     private RoleService roleService;
 
     @Override
-    public List<Authority> saveEntityAdminAuthorities(final Class<? extends Beanable<? extends Serializable>> entityClass) {
+    public void saveEntityAdminAuthorities(final Class<? extends Beanable<? extends Serializable>> entityClass) {
         final var entityAdminCode = SecurityUtils.getEntityAdminCode(entityClass);
         final var entityAdmin = roleService.findOneByCode(entityAdminCode)
-                .orElseThrow(() -> new MissingConfgurationException("'" + entityClass.getName() + "' entity admin not found"));
+                .orElseThrow(() -> new MissingConfigurationException("'" + entityClass.getName() + "' entity admin not found"));
 
-        Class<?> apiClass = null;
+        final Class<?> apiClass;
         try {
             apiClass = Class.forName(RegExUtils.replaceFirst(entityClass.getName(), ".domain.entity.", ".biz.api.") + "Api");
         } catch (final ClassNotFoundException e) {
@@ -60,7 +60,6 @@ public class AuthorityFacadeImpl extends BeanFacadeImpl<AuthorityService, Author
         authorities.addAll(getAuthoritiesFromApi(apiClass, entityClass, PutMapping.class, authorityCodePrefix));
         authorities.addAll(getAuthoritiesFromApi(apiClass, entityClass, DeleteMapping.class, authorityCodePrefix));
         roleService.grantAuthorities(entityAdmin, authorities);
-        return authorities;
     }
 
     private List<Authority> getAuthoritiesFromApi(final Class<?> apiClass, final Class<? extends Beanable<? extends Serializable>> entityClass, final Class<? extends Annotation> mappingClass, final String authorityCodePrefix) {
@@ -68,10 +67,10 @@ public class AuthorityFacadeImpl extends BeanFacadeImpl<AuthorityService, Author
         MethodUtils.getMethodsListWithAnnotation(apiClass, mappingClass, true, false).stream()
                 .filter(method -> method.getAnnotation(Authenticated.class) == null)
                 .map(method -> {
-                    String authorityCode = null;
+                    String authorityCode;
                     try {
                         authorityCode = authorityCodePrefix + ((String[]) MethodUtils.invokeMethod(method.getAnnotation(mappingClass), "value"))[0];
-                        authorityCode = RegExUtils.replaceAll(authorityCode, StringUtils.HYPHEN, StringUtils.UNDERCROSS);
+                        authorityCode = RegExUtils.replaceAll(authorityCode, StringUtils.HYPHEN, StringUtils.UNDERLINE);
                         authorityCode = authorityCode.replace("/", "");
                     } catch (final Exception e) {
                         throw new IllegalArgumentException("No value() method on mapping class or return value is empty");
@@ -83,12 +82,9 @@ public class AuthorityFacadeImpl extends BeanFacadeImpl<AuthorityService, Author
                             && !Sortable.class.isAssignableFrom(getEntityClass())) {
                         return false;
                     }
-                    if (StringUtils.endsWith(authorityCode, StringUtils.GLOBAL_SEPARATOR + "enable")
-                            || StringUtils.endsWith(authorityCode, StringUtils.GLOBAL_SEPARATOR + "disable")
-                            && !Enable.class.isAssignableFrom(entityClass)) {
-                        return false;
-                    }
-                    return true;
+                    return !StringUtils.endsWith(authorityCode, StringUtils.GLOBAL_SEPARATOR + "enable")
+                            && (!StringUtils.endsWith(authorityCode, StringUtils.GLOBAL_SEPARATOR + "disable")
+                            || Enable.class.isAssignableFrom(entityClass));
                 })
                 .distinct()
                 .forEach(authorityCode -> addAuthority(authorities, authorityCode));

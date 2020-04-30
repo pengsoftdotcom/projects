@@ -23,7 +23,7 @@ public interface RoleService extends TreeBeanService<Role, String> {
      * Save the entity admin by the given entity class
      *
      * @param entityClass The entity class
-     * @Return The entity admin.
+     * @return The entity admin.
      */
     Role saveEntityAdmin(Class<? extends Beanable<? extends Serializable>> entityClass);
 

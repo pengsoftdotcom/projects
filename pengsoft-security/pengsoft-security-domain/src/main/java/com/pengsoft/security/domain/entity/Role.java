@@ -2,14 +2,18 @@ package com.pengsoft.security.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pengsoft.support.commons.util.StringUtils;
-import com.pengsoft.support.domain.entity.Codable;
+import com.pengsoft.support.domain.entity.Codeable;
 import com.pengsoft.support.domain.entity.TreeBean;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
-import javax.persistence.*;
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
@@ -27,7 +31,7 @@ import java.util.List;
         @Index(name = "i_role_code", columnList = "code", unique = true),
         @Index(name = "i_role_name", columnList = "name", unique = true)
 })
-public class Role extends TreeBean<Role> implements Codable<String> {
+public class Role extends TreeBean<Role> implements Codeable {
 
     /**
      * Role code: admin
@@ -85,7 +89,7 @@ public class Role extends TreeBean<Role> implements Codable<String> {
     public Role(final Role parent, @NotBlank @Size(max = 255) final String code) {
         setParent(parent);
         this.code = code;
-        this.name = StringUtils.replace(code, StringUtils.UNDERCROSS, StringUtils.SPACE);
+        this.name = StringUtils.replace(code, StringUtils.UNDERLINE, StringUtils.SPACE);
     }
 
     public Role(final Role parent, @NotBlank @Size(max = 255) final String code, @NotBlank @Size(max = 255) final String name) {
@@ -127,11 +131,6 @@ public class Role extends TreeBean<Role> implements Codable<String> {
 
     public void setRoleAuthorities(final List<RoleAuthority> roleAuthorities) {
         this.roleAuthorities = roleAuthorities;
-    }
-
-    public static void main(final String[] args) {
-        final String code = "security_role_admin";
-        System.out.println(StringUtils.replace(code, "_", " "));
     }
 
 }

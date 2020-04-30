@@ -34,15 +34,13 @@ public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, Strin
 
     @Override
     public User save(final User user) {
-        final var target = user;
-        findOneByUsername(target.getUsername()).ifPresent(source -> {
-            if (EntityUtils.ne(source, target)) {
-                throw newInstanceOfConstraintViolationException("username", target.getUsername());
+        findOneByUsername(user.getUsername()).ifPresent(source -> {
+            if (EntityUtils.ne(source, user)) {
+                throw newInstanceOfConstraintViolationException("username", user.getUsername());
             }
         });
-        target.setPassword(passwordEncoder.encode(target.getPassword()));
-        super.save(target);
-        return target;
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return super.save(user);
     }
 
     @Override
@@ -57,7 +55,9 @@ public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, Strin
 
     @Override
     public void resetPassword(final String id, final String password) {
-        findOne(id).orElseThrow(() -> new IllegalArgumentException("the entity with given id has been deleted or the given id is invalid."));
+        if (findOne(id).isEmpty()) {
+            throw newInstanceOfEntityNotFoundException(id);
+        }
         getRepository().resetPassword(id, passwordEncoder.encode(password));
     }
 

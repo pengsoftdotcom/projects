@@ -23,9 +23,8 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
         extends BeanServiceImpl<R, T, ID> implements TreeBeanService<T, ID> {
 
     @Override
-    public T save(final T bean) {
-        final T source = bean.getId() == null ? null : findOne(bean.getId()).orElse(null);
-        final T target = bean;
+    public T save(final T target) {
+        final T source = target.getId() == null ? null : findOne(target.getId()).orElse(null);
         if (source != null) {
             target.setChildren(source.getChildren());
             // check the original parent if is a leaf node.
@@ -57,8 +56,7 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
 
         // change parent ids and depth of children.
         if (target.getId() != null) {
-            final var deque = new ArrayDeque<T>();
-            deque.addAll(bean.getChildren());
+            final var deque = new ArrayDeque<>(target.getChildren());
             var parent = target;
             while (!deque.isEmpty()) {
                 final T child = deque.pop();

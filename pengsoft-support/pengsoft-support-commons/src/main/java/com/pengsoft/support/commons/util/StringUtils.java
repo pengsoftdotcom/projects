@@ -14,7 +14,7 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     public static final String HYPHEN = "-";
 
-    public static final String UNDERCROSS = "_";
+    public static final String UNDERLINE = "_";
 
     public static final String COMMA = ",";
 
@@ -35,28 +35,27 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @param isUpperCase Change to the other upper case name.
      * @return The other case name.
      */
-    public static String camelCaseTo(final String name, final String separator, final boolean isUpperCase) {
+    private static String camelCaseTo(final String name, final String separator, final boolean isUpperCase) {
         if (isBlank(name)) {
             return name;
         } else {
-            final var sourceName = name;
-            final var targetName = new StringBuilder();
-            final var charArray = sourceName.toCharArray();
-            targetName.append(charArray[0]);
+            final var result = new StringBuilder();
+            final var charArray = name.toCharArray();
+            result.append(charArray[0]);
             if (charArray.length > 1) {
                 for (int i = 1; i < charArray.length; i++) {
                     final var c = charArray[i];
                     if (Character.getType(c) < 3 && c == Character.toUpperCase(c)
                             && !separator.equals(String.valueOf(c))) {
-                        targetName.append(separator);
+                        result.append(separator);
                     }
-                    targetName.append(c);
+                    result.append(c);
                 }
             }
             if (isUpperCase) {
-                return targetName.toString().toUpperCase();
+                return result.toString().toUpperCase();
             } else {
-                return targetName.toString().toLowerCase();
+                return result.toString().toLowerCase();
             }
         }
     }
@@ -69,7 +68,18 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
      * @return The snake case name.
      */
     public static String camelCaseToSnakeCase(final String name, final boolean isUpperCase) {
-        return camelCaseTo(name, UNDERCROSS, isUpperCase);
+        return camelCaseTo(name, UNDERLINE, isUpperCase);
+    }
+
+    /**
+     * Camel case to kebab case.
+     *
+     * @param name        The camel case name.
+     * @param isUpperCase Change to upper kebab case name.
+     * @return The kebab case name.
+     */
+    public static String camelCaseToKebabCase(final String name, final boolean isUpperCase) {
+        return camelCaseTo(name, HYPHEN, isUpperCase);
     }
 
 
