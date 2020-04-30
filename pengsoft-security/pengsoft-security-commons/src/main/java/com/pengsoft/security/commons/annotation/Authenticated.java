@@ -9,6 +9,9 @@ import java.lang.annotation.Target;
 
 /**
  * Annotated method will be ignore security check.
+ *
+ * @author dang.peng@pengsoft.com
+ * @since 1.0.0
  */
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
