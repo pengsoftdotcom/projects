@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>pengsoft-support</artifactId>
+        <groupId>com.pengsoft.support</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <groupId>com.pengsoft.as</groupId>
+    <artifactId>pengsoft-as</artifactId>
+    <packaging>pom</packaging>
+
+    <properties>
+        <spring-security-oauth2-autoconfigure.version>2.2.6.RELEASE</spring-security-oauth2-autoconfigure.version>
+    </properties>
+
+    <modules>
+        <module>pengsoft-as-starter</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.pengsoft.support</groupId>
+                <artifactId>pengsoft-support</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.security</groupId>
+                <artifactId>pengsoft-security</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.security.oauth.boot</groupId>
+                <artifactId>spring-security-oauth2-autoconfigure</artifactId>
+                <version>${spring-security-oauth2-autoconfigure.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>

@@ -12,18 +12,12 @@
     <artifactId>pengsoft-security</artifactId>
     <packaging>pom</packaging>
 
-    <properties>
-        <spring-security-oauth2-autoconfigure.version>2.2.6.RELEASE</spring-security-oauth2-autoconfigure.version>
-    </properties>
-
     <modules>
         <module>pengsoft-security-domain</module>
         <module>pengsoft-security-biz</module>
         <module>pengsoft-security-starter</module>
         <module>pengsoft-security-test</module>
         <module>pengsoft-security-commons</module>
-        <module>pengsoft-security-oauth-starter-authorization-server</module>
-        <module>pengsoft-security-oauth-starter-resource-server</module>
     </modules>
 
     <dependencyManagement>
@@ -34,11 +28,6 @@
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security.oauth.boot</groupId>
-                <artifactId>spring-security-oauth2-autoconfigure</artifactId>
-                <version>${spring-security-oauth2-autoconfigure.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.pengsoft.security</groupId>

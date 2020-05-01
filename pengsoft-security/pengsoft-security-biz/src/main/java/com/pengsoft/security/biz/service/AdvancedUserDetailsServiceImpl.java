@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
@@ -79,7 +78,7 @@ public class AdvancedUserDetailsServiceImpl implements AdvancedUserDetailsServic
     }
 
     @Override
-    public UserDetails loadUserByUsername(final String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(final String username) {
         final var user = userService.findOneByUsername(username).orElseThrow(() -> newInstanceOfConstraintViolationException("username", username));
         final var roles = user.getUserRoles().stream().map(UserRole::getRole).collect(Collectors.toList());
         final var optional = user.getUserRoles().stream().filter(UserRole::isMajor).map(UserRole::getRole).findFirst();
