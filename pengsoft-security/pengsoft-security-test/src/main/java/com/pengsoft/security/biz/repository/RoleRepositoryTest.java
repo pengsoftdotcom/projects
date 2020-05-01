@@ -1,5 +1,6 @@
 package com.pengsoft.security.biz.repository;
 
+import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.starter.SecurityApplication;
 import com.pengsoft.support.test.BaseRepositoryTest;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ public class RoleRepositoryTest extends BaseRepositoryTest<RoleRepository> {
 
     @Test
     public void findOneByCode() {
-        getRepository().findOneByCode("admin");
+        getRepository().findOneByCode(Role.ADMIN);
     }
 
 }

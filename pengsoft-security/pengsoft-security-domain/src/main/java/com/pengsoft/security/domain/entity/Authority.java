@@ -39,6 +39,10 @@ public class Authority extends Bean implements Codeable {
     @Size(max = 255)
     private String remark;
 
+    public Authority() {
+
+    }
+
     public Authority(@NotBlank @Size(max = 255) final String code) {
         this.code = code;
         this.name = StringUtils.replace(code, StringUtils.GLOBAL_SEPARATOR, StringUtils.SPACE);

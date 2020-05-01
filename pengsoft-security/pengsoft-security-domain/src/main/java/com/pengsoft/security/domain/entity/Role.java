@@ -81,6 +81,11 @@ public class Role extends TreeBean<Role> implements Codeable {
 
     }
 
+    public Role(@NotBlank @Size(max = 255) final String code) {
+        this.code = code;
+        this.name = StringUtils.replace(code, StringUtils.UNDERLINE, StringUtils.SPACE);
+    }
+
     public Role(@NotBlank @Size(max = 255) final String code, @NotBlank @Size(max = 255) final String name) {
         this.code = code;
         this.name = name;

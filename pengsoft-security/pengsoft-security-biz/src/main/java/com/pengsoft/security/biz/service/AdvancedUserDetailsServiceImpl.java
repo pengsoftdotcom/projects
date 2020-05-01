@@ -9,6 +9,7 @@ import com.pengsoft.security.domain.util.SecurityUtils;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.context.MessageSource;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -35,8 +36,30 @@ public class AdvancedUserDetailsServiceImpl implements AdvancedUserDetailsServic
     @Inject
     private MessageSource messageSource;
 
+    @Lazy
     @Inject
     private UserService userService;
+
+    private static List<GrantedAuthority> getAllAuthorities(final Role role) {
+        final var roles = new ArrayList<Role>();
+        roles.add(role);
+        final var deque = new ArrayDeque<Role>();
+        role.getChildren().forEach(root -> {
+            deque.push(root);
+            while (!deque.isEmpty()) {
+                final var parent = deque.pop();
+                parent.setParent(null);
+                roles.add(parent);
+                parent.getChildren().forEach(deque::push);
+            }
+        });
+        return roles.stream().map(Role::getRoleAuthorities)
+                .flatMap(List::stream)
+                .map(RoleAuthority::getAuthority)
+                .map(DefaultGrantedAuthority::new)
+                .distinct()
+                .collect(Collectors.toList());
+    }
 
     protected void saveAccessToken(final UserDetails userDetails) {
         //TODO Implement it.
@@ -66,27 +89,6 @@ public class AdvancedUserDetailsServiceImpl implements AdvancedUserDetailsServic
         } else {
             return new DefaultUserDetails(user, roles);
         }
-    }
-
-    private static List<GrantedAuthority> getAllAuthorities(final Role role) {
-        final var roles = new ArrayList<Role>();
-        roles.add(role);
-        final var deque = new ArrayDeque<Role>();
-        role.getChildren().forEach(root -> {
-            deque.push(root);
-            while (!deque.isEmpty()) {
-                final var parent = deque.pop();
-                parent.setParent(null);
-                roles.add(parent);
-                parent.getChildren().forEach(deque::push);
-            }
-        });
-        return roles.stream().map(Role::getRoleAuthorities)
-                .flatMap(List::stream)
-                .map(RoleAuthority::getAuthority)
-                .map(DefaultGrantedAuthority::new)
-                .distinct()
-                .collect(Collectors.toList());
     }
 
     protected ConstraintViolationException newInstanceOfConstraintViolationException(final String code, final Object... args) {
