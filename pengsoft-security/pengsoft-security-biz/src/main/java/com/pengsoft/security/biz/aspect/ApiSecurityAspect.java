@@ -16,6 +16,8 @@ import org.springframework.security.core.GrantedAuthority;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * The api security aspect, handling the privileges of external callers.
@@ -27,6 +29,7 @@ import java.util.Collection;
 @Aspect
 public class ApiSecurityAspect {
 
+    @SuppressWarnings("unchecked")
     @Around(JoinPoints.ALL_API)
     public Object handlerApiSecurity(final ProceedingJoinPoint jp) throws Throwable {
         final var args = jp.getArgs();
@@ -38,8 +41,8 @@ public class ApiSecurityAspect {
             final var modulePart = SecurityUtils.getModuleCodeFromEntityClass(entityClass);
             final var entityPart = SecurityUtils.getEntityCodeFromEntityClass(entityClass);
             final var methodPart = StringUtils.camelCaseToSnakeCase(jp.getSignature().getName(), false);
-            final var requiredAuthority = StringUtils.join(new String[]{modulePart, entityPart, methodPart}, StringUtils.GLOBAL_SEPARATOR);
-            final var grantedAuthorities = SecurityUtils.get("authorities", Collection.class);
+            final var requiredAuthority = StringUtils.join(new String[] { modulePart, entityPart, methodPart }, StringUtils.GLOBAL_SEPARATOR);
+            final var grantedAuthorities = Optional.ofNullable(SecurityUtils.get("authorities", Collection.class)).orElse(List.of());
             if (grantedAuthorities.stream()
                     .noneMatch(grantedAuthority -> StringUtils.equals(requiredAuthority, ((GrantedAuthority) grantedAuthority).getAuthority()))) {
                 throw new AccessDeniedException(requiredAuthority);

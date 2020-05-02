@@ -72,8 +72,10 @@ public class AdvancedUserDetailsServiceImpl implements AdvancedUserDetailsServic
     @Override
     public DefaultUserDetails setCurrentRole(final Role role) {
         final var userDetails = SecurityUtils.getUserDetails();
-        userDetails.setCurrentRole(role);
-        saveAccessToken(userDetails);
+        if (userDetails != null) {
+            userDetails.setCurrentRole(role);
+            saveAccessToken(userDetails);
+        }
         return userDetails;
     }
 

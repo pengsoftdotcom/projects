@@ -1,22 +1,20 @@
 package com.pengsoft.support.biz.service;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-
+import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.Beanable;
+import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.validation.annotation.Validated;
 
-import com.pengsoft.support.domain.entity.Bean;
-import com.pengsoft.support.domain.entity.Beanable;
-import com.querydsl.core.types.Predicate;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The service interface of {@link Bean}.
@@ -41,7 +39,7 @@ public interface BeanService<T extends Beanable<ID>, ID extends Serializable> {
      * Save one entity.
      *
      * @param bean entity
-     * @Return the saved entity
+     * @return the saved entity
      */
     T save(@Valid @NotNull T bean);
 
@@ -49,7 +47,7 @@ public interface BeanService<T extends Beanable<ID>, ID extends Serializable> {
      * Save entities.
      *
      * @param beans entities
-     * @Return the saved entities
+     * @return the saved entities
      */
     default List<T> save(@NotEmpty final List<T> beans) {
         return beans.stream().map(this::save).collect(Collectors.toList());
@@ -75,7 +73,7 @@ public interface BeanService<T extends Beanable<ID>, ID extends Serializable> {
      * Returns an entity with given id.
      *
      * @param id ID
-     * @Return an {@link Optional} of an entity
+     * @return an {@link Optional} of an entity
      */
     Optional<T> findOne(@NotNull ID id);
 
@@ -83,7 +81,7 @@ public interface BeanService<T extends Beanable<ID>, ID extends Serializable> {
      * Returns an entity with given {@link Predicate}.
      *
      * @param predicate {@link Predicate}
-     * @Return an {@link Optional} of an entity
+     * @return an {@link Optional} of an entity
      */
     Optional<T> findOne(Predicate predicate);
 
@@ -91,8 +89,8 @@ public interface BeanService<T extends Beanable<ID>, ID extends Serializable> {
      * Returns a {@link Page} of entities with given {@link Predicate}
      *
      * @param predicate {@link Predicate}
-     * @param pageable {@link Pageable}
-     * @Return a page of entities
+     * @param pageable  {@link Pageable}
+     * @return a page of entities
      */
     Page<T> findPage(Predicate predicate, Pageable pageable);
 
@@ -100,8 +98,8 @@ public interface BeanService<T extends Beanable<ID>, ID extends Serializable> {
      * Returns all entities with given {@link Predicate}.
      *
      * @param predicate {@link Predicate}
-     * @param sort {@link Sort}
-     * @Return entities
+     * @param sort      {@link Sort}
+     * @return entities
      */
     List<T> findAll(Predicate predicate, Sort sort);
 
@@ -109,7 +107,7 @@ public interface BeanService<T extends Beanable<ID>, ID extends Serializable> {
      * Returns whether an entity with the given {@link Predicate} exists.
      *
      * @param predicate {@link Predicate}
-     * @Return If true, exists.
+     * @return If true, exists.
      */
     boolean exists(Predicate predicate);
 
@@ -117,7 +115,7 @@ public interface BeanService<T extends Beanable<ID>, ID extends Serializable> {
      * Returns the number of entities by {@link Predicate}.
      *
      * @param predicate {@link Predicate}
-     * @Return The number of entities.
+     * @return The number of entities.
      */
     long count(Predicate predicate);
 
