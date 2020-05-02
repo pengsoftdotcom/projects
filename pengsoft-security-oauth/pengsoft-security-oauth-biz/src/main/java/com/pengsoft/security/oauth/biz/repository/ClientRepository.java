@@ -1,7 +1,7 @@
-package com.pengsoft.security.biz.repository;
+package com.pengsoft.security.oauth.biz.repository;
 
-import com.pengsoft.security.domain.entity.Authority;
-import com.pengsoft.security.domain.entity.QAuthority;
+import com.pengsoft.security.oauth.domain.entity.Client;
+import com.pengsoft.security.oauth.domain.entity.QClient;
 import com.pengsoft.support.biz.repository.BeanRepository;
 import com.querydsl.core.types.dsl.StringPath;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -13,24 +13,25 @@ import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
 /**
- * The repository interface of {@link Authority} based on JPA
+ * The repository interface of {@link Client} based on JPA
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
 @Repository
-public interface AuthorityRepository extends BeanRepository<QAuthority, Authority, String> {
+public interface ClientRepository extends BeanRepository<QClient, Client, String> {
 
     @Override
-    default void customize(final QuerydslBindings bindings, final QAuthority root) {
+    default void customize(QuerydslBindings bindings, QClient root) {
         BeanRepository.super.customize(bindings, root);
         bindings.bind(root.code).first(StringPath::contains);
+        bindings.bind(root.grantTypes).first(StringPath::contains);
     }
 
     /**
-     * Returns an {@link Optional} of a {@link Authority} with given code.
+     * Returns an {@link Optional} of a {@link Client} with given code.
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<Authority> findOneByCode(@NotBlank String code);
+    Optional<Client> findOneByCode(@NotBlank String code);
 
 }

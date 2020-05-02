@@ -9,6 +9,7 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
+import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
 /**
@@ -30,6 +31,6 @@ public interface RoleRepository extends TreeBeanRepository<QRole, Role, String> 
      * Returns an {@link Optional} of a {@link Role} with given code.
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<Role> findOneByCode(String code);
+    Optional<Role> findOneByCode(@NotBlank String code);
 
 }

@@ -17,7 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ComponentScan({ "com.*.*.biz.facade", "com.*.*.*.biz.facade" })
 @ComponentScan({ "com.*.*.biz.service", "com.*.*.*.biz.service" })
 @EnableJpaRepositories({ "com.*.*.biz.repository", "com.*.*.*.biz.repository" })
-@EntityScan({ "com.*.*.domain", "com.*.*.*.domain" })
+@EntityScan({ "com.*.*.domain.entity", "com.*.*.*.domain.entity" })
 public class JpaAutoConfigure {
 
 }

@@ -57,7 +57,7 @@ public class User extends Bean implements Enable {
 
     private LocalDateTime expiredAt;
 
-    private boolean enabled;
+    private boolean enabled = true;
 
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
