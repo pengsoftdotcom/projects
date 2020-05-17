@@ -13,7 +13,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
@@ -62,19 +61,21 @@ public class RoleServiceImpl extends TreeBeanServiceImpl<RoleRepository, Role, S
     }
 
     @Override
-    public void grantAuthorities(@NotNull final Role role, final List<Authority> authorities) {
+    public void grantAuthorities(final Role role, final List<Authority> authorities) {
         final var source = role.getRoleAuthorities();
         final var target = authorities.stream().map(authority -> new RoleAuthority(role, authority)).collect(Collectors.toList());
         final var deleted = source.stream()
                 .filter(s -> target.stream()
                         .noneMatch(t -> EntityUtils.eq(s.getRole(), t.getRole()) && EntityUtils.eq(s.getAuthority(), t.getAuthority())))
                 .collect(Collectors.toList());
+        roleAuthorityRepository.deleteAll(deleted);
         source.removeAll(deleted);
         final var created = target.stream()
                 .filter(t -> source.stream()
                         .noneMatch(s -> EntityUtils.eq(t.getRole(), s.getRole()) && EntityUtils.eq(t.getAuthority(), s.getAuthority())))
                 .collect(Collectors.toList());
-        source.addAll(roleAuthorityRepository.saveAll(created));
+        roleAuthorityRepository.saveAll(created);
+        source.addAll(created);
         super.save(role);
     }
 

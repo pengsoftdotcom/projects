@@ -71,6 +71,9 @@ public class Role extends TreeBean<Role> implements Codeable {
     @Size(max = 255)
     private String remark;
 
+    @OneToMany(mappedBy = "role", cascade = CascadeType.REMOVE)
+    private List<UserRole> userRoles = new ArrayList<>();
+
     @JsonIgnore
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @OneToMany(mappedBy = "role", cascade = CascadeType.REMOVE)
@@ -128,6 +131,14 @@ public class Role extends TreeBean<Role> implements Codeable {
 
     public void setRemark(final String remark) {
         this.remark = remark;
+    }
+
+    public List<UserRole> getUserRoles() {
+        return userRoles;
+    }
+
+    public void setUserRoles(final List<UserRole> userRoles) {
+        this.userRoles = userRoles;
     }
 
     public List<RoleAuthority> getRoleAuthorities() {

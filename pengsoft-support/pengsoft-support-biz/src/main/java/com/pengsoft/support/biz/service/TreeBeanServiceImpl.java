@@ -24,11 +24,13 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
 
     @Override
     public T save(final T target) {
+        var parentChanged = false;
         final T source = target.getId() == null ? null : findOne(target.getId()).orElse(null);
         if (source != null) {
             target.setChildren(source.getChildren());
+            parentChanged = EntityUtils.ne(source.getParent(), target.getParent());
             // check the original parent if is a leaf node.
-            if (EntityUtils.ne(source.getParent(), target.getParent()) && source.getParent() != null) {
+            if (parentChanged && source.getParent() != null) {
                 source.getParent().setLeaf(source.getParent().getChildren().size() == 1);
                 super.save(source.getParent());
             }
@@ -44,23 +46,26 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
             super.save(target.getParent());
 
             // change parent ids and depth.
-            if (target.getParent().getDepth() == 1) {
+            if (StringUtils.isBlank(target.getParent().getParentIds())) {
                 target.setParentIds(target.getParent().getId().toString());
-                target.setDepth(2);
             } else {
-                target.setParentIds(StringUtils.join(new Object[]{target.getParent().getParentIds(), target.getParent().getId()}, StringUtils.GLOBAL_SEPARATOR));
-                target.setDepth(target.getParent().getDepth() + 1);
+                target.setParentIds(StringUtils.join(new Object[] { target.getParent().getParentIds(), target.getParent().getId() }, StringUtils.GLOBAL_SEPARATOR));
             }
+            target.setDepth(target.getParent().getDepth() + 1);
         }
         super.save(target);
 
         // change parent ids and depth of children.
-        if (target.getId() != null) {
+        if (parentChanged) {
             final var deque = new ArrayDeque<>(target.getChildren());
             var parent = target;
             while (!deque.isEmpty()) {
                 final T child = deque.pop();
-                child.setParentIds(StringUtils.join(new Object[]{parent.getParentIds(), parent.getId()}, StringUtils.GLOBAL_SEPARATOR));
+                if (StringUtils.isBlank(parent.getParentIds())) {
+                    child.setParentIds(parent.getId().toString());
+                } else {
+                    child.setParentIds(StringUtils.join(new Object[] { parent.getParentIds(), parent.getId() }, StringUtils.GLOBAL_SEPARATOR));
+                }
                 child.setDepth(parent.getDepth() + 1);
                 super.save(child);
                 parent = child;
@@ -76,11 +81,10 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
         findOne(bean.getId()).ifPresent(node -> {
             super.delete(node);
             if (node.getParent() != null) {
-                findOne(node.getParent().getId()).ifPresent(parent -> {
-                    parent.getChildren().removeIf(child -> EntityUtils.eq(child, node));
-                    parent.setLeaf(parent.getChildren().isEmpty());
-                    super.save(parent);
-                });
+                final var parent = node.getParent();
+                parent.getChildren().removeIf(child -> EntityUtils.eq(child, node));
+                parent.setLeaf(parent.getChildren().isEmpty());
+                super.save(parent);
             }
         });
     }
@@ -92,20 +96,27 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
 
     @Override
     public List<T> findAllExcludeSelfAndItsChildrenByParent(final T self, final Predicate predicate, final Sort sort) {
-        return findAllByParent(getPredicateOfExcludingSelfAndItsChildren(self, predicate), sort);
+        return findAllByParent(getPredicateOfExcludeSelfAndItsChildren(self, predicate), sort);
     }
 
-    private Predicate getPredicateOfExcludingSelfAndItsChildren(final T self, Predicate predicate) {
+    private Predicate getPredicateOfExcludeSelfAndItsChildren(final T self, Predicate predicate) {
         if (self != null) {
-            final var parentIds = (StringPath) QueryDslUtils.getPath(getEntityClass(), "parentIds");
-            predicate = QueryDslUtils.merge(parentIds.notLike(self.getParentIds() + "%"), predicate);
+            final var idPath = QueryDslUtils.getIdStringPath(getEntityClass());
+            predicate = QueryDslUtils.merge(idPath.ne(self.getId().toString()), predicate);
+
+            final var parentIdsPath = (StringPath) QueryDslUtils.getPath(getEntityClass(), "parentIds");
+            if (StringUtils.isBlank(self.getParentIds())) {
+                predicate = QueryDslUtils.merge(parentIdsPath.notLike(self.getId().toString() + "%"), predicate);
+            } else {
+                predicate = QueryDslUtils.merge(parentIdsPath.notLike(StringUtils.join(new String[] { self.getParentIds(), self.getId().toString() }, StringUtils.GLOBAL_SEPARATOR) + "%"), predicate);
+            }
         }
         return predicate;
     }
 
     @Override
     public List<T> findAllExcludeSelfAndItsChildren(final T self, final Predicate predicate, final Sort sort) {
-        return findAll(getPredicateOfExcludingSelfAndItsChildren(self, predicate), sort);
+        return findAll(getPredicateOfExcludeSelfAndItsChildren(self, predicate), sort);
     }
 
 }

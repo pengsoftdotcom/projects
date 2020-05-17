@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration= \
-com.pengsoft.security.oauth.starter.autoconfigure.AuthorizationServerAutoConfigure
+com.pengsoft.security.oauth.starter.autoconfigure.AuthorizationServerAutoConfigure, \
+com.pengsoft.security.oauth.starter.autoconfigure.ResourceServerAutoConfigure

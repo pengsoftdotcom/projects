@@ -6,6 +6,8 @@ import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.security.domain.entity.UserRole;
 import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.commons.util.DateUtils;
+import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.util.EntityUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,7 +41,9 @@ public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, Strin
                 throw newInstanceOfConstraintViolationException("username", user.getUsername());
             }
         });
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (StringUtils.isNotBlank(user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(user.getPassword()));
+        }
         return super.save(user);
     }
 
@@ -47,7 +51,7 @@ public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, Strin
     public void changePassword(final String id, final String oldPassword, final String newPassword) {
         final var user = findOne(id).orElseThrow(() -> new IllegalArgumentException("the entity with given id has been deleted or the given id is invalid."));
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
-            getRepository().resetPassword(id, newPassword);
+            resetPassword(id, newPassword);
         } else {
             throw newInstanceOfConstraintViolationException("oldPassword", oldPassword);
         }
@@ -94,6 +98,27 @@ public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, Strin
             }
         });
         super.save(user);
+    }
+
+    @Override
+    public void signInSuccess(final String username) {
+        final var user = findOneByUsername(username).orElseThrow(() -> newInstanceOfEntityNotFoundException(username));
+        user.setSignedInAt(DateUtils.currentDateTime());
+        user.setSignInFailureCount(0L);
+        save(user);
+    }
+
+    @Override
+    public void signInFailure(final String username, final int allowSignInFailure) {
+        final var optional = findOneByUsername(username);
+        if (optional.isPresent()) {
+            final var user = optional.get();
+            user.setSignInFailureCount(user.getSignInFailureCount() + 1);
+            if (user.getSignInFailureCount() >= allowSignInFailure) {
+                user.setEnabled(false);
+            }
+            save(user);
+        }
     }
 
     @Override

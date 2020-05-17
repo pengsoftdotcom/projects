@@ -2,9 +2,12 @@ package com.pengsoft.security.starter.autoconfigure;
 
 import com.pengsoft.security.starter.autoconfigure.properties.WebSecurityAutoConfigureProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.DefaultAuthenticationEventPublisher;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -27,6 +30,9 @@ public class WebSecurityAutoConfigure extends WebSecurityConfigurerAdapter {
     @Inject
     private WebSecurityAutoConfigureProperties properties;
 
+    @Inject
+    private ApplicationEventPublisher applicationEventPublisher;
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -35,7 +41,9 @@ public class WebSecurityAutoConfigure extends WebSecurityConfigurerAdapter {
     @Bean
     @Override
     protected AuthenticationManager authenticationManager() throws Exception {
-        return super.authenticationManager();
+        final var authenticationManager = (ProviderManager) super.authenticationManager();
+        authenticationManager.setAuthenticationEventPublisher(new DefaultAuthenticationEventPublisher(applicationEventPublisher));
+        return authenticationManager;
     }
 
     @Override

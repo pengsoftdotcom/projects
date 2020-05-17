@@ -1,0 +1,75 @@
+<nz-layout class="app-layout">
+    <nz-sider class="menu-sidebar" nzCollapsible nzWidth="256px" nzBreakpoint="md" [(nzCollapsed)]="isCollapsed" [nzTrigger]="null">
+        <div class="sidebar-logo">
+            <a routerLink="/dashboard">
+                <img src="/assets/logo.png" alt="logo">
+                <h1>Pengsoft.com</h1>
+            </a>
+        </div>
+        <ul nz-menu nzTheme="dark" nzMode="inline" [nzInlineCollapsed]="isCollapsed">
+            <ng-container *ngFor="let menu of menus">
+                <ng-container *ngIf="!menu.children; else elseBlock">
+                    <li nz-menu-item [hasAnyRole]="menu.data?.code" [nzMatchRouter]="true" [routerLink]="menu.path">
+                        <i nz-icon [nzType]="menu.data.icon"></i>{{menu.data.name}}
+                    </li>
+                </ng-container>
+                <ng-template #elseBlock>
+                    <li nz-submenu [hasAnyRole]="menu.data?.code" [nzTitle]="menu.data.name" [nzIcon]="menu.data.icon" [nzOpen]="isMenuOpen(menu)">
+                        <ul>
+                            <li *ngFor="let submenu of menu.children" nz-menu-item [hasAnyAuthority]="submenu.data?.code" [nzMatchRouter]="true"
+                                [routerLink]="'/' + menu.path + '/' + submenu.path">
+                                {{submenu.data.name}}
+                            </li>
+                        </ul>
+                    </li>
+                </ng-template>
+            </ng-container>
+        </ul>
+    </nz-sider>
+    <nz-layout>
+        <nz-header>
+            <div class="app-header">
+                <span class="header-trigger" (click)="isCollapsed = !isCollapsed">
+                    <i class="trigger" nz-icon [nzType]="isCollapsed ? 'menu-unfold' : 'menu-fold'"></i>
+                </span>
+                <span class="header-profile" nz-dropdown [nzDropdownMenu]="profile" nzTrigger="click">
+                    <ng-container *ngTemplateOutlet="avatar; context: {userDetails: userDetails}"></ng-container>
+                </span>
+                <nz-dropdown-menu #profile>
+                    <ul nz-menu>
+                        <li nz-menu-item class="profile" nzDisabled>
+                            <ng-container *ngTemplateOutlet="avatar; context: {userDetails: userDetails}"></ng-container>
+                            <span class="name">{{name}}</span>
+                            <div class="menu">
+                                <a (click)="editProfile()">基本资料</a>
+                                <nz-divider nzType="vertical"></nz-divider>
+                                <a (click)="verify()">实名认证</a>
+                                <nz-divider nzType="vertical"></nz-divider>
+                                <a (click)="settings()">安全设置</a>
+                            </div>
+                        </li>
+                        <li nz-menu-divider></li>
+                        <li class="user-menu" nz-menu-item><i nz-icon nzType="switcher" nzTheme="outline"></i>切换职位</li>
+                        <li class="user-menu" nz-menu-item><i nz-icon nzType="switcher" nzTheme="outline"></i>切换角色</li>
+                        <li class="user-menu" nz-menu-item (click)="changePassword()"><i nz-icon nzType="lock" nzTheme="outline"></i>修改密码</li>
+                        <li nz-menu-divider></li>
+                        <li nz-menu-item class="sign-out" (click)="signOut()">退出登录</li>
+                    </ul>
+                </nz-dropdown-menu>
+            </div>
+        </nz-header>
+        <nz-content>
+            <div class="inner-content">
+                <router-outlet></router-outlet>
+            </div>
+        </nz-content>
+    </nz-layout>
+</nz-layout>
+<ng-template #avatar let-userDetails="userDetails">
+    <ng-container *ngIf="userDetails?.userProfile?.avatar?.accessPath; else elseBlock">
+        <nz-avatar [nzSize]="28" [nzSrc]="avatar"></nz-avatar>
+    </ng-container>
+    <ng-template #elseBlock>
+        <nz-avatar [nzSize]="28" nzIcon="user" style="background-color:#1890ff;"></nz-avatar>
+    </ng-template>
+</ng-template>

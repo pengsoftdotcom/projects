@@ -1,6 +1,6 @@
 spring:
   messages:
-    basename: META-INF/validations, META-INF/validations-security
+    basename: META-INF/messages, META-INF/messages-security
 logging:
   level:
     org.springframework.security: debug

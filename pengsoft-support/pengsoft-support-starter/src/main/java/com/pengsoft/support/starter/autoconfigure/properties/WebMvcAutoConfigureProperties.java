@@ -11,4 +11,14 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("pengsoft.web")
 public class WebMvcAutoConfigureProperties {
 
+    private Cors cors = new Cors();
+
+    public Cors getCors() {
+        return cors;
+    }
+
+    public void setCors(final Cors cors) {
+        this.cors = cors;
+    }
+
 }

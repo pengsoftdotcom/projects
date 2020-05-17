@@ -36,7 +36,6 @@ public class Client extends Bean implements Codeable {
     @Size(max = 255)
     private String name;
 
-    @NotBlank
     @Size(max = 255)
     private String secret;
 
@@ -53,7 +52,7 @@ public class Client extends Bean implements Codeable {
     }
 
     @Override
-    public void setCode(String code) {
+    public void setCode(final String code) {
         this.code = code;
     }
 
@@ -61,7 +60,7 @@ public class Client extends Bean implements Codeable {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -69,7 +68,7 @@ public class Client extends Bean implements Codeable {
         return secret;
     }
 
-    public void setSecret(String secret) {
+    public void setSecret(final String secret) {
         this.secret = secret;
     }
 
@@ -77,7 +76,7 @@ public class Client extends Bean implements Codeable {
         return grantTypes;
     }
 
-    public void setGrantTypes(String grantTypes) {
+    public void setGrantTypes(final String grantTypes) {
         this.grantTypes = grantTypes;
     }
 
@@ -85,7 +84,7 @@ public class Client extends Bean implements Codeable {
         return validitySeconds;
     }
 
-    public void setValiditySeconds(int validitySeconds) {
+    public void setValiditySeconds(final int validitySeconds) {
         this.validitySeconds = validitySeconds;
     }
 }

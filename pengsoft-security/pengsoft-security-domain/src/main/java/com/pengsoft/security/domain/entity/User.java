@@ -1,7 +1,8 @@
 package com.pengsoft.security.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pengsoft.security.commons.validation.Password;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.NullSerializer;
 import com.pengsoft.security.commons.validation.Username;
 import com.pengsoft.support.domain.entity.Bean;
 import com.pengsoft.support.domain.entity.Enable;
@@ -43,7 +44,7 @@ public class User extends Bean implements Enable {
     @Column(updatable = false)
     private String username;
 
-    @Password
+    @JsonSerialize(using = NullSerializer.class)
     @Column(updatable = false)
     private String password;
 

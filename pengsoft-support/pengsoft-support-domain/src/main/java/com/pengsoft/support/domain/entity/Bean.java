@@ -12,6 +12,7 @@ import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
+import javax.persistence.Version;
 import java.time.LocalDateTime;
 
 /**
@@ -35,6 +36,7 @@ public class Bean implements Beanable<String> {
 
     private LocalDateTime updatedAt;
 
+    @Version
     private long version;
 
     @Override
@@ -81,7 +83,7 @@ public class Bean implements Beanable<String> {
      * Before create.
      */
     @PrePersist
-    public void prePersist() {
+    public void preCreate() {
         final var now = DateUtils.currentDateTime();
         setCreatedAt(now);
         setUpdatedAt(now);

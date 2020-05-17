@@ -1,22 +1,14 @@
 package com.pengsoft.system.biz.service;
 
-import com.pengsoft.support.biz.service.TreeBeanService;
-import com.pengsoft.system.domain.entity.Region;
-
-import javax.validation.constraints.NotBlank;
-import java.util.Optional;
+import com.pengsoft.support.biz.service.BeanService;
+import com.pengsoft.system.domain.entity.Asset;
 
 /**
- * The service interface of {@link Region}.
+ * The service interface of {@link Asset}.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface RegionService extends TreeBeanService<Region, String> {
-
-    /**
-     * Returns an {@link Optional} of a {@link Region} with given code.
-     */
-    Optional<Region> findOneByCode(@NotBlank String code);
+public interface AssetService extends BeanService<Asset, String> {
 
 }

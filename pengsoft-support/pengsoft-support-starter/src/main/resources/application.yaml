@@ -8,11 +8,11 @@ pengsoft:
       - "*"
 spring:
   messages:
-    basename: META-INF/validations
+    basename: META-INF/messages
   datasource:
-    url: jdbc:postgresql://postgresql:5432/pengsoft
-    username: pengsoft
-    password: 494dc31c-a4ee-40f9-9263-d0541d1825c0
+    url: ${JDBC_URL}
+    username: ${JDBC_USERNAME}
+    password: ${JDBC_PASSWORD}
   jpa:
     open-in-view: false
     hibernate:

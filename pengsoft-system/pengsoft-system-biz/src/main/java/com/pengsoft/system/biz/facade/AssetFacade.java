@@ -1,15 +1,15 @@
 package com.pengsoft.system.biz.facade;
 
-import com.pengsoft.support.biz.facade.TreeBeanFacade;
-import com.pengsoft.system.biz.service.RegionService;
-import com.pengsoft.system.domain.entity.Region;
+import com.pengsoft.support.biz.facade.BeanFacade;
+import com.pengsoft.system.biz.service.AssetService;
+import com.pengsoft.system.domain.entity.Asset;
 
 /**
- * The implementer of {@link RegionFacade}
+ * The implementer of {@link AssetFacade}
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface RegionFacade extends TreeBeanFacade<RegionService, Region, String>, RegionService {
+public interface AssetFacade extends BeanFacade<AssetService, Asset, String>, AssetService {
 
 }

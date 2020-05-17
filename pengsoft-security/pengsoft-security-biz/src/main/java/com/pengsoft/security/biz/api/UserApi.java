@@ -4,7 +4,6 @@ import com.pengsoft.security.biz.facade.UserFacade;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.security.domain.entity.UserRole;
-import com.pengsoft.security.domain.util.SecurityUtils;
 import com.pengsoft.support.biz.api.BeanApi;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -25,18 +24,13 @@ import java.util.Optional;
 @RequestMapping("api/user")
 public class UserApi extends BeanApi<UserFacade, User, String> {
 
-    @PostMapping("change-password")
-    public void changePassword(final String oldPassword, final String newPassword) {
-        getFacade().changePassword(SecurityUtils.getCurrentUserId(), oldPassword, newPassword);
-    }
-
     @PostMapping("reset-password")
     public void resetPassword(final String id, final String password) {
         getFacade().resetPassword(id, password);
     }
 
     @PostMapping("grant-roles")
-    public void grantRoles(@RequestParam("user.id") final User user, @RequestParam("role.id") final List<Role> roles) {
+    public void grantRoles(@RequestParam("user.id") final User user, @RequestParam(value = "role.id", defaultValue = "") final List<Role> roles) {
         getFacade().grantRoles(user, roles);
     }
 

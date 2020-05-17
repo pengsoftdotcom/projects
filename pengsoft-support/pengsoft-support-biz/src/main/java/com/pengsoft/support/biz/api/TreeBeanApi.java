@@ -24,12 +24,12 @@ public class TreeBeanApi<F extends TreeBeanFacade<?, T, ID>, T extends TreeBeana
     }
 
     @GetMapping("find-all-exclude-self-and-its-children-by-parent")
-    public List<T> findAllExcludeSelfAndSelfChildrenByParent(@RequestParam(value = "self.id", required = false) final T self, final Predicate predicate, final Sort sort) {
+    public List<T> findAllExcludeSelfAndItsChildrenByParent(@RequestParam(value = "self.id", required = false) final T self, final Predicate predicate, final Sort sort) {
         return getFacade().findAllExcludeSelfAndItsChildrenByParent(self, predicate, sort);
     }
 
     @GetMapping("find-all-exclude-self-and-its-children")
-    public List<T> findAllExcludeSelfAndSelfChildren(@RequestParam(value = "self.id", required = false) final T self, final Predicate predicate, final Sort sort) {
+    public List<T> findAllExcludeSelfAndItsChildren(@RequestParam(value = "self.id", required = false) final T self, final Predicate predicate, final Sort sort) {
         return getFacade().findAllExcludeSelfAndItsChildren(self, predicate, sort);
     }
 

@@ -1,0 +1,30 @@
+<ng-template #content>
+    <nz-spin [nzSpinning]="loading">
+        <div class="edit">
+            <div [style.height]="transferHeight + 'px'" [style.padding]="'16px'">
+                <ng-container *ngIf="treeData;  else elseBlock">
+                    <nz-transfer [nzDataSource]="items" [nzTargetKeys]="targetKeys" (nzChange)="transferChange($event)"
+                        [nzRenderList]="[renderList, null]" nzShowSearch (nzSelectChange)="selectChange($event)"
+                        (nzSearchChange)="searchChange($event)">
+                        <ng-template #renderList let-onItemSelect="onItemSelect">
+                            <nz-tree #treeComponent [nzData]="treeData" nzCheckStrictly nzCheckable nzHideUnMatched [nzSearchValue]="searchValue"
+                                (nzCheckBoxChange)="treeSelectChange($event, onItemSelect)">
+                            </nz-tree>
+                        </ng-template>
+                    </nz-transfer>
+                </ng-container>
+                <ng-template #elseBlock>
+                    <nz-transfer [nzDataSource]="items" [nzTargetKeys]="targetKeys" nzShowSearch></nz-transfer>
+                </ng-template>
+            </div>
+            <div class="toolbar">
+                <nz-space>
+                    <nz-space-item *ngFor="let button of toolbarButtons">
+                        <app-button [name]="button.name" [type]="button.type" [danger]="button.danger" [divider]="button.divider" [size]="button.size"
+                            (action)="button.action()"></app-button>
+                    </nz-space-item>
+                </nz-space>
+            </div>
+        </div>
+    </nz-spin>
+</ng-template>

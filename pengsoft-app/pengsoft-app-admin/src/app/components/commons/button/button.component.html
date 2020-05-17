@@ -1,0 +1,7 @@
+<ng-container *ngIf="type === 'link'; else elseBlock">
+    <a [style.color]="danger ? '#ff4d4f': '#1890ff'" (click)="action.emit()">{{name}}</a>
+    <nz-divider *ngIf="divider" nzType="vertical"></nz-divider>
+</ng-container>
+<ng-template #elseBlock>
+    <button nz-button [nzType]="type" [nzDanger]="danger" (click)="action.emit()" [nzSize]="size">{{name}}</button>
+</ng-template>

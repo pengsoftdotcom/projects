@@ -36,7 +36,7 @@ public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beana
 
     @Inject
     private R repository;
-    
+
     @Inject
     private MessageSource messageSource;
 
@@ -76,7 +76,7 @@ public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beana
      * @param id The entity id.
      */
     protected IllegalArgumentException newInstanceOfEntityNotFoundException(final ID id) {
-        return new IllegalArgumentException("the entity with given id('" + id + "') has been deleted or the given id is invalid.");
+        return new IllegalArgumentException("the entity with given identity('" + id + "') has been deleted or the given id is invalid.");
     }
 
     @Override

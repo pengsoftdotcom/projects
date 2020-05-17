@@ -2,11 +2,12 @@ package com.pengsoft.security.biz.service;
 
 import com.pengsoft.security.biz.repository.RoleRepository;
 import com.pengsoft.security.domain.entity.Role;
-import com.pengsoft.security.domain.entity.User;
+import com.pengsoft.security.domain.util.SecurityUtils;
 import com.pengsoft.security.starter.SecurityApplication;
 import com.pengsoft.support.test.BaseServiceTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.inject.Inject;
@@ -26,22 +27,15 @@ public class UserServiceTest extends BaseServiceTest<UserService> {
     private RoleRepository roleRepository;
 
     @Test
-    public void init() {
-        getService().resetPassword(createIfNotExists().getId(), "123123");
-    }
-
-    private User createIfNotExists() {
-        final var optional = getService().findOneByUsername(Role.ADMIN);
-        if (optional.isEmpty()) {
-            return getService().save(new User(Role.ADMIN, "!@#123qwe"));
-        } else {
-            return optional.get();
-        }
+    public void grantRoles() {
+        getService().findOneByUsername(Role.ADMIN)
+                .ifPresent(user -> roleRepository.findOneByCode(Role.ADMIN).map(List::of).ifPresent(roles -> getService().grantRoles(user, roles)));
     }
 
     @Test
-    public void grantRoles() {
-        getService().findOneByUsername(Role.ADMIN).ifPresent(user -> roleRepository.findOneByCode(Role.ADMIN).map(List::of).ifPresent(roles -> getService().grantRoles(user, roles)));
+    @WithUserDetails("admin")
+    public void resetPassword() {
+        getService().resetPassword(SecurityUtils.getUserId(), "123123");
     }
 
 }

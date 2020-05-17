@@ -1,14 +1,25 @@
 package com.pengsoft.security.oauth.starter.autoconfigure;
 
-import com.pengsoft.security.oauth.starter.autoconfigure.properties.AuthorizationServerAutoConfigureProperties;
+import com.pengsoft.security.biz.facade.UserFacade;
+import com.pengsoft.security.domain.DefaultUserDetails;
+import com.pengsoft.security.oauth.commons.json.OAuth2AccessTokenMixIn;
+import com.pengsoft.security.oauth.starter.autoconfigure.properties.OAuthAutoConfigureProperties;
+import com.pengsoft.security.starter.autoconfigure.properties.WebSecurityAutoConfigureProperties;
+import com.pengsoft.support.commons.json.ObjectMapper;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.authentication.event.AbstractAuthenticationFailureEvent;
+import org.springframework.security.authentication.event.AuthenticationSuccessEvent;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.oauth2.common.OAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -29,13 +40,15 @@ import javax.inject.Inject;
 import java.util.ArrayList;
 
 /**
+ * Authorization server auto configure.
+ *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-@ConditionalOnProperty(prefix = "pengsoft.security.oauth.authorization-server", name = "enabled", havingValue = "true")
+@ConditionalOnProperty(name = "pengsoft.security.oauth.authorization-server", havingValue = "enabled")
 @Configuration
 @EnableAuthorizationServer
-@EnableConfigurationProperties(AuthorizationServerAutoConfigureProperties.class)
+@EnableConfigurationProperties(OAuthAutoConfigureProperties.class)
 public class AuthorizationServerAutoConfigure extends AuthorizationServerConfigurerAdapter {
 
     @Inject
@@ -50,8 +63,18 @@ public class AuthorizationServerAutoConfigure extends AuthorizationServerConfigu
     @Inject
     private RedisConnectionFactory connectionFactory;
 
+    @Inject
+    private UserFacade userFacade;
+
+    @Inject
+    private WebSecurityAutoConfigureProperties properties;
+
+    public AuthorizationServerAutoConfigure(final ObjectMapper objectMapper) {
+        objectMapper.addMixIn(OAuth2AccessToken.class, OAuth2AccessTokenMixIn.class);
+    }
+
     @Override
-    public void configure(AuthorizationServerEndpointsConfigurer endpoints) {
+    public void configure(final AuthorizationServerEndpointsConfigurer endpoints) {
         endpoints.authenticationManager(authenticationManager)
                 .allowedTokenEndpointRequestMethods(HttpMethod.POST)
                 .tokenStore(tokenStore())
@@ -64,11 +87,11 @@ public class AuthorizationServerAutoConfigure extends AuthorizationServerConfigu
         return new RedisTokenStore(connectionFactory);
     }
 
-    private TokenGranter getTokenGranter(AuthorizationServerEndpointsConfigurer endpoints) {
-        var tokenServices = endpoints.getTokenServices();
-        var authorizationCodeServices = endpoints.getAuthorizationCodeServices();
-        var requestFactory = new DefaultOAuth2RequestFactory(clientDetailsService);
-        var tokenGranters = new ArrayList<TokenGranter>();
+    private TokenGranter getTokenGranter(final AuthorizationServerEndpointsConfigurer endpoints) {
+        final var tokenServices = endpoints.getTokenServices();
+        final var authorizationCodeServices = endpoints.getAuthorizationCodeServices();
+        final var requestFactory = new DefaultOAuth2RequestFactory(clientDetailsService);
+        final var tokenGranters = new ArrayList<TokenGranter>();
         tokenGranters.add(new AuthorizationCodeTokenGranter(tokenServices, authorizationCodeServices, clientDetailsService, requestFactory));
         tokenGranters.add(new RefreshTokenGranter(tokenServices, clientDetailsService, requestFactory));
         tokenGranters.add(new ImplicitTokenGranter(tokenServices, clientDetailsService, requestFactory));
@@ -79,8 +102,25 @@ public class AuthorizationServerAutoConfigure extends AuthorizationServerConfigu
     }
 
     @Override
-    public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+    public void configure(final ClientDetailsServiceConfigurer clients) throws Exception {
         clients.withClientDetails(clientDetailsService);
+    }
+
+    @EventListener
+    public void authenticationSuccessEventListener(final AuthenticationSuccessEvent event) {
+        final var authentication = event.getAuthentication();
+        if (authentication instanceof UsernamePasswordAuthenticationToken && authentication.getPrincipal() instanceof DefaultUserDetails) {
+            userFacade.signInSuccess(authentication.getName());
+        }
+    }
+
+    @EventListener
+    public void authenticationFailedEventListener(final AbstractAuthenticationFailureEvent event) {
+        final var exception = event.getException();
+        final var authentication = event.getAuthentication();
+        if (exception instanceof BadCredentialsException) {
+            userFacade.signInFailure(authentication.getName(), properties.getAllowSignInFailure());
+        }
     }
 
 }

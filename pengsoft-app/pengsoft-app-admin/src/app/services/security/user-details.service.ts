@@ -1,0 +1,39 @@
+import { Injectable } from '@angular/core';
+import { NzMessageService } from 'ng-zorro-antd';
+import { BaseService } from '../commons/base.service';
+import { HttpOptions } from '../commons/http-options';
+import { HttpService } from '../commons/http.service';
+
+@Injectable({
+    providedIn: 'root'
+})
+export class UserDetailsService extends BaseService {
+
+    constructor(private http: HttpService, private message: NzMessageService) { super(); }
+
+    getApiPath(action: string): string {
+        return super.getApiPath('/user-details/' + action);
+    }
+
+    current(options: HttpOptions): void {
+        const url = this.getApiPath('current');
+        this.http.request('GET', url, options);
+    }
+
+    changePassword(oldPassword: string, newPassword: string, confirmPassword: string, options: HttpOptions): void {
+        if ((newPassword || confirmPassword) && newPassword !== confirmPassword) {
+            this.clearErrors(options.errors);
+            options.errors.confirmPassword = ['密码不一致'];
+            options.failure(null);
+        } else {
+            const body = new FormData();
+            body.set('oldPassword', this.getStringValue(oldPassword));
+            body.set('newPassword', this.getStringValue(newPassword));
+            options.body = body;
+            options = this.mergeSuccess(() => this.message.info('修改成功'), options);
+            const url = this.getApiPath('change-password');
+            this.http.request('POST', url, options);
+        }
+    }
+
+}

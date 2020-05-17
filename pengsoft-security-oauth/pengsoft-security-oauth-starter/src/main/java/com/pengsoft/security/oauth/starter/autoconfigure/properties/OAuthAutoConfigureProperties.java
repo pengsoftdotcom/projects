@@ -8,17 +8,33 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-@ConfigurationProperties("pengsoft.security.oauth.authorization-server")
-public class AuthorizationServerAutoConfigureProperties {
+@ConfigurationProperties("pengsoft.security.oauth")
+public class OAuthAutoConfigureProperties {
 
-    private boolean enabled;
+    /**
+     * Optional values are 'enabled' and 'disabled'.
+     */
+    private String authorizationServer;
 
-    public boolean isEnabled() {
-        return enabled;
+    /**
+     * Optional values are 'enabled' and 'disabled'.
+     */
+    private String resourceServer;
+
+    public String getAuthorizationServer() {
+        return authorizationServer;
     }
 
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setAuthorizationServer(final String authorizationServer) {
+        this.authorizationServer = authorizationServer;
+    }
+
+    public String getResourceServer() {
+        return resourceServer;
+    }
+
+    public void setResourceServer(final String resourceServer) {
+        this.resourceServer = resourceServer;
     }
 
 }

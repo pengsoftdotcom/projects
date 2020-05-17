@@ -12,6 +12,8 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     public static final String PACKAGE_SEPARATOR = ".";
 
+    public static final String FILE_SEPARATOR = "/";
+
     public static final String HYPHEN = "-";
 
     public static final String UNDERLINE = "_";

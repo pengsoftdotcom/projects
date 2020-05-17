@@ -6,11 +6,15 @@ import com.pengsoft.support.domain.entity.Codeable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Index;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Authority
@@ -38,6 +42,9 @@ public class Authority extends Bean implements Codeable {
 
     @Size(max = 255)
     private String remark;
+
+    @OneToMany(mappedBy = "authority", cascade = CascadeType.REMOVE)
+    private List<RoleAuthority> roleAuthorities = new ArrayList<>();
 
     public Authority() {
 
@@ -72,5 +79,13 @@ public class Authority extends Bean implements Codeable {
 
     public void setRemark(final String remark) {
         this.remark = remark;
+    }
+
+    public List<RoleAuthority> getRoleAuthorities() {
+        return roleAuthorities;
+    }
+
+    public void setRoleAuthorities(final List<RoleAuthority> roleAuthorities) {
+        this.roleAuthorities = roleAuthorities;
     }
 }

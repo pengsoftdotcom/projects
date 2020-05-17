@@ -1,12 +1,25 @@
-<nz-form-item *ngIf="isVisible()">
-    <nz-form-label nz-col *ngIf="isLabelVisible()" [nzSpan]="this.field.edit.label.span" [nzRequired]="isRequired()">
-        {{getLabel()}}
-        <span *ngIf="field.edit.label.tooltip" nz-tooltip [nzTooltipTitle]="field.edit.label.tooltip">
+<nz-form-item *ngIf="visible">
+    <nz-form-label nz-col *ngIf="labelVisible" [nzSpan]="this.field.edit.label.span" [nzRequired]="required">
+        {{label}}
+        <span *ngIf="field.edit.label.tooltip" nz-tooltip [nzTooltipTitle]="field.edit.label.tooltip" style="margin-left: 2px;">
             <i nz-tooltip nz-icon nzType="question-circle-o"></i>
         </span>
     </nz-form-label>
-    <nz-form-control nz-col *ngIf="isInputVisible()" [nzSpan]="this.field.edit.input.span" [ngSwitch]="field.edit.input.type">
+    <nz-form-control nz-col *ngIf="inputVisible" [nzSpan]="this.field.edit.input.span" [ngSwitch]="field.edit.input.type" [nzValidateStatus]="status"
+        [nzErrorTip]="error">
         <app-input-password *ngSwitchCase="InputType.PASSWORD" [form]="form" [field]="field"></app-input-password>
+        <app-input-number *ngSwitchCase="InputType.NUMBER" [form]="form" [field]="field"></app-input-number>
+        <app-input-boolean *ngSwitchCase="InputType.BOOLEAN" [form]="form" [field]="field"></app-input-boolean>
+        <app-input-datetime *ngSwitchCase="InputType.DATETIME" [form]="form" [field]="field"></app-input-datetime>
+        <app-input-select *ngSwitchCase="InputType.SELECT" [form]="form" [field]="field"></app-input-select>
+        <app-input-tree-select *ngSwitchCase="InputType.TREE_SELECT" [form]="form" [field]="field"></app-input-tree-select>
+        <app-input-textarea *ngSwitchCase="InputType.TEXTAREA" [form]="form" [field]="field"></app-input-textarea>
+        <app-input-upload *ngSwitchCase="InputType.UPLOAD" [form]="form" [field]="field"></app-input-upload>
         <app-input-text *ngSwitchDefault [form]="form" [field]="field"></app-input-text>
     </nz-form-control>
 </nz-form-item>
+<ng-template #error let-control>
+    <ul style="margin: 0px 0px 0px -20px">
+        <li *ngFor="let error of errors[field.code]">{{error}}</li>
+    </ul>
+</ng-template>

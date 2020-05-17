@@ -98,12 +98,10 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
         try {
             final var bucket = asset.isLocked() ? lockedBucket : publicBucket;
             final var ossKey = new StringBuilder();
-            if (asset.isLocked()) {
-                ossKey.append("user");
-                ossKey.append(StringUtils.FILE_SEPARATOR);
-                ossKey.append(SecurityUtils.getUserId());
-                ossKey.append(StringUtils.FILE_SEPARATOR);
-            }
+            ossKey.append("user");
+            ossKey.append(StringUtils.FILE_SEPARATOR);
+            ossKey.append(SecurityUtils.getUserId());
+            ossKey.append(StringUtils.FILE_SEPARATOR);
             ossKey.append(asset.getPresentName());
             asset.setInputStream(client.getObject(bucket, ossKey.toString()).getObjectContent());
         } finally {
@@ -118,12 +116,10 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
         try {
             final var bucket = asset.isLocked() ? lockedBucket : publicBucket;
             final var ossKey = new StringBuilder();
-            if (asset.isLocked()) {
-                ossKey.append("user");
-                ossKey.append(StringUtils.FILE_SEPARATOR);
-                ossKey.append(SecurityUtils.getUserId());
-                ossKey.append(StringUtils.FILE_SEPARATOR);
-            }
+            ossKey.append("user");
+            ossKey.append(StringUtils.FILE_SEPARATOR);
+            ossKey.append(SecurityUtils.getUserId());
+            ossKey.append(StringUtils.FILE_SEPARATOR);
             ossKey.append(asset.getPresentName());
             client.deleteObject(bucket, ossKey.toString());
         } finally {

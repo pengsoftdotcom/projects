@@ -13,7 +13,7 @@ import java.lang.annotation.Target;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-@Target(ElementType.METHOD)
+@Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface Authenticated {

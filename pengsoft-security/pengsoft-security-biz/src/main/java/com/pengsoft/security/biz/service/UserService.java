@@ -53,6 +53,21 @@ public interface UserService extends BeanService<User, String> {
     void setMajorRole(@NotNull User user, @NotNull Role role);
 
     /**
+     * Save the sign in date and clear the sign in failure count.
+     *
+     * @param username The username.
+     */
+    void signInSuccess(String username);
+
+    /**
+     * Save the sign in failure count.
+     *
+     * @param username           The username.
+     * @param allowSignInFailure The maximum count of sign in failure.
+     */
+    void signInFailure(String username, int allowSignInFailure);
+
+    /**
      * Returns an {@link Optional} of a {@link User} with given username.
      *
      * @param username The username.

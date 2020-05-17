@@ -3,10 +3,69 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>org.example</groupId>
+    <parent>
+        <groupId>com.pengsoft.security</groupId>
+        <artifactId>pengsoft-security</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <groupId>com.pengsoft.system</groupId>
     <artifactId>pengsoft-system</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
+    <properties>
+        <aliyun-sdk-oss.version>3.9.1</aliyun-sdk-oss.version>
+    </properties>
+
+    <modules>
+        <module>pengsoft-system-commons</module>
+        <module>pengsoft-system-domain</module>
+        <module>pengsoft-system-biz</module>
+        <module>pengsoft-system-starter</module>
+        <module>pengsoft-system-test</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.pengsoft.security</groupId>
+                <artifactId>pengsoft-security</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.aliyun.oss</groupId>
+                <artifactId>aliyun-sdk-oss</artifactId>
+                <version>${aliyun-sdk-oss.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.pengsoft.system</groupId>
+                <artifactId>pengsoft-system-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.system</groupId>
+                <artifactId>pengsoft-system-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.system</groupId>
+                <artifactId>pengsoft-system-biz</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.system</groupId>
+                <artifactId>pengsoft-system-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.system</groupId>
+                <artifactId>pengsoft-system-test</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
 </project>

@@ -1,37 +1,19 @@
 package com.pengsoft.system.biz.service;
 
-import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
-import com.pengsoft.support.domain.util.EntityUtils;
-import com.pengsoft.system.biz.repository.RegionRepository;
-import com.pengsoft.system.domain.entity.Region;
+import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.system.biz.repository.AssetRepository;
+import com.pengsoft.system.domain.entity.Asset;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
-
 /**
- * The implementer of {@link RegionService} based on JPA.
+ * The implementer of {@link AssetService} based on JPA.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
 @Primary
 @Service
-public class RegionServiceImpl extends TreeBeanServiceImpl<RegionRepository, Region, String> implements RegionService {
-
-    @Override
-    public Region save(final Region region) {
-        findOneByCode(region.getCode()).ifPresent(source -> {
-            if (EntityUtils.ne(source, region)) {
-                throw newInstanceOfConstraintViolationException("code", region.getCode());
-            }
-        });
-        return super.save(region);
-    }
-
-    @Override
-    public Optional<Region> findOneByCode(final String code) {
-        return getRepository().findOneByCode(code);
-    }
+public class AssetServiceImpl extends BeanServiceImpl<AssetRepository, Asset, String> implements AssetService {
 
 }

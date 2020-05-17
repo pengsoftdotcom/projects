@@ -1,5 +1,6 @@
 package com.pengsoft.security.biz.facade;
 
+import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.security.starter.SecurityApplication;
 import com.pengsoft.support.test.BaseFacadeTest;
@@ -29,6 +30,17 @@ public class UserFacadeTest extends BaseFacadeTest<UserFacade> {
     public void init() {
         roleFacade.saveEntityAdmin(User.class);
         authorityFacade.saveEntityAdminAuthorities(User.class);
+
+        getFacade().resetPassword(createIfNotExists().getId(), "123123");
+    }
+
+    private User createIfNotExists() {
+        final var optional = getFacade().findOneByUsername(Role.ADMIN);
+        if (optional.isEmpty()) {
+            return getFacade().save(new User(Role.ADMIN, "!@#123qwe"));
+        } else {
+            return optional.get();
+        }
     }
 
 }

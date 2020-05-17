@@ -69,28 +69,28 @@ public class SecurityUtils {
     /**
      * Returns the current user.
      */
-    public static User getCurrentUser() {
-        return get("currentUser", User.class);
+    public static User getUser() {
+        return get("user", User.class);
     }
 
     /**
      * Returns the current user id.
      */
-    public static String getCurrentUserId() {
-        return getPropertyId("currentUser");
+    public static String getUserId() {
+        return getPropertyId("user");
     }
 
     /**
      * Return department id of the current user.
      */
-    public static String getCurrentControlById() {
+    public static String getControlById() {
         return getPropertyId("controlBy");
     }
 
     /**
      * Return organization id of the current user.
      */
-    public static String getCurrentBelongsToId() {
+    public static String getBelongsToId() {
         return getPropertyId("belongsTo");
     }
 
@@ -119,7 +119,7 @@ public class SecurityUtils {
      */
     public static String getModuleAdminCode(final Class<? extends Beanable<? extends Serializable>> entityClass) {
         final var moduleCode = getModuleCodeFromEntityClass(entityClass).replaceAll(ESCAPES + PACKAGE_SEPARATOR, StringUtils.UNDERLINE);
-        return StringUtils.join(new String[]{moduleCode, ADMIN}, StringUtils.UNDERLINE);
+        return StringUtils.join(new String[] { moduleCode, ADMIN }, StringUtils.UNDERLINE);
     }
 
     /**
@@ -131,7 +131,7 @@ public class SecurityUtils {
     public static String getEntityAdminCode(final Class<? extends Beanable<? extends Serializable>> entityClass) {
         final var moduleCode = getModuleCodeFromEntityClass(entityClass);
         final var entityCode = getEntityCodeFromEntityClass(entityClass);
-        return StringUtils.join(new String[]{moduleCode, entityCode, ADMIN}, StringUtils.UNDERLINE);
+        return StringUtils.join(new String[] { moduleCode, entityCode, ADMIN }, StringUtils.UNDERLINE);
     }
 
     /**
@@ -173,7 +173,7 @@ public class SecurityUtils {
     public static String getEntityAdminAuthorityCodePrefixFromEntityClass(final Class<? extends Beanable<? extends Serializable>> entityClass) {
         final var moduleCode = getModuleCodeFromEntityClass(entityClass);
         final var entityCode = getEntityCodeFromEntityClass(entityClass);
-        return StringUtils.join(new String[]{moduleCode, entityCode}, StringUtils.GLOBAL_SEPARATOR);
+        return StringUtils.join(new String[] { moduleCode, entityCode }, StringUtils.GLOBAL_SEPARATOR);
     }
 
 }

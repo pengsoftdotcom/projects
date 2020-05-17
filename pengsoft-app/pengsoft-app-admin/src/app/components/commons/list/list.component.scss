@@ -1,0 +1,19 @@
+.list {
+    height: 100%;
+}
+
+.list .title {
+    margin-bottom: 16px;
+}
+
+.list .title :nth-child(1) {
+    background-color: #1890ff;
+    margin-bottom: 2px;
+    margin-left: 1px;
+}
+
+.list .title :nth-child(2) {
+    color: rgb(0, 0, 0, 0.85);
+    font-weight: 500;
+    font-size: 16px;
+}

@@ -25,7 +25,7 @@ import java.util.Optional;
 public class RoleApi extends TreeBeanApi<RoleFacade, Role, String> {
 
     @PostMapping("grant-authorities")
-    public void grantAuthorities(@RequestParam("role.id") final Role role, @RequestParam("authority.id") final List<Authority> authorities) {
+    public void grantAuthorities(@RequestParam("role.id") final Role role, @RequestParam(value = "authority.id", defaultValue = "") final List<Authority> authorities) {
         getFacade().grantAuthorities(role, authorities);
     }
 

@@ -1,0 +1,84 @@
+<div class="list">
+    <div class="title">
+        <nz-divider nzType="vertical"></nz-divider>
+        <span>{{title}}</span>
+    </div>
+    <div class="table">
+        <nz-table #table nzBordered nzSize="middle" [nzLoading]="loading" [nzWidthConfig]="tableWidthConfig" [nzScroll]="{ y: tableBodyHeight }"
+            [nzData]="data" [nzTitle]="buttonsTemplate" [nzFrontPagination]="false" [nzShowPagination]="pageable" [(nzPageIndex)]="page.page"
+            [(nzPageSize)]="page.size" [nzTotal]="page.total" [nzShowTotal]="rangeTemplate" nzShowQuickJumper (nzPageIndexChange)="pageChange.emit()"
+            nzShowSizeChanger [nzPageSizeOptions]="[20, 50, 100]" (nzPageSizeChange)="pageChange.emit()">
+            <thead>
+                <tr>
+                    <th [attr.rowspan]="rowspan" colspan="1" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
+                        (nzCheckedChange)="checkAll($event)">
+                    </th>
+                    <ng-container *ngFor="let field of visibleFields">
+                        <th nzAlign="center" [attr.rowspan]="rowspan" [attr.colspan]="getColumnSpan(field)"
+                            [nzShowSort]="field.list.sortable && !treeable" (nzSortChange)="sortChange(field, $event)">
+                            {{field.list.label ? field.list.label : field.name}}
+                        </th>
+                    </ng-container>
+                    <th *ngIf="sortable" nzAlign="center" [attr.rowspan]="rowspan" colspan="1" nzAlign="center">
+                        <a>排序</a>
+                    </th>
+                    <th nzAlign="center" [attr.rowspan]="rowspan" colspan="1">操作</th>
+                </tr>
+                <tr *ngIf="groupable">
+                    <ng-container *ngFor="let field of visibleFields">
+                        <ng-container *ngFor="let subfield of field.children">
+                            <th *ngIf="isColVisible(subfield)" nzAlign="center" rowspan="1" colspan="1">
+                                {{subfield.list.label ? subfield.list.label : subfield.name}}
+                            </th>
+                        </ng-container>
+                    </ng-container>
+                </tr>
+            </thead>
+            <tbody>
+                <ng-container *ngFor="let row of table.data;">
+                    <tr *ngIf="isRowVisible(row)">
+                        <td nzShowCheckbox [(nzChecked)]="row.checked" (nzCheckedChange)="check()"></td>
+                        <ng-container *ngFor="let field of visibleFields; index as i">
+                            <ng-container *ngIf="treeable && i === 0; else elseBlock">
+                                <td nzBreakWord [nzAlign]="field.list.align" [nzIndentSize]="row.depth * 20" [nzShowExpand]="!row.leaf"
+                                    [(nzExpand)]="row.expand" (nzExpandChange)="expandChange.emit(row)">
+                                    <span [innerHTML]="render(field, row)"></span>
+                                </td>
+                            </ng-container>
+                            <ng-template #elseBlock>
+                                <td nzBreakWord [nzAlign]="field.list.align">
+                                    <span [innerHTML]="render(field, row)"></span>
+                                </td>
+                            </ng-template>
+                        </ng-container>
+                        <td *ngIf="sortable" nzAlign="center">
+                            <nz-input-number [(ngModel)]="row.sequence" nzSize="small" nzMin="0" nzMax="999" (ngModelChange)="row.dirty = true"
+                                [style.width]="'65px'">
+                            </nz-input-number>
+                        </td>
+                        <td>
+                            <app-button *ngFor="let button of actionButtons" [hasAnyAuthority]="button.authority" [name]="button.name"
+                                [type]="button.type" [danger]="button.danger" [divider]="button.divider" [size]="button.size"
+                                (action)="button.action(row)">
+                            </app-button>
+                        </td>
+                    </tr>
+                </ng-container>
+            </tbody>
+        </nz-table>
+    </div>
+
+    <ng-template #buttonsTemplate>
+        <nz-space>
+            <nz-space-item *ngFor="let button of toolbarButtons">
+                <app-button [hasAnyAuthority]="button.authority" [name]="button.name" [type]="button.type" [danger]="button.danger"
+                    [divider]="button.divider" [size]="button.size" (action)="button.action()">
+                </app-button>
+            </nz-space-item>
+        </nz-space>
+    </ng-template>
+
+    <ng-template #rangeTemplate let-range="range" let-total>
+        共 {{total}} 条 显示 {{range[0]}} 到 {{range[1]}} 条
+    </ng-template>
+</div>

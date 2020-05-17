@@ -1,7 +1,7 @@
 package com.pengsoft.security.domain.entity;
 
 import com.pengsoft.security.domain.util.SecurityUtils;
-import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.TreeBean;
 
 import javax.persistence.Column;
 import javax.persistence.MappedSuperclass;
@@ -13,9 +13,9 @@ import javax.persistence.MappedSuperclass;
  * @since 1.0.0
  */
 @MappedSuperclass
-public class OwnableBean extends Bean implements Ownable {
+public class OwnableTreeBean extends TreeBean<OwnableTreeBean> implements Ownable {
 
-    private static final long serialVersionUID = 5223721103805836885L;
+    private static final long serialVersionUID = 8847928383056687590L;
 
     @Column(updatable = false)
     private String createdBy;

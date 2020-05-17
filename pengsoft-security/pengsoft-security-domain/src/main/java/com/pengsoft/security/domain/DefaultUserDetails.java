@@ -27,24 +27,24 @@ public class DefaultUserDetails implements UserDetails {
     @JsonSerialize(using = RoleCollectionSerializer.class)
     private final List<Role> roles;
 
-    @JsonIgnoreProperties({"id", "dateTimeCreated", "dateTimeUpdated", "version"})
-    private User currentUser;
+    @JsonIgnoreProperties({ "id", "dateTimeCreated", "dateTimeUpdated", "version" })
+    private User user;
 
     @JsonSerialize(using = RoleSerializer.class)
-    private Role currentRole;
+    private Role role;
 
     @JsonSerialize(using = GrantedAuthorityListSerializer.class)
     private Collection<? extends GrantedAuthority> authorities;
 
-    public DefaultUserDetails(final User currentUser, final List<Role> roles) {
-        this.currentUser = currentUser;
+    public DefaultUserDetails(final User user, final List<Role> roles) {
+        this.user = user;
         this.roles = roles;
     }
 
-    public DefaultUserDetails(final User currentUser, final List<Role> roles, final Role majorRole, final List<GrantedAuthority> authorities) {
+    public DefaultUserDetails(final User user, final List<Role> roles, final Role majorRole, final List<GrantedAuthority> authorities) {
         this.roles = roles;
-        this.currentUser = currentUser;
-        currentRole = majorRole;
+        this.user = user;
+        this.role = majorRole;
         this.authorities = authorities;
     }
 
@@ -52,20 +52,20 @@ public class DefaultUserDetails implements UserDetails {
         return roles;
     }
 
-    public User getCurrentUser() {
-        return currentUser;
+    public User getUser() {
+        return user;
     }
 
-    public void setCurrentUser(final User currentUser) {
-        this.currentUser = currentUser;
+    public void setUser(final User user) {
+        this.user = user;
     }
 
-    public Role getCurrentRole() {
-        return currentRole;
+    public Role getRole() {
+        return role;
     }
 
-    public void setCurrentRole(final Role currentRole) {
-        this.currentRole = currentRole;
+    public void setRole(final Role role) {
+        this.role = role;
     }
 
     @Override
@@ -80,8 +80,8 @@ public class DefaultUserDetails implements UserDetails {
     @JsonSerialize(using = NullSerializer.class)
     @Override
     public String getPassword() {
-        if (currentUser != null) {
-            return currentUser.getPassword();
+        if (user != null) {
+            return user.getPassword();
         } else {
             return null;
         }
@@ -89,8 +89,8 @@ public class DefaultUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        if (currentUser != null) {
-            return currentUser.getUsername();
+        if (user != null) {
+            return user.getUsername();
         } else {
             return null;
         }
@@ -98,13 +98,13 @@ public class DefaultUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return currentUser == null || currentUser.getExpiredAt() == null
-                || currentUser.getExpiredAt().isBefore(DateUtils.currentDateTime());
+        return user == null || user.getExpiredAt() == null
+                || user.getExpiredAt().isBefore(DateUtils.currentDateTime());
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return currentUser == null || currentUser.isEnabled();
+        return user == null || user.isEnabled();
     }
 
     @Override
@@ -114,7 +114,7 @@ public class DefaultUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return currentUser == null || currentUser.isEnabled();
+        return user == null || user.isEnabled();
     }
 
 }

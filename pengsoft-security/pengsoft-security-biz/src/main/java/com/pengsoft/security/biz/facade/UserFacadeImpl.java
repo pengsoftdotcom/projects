@@ -39,6 +39,16 @@ public class UserFacadeImpl extends BeanFacadeImpl<UserService, User, String> im
     }
 
     @Override
+    public void signInSuccess(final String username) {
+        getService().signInSuccess(username);
+    }
+
+    @Override
+    public void signInFailure(final String username, final int allowSignInFailure) {
+        getService().signInFailure(username, allowSignInFailure);
+    }
+
+    @Override
     public Optional<User> findOneByUsername(final String username) {
         return getService().findOneByUsername(username);
     }

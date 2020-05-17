@@ -31,12 +31,20 @@ public class ClientFacadeTest extends BaseFacadeTest<ClientFacade> {
         authorityFacade.saveEntityAdminAuthorities(Client.class);
 
         getFacade().findOneByCode("admin").ifPresent(getFacade()::delete);
-        var client = new Client();
+        final var client = new Client();
         client.setCode("admin");
         client.setName("admin");
         client.setSecret("admin");
         client.setValiditySeconds(60 * 60 * 8);
         getFacade().save(client);
+    }
+
+    @Test
+    public void save() {
+        getFacade().findOneByCode("admin").ifPresent(client -> {
+            client.setSecret("admin");
+            getFacade().save(client);
+        });
     }
 
 }

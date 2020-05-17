@@ -1,0 +1,11 @@
+<nz-select [(ngModel)]="form[field.code]" nzAllowClear nzShowSearch [compareWith]="compareWith" [nzPlaceHolder]="placeholder" [nzDisabled]="disabled"
+    (ngModelChange)="modelChange($event)" (nzOpenChange)="openChange($event)" [nzLoading]="loading" [nzServerSearch]="!!field.edit.input.load"
+    (onSearch)="search($event)">
+    <nz-option *ngFor="let option of field.edit.input.options" [nzValue]="option.value" [nzLabel]="option.label"
+        [nzCustomContent]="option.customContent">
+        <span *ngIf="option.customContent" [innerHTML]="option.customRender(sanitizer)"></span>
+    </nz-option>
+</nz-select>
+<ng-template #custom let-selected>
+    {{selected.label}}
+</ng-template>

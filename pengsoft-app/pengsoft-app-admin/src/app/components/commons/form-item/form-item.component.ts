@@ -4,52 +4,59 @@ import { BaseComponent } from '../base.component';
 import { Field } from './field';
 
 @Component({
-  selector: 'app-form-item',
-  templateUrl: './form-item.component.html',
-  styleUrls: ['./form-item.component.scss']
+    selector: 'app-form-item',
+    templateUrl: './form-item.component.html',
+    styleUrls: ['./form-item.component.scss']
 })
 export class FormItemComponent extends BaseComponent implements OnInit {
 
-  InputType = InputType;
+    InputType = InputType;
 
-  @Input() form = {};
+    @Input() form = {};
 
-  @Input() field: Field;
+    @Input() errors = {};
 
-  ngOnInit(): void {
-    if (this.field.edit === undefined) {
-      throw new Error('The edit is not configured.');
+    @Input() field: Field;
+
+    ngOnInit(): void {
+        if (this.field.edit === undefined) {
+            throw new Error('The edit is not configured.');
+        }
+        if (this.field.edit.label === undefined) {
+            throw new Error('The label is not configured.');
+        }
+        if (this.field.edit.input === undefined) {
+            throw new Error('The input is not configured.');
+        }
+        if (typeof this.field.edit.visible === 'function') {
+            this.visible = this.field.edit.visible(this.field, this.form);
+        } else {
+            this.visible = !(this.field.edit.visible === false);
+        }
     }
-    if (this.field.edit.label === undefined) {
-      throw new Error('The label is not configured.');
+
+    get status(): string {
+        return JSON.stringify(this.errors) === '{}' ? null : this.errors[this.field.code] ? 'error' : null;
     }
-    if (this.field.edit.input === undefined) {
-      throw new Error('The input is not configured.');
+
+    get required(): boolean {
+        return this.field.edit.required;
     }
-  }
 
-  isRequired(): boolean {
-    return this.field.edit.required;
-  }
-
-  isVisible(): boolean {
-    return !(this.field.edit.visible === false);
-  }
-
-  getLabel(): string {
-    let label = this.field.name;
-    if (this.field.edit.label.value) {
-      label = this.field.edit.label.value;
+    get label(): string {
+        let label = this.field.name;
+        if (this.field.edit.label.value) {
+            label = this.field.edit.label.value;
+        }
+        return label;
     }
-    return label;
-  }
 
-  isLabelVisible(): boolean {
-    return !(this.field.edit.label.visible === false);
-  }
+    get labelVisible(): boolean {
+        return !(this.field.edit.label.visible === false);
+    }
 
-  isInputVisible(): boolean {
-    return !(this.field.edit.input.visible === false);
-  }
+    get inputVisible(): boolean {
+        return !(this.field.edit.input.visible === false);
+    }
 
 }
