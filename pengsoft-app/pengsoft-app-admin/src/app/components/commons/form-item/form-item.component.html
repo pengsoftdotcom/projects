@@ -1,0 +1,12 @@
+<nz-form-item *ngIf="isVisible()">
+    <nz-form-label nz-col *ngIf="isLabelVisible()" [nzSpan]="this.field.edit.label.span" [nzRequired]="isRequired()">
+        {{getLabel()}}
+        <span *ngIf="field.edit.label.tooltip" nz-tooltip [nzTooltipTitle]="field.edit.label.tooltip">
+            <i nz-tooltip nz-icon nzType="question-circle-o"></i>
+        </span>
+    </nz-form-label>
+    <nz-form-control nz-col *ngIf="isInputVisible()" [nzSpan]="this.field.edit.input.span" [ngSwitch]="field.edit.input.type">
+        <app-input-password *ngSwitchCase="InputType.PASSWORD" [form]="form" [field]="field"></app-input-password>
+        <app-input-text *ngSwitchDefault [form]="form" [field]="field"></app-input-text>
+    </nz-form-control>
+</nz-form-item>

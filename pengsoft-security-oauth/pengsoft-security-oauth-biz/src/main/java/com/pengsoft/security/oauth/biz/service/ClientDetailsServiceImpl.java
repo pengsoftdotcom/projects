@@ -16,7 +16,7 @@ import javax.inject.Inject;
  */
 @Primary
 @Service
-public class DefaultClientDetailsServiceImpl implements ClientDetailsService {
+public class ClientDetailsServiceImpl implements ClientDetailsService {
 
     @Inject
     private ClientService clientService;
