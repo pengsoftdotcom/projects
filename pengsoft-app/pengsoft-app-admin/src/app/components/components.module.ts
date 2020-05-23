@@ -19,7 +19,8 @@ import {
     NzTreeModule,
     NzRadioModule,
     NzTreeSelectModule,
-    NzUploadModule
+    NzUploadModule,
+    NzCascaderModule
 } from 'ng-zorro-antd';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { DirectivesModule } from '../directives/directives.module';
@@ -42,6 +43,9 @@ import { EditManyToManyComponent } from './commons/edit-many-to-many/edit-many-t
 import { SetMajorRoleComponent } from './modal/set-major-role/set-major-role.component';
 import { TreeSelectComponent } from './commons/input/tree-select/tree-select.component';
 import { UploadComponent } from './commons/input/upload/upload.component';
+import { EditOneToManyComponent } from './commons/edit-one-to-many/edit-one-to-many.component';
+import { AvatarComponent } from './commons/input/avatar/avatar.component';
+import { CascaderComponent } from './commons/input/cascader/cascader.component';
 
 @NgModule({
     declarations: [
@@ -62,7 +66,10 @@ import { UploadComponent } from './commons/input/upload/upload.component';
         EditManyToManyComponent,
         SetMajorRoleComponent,
         TreeSelectComponent,
-        UploadComponent
+        EditOneToManyComponent,
+        UploadComponent,
+        AvatarComponent,
+        CascaderComponent
     ],
     imports: [
         CommonModule,
@@ -86,6 +93,7 @@ import { UploadComponent } from './commons/input/upload/upload.component';
         NzTreeModule,
         NzRadioModule,
         NzUploadModule,
+        NzCascaderModule,
         IconsProviderModule,
         DirectivesModule
     ],
@@ -96,6 +104,7 @@ import { UploadComponent } from './commons/input/upload/upload.component';
         ListComponent,
         EditComponent,
         EditManyToManyComponent,
+        EditOneToManyComponent,
         UploadComponent
     ]
 })

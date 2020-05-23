@@ -79,12 +79,15 @@ public class AuthorityFacadeImpl extends BeanFacadeImpl<AuthorityService, Author
                 })
                 .filter(authorityCode -> {
                     if (StringUtils.endsWith(authorityCode, StringUtils.GLOBAL_SEPARATOR + "sort")
-                            && !Sortable.class.isAssignableFrom(getEntityClass())) {
+                            && !Sortable.class.isAssignableFrom(entityClass)) {
                         return false;
                     }
-                    return !StringUtils.endsWith(authorityCode, StringUtils.GLOBAL_SEPARATOR + "enable")
-                            && (!StringUtils.endsWith(authorityCode, StringUtils.GLOBAL_SEPARATOR + "disable")
-                            || Enable.class.isAssignableFrom(entityClass));
+                    if ((StringUtils.endsWith(authorityCode, StringUtils.GLOBAL_SEPARATOR + "enable")
+                            || StringUtils.endsWith(authorityCode, StringUtils.GLOBAL_SEPARATOR + "disable"))
+                            && !Enable.class.isAssignableFrom(entityClass)) {
+                        return false;
+                    }
+                    return true;
                 })
                 .distinct()
                 .forEach(authorityCode -> addAuthority(authorities, authorityCode));

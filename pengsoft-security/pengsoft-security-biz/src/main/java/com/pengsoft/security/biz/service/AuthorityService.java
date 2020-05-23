@@ -16,6 +16,8 @@ public interface AuthorityService extends BeanService<Authority, String> {
 
     /**
      * Returns an {@link Optional} of a {@link Authority} with given code.
+     *
+     * @param code {@link Authority}'s code
      */
     Optional<Authority> findOneByCode(@NotBlank String code);
 

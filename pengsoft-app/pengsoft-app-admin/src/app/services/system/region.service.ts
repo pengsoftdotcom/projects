@@ -3,18 +3,18 @@ import { HttpService } from '../commons/http.service';
 import { TreeBeanService } from '../commons/tree-bean.service';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class RegionService extends TreeBeanService {
 
-  constructor(protected http: HttpService) { super(http); }
+    constructor(protected http: HttpService) { super(http); }
 
-  getModulePath(): string {
-    return 'system';
-  }
+    get modulePath(): string {
+        return 'system';
+    }
 
-  getEntityPath(): string {
-    return 'region';
-  }
+    get entityPath(): string {
+        return 'region';
+    }
 
 }

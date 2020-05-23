@@ -26,6 +26,7 @@
         <redisson.version>3.12.4</redisson.version>
         <hibernate-types.version>2.9.8</hibernate-types.version>
         <commons-collections4.version>4.4</commons-collections4.version>
+        <rocketmq.version>4.7.0</rocketmq.version>
     </properties>
 
     <modules>
@@ -69,6 +70,16 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-collections4</artifactId>
                 <version>${commons-collections4.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-client</artifactId>
+                <version>${rocketmq.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.rocketmq</groupId>
+                <artifactId>rocketmq-acl</artifactId>
+                <version>${rocketmq.version}</version>
             </dependency>
 
             <dependency>

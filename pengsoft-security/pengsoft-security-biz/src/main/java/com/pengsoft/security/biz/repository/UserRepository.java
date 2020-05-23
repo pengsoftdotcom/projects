@@ -3,6 +3,7 @@ package com.pengsoft.security.biz.repository;
 import com.pengsoft.security.domain.entity.QUser;
 import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.support.biz.repository.BeanRepository;
+import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.core.types.dsl.StringPath;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -27,6 +28,7 @@ public interface UserRepository extends BeanRepository<QUser, User, String> {
     default void customize(final QuerydslBindings bindings, final QUser root) {
         BeanRepository.super.customize(bindings, root);
         bindings.bind(root.username).first(StringPath::contains);
+        bindings.bind(root.expiredAt).first(DateTimePath::before);
     }
 
     /**
@@ -41,8 +43,34 @@ public interface UserRepository extends BeanRepository<QUser, User, String> {
 
     /**
      * Returns an {@link Optional} of a {@link User} with given username.
+     *
+     * @param username {@link User}'s username
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
     Optional<User> findOneByUsername(@NotBlank String username);
+
+    /**
+     * Returns an {@link Optional} of a {@link User} with given mobile.
+     *
+     * @param mobile {@link User}'s mobile
+     */
+    @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
+    Optional<User> findOneByMobile(@NotBlank String mobile);
+
+    /**
+     * Returns an {@link Optional} of a {@link User} with given email.
+     *
+     * @param email {@link User}'s email
+     */
+    @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
+    Optional<User> findOneByEmail(@NotBlank String email);
+
+    /**
+     * Returns an {@link Optional} of a {@link User} with given mp open id.
+     *
+     * @param mpOpenId {@link User}'s mpOpenId
+     */
+    @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
+    Optional<User> findOneByMpOpenId(@NotBlank String mpOpenId);
 
 }

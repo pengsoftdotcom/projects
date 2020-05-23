@@ -1,18 +1,17 @@
 package com.pengsoft.support.commons.exception;
 
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.MessageSource;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import javax.inject.Named;
+import javax.validation.ConstraintViolationException;
+
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 /**
  * Convert a {@link ConstraintViolationException} to a {@link ResponseEntity}
@@ -21,17 +20,20 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 @Named
-public class ConstraintViolationExceptionExceptionResponseEntityConverter implements ExceptionResponseEntityConverter<ConstraintViolationException> {
+public class ConstraintViolationExceptionExceptionResponseEntityConverter implements ExceptionResponseEntityConverter {
 
     private static final Logger log = LoggerFactory.getLogger(ConstraintViolationExceptionExceptionResponseEntityConverter.class);
 
     private static final String PACKAGE_DELIMITER = ".";
 
-    @Inject
-    private MessageSource messageSource;
+    @Override
+    public boolean support(final Exception e) {
+        return e instanceof ConstraintViolationException;
+    }
 
     @Override
-    public ResponseEntity<Object> convert(final ConstraintViolationException e) {
+    public ResponseEntity<Object> convert(final Exception exception) {
+        final var e = (ConstraintViolationException) exception;
         final var body = e.getConstraintViolations().stream().collect(Collectors.toMap(
                 cv -> {
                     var propertyPath = cv.getPropertyPath().toString();

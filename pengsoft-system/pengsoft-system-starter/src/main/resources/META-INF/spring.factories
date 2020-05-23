@@ -1,2 +1,3 @@
 org.springframework.boot.autoconfigure.EnableAutoConfiguration= \
-com.pengsoft.system.starter.autoconfigure.ObjectStorageServiceAutoConfigure
+com.pengsoft.system.starter.autoconfigure.ObjectStorageServiceAutoConfigure, \
+com.pengsoft.system.starter.autoconfigure.MessagingAutoConfigure

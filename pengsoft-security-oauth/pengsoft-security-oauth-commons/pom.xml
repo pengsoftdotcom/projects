@@ -20,5 +20,4 @@
             <artifactId>spring-security-oauth2</artifactId>
         </dependency>
     </dependencies>
-
 </project>

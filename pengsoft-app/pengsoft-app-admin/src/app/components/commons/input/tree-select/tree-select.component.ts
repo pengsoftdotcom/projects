@@ -23,23 +23,18 @@ export class TreeSelectComponent extends InputComponent implements OnChanges {
     }
 
     modelChange(event: any): void {
-        let values: Array<any>;
-        if (typeof this.rawValue === 'string') {
-            values = [this.rawValue];
-        } else {
+        let values: Array<string>;
+        if (this.rawValue instanceof Array) {
             values = this.rawValue;
+        } else {
+            values = [this.rawValue];
         }
-        if (values && values.length > 0) {
-            if (!this.field.edit.input.multiple) {
-                this.form[this.field.code] = values[values.length - 1];
+        this.form[this.field.code] = EntityUtils.findTreeNodes((this.field.edit.input.options as Array<NzTreeNodeOptions>), values);
+        if (this.form[this.field.code].length > 0) {
+            if (this.field.edit.input.multiple) {
+                this.form[this.field.code] = this.form[this.field.code].map((node: NzTreeNodeOptions) => node.key).join(',');
             } else {
-                this.form[this.field.code] = values;
-            }
-            const tree = (this.field.edit.input.options as Array<NzTreeNodeOptions>);
-            this.form[this.field.code] =
-                EntityUtils.findTreeNodes(tree, this.form[this.field.code]).map(node => node.value);
-            if (!this.field.edit.input.multiple) {
-                this.form[this.field.code] = this.form[this.field.code][this.form[this.field.code].length - 1];
+                this.form[this.field.code] = this.form[this.field.code][0].value;
             }
         } else {
             this.form[this.field.code] = null;

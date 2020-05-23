@@ -29,6 +29,8 @@ public interface RegionRepository extends TreeBeanRepository<QRegion, Region, St
 
     /**
      * Returns an {@link Optional} of a {@link Region} with given code.
+     *
+     * @param code {@link Region}'code
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
     Optional<Region> findOneByCode(@NotBlank String code);

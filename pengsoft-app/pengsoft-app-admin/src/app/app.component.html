@@ -14,7 +14,8 @@
                     </li>
                 </ng-container>
                 <ng-template #elseBlock>
-                    <li nz-submenu [hasAnyRole]="menu.data?.code" [nzTitle]="menu.data.name" [nzIcon]="menu.data.icon" [nzOpen]="isMenuOpen(menu)">
+                    <li nz-submenu [hasAnyAuthority]="getMenuAuthority(menu)" [nzTitle]="menu.data.name" [nzIcon]="menu.data.icon"
+                        [nzOpen]="isMenuOpen(menu)">
                         <ul>
                             <li *ngFor="let submenu of menu.children" nz-menu-item [hasAnyAuthority]="submenu.data?.code" [nzMatchRouter]="true"
                                 [routerLink]="'/' + menu.path + '/' + submenu.path">

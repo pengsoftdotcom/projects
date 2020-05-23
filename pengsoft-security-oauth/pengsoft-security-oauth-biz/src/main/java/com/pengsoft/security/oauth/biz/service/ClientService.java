@@ -16,6 +16,8 @@ public interface ClientService extends BeanService<Client, String> {
 
     /**
      * Returns an {@link Optional} of a {@link Client} with given code.
+     *
+     * @param code {@link Client}'s code
      */
     Optional<Client> findOneByCode(@NotBlank String code);
 

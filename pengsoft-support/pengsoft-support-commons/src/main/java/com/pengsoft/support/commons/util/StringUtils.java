@@ -1,5 +1,8 @@
 package com.pengsoft.support.commons.util;
 
+import java.util.ArrayList;
+import java.util.regex.Pattern;
+
 /**
  * String utility methods.
  *
@@ -84,5 +87,39 @@ public class StringUtils extends org.apache.commons.lang3.StringUtils {
         return camelCaseTo(name, HYPHEN, isUpperCase);
     }
 
+    /**
+     * Check the given characters is full of chinese characters.
+     *
+     * @param text Characters to be checked.
+     * @return if true, text is full of chinese characters.
+     */
+    public static boolean isChinese(final String text) {
+        if (isBlank(text)) {
+            return true;
+        } else {
+            final var regex = "[\u4e00-\u9fa5]+";
+            final var pattern = Pattern.compile(regex);
+            return pattern.matcher(text).matches();
+        }
+    }
+
+    /**
+     * Check the given characters is a valid mobile phone number.
+     *
+     * @param text Characters to be checked.
+     * @return if true, text is a valid mobile phone number.
+     */
+    public static boolean isMobile(final String text) {
+        if (isBlank(text)) {
+            return true;
+        } else {
+            final var chars = new ArrayList<Character>();
+            final var array = text.toCharArray();
+            for (final var c : array) {
+                chars.add(c);
+            }
+            return chars.stream().allMatch(Character::isDigit) && text.length() == 11;
+        }
+    }
 
 }

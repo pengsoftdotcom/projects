@@ -35,7 +35,7 @@ public class RoleServiceImpl extends TreeBeanServiceImpl<RoleRepository, Role, S
     public Role save(final Role role) {
         findOneByCode(role.getCode()).ifPresent(source -> {
             if (EntityUtils.ne(source, role)) {
-                throw newInstanceOfConstraintViolationException("code", role.getCode());
+                throw exceptions.constraintViolated("code", "Exists", role.getCode());
             }
         });
         return super.save(role);

@@ -22,7 +22,7 @@ import java.util.Optional;
 public interface ClientRepository extends BeanRepository<QClient, Client, String> {
 
     @Override
-    default void customize(QuerydslBindings bindings, QClient root) {
+    default void customize(final QuerydslBindings bindings, final QClient root) {
         BeanRepository.super.customize(bindings, root);
         bindings.bind(root.code).first(StringPath::contains);
         bindings.bind(root.grantTypes).first(StringPath::contains);
@@ -30,6 +30,8 @@ public interface ClientRepository extends BeanRepository<QClient, Client, String
 
     /**
      * Returns an {@link Optional} of a {@link Client} with given code.
+     *
+     * @param code {@link Client}'s code
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
     Optional<Client> findOneByCode(@NotBlank String code);

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.organization/POM/4.0.0"
+         xmlns:xsi="http://www.w3.organization/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.organization/POM/4.0.0 http://maven.apache.organization/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>pengsoft-basedata</artifactId>
+        <groupId>com.pengsoft.basedata</groupId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <artifactId>pengsoft-basedata-starter</artifactId>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.pengsoft.basedata</groupId>
+            <artifactId>pengsoft-basedata-biz</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.pengsoft.system</groupId>
+            <artifactId>pengsoft-system-starter</artifactId>
+        </dependency>
+    </dependencies>
+</project>

@@ -9,11 +9,11 @@ export class AssetService extends BeanService {
 
     constructor(protected http: HttpService) { super(http); }
 
-    getModulePath(): string {
+    get modulePath(): string {
         return 'system';
     }
 
-    getEntityPath(): string {
+    get entityPath(): string {
         return 'asset';
     }
 

@@ -10,11 +10,11 @@ export class ClientService extends BeanService {
 
     constructor(protected http: HttpService) { super(http); }
 
-    getModulePath(): string {
+    get modulePath(): string {
         return 'security-oauth';
     }
 
-    getEntityPath(): string {
+    get entityPath(): string {
         return 'client';
     }
 

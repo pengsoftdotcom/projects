@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.organization/POM/4.0.0"
+         xmlns:xsi="http://www.w3.organization/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.organization/POM/4.0.0 http://maven.apache.organization/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.pengsoft.system</groupId>
+        <artifactId>pengsoft-system</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <groupId>com.pengsoft.basedata</groupId>
+    <artifactId>pengsoft-basedata</artifactId>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>pengsoft-basedata-commons</module>
+        <module>pengsoft-basedata-domain</module>
+        <module>pengsoft-basedata-biz</module>
+        <module>pengsoft-basedata-starter</module>
+        <module>pengsoft-basedata-test</module>
+    </modules>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.pengsoft.system</groupId>
+                <artifactId>pengsoft-system</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.pengsoft.basedata</groupId>
+                <artifactId>pengsoft-basedata-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.basedata</groupId>
+                <artifactId>pengsoft-basedata-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.basedata</groupId>
+                <artifactId>pengsoft-basedata-biz</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.basedata</groupId>
+                <artifactId>pengsoft-basedata-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.basedata</groupId>
+                <artifactId>pengsoft-basedata-test</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>

@@ -3,6 +3,7 @@ package com.pengsoft.security.oauth.biz.service;
 import com.pengsoft.security.oauth.biz.repository.ClientRepository;
 import com.pengsoft.security.oauth.domain.entity.Client;
 import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.domain.util.EntityUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -27,6 +28,11 @@ public class ClientServiceImpl extends BeanServiceImpl<ClientRepository, Client,
 
     @Override
     public Client save(final Client client) {
+        findOneByCode(client.getCode()).ifPresent(source -> {
+            if (EntityUtils.ne(source, client)) {
+                throw exceptions.constraintViolated("code", "Exists", client.getCode());
+            }
+        });
         if (StringUtils.isBlank(client.getId())) {
             if (StringUtils.isNotBlank(client.getSecret())) {
                 client.setSecret(passwordEncoder.encode(client.getSecret()));

@@ -5,7 +5,9 @@ export enum InputType {
     PASSWORD,
     SELECT,
     TREE_SELECT,
+    CASCADER,
     DATETIME,
     BOOLEAN,
-    UPLOAD
+    UPLOAD,
+    AVATAR
 }

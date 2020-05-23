@@ -4,9 +4,9 @@ import com.pengsoft.security.domain.DefaultGrantedAuthority;
 import com.pengsoft.security.domain.DefaultUserDetails;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.RoleAuthority;
+import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.security.domain.entity.UserRole;
 import com.pengsoft.security.domain.util.SecurityUtils;
-import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,9 +27,6 @@ import java.util.stream.Collectors;
  */
 @Service
 public class AdvancedUserDetailsServiceImpl implements AdvancedUserDetailsService {
-
-    @Inject
-    private MessageSource messageSource;
 
     @Lazy
     @Inject
@@ -77,15 +74,39 @@ public class AdvancedUserDetailsServiceImpl implements AdvancedUserDetailsServic
 
     @Override
     public UserDetails loadUserByUsername(final String username) {
-        final var user = userService.findOneByUsername(username).orElseThrow(() -> new UsernameNotFoundException("'" + username + "' not found"));
-        final var roles = user.getUserRoles().stream().map(UserRole::getRole).collect(Collectors.toList());
-        final var optional = user.getUserRoles().stream().filter(UserRole::isMajor).map(UserRole::getRole).findFirst();
+        var optional = userService.findOneByUsername(username);
         if (optional.isPresent()) {
-            final var majorRole = optional.get();
-            return new DefaultUserDetails(user, roles, majorRole, getAllAuthorities(majorRole));
+            return buildUserDetails(optional.get());
         } else {
-            return new DefaultUserDetails(user, roles);
+            optional = userService.findOneByMobile(username);
         }
+
+        if (optional.isPresent()) {
+            return buildUserDetails(optional.get());
+        } else {
+            optional = userService.findOneByEmail(username);
+        }
+
+        if (optional.isPresent()) {
+            return buildUserDetails(optional.get());
+        } else {
+            optional = userService.findOneByMpOpenId(username);
+        }
+
+        if (optional.isPresent()) {
+            return buildUserDetails(optional.get());
+        } else {
+            throw new UsernameNotFoundException("'" + username + "' not found");
+        }
+    }
+
+    private UserDetails buildUserDetails(final User user) {
+        final var roles = user.getUserRoles().stream().map(UserRole::getRole).collect(Collectors.toList());
+        return user.getUserRoles().stream()
+                .filter(UserRole::isMajor)
+                .map(UserRole::getRole).findFirst()
+                .map(role -> new DefaultUserDetails(user, roles, role, getAllAuthorities(role)))
+                .orElse(new DefaultUserDetails(user, roles));
     }
 
 }

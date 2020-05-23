@@ -59,5 +59,4 @@ public class WebSecurityAutoConfigure extends WebSecurityConfigurerAdapter {
                 .anyRequest().authenticated();
     }
 
-
 }

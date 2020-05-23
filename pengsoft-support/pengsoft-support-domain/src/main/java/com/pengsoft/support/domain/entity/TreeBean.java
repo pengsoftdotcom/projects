@@ -32,7 +32,7 @@ public class TreeBean<T extends TreeBeanable<T, String>> extends Bean implements
     @NotFound(action = NotFoundAction.IGNORE)
     private T parent;
 
-    /*
+    /**
      * All parent node IDs.
      */
     @Size(max = 2000)

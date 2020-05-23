@@ -11,16 +11,11 @@ import { InputComponent } from '../input.component';
     templateUrl: './upload.component.html',
     styleUrls: ['./upload.component.scss']
 })
-export class UploadComponent extends InputComponent implements OnInit {
+export class UploadComponent extends InputComponent {
 
     files = [];
 
     constructor(private security: SecurityService, private asset: AssetService) { super(); }
-
-    ngOnInit(): void {
-
-    }
-
 
     get path(): string {
         return environment.gateway.path + '/api/asset/upload';

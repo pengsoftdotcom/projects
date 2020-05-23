@@ -39,7 +39,7 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
         if (target.getParent() != null) {
             // set the current parent as a non-leaf node.
             if (EntityUtils.isNotPersisted(target.getParent())) {
-                target.setParent(findOne(target.getParent().getId()).orElseThrow(() -> newInstanceOfEntityNotFoundException(target.getParent().getId())));
+                target.setParent(findOne(target.getParent().getId()).orElseThrow(() -> exceptions.entityNotFound(target.getParent().getId().toString())));
             }
             target.getParent().getChildren().add(target);
             target.getParent().setLeaf(false);

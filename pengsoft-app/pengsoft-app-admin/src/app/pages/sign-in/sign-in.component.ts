@@ -37,10 +37,7 @@ export class SignInComponent extends BaseComponent implements OnInit {
         }),
     ];
 
-    modalRef: NzModalRef;
-
     constructor(
-        private location: Location,
         private router: Router,
         private modal: NzModalService,
         private message: NzMessageService,
@@ -55,7 +52,7 @@ export class SignInComponent extends BaseComponent implements OnInit {
         if (this.security.isAuthenticated()) {
             this.router.navigateByUrl('/dashboard');
         } else {
-            this.modalRef = this.modal.create({
+            this.modal.create({
                 nzContent: this.content,
                 nzStyle: { top: '30%' },
                 nzMaskStyle: { background: '#ffffff' },
@@ -75,9 +72,8 @@ export class SignInComponent extends BaseComponent implements OnInit {
                 this.userDetails.current({
                     before: () => this.loading = true,
                     success: (userDetails: any) => {
-                        this.modalRef.close();
                         this.security.userDetails = userDetails;
-                        this.location.back();
+                        window.location.reload();
                     },
                     after: () => this.loading = false
                 });

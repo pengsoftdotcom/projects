@@ -3,7 +3,7 @@ package com.pengsoft.security.domain.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.NullSerializer;
-import com.pengsoft.security.commons.validation.Username;
+import com.pengsoft.security.domain.validation.Username;
 import com.pengsoft.support.domain.entity.Bean;
 import com.pengsoft.support.domain.entity.Enable;
 import org.hibernate.annotations.Cache;
@@ -17,6 +17,7 @@ import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -38,18 +39,28 @@ import java.util.Locale;
 })
 public class User extends Bean implements Enable {
 
-    private static final long serialVersionUID = 4025683878971039742L;
+    private static final long serialVersionUID = -4947447323105702218L;
 
     @Username
     @Column(updatable = false)
     private String username;
+
+    @Size(max = 255)
+    private String mobile;
+
+    @Email
+    @Size(max = 255)
+    private String email;
+
+    @Size(max = 255)
+    private String mpOpenId;
 
     @JsonSerialize(using = NullSerializer.class)
     @Column(updatable = false)
     private String password;
 
     @Size(max = 255)
-    private String locale = Locale.getDefault().toString();
+    private String locale = Locale.SIMPLIFIED_CHINESE.toString();
 
     private LocalDateTime signedInAt;
 
@@ -81,6 +92,30 @@ public class User extends Bean implements Enable {
 
     public void setUsername(final String username) {
         this.username = username;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(final String mobile) {
+        this.mobile = mobile;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(final String email) {
+        this.email = email;
+    }
+
+    public String getMpOpenId() {
+        return mpOpenId;
+    }
+
+    public void setMpOpenId(final String mpOpenId) {
+        this.mpOpenId = mpOpenId;
     }
 
     public String getPassword() {
@@ -140,4 +175,5 @@ public class User extends Bean implements Enable {
     public void setUserRoles(final List<UserRole> userRoles) {
         this.userRoles = userRoles;
     }
+
 }

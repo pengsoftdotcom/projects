@@ -10,11 +10,11 @@ export class RoleService extends TreeBeanService {
 
     constructor(protected http: HttpService) { super(http); }
 
-    getModulePath(): string {
+    get modulePath(): string {
         return 'security';
     }
 
-    getEntityPath(): string {
+    get entityPath(): string {
         return 'role';
     }
 

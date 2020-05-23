@@ -9,11 +9,11 @@ export class AuthorityService extends BeanService {
 
     constructor(protected http: HttpService) { super(http); }
 
-    getModulePath(): string {
+    get modulePath(): string {
         return 'security';
     }
 
-    getEntityPath(): string {
+    get entityPath(): string {
         return 'authority';
     }
 

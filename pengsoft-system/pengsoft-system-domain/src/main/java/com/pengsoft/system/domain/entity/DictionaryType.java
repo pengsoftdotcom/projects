@@ -1,0 +1,85 @@
+package com.pengsoft.system.domain.entity;
+
+import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.Codeable;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Entity;
+import javax.persistence.Index;
+import javax.persistence.OneToMany;
+import javax.persistence.Table;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Dictionary Type
+ *
+ * @author dang.peng@pengsoft.com
+ * @since 1.0.0
+ */
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@Entity
+@Table(name = "t_dictionary_type", indexes = {
+        @Index(name = "i_dictionary_type_code", columnList = "code", unique = true)
+})
+public class DictionaryType extends Bean implements Codeable {
+
+    private static final long serialVersionUID = 7355743632684719076L;
+
+    @NotBlank
+    @Size(max = 255)
+    private String code;
+
+    @NotBlank
+    @Size(max = 255)
+    private String name;
+
+    @Size(max = 255)
+    private String remark;
+
+    @OneToMany(mappedBy = "type", cascade = CascadeType.REMOVE)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @NotFound(action = NotFoundAction.IGNORE)
+    private List<DictionaryItem> items = new ArrayList<>();
+
+    @Override
+    public String getCode() {
+        return code;
+    }
+
+    @Override
+    public void setCode(final String code) {
+        this.code = code;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
+
+    public String getRemark() {
+        return remark;
+    }
+
+    public void setRemark(final String remark) {
+        this.remark = remark;
+    }
+
+    public List<DictionaryItem> getItems() {
+        return items;
+    }
+
+    public void setItems(final List<DictionaryItem> items) {
+        this.items = items;
+    }
+
+}

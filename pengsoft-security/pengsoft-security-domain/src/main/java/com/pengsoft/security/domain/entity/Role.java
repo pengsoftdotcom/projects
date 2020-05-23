@@ -39,24 +39,9 @@ public class Role extends TreeBean<Role> implements Codeable {
     public static final String ADMIN = "admin";
 
     /**
-     * Role code: security admin
+     * Role code: user
      */
-    public static final String SECURITY_ADMIN = "security_admin";
-
-    /**
-     * Role code: security user admin
-     */
-    public static final String SECURITY_USER_ADMIN = "security_user_admin";
-
-    /**
-     * Role code: security role admin
-     */
-    public static final String SECURITY_ROLE_ADMIN = "security_role_admin";
-
-    /**
-     * Role code: security authority admin
-     */
-    public static final String SECURITY_AUTHORITY_ADMIN = "security_authority_admin";
+    public static final String USER = "user";
 
     private static final long serialVersionUID = 8899680261707632937L;
 

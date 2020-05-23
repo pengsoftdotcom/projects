@@ -16,5 +16,4 @@
             <artifactId>pengsoft-security-commons</artifactId>
         </dependency>
     </dependencies>
-
 </project>

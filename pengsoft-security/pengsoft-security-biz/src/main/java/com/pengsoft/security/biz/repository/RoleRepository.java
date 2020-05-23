@@ -29,6 +29,8 @@ public interface RoleRepository extends TreeBeanRepository<QRole, Role, String> 
 
     /**
      * Returns an {@link Optional} of a {@link Role} with given code.
+     *
+     * @param code {@link Role}'s code
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
     Optional<Role> findOneByCode(@NotBlank String code);

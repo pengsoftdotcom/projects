@@ -1,0 +1,8 @@
+<ng-container *ngIf="field.edit.input.lazy; else elseBlock">
+    <nz-cascader [(ngModel)]="rawValue" [nzLoadData]="field.edit.input.load" (ngModelChange)="modelChange($event)" nzLabelProperty="title"
+        nzValueProperty="key" [nzDisabled]="disabled" [nzPlaceHolder]="placeholder"></nz-cascader>
+</ng-container>
+<ng-template #elseBlock>
+    <nz-cascader [(ngModel)]="rawValue" [nzOptions]="field.edit.input.options" (ngModelChange)="modelChange($event)" nzLabelProperty="title"
+        nzValueProperty="key" [nzDisabled]="disabled" [nzPlaceHolder]="placeholder"></nz-cascader>
+</ng-template>

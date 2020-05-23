@@ -1,12 +1,13 @@
 import { OnInit, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { BeanService } from 'src/app/services/commons/bean.service';
+import { SecurityService } from 'src/app/services/commons/security.service';
 import { TreeBeanService } from 'src/app/services/commons/tree-bean.service';
 import { BaseComponent } from './base.component';
 import { Button } from './button/button';
 import { EditComponent } from './edit/edit.component';
-import { Field } from './form-item/field';
 import { FilterComponent } from './filter/filter.component';
+import { Field } from './form-item/field';
 import { ListComponent } from './list/list.component';
 import { Page } from './list/page';
 
@@ -14,13 +15,7 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
 
     filterForm: any = {};
 
-    filterWidth = 600;
-
-    filterSpan = 12;
-
     editForm: any = {};
-
-    editSpan = 24;
 
     listData = [];
 
@@ -32,13 +27,25 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
 
     @ViewChild('editComponent', { static: true }) editComponent: EditComponent;
 
-    constructor(protected bean: S, protected modal: NzModalService, protected message: NzMessageService) { super(); }
+    constructor(
+        protected bean: S,
+        protected modal: NzModalService,
+        protected message: NzMessageService
+    ) { super(); }
 
     ngOnInit() {
         this.list();
     }
 
     abstract get fields(): Array<Field>;
+
+    get filterWidth(): number {
+        return 900;
+    }
+
+    get filterSpan(): number {
+        return 12;
+    }
 
     get editButtons(): Array<Button> {
         return [
@@ -47,18 +54,24 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
     }
 
     get listToolbarButtons(): Array<Button> {
-        return [
-            {
-                name: '搜索', type: 'link', action: () => this.filter(),
-                authority: [
-                    this.getAuthority('findPage'),
-                    this.getAuthority('findAll'),
-                    this.getAuthority('findAllByParent')
-                ].join(',')
-            },
+        const buttons = [];
+        if (this.fields.some(field => field.filter)
+            || this.fields.filter(field => field.children).some(field => field.children.some(subfield => subfield.filter))) {
+            buttons.push(
+                {
+                    name: '搜索', type: 'link', action: () => this.filter(),
+                    authority: [
+                        this.getAuthority('findPage'),
+                        this.getAuthority('findAll'),
+                        this.getAuthority('findAllByParent')
+                    ].join(',')
+                }
+            );
+        }
+        return buttons.concat([
             { name: '新增', type: 'primary', action: () => this.edit(), authority: this.getAuthority('findOne') },
             { name: '批量删除', type: 'primary', danger: true, action: () => this.delete(), authority: this.getAuthority('delete') }
-        ];
+        ]);
     }
 
     get listActionButtons(): Array<Button> {
@@ -76,15 +89,20 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
 
     edit(row?: any): void {
         this.errors = {};
-        this.editForm = {};
         const id = row ? row.id : null;
+        this.editForm = { id };
         this.editComponent.show();
         this.bean.findOne(id, {
             before: () => this.editComponent.loading = true,
-            success: (res: any) => this.editForm = res,
+            success: (res: any) => {
+                this.editForm = res;
+                this.afterEditFormFilled();
+            },
             after: () => this.editComponent.loading = false
         });
     }
+
+    afterEditFormFilled(): void { }
 
     save(): void {
         this.bean.save(this.editForm, {
@@ -113,11 +131,13 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
             },
             nzOnOk: () => this.list(),
             nzCancelText: '重置',
-            nzOnCancel: () => {
-                this.filterForm = {};
-                this.list();
-            }
+            nzOnCancel: () => this.afterFilterReset()
         });
+    }
+
+    afterFilterReset(): void {
+        this.filterForm = {};
+        this.list();
     }
 
     list(): void {
@@ -145,19 +165,18 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
                             this.listComponent.indeterminate = false;
                             this.message.info('删除成功');
                             resolve();
-                            if (this.bean instanceof TreeBeanService) {
-                                ids.forEach(id => {
-                                    const deleted = this.listData.splice(this.listData.findIndex(value => value.id === id), 1)[0];
-                                    // delete all children
-                                    this.listData.filter(value => value.parentIds.indexOf(deleted.parentIds) === 0)
-                                        .forEach(value => this.listData.splice(this.listData.findIndex(v => v.id = value.id), 1));
-                                    // update the 'leaf' property of the deleted node's parent
+                            ids.forEach(id => {
+                                const deleted = this.listData.splice(this.listData.findIndex(value => value.id === id), 1)[0];
+                                const parentIds = deleted.parentIds ? `${deleted.parentIds}::${deleted.id}` : deleted.id;
+                                // delete all children
+                                this.listData.filter(value => value.parentIds.indexOf(parentIds) === 0)
+                                    .forEach(value => this.listData.splice(this.listData.findIndex(v => v.id = value.id), 1));
+                                // update the 'leaf' property of the deleted node's parent
+                                if (deleted.parent) {
                                     this.listData.filter(value => value.id === deleted.parent.id)
                                         .forEach(value => value.leaf = !this.listData.some(v => v.parentIds === deleted.parentIds));
-                                });
-                            } else {
-                                this.list();
-                            }
+                                }
+                            });
                         }
                     });
                 })
@@ -167,8 +186,8 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
 
     getAuthority(action: string): string {
         if (action.indexOf('::') === -1) {
-            const moduleCode = this.bean.getModulePath().replace(/\//g, '_').replace(/-/g, '_');
-            const entityCode = this.bean.getEntityPath().replace(/\//g, '_').replace(/-/g, '_');
+            const moduleCode = this.bean.modulePath.replace(/\//g, '_').replace(/-/g, '_');
+            const entityCode = this.bean.entityPath.replace(/\//g, '_').replace(/-/g, '_');
             let actionCode = '';
             const length = action.length;
             for (let index = 0; index < length; index++) {
@@ -182,6 +201,21 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
             return [moduleCode, entityCode, actionCode].join('::');
         } else {
             return action;
+        }
+    }
+
+    sort(): void {
+        const sortInfo = {};
+        this.listData.filter(d => d.dirty).forEach(data => sortInfo[data.id] = data.sequence);
+        if (Object.keys(sortInfo).length > 0) {
+            this.bean.sort(sortInfo, {
+                before: () => this.loading = true,
+                success: () => {
+                    this.message.info('排序成功');
+                    this.list();
+                },
+                after: () => this.loading = false
+            });
         }
     }
 

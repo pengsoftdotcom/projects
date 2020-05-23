@@ -5,7 +5,7 @@ import com.pengsoft.system.biz.service.AssetService;
 import com.pengsoft.system.domain.entity.Asset;
 
 /**
- * The implementer of {@link AssetFacade}
+ * The facade interface of {@link Asset}
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0

@@ -18,6 +18,8 @@ export class FormItemComponent extends BaseComponent implements OnInit {
 
     @Input() field: Field;
 
+    @Input() filterable = false;
+
     ngOnInit(): void {
         if (this.field.edit === undefined) {
             throw new Error('The edit is not configured.');
@@ -40,7 +42,7 @@ export class FormItemComponent extends BaseComponent implements OnInit {
     }
 
     get required(): boolean {
-        return this.field.edit.required;
+        return !this.filterable && this.field.edit.required;
     }
 
     get label(): string {

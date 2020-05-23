@@ -23,7 +23,7 @@ public class RegionServiceImpl extends TreeBeanServiceImpl<RegionRepository, Reg
     public Region save(final Region region) {
         findOneByCode(region.getCode()).ifPresent(source -> {
             if (EntityUtils.ne(source, region)) {
-                throw newInstanceOfConstraintViolationException("code", region.getCode());
+                throw exceptions.constraintViolated("code", region.getCode());
             }
         });
         return super.save(region);

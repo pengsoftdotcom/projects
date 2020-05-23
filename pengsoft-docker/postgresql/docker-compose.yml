@@ -10,8 +10,8 @@ services:
   postgresql:
     image: ${DATABASE_IMAGE}
     restart: always
-    # volumes:
-    #  - ./data:${DATABASE_DATA}
+    volumes:
+      - ./data:${DATABASE_DATA}
     environment:
       TZ: ${TZ}
       PGDATA: ${DATABASE_DATA}

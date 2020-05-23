@@ -29,6 +29,8 @@ public interface AuthorityRepository extends BeanRepository<QAuthority, Authorit
 
     /**
      * Returns an {@link Optional} of a {@link Authority} with given code.
+     *
+     * @param code {@link Authority}'s code
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
     Optional<Authority> findOneByCode(@NotBlank String code);

@@ -11,6 +11,8 @@ export interface Field {
 
     edit?: Edit;
 
+    filter?: Edit;
+
     children?: Array<Field>;
 
 }

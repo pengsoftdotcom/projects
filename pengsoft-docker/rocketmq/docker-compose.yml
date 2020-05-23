@@ -1,0 +1,35 @@
+version: "3.7"
+services:
+  rocketmq-server:
+    image: ${ROCKETMQ_SERVER_IMAGE}
+    ports:
+      - 9876:9876
+    volumes:
+      - ./logs:/opt/logs
+      - ./store:/opt/store
+    environment:
+      JAVA_OPT_EXT: "-Duser.home=/opt -Xms128m -Xmx128m -Xmn128m"
+  rocketmq-broker:
+    image: ${ROCKETMQ_BROKER_IMAGE}
+    ports:
+      - 10909:10909
+      - 10911:10911
+    volumes:
+      - ./logs:/opt/logs
+      - ./store:/opt/store
+      - ./conf/broker.conf:/etc/rocketmq/broker.conf    
+    environment:
+        NAMESRV_ADDR: "rocketmq-server:9876"
+        JAVA_OPTS: " -Duser.home=/opt"
+        JAVA_OPT_EXT: "-server -Xms128m -Xmx128m -Xmn128m"
+    command: mqbroker -c /etc/rocketmq/broker.conf
+    depends_on:
+      - rocketmq-server
+  rocketmq-console:
+    image: ${ROCKETMQ_CONSOLE_IMAGE}
+    ports:
+      - 12348:8080
+    environment:
+        JAVA_OPTS: "-Drocketmq.namesrv.addr=rocketmq-server:9876 -Dcom.rocketmq.sendMessageWithVIPChannel=false"
+    depends_on:
+      - rocketmq-server

@@ -37,6 +37,8 @@ public interface RoleService extends TreeBeanService<Role, String> {
 
     /**
      * Returns an {@link Optional} of a {@link Role} with given code.
+     *
+     * @param code {@link Authority}'s code
      */
     Optional<Role> findOneByCode(@NotBlank String code);
 

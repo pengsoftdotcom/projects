@@ -7,12 +7,12 @@ export abstract class BeanService extends BaseService {
 
     constructor(protected http: HttpService) { super(); }
 
-    abstract getModulePath(): string;
+    abstract get modulePath(): string;
 
-    abstract getEntityPath(): string;
+    abstract get entityPath(): string;
 
     getApiPath(path: string): string {
-        return super.getApiPath('/' + this.getEntityPath() + '/' + path);
+        return super.getApiPath('/' + this.entityPath + '/' + path);
     }
 
     save(data: any, options: HttpOptions): void {
@@ -40,9 +40,9 @@ export abstract class BeanService extends BaseService {
         this.http.request('PUT', url, options);
     }
 
-    sort(params: any, options: HttpOptions): void {
+    sort(sortInfo: any, options: HttpOptions): void {
         const url = this.getApiPath('sort');
-        options.params = params;
+        options.body = sortInfo;
         this.http.request('PUT', url, options);
     }
 

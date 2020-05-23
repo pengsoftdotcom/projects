@@ -29,6 +29,10 @@ export class ListComponent extends BaseComponent implements OnInit {
 
     @Output() expandChange = new EventEmitter<any>();
 
+    @Input() sortable = false;
+
+    @Output() sequenceChange = new EventEmitter<any>();
+
     @ViewChild('table', { static: true }) table: any;
 
     tableBodyHeight: any = 0;
@@ -61,18 +65,6 @@ export class ListComponent extends BaseComponent implements OnInit {
 
     get groupable(): boolean {
         return this.fields.some(field => field.children);
-    }
-
-    get sortable(): boolean {
-        return this.fields.some(field => field.code === 'sequence');
-    }
-
-    get rowspan(): number {
-        return this.groupable ? 2 : 1;
-    }
-
-    get colspan(): number {
-        return 1;
     }
 
     private handlePageable() {
@@ -159,7 +151,7 @@ export class ListComponent extends BaseComponent implements OnInit {
     }
 
     private handleVisibleFields() {
-        this.visibleFields = this.fields.filter(field => field.list.visible);
+        this.visibleFields = this.fields.filter(field => field.list.visible && field.code !== 'sequence');
         this.visibleFields.filter(field => field.children)
             .forEach(field => field.children = field.children.filter(subfield => subfield.list.visible));
     }
@@ -187,12 +179,16 @@ export class ListComponent extends BaseComponent implements OnInit {
         return true;
     }
 
-    isColVisible(field: Field): boolean {
-        return field.list.visible;
+    getRowspan(field?: Field): number {
+        if (this.groupable && (!field || !field.children)) {
+            return 2;
+        } else {
+            return 1;
+        }
     }
 
-    getColumnSpan(field: Field): number {
-        if (field.children && field.children.length > 0) {
+    getColspan(field: Field): number {
+        if (field.children) {
             return field.children.length;
         } else {
             return 1;

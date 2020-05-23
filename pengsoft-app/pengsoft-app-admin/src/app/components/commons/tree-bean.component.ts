@@ -21,7 +21,7 @@ export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanC
                             const self = this.editForm;
                             if (this.lazy) {
                                 const parent = event ? event.node.origin.value : null;
-                                this.bean.findAllExcludeSelfAndItsChildrenByParent(parent, self, null, {
+                                this.bean.findAllExcludeSelfAndItsChildrenByParent(parent, self, this.parentFilterForm, {
                                     before: () => inputComponent.loading = true,
                                     success: (res: any) => {
                                         if (event) {
@@ -33,7 +33,7 @@ export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanC
                                     after: () => inputComponent.loading = false
                                 });
                             } else {
-                                this.bean.findAllExcludeSelfAndItsChildren(self, null, {
+                                this.bean.findAllExcludeSelfAndItsChildren(self, this.parentFilterForm, {
                                     before: () => inputComponent.loading = true,
                                     success: (res: any) =>
                                         inputComponent.field.edit.input.options = EntityUtils.convertListToTree(res),
@@ -48,6 +48,8 @@ export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanC
     }
 
     abstract get lazy(): boolean;
+
+    abstract get parentFilterForm(): any;
 
     list(): void {
         if (this.lazy) {
@@ -68,13 +70,15 @@ export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanC
             this.bean.findAll(this.filterForm, {
                 before: () => this.listComponent.loading = true,
                 success: (res: any) => {
-                    this.listData = EntityUtils.convertTreeToList(EntityUtils.convertListToTree(res), node => {
+                    const tree = EntityUtils.convertListToTree(res);
+                    const list = EntityUtils.convertTreeToList(tree, node => {
                         const value = node.value;
                         value.expand = true;
                         value.loaded = true;
                         value.children = node.children;
                         return value;
                     });
+                    this.listData = list;
                 },
                 after: () => this.listComponent.loading = false
             });

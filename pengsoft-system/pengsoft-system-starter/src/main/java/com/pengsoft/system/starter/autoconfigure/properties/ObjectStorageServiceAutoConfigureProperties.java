@@ -11,6 +11,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties("pengsoft.oss")
 public class ObjectStorageServiceAutoConfigureProperties {
 
+    private boolean enabled;
+
     private String accessKeyId;
 
     private String accessKeySecret;
@@ -24,6 +26,14 @@ public class ObjectStorageServiceAutoConfigureProperties {
     private String publicAccessPathPrefix;
 
     private String lockedAccessPathPrefix;
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(final boolean enabled) {
+        this.enabled = enabled;
+    }
 
     public String getAccessKeyId() {
         return accessKeyId;

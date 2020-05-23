@@ -16,6 +16,8 @@ public interface RegionService extends TreeBeanService<Region, String> {
 
     /**
      * Returns an {@link Optional} of a {@link Region} with given code.
+     *
+     * @param code {@link Region}'code
      */
     Optional<Region> findOneByCode(@NotBlank String code);
 

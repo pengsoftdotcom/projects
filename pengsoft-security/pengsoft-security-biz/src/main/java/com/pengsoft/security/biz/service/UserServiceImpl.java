@@ -36,16 +36,22 @@ public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, Strin
 
     @Override
     public User save(final User user) {
-        findOneByUsername(user.getUsername()).ifPresent(source -> {
-            if (EntityUtils.ne(source, user)) {
-                throw newInstanceOfConstraintViolationException("username", user.getUsername());
-            }
-        });
+        findOneByUsername(user.getUsername()).ifPresent(source -> usernameAlreadyExists(user, source));
+        findOneByMobile(user.getUsername()).ifPresent(source -> usernameAlreadyExists(user, source));
+        findOneByEmail(user.getUsername()).ifPresent(source -> usernameAlreadyExists(user, source));
+        findOneByMpOpenId(user.getUsername()).ifPresent(source -> usernameAlreadyExists(user, source));
         if (StringUtils.isNotBlank(user.getPassword())) {
             user.setPassword(passwordEncoder.encode(user.getPassword()));
         }
         return super.save(user);
     }
+
+    private void usernameAlreadyExists(final User user, final User source) {
+        if (EntityUtils.ne(source, user)) {
+            throw exceptions.constraintViolated("username", "Exists", user.getUsername());
+        }
+    }
+
 
     @Override
     public void changePassword(final String id, final String oldPassword, final String newPassword) {
@@ -53,14 +59,14 @@ public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, Strin
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             resetPassword(id, newPassword);
         } else {
-            throw newInstanceOfConstraintViolationException("oldPassword", oldPassword);
+            throw exceptions.constraintViolated("oldPassword", "WrongPassword", oldPassword);
         }
     }
 
     @Override
     public void resetPassword(final String id, final String password) {
         if (findOne(id).isEmpty()) {
-            throw newInstanceOfEntityNotFoundException(id);
+            throw exceptions.entityNotFound(id);
         }
         getRepository().resetPassword(id, passwordEncoder.encode(password));
     }
@@ -102,7 +108,7 @@ public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, Strin
 
     @Override
     public void signInSuccess(final String username) {
-        final var user = findOneByUsername(username).orElseThrow(() -> newInstanceOfEntityNotFoundException(username));
+        final var user = findOneByUsername(username).orElseThrow(() -> exceptions.entityNotFound(username));
         user.setSignedInAt(DateUtils.currentDateTime());
         user.setSignInFailureCount(0L);
         save(user);
@@ -124,6 +130,21 @@ public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, Strin
     @Override
     public Optional<User> findOneByUsername(final String username) {
         return getRepository().findOneByUsername(username);
+    }
+
+    @Override
+    public Optional<User> findOneByMobile(final String mobile) {
+        return getRepository().findOneByMobile(mobile);
+    }
+
+    @Override
+    public Optional<User> findOneByEmail(final String email) {
+        return getRepository().findOneByEmail(email);
+    }
+
+    @Override
+    public Optional<User> findOneByMpOpenId(final String mpOpenId) {
+        return getRepository().findOneByMpOpenId(mpOpenId);
     }
 
 }

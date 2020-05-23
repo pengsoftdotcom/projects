@@ -5,9 +5,11 @@ import { Label } from "./label";
 
 export interface Edit {
 
+    code?: string;
+
     required?: boolean;
 
-    disabled?: boolean;
+    disabled?: boolean | ((field: Field, form: any) => boolean);
 
     visible?: boolean | ((field: Field, form: any) => boolean);
 

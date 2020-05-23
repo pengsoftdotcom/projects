@@ -14,6 +14,7 @@
 
     <properties>
         <aliyun-sdk-oss.version>3.9.1</aliyun-sdk-oss.version>
+        <aliyun-java-sdk-core.version>4.5.1</aliyun-java-sdk-core.version>
     </properties>
 
     <modules>
@@ -38,6 +39,11 @@
                 <groupId>com.aliyun.oss</groupId>
                 <artifactId>aliyun-sdk-oss</artifactId>
                 <version>${aliyun-sdk-oss.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.aliyun</groupId>
+                <artifactId>aliyun-java-sdk-core</artifactId>
+                <version>${aliyun-java-sdk-core.version}</version>
             </dependency>
 
             <dependency>

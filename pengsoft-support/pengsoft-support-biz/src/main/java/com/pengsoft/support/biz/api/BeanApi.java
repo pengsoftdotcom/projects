@@ -4,6 +4,7 @@ import com.pengsoft.support.biz.facade.BeanFacade;
 import com.pengsoft.support.biz.service.EnableService;
 import com.pengsoft.support.biz.service.SortService;
 import com.pengsoft.support.biz.util.QueryDslUtils;
+import com.pengsoft.support.commons.exception.Exceptions;
 import com.pengsoft.support.domain.entity.Beanable;
 import com.pengsoft.support.domain.entity.Enable;
 import com.pengsoft.support.domain.entity.Sortable;
@@ -35,6 +36,9 @@ import java.util.stream.Collectors;
  * @since 1.0.0
  */
 public class BeanApi<F extends BeanFacade<?, T, ID>, T extends Beanable<ID>, ID extends Serializable> {
+
+    @Inject
+    protected Exceptions exceptions;
 
     @Inject
     private F facade;

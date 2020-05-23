@@ -13,7 +13,9 @@ import {
     SettingOutline,
     UploadOutline,
     DeleteOutline,
-    DownloadOutline
+    DownloadOutline,
+    BookOutline,
+    PlusOutline
 } from '@ant-design/icons-angular/icons';
 
 const icons = [
@@ -28,7 +30,9 @@ const icons = [
     SettingOutline,
     UploadOutline,
     DeleteOutline,
-    DownloadOutline
+    DownloadOutline,
+    BookOutline,
+    PlusOutline
 ];
 
 @NgModule({

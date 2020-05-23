@@ -2,14 +2,12 @@ package com.pengsoft.support.biz.service;
 
 import com.google.common.collect.Lists;
 import com.pengsoft.support.biz.repository.BeanRepository;
+import com.pengsoft.support.commons.exception.Exceptions;
 import com.pengsoft.support.domain.entity.Beanable;
 import com.pengsoft.support.domain.entity.Codeable;
 import com.pengsoft.support.domain.entity.Sortable;
 import com.querydsl.core.types.Predicate;
-import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
-import org.hibernate.validator.internal.engine.path.PathImpl;
 import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -17,11 +15,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
 import javax.inject.Inject;
-import javax.validation.ConstraintViolationException;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static com.pengsoft.support.commons.util.ClassUtils.getGenericType;
 
@@ -33,6 +29,9 @@ import static com.pengsoft.support.commons.util.ClassUtils.getGenericType;
  */
 public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beanable<ID>, ID extends Serializable>
         implements BeanService<T, ID> {
+
+    @Inject
+    protected Exceptions exceptions;
 
     @Inject
     private R repository;
@@ -54,29 +53,6 @@ public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beana
     @Override
     public Class<ID> getIdClass() {
         return (Class<ID>) getGenericType(getClass(), 2);
-    }
-
-    /**
-     * Returns {@link ConstraintViolationException} instance by given message and property path.
-     *
-     * @param code The message template, also the entity property path.
-     * @param args The message arguments.
-     * @return The new instance.
-     */
-    protected ConstraintViolationException newInstanceOfConstraintViolationException(final String code, final Object... args) {
-        final var message = messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
-        final var propertyPath = PathImpl.createPathFromString(code);
-        return new ConstraintViolationException(
-                Set.of(ConstraintViolationImpl.forBeanValidation(null, null, null, message, null, null, null, null, propertyPath, null, null)));
-    }
-
-    /**
-     * Returns {@link IllegalArgumentException} instance
-     *
-     * @param id The entity id.
-     */
-    protected IllegalArgumentException newInstanceOfEntityNotFoundException(final ID id) {
-        return new IllegalArgumentException("the entity with given identity('" + id + "') has been deleted or the given id is invalid.");
     }
 
     @Override
@@ -119,7 +95,7 @@ public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beana
     /**
      * Returns the default sort.
      */
-    Sort getDefaultSort() {
+    protected Sort getDefaultSort() {
         final var entityClass = getEntityClass();
         if (Sortable.class.isAssignableFrom(entityClass)) {
             return Sort.by(Direction.ASC, "sequence");

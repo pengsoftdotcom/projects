@@ -15,13 +15,11 @@
         <dependency>
             <groupId>com.pengsoft.security.oauth</groupId>
             <artifactId>pengsoft-security-oauth-starter</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.pengsoft.system</groupId>
-            <artifactId>pengsoft-system-starter</artifactId>
+            <groupId>com.pengsoft.basedata</groupId>
+            <artifactId>pengsoft-basedata-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
-
 </project>

@@ -12,9 +12,9 @@ public class BusinessException extends RuntimeException {
 
     private final String code;
 
-    private final String[] args;
+    private final Object[] args;
 
-    public BusinessException(final String code, final String... args) {
+    public BusinessException(final String code, final Object... args) {
         this.code = code;
         this.args = args;
     }
@@ -23,7 +23,7 @@ public class BusinessException extends RuntimeException {
         return code;
     }
 
-    public String[] getArgs() {
+    public Object[] getArgs() {
         return args;
     }
 

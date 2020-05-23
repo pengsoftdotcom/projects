@@ -66,7 +66,7 @@ export class HttpService {
                             this.message.error('账号已锁定');
                             break;
                         default:
-                            this.message.error('错误的请求');
+                            this.message.error(err.error.error_description);
                             break;
                     }
                     break;

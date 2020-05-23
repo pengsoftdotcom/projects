@@ -53,4 +53,19 @@ public class UserFacadeImpl extends BeanFacadeImpl<UserService, User, String> im
         return getService().findOneByUsername(username);
     }
 
+    @Override
+    public Optional<User> findOneByMobile(final String mobile) {
+        return getService().findOneByMobile(mobile);
+    }
+
+    @Override
+    public Optional<User> findOneByEmail(final String email) {
+        return getService().findOneByEmail(email);
+    }
+
+    @Override
+    public Optional<User> findOneByMpOpenId(final String mpOpenId) {
+        return getService().findOneByMpOpenId(mpOpenId);
+    }
+
 }

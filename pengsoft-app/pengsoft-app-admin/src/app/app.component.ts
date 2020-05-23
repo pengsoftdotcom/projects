@@ -1,6 +1,6 @@
 import { Location } from '@angular/common';
 import { Component } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, Route } from '@angular/router';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { ChangePasswordComponent } from './components/modal/change-password/change-password.component';
 import { SecurityService } from './services/commons/security.service';
@@ -15,20 +15,29 @@ export class AppComponent {
 
     isCollapsed = false;
 
+    userDetails: any = {};
+
+    menus = [];
+
     constructor(
         private security: SecurityService,
         private modal: NzModalService,
         private message: NzMessageService,
         private router: Router,
         private location: Location
-    ) { }
-
-    get userDetails(): any {
-        return this.security.userDetails;
+    ) {
+        this.userDetails = this.security.userDetails;
+        this.menus = this.router.config.filter(route => route.data || route.children);
     }
 
-    get menus(): Array<any> {
-        return this.router.config.filter(route => route.data || route.children);
+    getMenuAuthority(route: Route): string {
+        let authority: string;
+        if (route.data && route.data.code) {
+            authority = route.data.code;
+        } else {
+            authority = route.children.map(child => child.data.code).join(',');
+        }
+        return authority;
     }
 
     get avatar(): string {

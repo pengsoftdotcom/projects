@@ -19,24 +19,28 @@ export class RoleComponent extends TreeBeanComponent<RoleService> {
 
     constructor(
         private authority: AuthorityService,
-        protected role: RoleService,
+        protected bean: RoleService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(role, modal, message);
+        super(bean, modal, message);
     }
 
     get fields(): Array<Field> {
         return super.fields.concat([
-            FieldUtils.buildText({ code: 'code', name: '编码', list: { filterable: true, sortable: true, sortPriority: 1 } }),
-            FieldUtils.buildText({ code: 'name', name: '名称', list: { filterable: true, sortable: true } }),
-            FieldUtils.buildTexarea({ code: 'remark', name: '备注' }),
+            FieldUtils.buildTextForCode(),
+            FieldUtils.buildTextForName(),
+            FieldUtils.buildTexareaForRemark()
         ]);
 
     }
 
     get lazy(): boolean {
         return false;
+    }
+
+    get parentFilterForm(): any {
+        return null;
     }
 
     get listActionButtons(): Array<Button> {
@@ -60,7 +64,7 @@ export class RoleComponent extends TreeBeanComponent<RoleService> {
                     const authorities = this.editManyToManyComponent.items
                         .filter(item => item.direction === 'right')
                         .map(item => item.value);
-                    this.role.grantAuthorities(role, authorities, {
+                    this.bean.grantAuthorities(role, authorities, {
                         before: () => this.editManyToManyComponent.loading = true,
                         success: () => {
                             this.message.info('保存成功');
@@ -81,7 +85,7 @@ export class RoleComponent extends TreeBeanComponent<RoleService> {
             success: (authorities: any) => {
                 this.editManyToManyComponent.items =
                     authorities.map(authority => Object.assign({ title: authority.name, key: authority.id, value: authority }));
-                this.role.findAllRoleAuthoritiesByRole(row, {
+                this.bean.findAllRoleAuthoritiesByRole(row, {
                     success: (roleAuthorities: any) =>
                         this.editManyToManyComponent.targetKeys = roleAuthorities.map(roleAuthority => roleAuthority.authority.id)
                 });

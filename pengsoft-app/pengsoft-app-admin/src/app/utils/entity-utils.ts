@@ -47,16 +47,16 @@ export class EntityUtils {
     static convertTreeToList(tree: Array<NzTreeNodeOptions>, convert?: (node: NzTreeNodeOptions) => any): Array<any> {
         convert = convert ? convert : this.convertTreeNodeToTreeBean;
         const list = [];
-        const stack = [];
+        const queue = [];
         if (tree) {
             tree.forEach(data => {
-                stack.push(data);
-                while (stack.length > 0) {
-                    let parent = stack.pop();
+                queue.push(data);
+                while (queue.length > 0) {
+                    let parent = queue.pop();
                     parent = convert(parent);
                     list.push(parent);
                     if (parent.children) {
-                        parent.children.reverse().forEach(child => stack.push(child));
+                        parent.children.reverse().forEach(child => queue.push(child));
                     }
                 }
             });
@@ -75,14 +75,37 @@ export class EntityUtils {
                 roots.push(node);
             });
         nodes = nodes.filter(source => !roots.some(target => source.value.id === target.value.id));
+        roots.sort(this.sort);
         while (queue.length > 0) {
             const node = queue.shift();
             const parentIds = node.value.parentIds ? node.value.parentIds + '::' + node.value.id : node.value.id;
-            node.children = nodes.filter(child => child.value.parentIds === parentIds);
+            node.children = nodes.filter(child => child.value.parentIds === parentIds).sort(this.sort);
             nodes = nodes.filter(source => !node.children.some(target => source.value.id === target.value.id));
             node.children.forEach(child => queue.push(child));
         }
         return roots;
+    }
+
+    static sort(node1: NzTreeNodeOptions, node2: NzTreeNodeOptions): number {
+        if (node1.value.code !== undefined && node2.value.code !== undefined) {
+            if ([node1.value.code, node2.value.code].sort()[0] === node1.value.code) {
+                return -1;
+            } else {
+                return 1;
+            }
+        }
+
+        if (node1.value.sequence !== undefined && node2.value.sequence !== undefined) {
+            if (node1.value.sequence > node2.value.sequence) {
+                return 1;
+            } else if (node1.value.sequence === node2.value.sequence) {
+                return 0;
+            } else {
+                return -1;
+            }
+        }
+
+        return 0;
     }
 
     static filterTree(tree: Array<NzTreeNodeOptions>, options: { filter: (node) => boolean }): Array<any> {
@@ -103,7 +126,7 @@ export class EntityUtils {
         return tree;
     }
 
-    static findTreeNodes(tree: Array<NzTreeNodeOptions>, ...ids: Array<string>): Array<NzTreeNodeOptions> {
+    static findTreeNodes(tree: Array<NzTreeNodeOptions>, ids: Array<string>): Array<NzTreeNodeOptions> {
         const queue = [];
         const matched = [];
         tree.forEach(node => queue.push(node));

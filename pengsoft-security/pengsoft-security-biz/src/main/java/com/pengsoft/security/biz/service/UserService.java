@@ -1,9 +1,9 @@
 package com.pengsoft.security.biz.service;
 
-import com.pengsoft.security.commons.validation.Password;
-import com.pengsoft.security.commons.validation.Username;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.User;
+import com.pengsoft.security.domain.validation.Password;
+import com.pengsoft.security.domain.validation.Username;
 import com.pengsoft.support.biz.service.BeanService;
 
 import javax.validation.constraints.NotBlank;
@@ -70,8 +70,29 @@ public interface UserService extends BeanService<User, String> {
     /**
      * Returns an {@link Optional} of a {@link User} with given username.
      *
-     * @param username The username.
+     * @param username {@link User}' username.
      */
     Optional<User> findOneByUsername(@Username String username);
+
+    /**
+     * Returns an {@link Optional} of a {@link User} with given mobile.
+     *
+     * @param mobile {@link User}' mobile.
+     */
+    Optional<User> findOneByMobile(@NotBlank String mobile);
+
+    /**
+     * Returns an {@link Optional} of a {@link User} with given email.
+     *
+     * @param email {@link User}' email.
+     */
+    Optional<User> findOneByEmail(@NotBlank String email);
+
+    /**
+     * Returns an {@link Optional} of a {@link User} with given mp open id.
+     *
+     * @param mpOpenId {@link User}' mpOpenId.
+     */
+    Optional<User> findOneByMpOpenId(@NotBlank String mpOpenId);
 
 }

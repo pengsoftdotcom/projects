@@ -7,15 +7,17 @@
     </nz-form-label>
     <nz-form-control nz-col *ngIf="inputVisible" [nzSpan]="this.field.edit.input.span" [ngSwitch]="field.edit.input.type" [nzValidateStatus]="status"
         [nzErrorTip]="error">
-        <app-input-password *ngSwitchCase="InputType.PASSWORD" [form]="form" [field]="field"></app-input-password>
-        <app-input-number *ngSwitchCase="InputType.NUMBER" [form]="form" [field]="field"></app-input-number>
-        <app-input-boolean *ngSwitchCase="InputType.BOOLEAN" [form]="form" [field]="field"></app-input-boolean>
-        <app-input-datetime *ngSwitchCase="InputType.DATETIME" [form]="form" [field]="field"></app-input-datetime>
-        <app-input-select *ngSwitchCase="InputType.SELECT" [form]="form" [field]="field"></app-input-select>
-        <app-input-tree-select *ngSwitchCase="InputType.TREE_SELECT" [form]="form" [field]="field"></app-input-tree-select>
-        <app-input-textarea *ngSwitchCase="InputType.TEXTAREA" [form]="form" [field]="field"></app-input-textarea>
-        <app-input-upload *ngSwitchCase="InputType.UPLOAD" [form]="form" [field]="field"></app-input-upload>
-        <app-input-text *ngSwitchDefault [form]="form" [field]="field"></app-input-text>
+        <app-input-password *ngSwitchCase="InputType.PASSWORD" [form]="form" [field]="field" [filterable]="filterable"></app-input-password>
+        <app-input-number *ngSwitchCase="InputType.NUMBER" [form]="form" [field]="field" [filterable]="filterable"></app-input-number>
+        <app-input-boolean *ngSwitchCase="InputType.BOOLEAN" [form]="form" [field]="field" [filterable]="filterable"></app-input-boolean>
+        <app-input-datetime *ngSwitchCase="InputType.DATETIME" [form]="form" [field]="field" [filterable]="filterable"></app-input-datetime>
+        <app-input-select *ngSwitchCase="InputType.SELECT" [form]="form" [field]="field" [filterable]="true"></app-input-select>
+        <app-input-tree-select *ngSwitchCase="InputType.TREE_SELECT" [form]="form" [field]="field" [filterable]="filterable"></app-input-tree-select>
+        <app-input-cascader *ngSwitchCase="InputType.CASCADER" [form]="form" [field]="field" [filterable]="filterable"></app-input-cascader>
+        <app-input-textarea *ngSwitchCase="InputType.TEXTAREA" [form]="form" [field]="field" [filterable]="filterable"></app-input-textarea>
+        <app-input-upload *ngSwitchCase="InputType.UPLOAD" [form]="form" [field]="field" [filterable]="filterable"></app-input-upload>
+        <app-input-avatar *ngSwitchCase="InputType.AVATAR" [form]="form" [field]="field" [filterable]="filterable"></app-input-avatar>
+        <app-input-text *ngSwitchDefault [form]="form" [field]="field" [filterable]="filterable"></app-input-text>
     </nz-form-control>
 </nz-form-item>
 <ng-template #error let-control>

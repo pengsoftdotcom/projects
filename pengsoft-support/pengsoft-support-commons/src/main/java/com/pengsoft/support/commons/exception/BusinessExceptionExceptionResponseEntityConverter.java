@@ -16,17 +16,23 @@ import java.util.Map;
  * @since 1.0.0
  */
 @Named
-public class BusinessExceptionExceptionResponseEntityConverter implements ExceptionResponseEntityConverter<BusinessException> {
+public class BusinessExceptionExceptionResponseEntityConverter implements ExceptionResponseEntityConverter {
 
     @Inject
     private MessageSource messageSource;
 
     @Override
-    public ResponseEntity<Object> convert(final BusinessException e) {
+    public boolean support(final Exception e) {
+        return e instanceof BusinessException;
+    }
+
+    @Override
+    public ResponseEntity<Object> convert(final Exception exception) {
+        final var e = (BusinessException) exception;
         final var code = e.getCode();
         final var args = e.getArgs();
         final var text = messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
-        return new ResponseEntity<>(Map.of("code", code, "text", text), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(Map.of("error", code, "error_description", text), HttpStatus.BAD_REQUEST);
     }
 
 }

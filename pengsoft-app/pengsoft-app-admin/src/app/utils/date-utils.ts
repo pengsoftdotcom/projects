@@ -1,4 +1,4 @@
-import { format, parse } from 'date-fns';
+import { format, parse, isAfter } from 'date-fns';
 
 export class DateUtils {
 
@@ -16,6 +16,10 @@ export class DateUtils {
 
     static parse(dateTime: string): Date {
         return parse(dateTime, 'yyyy-MM-dd HH:mm:ss', new Date());
+    }
+
+    static isAfter(dateTime: string): boolean {
+        return isAfter(this.parse(dateTime), new Date());
     }
 
 }

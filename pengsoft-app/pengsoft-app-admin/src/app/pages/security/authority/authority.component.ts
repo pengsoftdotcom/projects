@@ -12,15 +12,19 @@ import { FieldUtils } from 'src/app/utils/field-utils';
 })
 export class AuthorityComponent extends BeanComponent<AuthorityService> {
 
-    constructor(protected authority: AuthorityService, protected modal: NzModalService, protected message: NzMessageService) {
-        super(authority, modal, message);
+    constructor(
+        protected bean: AuthorityService,
+        protected modal: NzModalService,
+        protected message: NzMessageService
+    ) {
+        super(bean, modal, message);
     }
 
     get fields(): Array<Field> {
         return [
-            FieldUtils.buildText({ code: 'code', name: '编码', list: { filterable: true, sortable: true, sortPriority: 1 } }),
-            FieldUtils.buildText({ code: 'name', name: '名称', list: { filterable: true, sortable: true } }),
-            FieldUtils.buildTexarea({ code: 'remark', name: '备注' }),
+            FieldUtils.buildTextForCode(),
+            FieldUtils.buildTextForName(),
+            FieldUtils.buildTexareaForRemark()
         ];
     }
 

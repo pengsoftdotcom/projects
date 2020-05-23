@@ -6,6 +6,8 @@ pengsoft:
       - exists*
     required:
       - "*"
+  mq:
+    enabled: true
 spring:
   messages:
     basename: META-INF/messages

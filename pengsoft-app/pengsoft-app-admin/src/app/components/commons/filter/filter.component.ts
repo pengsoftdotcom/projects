@@ -22,7 +22,7 @@ export class FilterComponent extends BaseComponent implements OnInit {
             queue.push(field);
             while (queue.length > 0) {
                 const parent = queue.shift();
-                if (parent.list.filterable) {
+                if (parent.filter) {
                     result.push(parent);
                 }
                 if (parent.children) {
