@@ -7,6 +7,7 @@ export enum InputType {
     TREE_SELECT,
     CASCADER,
     DATETIME,
+    DATE,
     BOOLEAN,
     UPLOAD,
     AVATAR

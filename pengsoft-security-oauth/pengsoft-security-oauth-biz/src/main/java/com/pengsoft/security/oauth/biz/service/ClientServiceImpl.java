@@ -1,17 +1,19 @@
 package com.pengsoft.security.oauth.biz.service;
 
-import com.pengsoft.security.oauth.biz.repository.ClientRepository;
-import com.pengsoft.security.oauth.domain.entity.Client;
-import com.pengsoft.support.biz.service.BeanServiceImpl;
-import com.pengsoft.support.domain.util.EntityUtils;
+import java.util.Optional;
+
+import javax.inject.Inject;
+import javax.validation.constraints.NotBlank;
+
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Inject;
-import javax.validation.constraints.NotBlank;
-import java.util.Optional;
+import com.pengsoft.security.oauth.biz.repository.ClientRepository;
+import com.pengsoft.security.oauth.domain.entity.Client;
+import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.domain.util.EntityUtils;
 
 /**
  * The implementer of {@link ClientService} based on JPA.
@@ -30,7 +32,7 @@ public class ClientServiceImpl extends BeanServiceImpl<ClientRepository, Client,
     public Client save(final Client client) {
         findOneByCode(client.getCode()).ifPresent(source -> {
             if (EntityUtils.ne(source, client)) {
-                throw exceptions.constraintViolated("code", "Exists", client.getCode());
+                throw getExceptions().constraintViolated("code", "Exists", client.getCode());
             }
         });
         if (StringUtils.isBlank(client.getId())) {

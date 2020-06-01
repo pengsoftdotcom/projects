@@ -1,6 +1,7 @@
 package com.pengsoft.basedata.domain.entity;
 
-import com.pengsoft.support.domain.entity.TreeBean;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
@@ -20,12 +21,14 @@ import javax.validation.constraints.Size;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_post", indexes = {
         @Index(name = "i_post_organization_id", columnList = "organization_id, name", unique = true)
 })
-public class Post extends TreeBean<Post> {
+public class Post extends OwnedTreeBeanExt<Post> {
 
     private static final long serialVersionUID = 4974303630293223990L;
 
@@ -37,21 +40,5 @@ public class Post extends TreeBean<Post> {
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private Organization organization;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public Organization getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(final Organization organization) {
-        this.organization = organization;
-    }
 
 }

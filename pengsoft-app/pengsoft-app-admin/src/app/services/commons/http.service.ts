@@ -51,7 +51,6 @@ export class HttpService {
         if (options.failure) {
             options.failure(err);
         }
-        console.log(err);
         if (err instanceof HttpErrorResponse) {
             switch (err.status) {
                 case 0:

@@ -12,9 +12,7 @@ export class FieldUtils {
     static buildAvatar(field?: Field): Field {
         field = Object.assign({ code: 'avatar', name: '头像' }, field);
         field = this.getList(field, { visible: false });
-        field = this.getInput(field, { width: 100, height: 100 });
-        field = this.getEdit(field);
-        field.edit.input.type = InputType.AVATAR;
+        field = this.getEdit(field, { input: { width: 100, height: 100, type: InputType.AVATAR } });
         return field;
     }
 
@@ -49,8 +47,7 @@ export class FieldUtils {
 
     static buildText(field: Field): Field {
         field = this.getList(field);
-        field = this.getEdit(field);
-        field.edit.input.type = InputType.TEXT;
+        field = this.getEdit(field, { input: { type: InputType.TEXT } });
         return field;
     }
 
@@ -59,50 +56,42 @@ export class FieldUtils {
     }
 
     static buildTextarea(field: Field): Field {
-        field = this.getList(field);
-        field.list.visible = false;
-        field = this.getEdit(field);
-        field.edit.input.type = InputType.TEXTAREA;
+        field = this.getList(field, { visible: false });
+        field = this.getEdit(field, { input: { type: InputType.TEXTAREA, rows: 4 } });
         return field;
     }
 
     static buildNumber(field: Field): Field {
-        field = this.getList(field);
-        field.list.align = 'right';
-        field = this.getEdit(field);
-        field.edit.input.type = InputType.NUMBER;
+        field = this.getList(field, { align: 'right' });
+        field = this.getEdit(field, { input: { type: InputType.NUMBER } });
         return field;
     }
 
     static buildPassword(field: Field): Field {
-        field = this.getList(field);
-        field.list.visible = false;
-        field = this.getEdit(field);
-        field.edit.input.type = InputType.PASSWORD;
+        field = this.getList(field, { visible: false });
+        field = this.getEdit(field, { input: { type: InputType.PASSWORD } });
         return field;
     }
 
     static buildSelect(field: Field): Field {
-        field = this.getList(field, { render: (f: Field, row: any) => row[field.code] ? row[field.code].name : null });
-        field = this.getInput(field, { lazy: false, multiple: false, options: [], placeholder: '请选择' });
-        field = this.getEdit(field);
-        field.edit.input.type = InputType.SELECT;
+        field = this.getList(field, { render: (f: Field, row: any) => row[f.code] ? row[f.code].name : null });
+        field = this.getEdit(field, { input: { lazy: false, multiple: false, options: [], placeholder: '请选择', type: InputType.SELECT } });
         return field;
     }
 
     static buildTreeSelect(field: Field): Field {
-        field = this.getList(field, { render: (f: Field, row: any) => row[field.code] ? row[field.code].name : null });
-        field = this.getInput(field, { lazy: false, multiple: false, options: [], placeholder: '请选择' });
-        field = this.getEdit(field);
-        field.edit.input.type = InputType.TREE_SELECT;
+        field = this.getList(field, { render: (f: Field, row: any) => row[f.code] ? row[f.code].name : null });
+        field = this.getEdit(field, {
+            input: {
+                lazy: false, multiple: false, options: [], placeholder: '请选择', type: InputType.TREE_SELECT
+            }
+        });
         return field;
     }
 
     static buildCascader(field: Field): Field {
-        field = this.getList(field, { render: (f: Field, row: any) => row[field.code] ? row[field.code].name : null });
-        field = this.getInput(field, { lazy: false, multiple: false, options: [], placeholder: '请选择' });
-        field = this.getEdit(field);
-        field.edit.input.type = InputType.CASCADER;
+        field = this.getList(field, { render: (f: Field, row: any) => row[f.code] ? row[f.code].name : null });
+        field = this.getEdit(field, { input: { lazy: false, multiple: false, options: [], placeholder: '请选择', type: InputType.CASCADER } });
         return field;
     }
 
@@ -127,12 +116,14 @@ export class FieldUtils {
     }
 
     static buildDatetime(field: Field): Field {
-        field = this.getList(field);
-        field.list.width = 170;
-        field.list.align = 'center';
-        field = this.getInput(field, { placeholder: '请选择' });
-        field = this.getEdit(field);
-        field.edit.input.type = InputType.DATETIME;
+        field = this.getList(field, { width: 170, align: 'center' });
+        field = this.getEdit(field, { input: { placeholder: '请选择', type: InputType.DATETIME } });
+        return field;
+    }
+
+    static buildDate(field: Field): Field {
+        field = this.getList(field, { width: 170, align: 'center' });
+        field = this.getEdit(field, { input: { placeholder: '请选择', type: InputType.DATE } });
         return field;
     }
 
@@ -163,18 +154,14 @@ export class FieldUtils {
                         return sanitizer.bypassSecurityTrustHtml('<span style="color: #ff4d4f">否</span>');
                     }
                 }
-            },
-            edit: { disabled: true }
+            }
         }, field);
         return this.buildBoolean(field);
     }
 
     static buildBoolean(field: Field): Field {
-        field = this.getList(field);
-        field.list.width = 80;
-        field.list.align = 'center';
-        field = this.getEdit(field);
-        field.edit.input.type = InputType.BOOLEAN;
+        field = this.getList(field, { width: 80, align: 'center' });
+        field = this.getEdit(field, { input: { type: InputType.BOOLEAN } });
         return field;
     }
 
@@ -192,6 +179,7 @@ export class FieldUtils {
 
     static getEdit(field: Field, edit?: Edit): Field {
         field.edit = Object.assign({ visible: true }, field.edit);
+        field.edit.code = field.code;
         if (edit) {
             for (const key in edit) {
                 if (edit.hasOwnProperty(key) && key !== 'label' && key !== 'input' && field.edit[key] === undefined) {
@@ -200,18 +188,24 @@ export class FieldUtils {
             }
             if (edit.label) {
                 field = this.getLabel(field, edit.label);
+            } else {
+                field = this.getLabel(field);
             }
             if (edit.input) {
                 field = this.getInput(field, edit.input);
+            } else {
+                field = this.getInput(field);
             }
         } else {
             field = this.getLabel(field);
             field = this.getInput(field);
-
         }
         if (field.filter) {
-            field.filter.label = Object.assign(field.edit.label, field.filter.label);
-            field.filter.input = Object.assign(field.edit.input, field.filter.input);
+            field.filter.code = field.edit.code;
+            const label = Object.assign({}, field.edit.label);
+            const input = Object.assign({}, field.edit.input);
+            field.filter.label = Object.assign(label, field.filter.label);
+            field.filter.input = Object.assign(input, field.filter.input);
         }
         return field;
     }
@@ -232,6 +226,19 @@ export class FieldUtils {
             field.edit.input = Object.assign(input, field.edit.input);
         }
         return field;
+    }
+
+    static resetSubfieldEditCode(fields: Array<Field>): void {
+        fields.forEach(field => {
+            if (field.children) {
+                field.children.forEach(subfield => {
+                    subfield.edit.code = field.edit.code + '.' + subfield.edit.code;
+                    if (subfield.filter) {
+                        subfield.filter.code = subfield.edit.code;
+                    }
+                });
+            }
+        });
     }
 
 }

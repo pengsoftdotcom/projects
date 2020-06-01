@@ -8,12 +8,10 @@ import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.entity.Beanable;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.GrantedAuthority;
 
-import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
@@ -25,9 +23,9 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-@Named
-@Aspect
-public class HandleApiOperationAuthoritiesAspect {
+//@Named
+//@Aspect
+public class HandleApiOperationAuthorityAspect {
 
     @SuppressWarnings("unchecked")
     @Around(JoinPoints.ALL_API)

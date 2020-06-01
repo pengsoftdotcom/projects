@@ -6,6 +6,11 @@ import com.fasterxml.jackson.databind.ser.std.NullSerializer;
 import com.pengsoft.security.domain.validation.Username;
 import com.pengsoft.support.domain.entity.Bean;
 import com.pengsoft.support.domain.entity.Enable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
@@ -31,6 +36,10 @@ import java.util.Locale;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@RequiredArgsConstructor
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_user", indexes = {
@@ -41,6 +50,7 @@ public class User extends Bean implements Enable {
 
     private static final long serialVersionUID = -4947447323105702218L;
 
+    @NonNull
     @Username
     @Column(updatable = false)
     private String username;
@@ -55,6 +65,7 @@ public class User extends Bean implements Enable {
     @Size(max = 255)
     private String mpOpenId;
 
+    @NonNull
     @JsonSerialize(using = NullSerializer.class)
     @Column(updatable = false)
     private String password;
@@ -76,104 +87,5 @@ public class User extends Bean implements Enable {
     @OneToMany(mappedBy = "user", cascade = CascadeType.REMOVE)
     @NotFound(action = NotFoundAction.IGNORE)
     private List<UserRole> userRoles = new ArrayList<>();
-
-    public User() {
-
-    }
-
-    public User(final String username, final String password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(final String username) {
-        this.username = username;
-    }
-
-    public String getMobile() {
-        return mobile;
-    }
-
-    public void setMobile(final String mobile) {
-        this.mobile = mobile;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(final String email) {
-        this.email = email;
-    }
-
-    public String getMpOpenId() {
-        return mpOpenId;
-    }
-
-    public void setMpOpenId(final String mpOpenId) {
-        this.mpOpenId = mpOpenId;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(final String password) {
-        this.password = password;
-    }
-
-    public String getLocale() {
-        return locale;
-    }
-
-    public void setLocale(final String locale) {
-        this.locale = locale;
-    }
-
-    public LocalDateTime getSignedInAt() {
-        return signedInAt;
-    }
-
-    public void setSignedInAt(final LocalDateTime signedInAt) {
-        this.signedInAt = signedInAt;
-    }
-
-    public long getSignInFailureCount() {
-        return signInFailureCount;
-    }
-
-    public void setSignInFailureCount(final long signInFailureCount) {
-        this.signInFailureCount = signInFailureCount;
-    }
-
-    public LocalDateTime getExpiredAt() {
-        return expiredAt;
-    }
-
-    public void setExpiredAt(final LocalDateTime expiredAt) {
-        this.expiredAt = expiredAt;
-    }
-
-    @Override
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    @Override
-    public void setEnabled(final boolean enabled) {
-        this.enabled = enabled;
-    }
-
-    public List<UserRole> getUserRoles() {
-        return userRoles;
-    }
-
-    public void setUserRoles(final List<UserRole> userRoles) {
-        this.userRoles = userRoles;
-    }
 
 }

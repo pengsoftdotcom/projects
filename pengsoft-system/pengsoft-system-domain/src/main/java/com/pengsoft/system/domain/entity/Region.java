@@ -2,6 +2,8 @@ package com.pengsoft.system.domain.entity;
 
 import com.pengsoft.support.domain.entity.Codeable;
 import com.pengsoft.support.domain.entity.TreeBean;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -17,6 +19,8 @@ import javax.validation.constraints.Size;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_region", indexes = {
@@ -36,31 +40,5 @@ public class Region extends TreeBean<Region> implements Codeable {
 
     @Size(max = 255)
     private String remark;
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(final String remark) {
-        this.remark = remark;
-    }
 
 }

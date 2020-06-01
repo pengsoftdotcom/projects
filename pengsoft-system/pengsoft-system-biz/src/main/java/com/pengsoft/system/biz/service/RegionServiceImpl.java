@@ -1,13 +1,14 @@
 package com.pengsoft.system.biz.service;
 
+import java.util.Optional;
+
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+
 import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
 import com.pengsoft.system.biz.repository.RegionRepository;
 import com.pengsoft.system.domain.entity.Region;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * The implementer of {@link RegionService} based on JPA.
@@ -23,7 +24,7 @@ public class RegionServiceImpl extends TreeBeanServiceImpl<RegionRepository, Reg
     public Region save(final Region region) {
         findOneByCode(region.getCode()).ifPresent(source -> {
             if (EntityUtils.ne(source, region)) {
-                throw exceptions.constraintViolated("code", region.getCode());
+                throw getExceptions().constraintViolated("code", region.getCode());
             }
         });
         return super.save(region);

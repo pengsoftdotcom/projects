@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,17 +34,21 @@ public class UserProfileFacadeImpl extends BeanFacadeImpl<UserProfileService, Us
 
     @Override
     public UserProfile save(final UserProfile userProfile) {
-        super.save(userProfile);
         final var user = userService.save(new User(userProfile.getMobile(), UUID.randomUUID().toString()));
         final var roles = roleService.findOneByCode(Role.USER).map(List::of).orElseThrow(() -> new MissingConfigurationException("No role user configured."));
         userService.grantRoles(user, roles);
         userProfile.setUser(user);
-        return userProfile;
+        return super.save(userProfile);
     }
 
     @Override
     public Optional<UserProfile> findOneByMobile(@NotBlank final String mobile) {
         return getService().findOneByMobile(mobile);
+    }
+
+    @Override
+    public Optional<UserProfile> findOneByUser(@NotNull final User user) {
+        return getService().findOneByUser(user);
     }
 
 }

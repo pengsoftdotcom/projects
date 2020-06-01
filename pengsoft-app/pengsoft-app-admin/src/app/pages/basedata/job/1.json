@@ -1,0 +1,32 @@
+[
+    {
+        "client_id": "c356d7b5-c8f9-420b-bd23-85720cdc681a",
+        "cmd_id": "ffffffff",
+        "version": "0.2",
+        "cmd": "create_face",
+        "per_id": "ff00ff",
+        "face_id": "ff00ff",
+        "per_name": "ning",
+        "idcardNum": "123456",
+        "img_url": "http://dqfile-1251895221.cos.ap-guangzhou.myqcloud. com/img/DC681D46EA932574179933CA04F29998A99F2EF9.jpg",
+        "idcardper": "51102419999999171x",
+        "s_time": 0,
+        "e_time": 1000,
+        "per_type": 0,
+        "usr_type": 0
+    },
+    {
+        "version": "0.2",
+        "cmd": "create_face",
+        "per_id": "ff00ff",
+        "face_id": "ff00ff",
+        "per_name": "tony",
+        "idcardNum": "1234",
+        "img_data": "fgfsgfs",
+        "idcardper": "51102419999999171x",
+        "s_time": 0,
+        "e_time": 1000,
+        "per_type": 0,
+        "usr_type": 0
+    }
+]

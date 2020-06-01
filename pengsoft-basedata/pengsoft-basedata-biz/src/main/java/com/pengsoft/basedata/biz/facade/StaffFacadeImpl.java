@@ -1,49 +1,76 @@
 package com.pengsoft.basedata.biz.facade;
 
+import com.pengsoft.basedata.biz.service.StaffService;
 import com.pengsoft.basedata.biz.service.UserProfileService;
+import com.pengsoft.basedata.domain.entity.Job;
+import com.pengsoft.basedata.domain.entity.Staff;
 import com.pengsoft.basedata.domain.entity.UserProfile;
-import com.pengsoft.security.biz.service.RoleService;
 import com.pengsoft.security.biz.service.UserService;
-import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.support.biz.facade.BeanFacadeImpl;
-import com.pengsoft.support.commons.exception.MissingConfigurationException;
+import com.pengsoft.support.commons.util.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotBlank;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 /**
- * The implementer of {@link UserProfileFacade}
+ * The implementer of {@link StaffFacade}
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
 @Service
-public class UserProfileFacadeImpl extends BeanFacadeImpl<UserProfileService, UserProfile, String> implements UserProfileFacade {
+public class StaffFacadeImpl extends BeanFacadeImpl<StaffService, Staff, String> implements StaffFacade {
+
+    @Inject
+    private UserProfileService userProfileService;
 
     @Inject
     private UserService userService;
 
-    @Inject
-    private RoleService roleService;
-
     @Override
-    public UserProfile save(final UserProfile userProfile) {
-        super.save(userProfile);
-        final var user = userService.save(new User(userProfile.getMobile(), UUID.randomUUID().toString()));
-        final var roles = roleService.findOneByCode(Role.USER).map(List::of).orElseThrow(() -> new MissingConfigurationException("No role user configured."));
-        userService.grantRoles(user, roles);
-        userProfile.setUser(user);
-        return userProfile;
+    public Staff save(final Staff staff) {
+        final var userProfile = userProfileService.findOneByMobile(staff.getUserProfile().getMobile()).orElse(staff.getUserProfile());
+        if (StringUtils.isBlank(userProfile.getId())) {
+            final var user = userService.findOneByMobile(userProfile.getMobile()).orElse(new User(userProfile.getMobile(), UUID.randomUUID().toString()));
+            if (StringUtils.isBlank(user.getId())) {
+                userService.save(user);
+            }
+            userProfile.setUser(user);
+        } else {
+            BeanUtils.copyProperties(staff.getUserProfile(), userProfile, "id", "mobile", "user", "version");
+        }
+        staff.setUserProfile(userProfileService.save(userProfile));
+        return super.save(staff);
     }
 
     @Override
-    public Optional<UserProfile> findOneByMobile(@NotBlank final String mobile) {
-        return getService().findOneByMobile(mobile);
+    public void setMajorJob(final UserProfile userProfile, final Job job) {
+        getService().setMajorJob(userProfile, job);
+    }
+
+    @Override
+    public Optional<Staff> findOneByUserProfileAndJob(final UserProfile userProfile, final Job job) {
+        return getService().findOneByUserProfileAndJob(userProfile, job);
+    }
+
+    @Override
+    public Optional<Staff> findOneByUserProfileAndMajorTrue(final UserProfile userProfile) {
+        return getService().findOneByUserProfileAndMajorTrue(userProfile);
+    }
+
+    @Override
+    public List<Staff> findAllByUserProfile(final UserProfile userProfile) {
+        return getService().findAllByUserProfile(userProfile);
+    }
+
+    @Override
+    public List<Staff> findAllByJobIn(final List<Job> jobs) {
+        return getService().findAllByJobIn(jobs);
     }
 
 }

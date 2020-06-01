@@ -2,10 +2,9 @@ package com.pengsoft.security.domain.entity;
 
 import com.pengsoft.security.starter.SecurityApplication;
 import com.pengsoft.support.test.BaseEntityTest;
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
@@ -15,11 +14,10 @@ import org.springframework.test.context.ActiveProfiles;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Slf4j
 @SpringBootTest(classes = SecurityApplication.class)
 @ActiveProfiles("security")
 public class UserTest extends BaseEntityTest {
-
-    private static final Logger log = LoggerFactory.getLogger(UserTest.class);
 
     @Test
     public void validate() {

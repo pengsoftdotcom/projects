@@ -10,8 +10,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
@@ -22,9 +21,8 @@ import java.io.Serializable;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Slf4j
 public class QueryDslUtils {
-
-    private static final Logger log = LoggerFactory.getLogger(QueryDslUtils.class);
 
     private static final String GET_PATH_WRONG = "get %s path wrong from entity class: %s";
 

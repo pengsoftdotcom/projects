@@ -1,8 +1,6 @@
 import { OnInit, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { BeanService } from 'src/app/services/commons/bean.service';
-import { SecurityService } from 'src/app/services/commons/security.service';
-import { TreeBeanService } from 'src/app/services/commons/tree-bean.service';
 import { BaseComponent } from './base.component';
 import { Button } from './button/button';
 import { EditComponent } from './edit/edit.component';
@@ -15,11 +13,23 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
 
     filterForm: any = {};
 
+    filterWidth = 900;
+
+    filterSpan = 12;
+
     editForm: any = {};
 
-    listData = [];
+    editToolbarButtons: Array<Button> = [];
+
+    fields: Array<Field> = [];
+
+    listData: Array<any> = [];
 
     pageData: Page = { page: 1, size: 20, total: 1, sort: [] };
+
+    listToolbarButtons: Array<Button> = [];
+
+    listActionButtons: Array<Button> = [];
 
     errors = {};
 
@@ -31,59 +41,53 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
         protected bean: S,
         protected modal: NzModalService,
         protected message: NzMessageService
-    ) { super(); }
+    ) {
+        super();
+        this.init();
+    }
+
+    private init() {
+        this.initFields();
+        this.intEditToolbarButtons();
+        this.initListToolbarButtons();
+        this.initListActionButtons();
+    }
 
     ngOnInit() {
         this.list();
     }
 
-    abstract get fields(): Array<Field>;
+    abstract initFields(): void;
 
-    get filterWidth(): number {
-        return 900;
-    }
-
-    get filterSpan(): number {
-        return 12;
-    }
-
-    get editButtons(): Array<Button> {
-        return [
-            { name: '保存', action: () => this.save() }
+    intEditToolbarButtons(): void {
+        this.editToolbarButtons = [
+            { name: '保存', type: 'primary', size: 'default', action: () => this.save(), authority: this.getAuthority('save') }
         ];
     }
 
-    get listToolbarButtons(): Array<Button> {
-        const buttons = [];
+    initListToolbarButtons(): void {
+        this.listToolbarButtons = [];
         if (this.fields.some(field => field.filter)
             || this.fields.filter(field => field.children).some(field => field.children.some(subfield => subfield.filter))) {
-            buttons.push(
-                {
-                    name: '搜索', type: 'link', action: () => this.filter(),
-                    authority: [
-                        this.getAuthority('findPage'),
-                        this.getAuthority('findAll'),
-                        this.getAuthority('findAllByParent')
-                    ].join(',')
-                }
-            );
+            this.listToolbarButtons.push({
+                name: '搜索', type: 'link', action: () => this.filter(),
+                authority: [
+                    this.getAuthority('findPage'),
+                    this.getAuthority('findAll'),
+                    this.getAuthority('findAllByParent')
+                ].join(',')
+            });
         }
-        return buttons.concat([
-            { name: '新增', type: 'primary', action: () => this.edit(), authority: this.getAuthority('findOne') },
-            { name: '批量删除', type: 'primary', danger: true, action: () => this.delete(), authority: this.getAuthority('delete') }
-        ]);
+        this.listToolbarButtons.push({ name: '新增', type: 'primary', action: () => this.edit(), authority: this.getAuthority('findOne') });
+        this.listToolbarButtons.push({
+            name: '批量删除', type: 'primary', danger: true, action: () => this.delete(), authority: this.getAuthority('delete')
+        });
     }
 
-    get listActionButtons(): Array<Button> {
-        return [
+    initListActionButtons(): void {
+        this.listActionButtons = [
             { name: '修改', type: 'link', divider: true, width: 45, action: (row: any) => this.edit(row), authority: this.getAuthority('findOne') },
             { name: '删除', type: 'link', danger: true, width: 28, action: (row: any) => this.delete(row), authority: this.getAuthority('delete') }
-        ];
-    }
-
-    get editToolbarButtons(): Array<Button> {
-        return [
-            { name: '保存', type: 'primary', size: 'default', action: () => this.save(), authority: this.getAuthority('save') }
         ];
     }
 
@@ -95,6 +99,14 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
         this.bean.findOne(id, {
             before: () => this.editComponent.loading = true,
             success: (res: any) => {
+                this.fields.filter(field => !!field.children).forEach(field => {
+                    for (const key in res[field.code]) {
+                        if (res[field.code].hasOwnProperty(key)) {
+                            res[field.code + '.' + key] = res[field.code][key];
+                        }
+                    }
+                    delete res[field.code];
+                });
                 this.editForm = res;
                 this.afterEditFormFilled();
             },
@@ -105,7 +117,18 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
     afterEditFormFilled(): void { }
 
     save(): void {
-        this.bean.save(this.editForm, {
+        const form = Object.assign({}, this.editForm);
+        for (const key in form) {
+            if (form.hasOwnProperty(key) && key.indexOf('.') > -1) {
+                const code = key.split('.');
+                if (!form[code[0]]) {
+                    form[code[0]] = {};
+                }
+                form[code[0]][code[1]] = form[key];
+                delete form[key];
+            }
+        }
+        this.bean.save(form, {
             errors: this.errors,
             before: () => this.editComponent.loading = true,
             success: (res: any) => {
@@ -131,12 +154,14 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
             },
             nzOnOk: () => this.list(),
             nzCancelText: '重置',
-            nzOnCancel: () => this.afterFilterReset()
+            nzOnCancel: () => {
+                this.filterForm = {};
+                this.afterFilterFormReset();
+            }
         });
     }
 
-    afterFilterReset(): void {
-        this.filterForm = {};
+    afterFilterFormReset(): void {
         this.list();
     }
 
@@ -161,27 +186,20 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
                 nzOnOk: () => new Promise(resolve => {
                     this.bean.delete(ids, {
                         success: () => {
+                            this.afterListDataDeleted(ids.map(id => this.listData.find(value => value.id === id)));
                             this.listComponent.allChecked = false;
                             this.listComponent.indeterminate = false;
                             this.message.info('删除成功');
                             resolve();
-                            ids.forEach(id => {
-                                const deleted = this.listData.splice(this.listData.findIndex(value => value.id === id), 1)[0];
-                                const parentIds = deleted.parentIds ? `${deleted.parentIds}::${deleted.id}` : deleted.id;
-                                // delete all children
-                                this.listData.filter(value => value.parentIds.indexOf(parentIds) === 0)
-                                    .forEach(value => this.listData.splice(this.listData.findIndex(v => v.id = value.id), 1));
-                                // update the 'leaf' property of the deleted node's parent
-                                if (deleted.parent) {
-                                    this.listData.filter(value => value.id === deleted.parent.id)
-                                        .forEach(value => value.leaf = !this.listData.some(v => v.parentIds === deleted.parentIds));
-                                }
-                            });
                         }
                     });
                 })
             });
         }
+    }
+
+    afterListDataDeleted(deletedRows: Array<any>): void {
+        this.list();
     }
 
     getAuthority(action: string): string {

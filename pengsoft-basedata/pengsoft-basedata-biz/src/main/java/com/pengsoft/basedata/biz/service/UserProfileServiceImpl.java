@@ -2,6 +2,7 @@ package com.pengsoft.basedata.biz.service;
 
 import com.pengsoft.basedata.biz.repository.UserProfileRepository;
 import com.pengsoft.basedata.domain.entity.UserProfile;
+import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.support.biz.service.BeanServiceImpl;
 import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.util.EntityUtils;
@@ -24,7 +25,7 @@ public class UserProfileServiceImpl extends BeanServiceImpl<UserProfileRepositor
     public UserProfile save(final UserProfile userProfile) {
         findOneByMobile(userProfile.getMobile()).ifPresent(source -> {
             if (EntityUtils.ne(source, userProfile)) {
-                throw exceptions.constraintViolated("mobile", "Exists", userProfile.getMobile());
+                throw getExceptions().constraintViolated("mobile", "Exists", userProfile.getMobile());
             }
         });
         if (StringUtils.isBlank(userProfile.getNickname())) {
@@ -36,6 +37,11 @@ public class UserProfileServiceImpl extends BeanServiceImpl<UserProfileRepositor
     @Override
     public Optional<UserProfile> findOneByMobile(final String mobile) {
         return getRepository().findOneByMobile(mobile);
+    }
+
+    @Override
+    public Optional<UserProfile> findOneByUser(final User user) {
+        return getRepository().findOneByUser(user);
     }
 
 }

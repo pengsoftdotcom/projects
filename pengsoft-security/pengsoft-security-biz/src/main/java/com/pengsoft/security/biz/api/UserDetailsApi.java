@@ -1,8 +1,9 @@
 package com.pengsoft.security.biz.api;
 
 import com.pengsoft.security.biz.facade.UserFacade;
-import com.pengsoft.security.biz.service.AdvancedUserDetailsService;
+import com.pengsoft.security.biz.service.DefaultUserDetailsService;
 import com.pengsoft.security.commons.annotation.Authenticated;
+import com.pengsoft.security.commons.annotation.UpdatingAuthentication;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.util.SecurityUtils;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,18 +30,20 @@ public class UserDetailsApi {
     private UserFacade userFacade;
 
     @Inject
-    private AdvancedUserDetailsService service;
+    private DefaultUserDetailsService service;
 
     @GetMapping("current")
     public UserDetails current() {
         return SecurityUtils.getUserDetails();
     }
 
+    @UpdatingAuthentication
     @PostMapping("set-major-role")
-    public void setMajorRole(@RequestParam("id") final Role role) {
-        service.setMajorRole(role);
+    public UserDetails setMajorRole(@RequestParam("id") final Role role) {
+        return service.setMajorRole(role);
     }
 
+    @UpdatingAuthentication
     @PostMapping("set-current-role")
     public UserDetails setCurrentRole(@RequestParam("id") final Role role) {
         return service.setCurrentRole(role);

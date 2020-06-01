@@ -11,6 +11,10 @@ import java.util.List;
 @ConfigurationProperties("pengsoft.security")
 public class WebSecurityAutoConfigureProperties {
 
+    /**
+     * The updating authentication MQ topic
+     */
+    private String updatingAuthenticationMqTopic;
 
     /**
      * The maximum count of sign in failure
@@ -21,6 +25,14 @@ public class WebSecurityAutoConfigureProperties {
      * The URIs permitted.
      */
     private List<String> urisPermitted = List.of();
+
+    public String getUpdatingAuthenticationMqTopic() {
+        return updatingAuthenticationMqTopic;
+    }
+
+    public void setUpdatingAuthenticationMqTopic(final String updatingAuthenticationMqTopic) {
+        this.updatingAuthenticationMqTopic = updatingAuthenticationMqTopic;
+    }
 
     public int getAllowSignInFailure() {
         return allowSignInFailure;
@@ -37,4 +49,5 @@ public class WebSecurityAutoConfigureProperties {
     public void setUrisPermitted(final List<String> urisPermitted) {
         this.urisPermitted = urisPermitted;
     }
+
 }

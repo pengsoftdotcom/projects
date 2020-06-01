@@ -12,9 +12,9 @@ export class CascaderComponent extends InputComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.form) {
-            if (this.form[this.field.code]) {
-                const id = this.form[this.field.code].id;
-                const parentIds = this.form[this.field.code].parentIds;
+            if (this.form[this.edit.code]) {
+                const id = this.form[this.edit.code].id;
+                const parentIds = this.form[this.edit.code].parentIds;
                 if (parentIds) {
                     this.rawValue = parentIds.split('::').concat(id);
                 } else {
@@ -26,10 +26,10 @@ export class CascaderComponent extends InputComponent implements OnChanges {
 
     modelChange(event: any): void {
         if (this.rawValue && this.rawValue.length > 0) {
-            const nodes = EntityUtils.findTreeNodes((this.field.edit.input.options as Array<NzTreeNodeOptions>), this.rawValue);
-            this.form[this.field.code] = nodes[this.rawValue.length - 1].value;
+            const nodes = EntityUtils.findTreeNodes((this.edit.input.options as Array<NzTreeNodeOptions>), this.rawValue);
+            this.form[this.edit.code] = nodes[this.rawValue.length - 1].value;
         } else {
-            this.form[this.field.code] = null;
+            this.form[this.edit.code] = null;
         }
     }
 

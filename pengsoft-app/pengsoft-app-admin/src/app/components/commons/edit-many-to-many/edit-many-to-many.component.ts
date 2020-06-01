@@ -33,10 +33,10 @@ export class EditManyToManyComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.handleTransferHeight();
+        this.initTransferHeight();
     }
 
-    private handleTransferHeight() {
+    private initTransferHeight() {
         const totalHeight = window.innerHeight;
         const titleHeight = 55;
         const toolbarHeight = 65;

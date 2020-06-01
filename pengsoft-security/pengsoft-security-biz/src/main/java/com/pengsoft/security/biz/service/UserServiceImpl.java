@@ -1,5 +1,15 @@
 package com.pengsoft.security.biz.service;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.springframework.context.annotation.Primary;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.pengsoft.security.biz.repository.UserRepository;
 import com.pengsoft.security.biz.repository.UserRoleRepository;
 import com.pengsoft.security.domain.entity.Role;
@@ -9,14 +19,6 @@ import com.pengsoft.support.biz.service.BeanServiceImpl;
 import com.pengsoft.support.commons.util.DateUtils;
 import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.util.EntityUtils;
-import org.springframework.context.annotation.Primary;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * The implementer of {@link UserService} based on JPA.
@@ -48,25 +50,25 @@ public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, Strin
 
     private void usernameAlreadyExists(final User user, final User source) {
         if (EntityUtils.ne(source, user)) {
-            throw exceptions.constraintViolated("username", "Exists", user.getUsername());
+            throw getExceptions().constraintViolated("username", "Exists", user.getUsername());
         }
     }
 
-
     @Override
     public void changePassword(final String id, final String oldPassword, final String newPassword) {
-        final var user = findOne(id).orElseThrow(() -> new IllegalArgumentException("the entity with given id has been deleted or the given id is invalid."));
+        final var user = findOne(id)
+                .orElseThrow(() -> new IllegalArgumentException("the entity with given id has been deleted or the given id is invalid."));
         if (passwordEncoder.matches(oldPassword, user.getPassword())) {
             resetPassword(id, newPassword);
         } else {
-            throw exceptions.constraintViolated("oldPassword", "WrongPassword", oldPassword);
+            throw getExceptions().constraintViolated("oldPassword", "WrongPassword", oldPassword);
         }
     }
 
     @Override
     public void resetPassword(final String id, final String password) {
         if (findOne(id).isEmpty()) {
-            throw exceptions.entityNotFound(id);
+            throw getExceptions().entityNotFound(id);
         }
         getRepository().resetPassword(id, passwordEncoder.encode(password));
     }
@@ -108,7 +110,7 @@ public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, Strin
 
     @Override
     public void signInSuccess(final String username) {
-        final var user = findOneByUsername(username).orElseThrow(() -> exceptions.entityNotFound(username));
+        final var user = findOneByUsername(username).orElseThrow(() -> getExceptions().entityNotFound(username));
         user.setSignedInAt(DateUtils.currentDateTime());
         user.setSignInFailureCount(0L);
         save(user);

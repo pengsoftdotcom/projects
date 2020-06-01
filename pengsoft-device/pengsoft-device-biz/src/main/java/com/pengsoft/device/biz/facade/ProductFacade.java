@@ -1,7 +1,7 @@
 package com.pengsoft.device.biz.facade;
 
-import com.pengsoft.basedata.biz.service.ProductService;
-import com.pengsoft.basedata.domain.entity.Product;
+import com.pengsoft.device.biz.service.ProductService;
+import com.pengsoft.device.domain.entity.Product;
 import com.pengsoft.support.biz.facade.BeanFacade;
 
 /**

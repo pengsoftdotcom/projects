@@ -1,5 +1,25 @@
 package com.pengsoft.system.starter.autoconfigure;
 
+import java.util.List;
+
+import org.apache.rocketmq.acl.common.AclClientRPCHook;
+import org.apache.rocketmq.acl.common.SessionCredentials;
+import org.apache.rocketmq.client.AccessChannel;
+import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
+import org.apache.rocketmq.client.consumer.MQConsumer;
+import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
+import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
+import org.apache.rocketmq.client.consumer.rebalance.AllocateMessageQueueAveragely;
+import org.apache.rocketmq.client.exception.MQClientException;
+import org.apache.rocketmq.remoting.RPCHook;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.util.SerializationUtils;
+
 import com.aliyuncs.DefaultAcsClient;
 import com.aliyuncs.profile.DefaultProfile;
 import com.pengsoft.support.commons.json.ObjectMapper;
@@ -12,27 +32,8 @@ import com.pengsoft.system.biz.messaging.builder.MessageBuilder;
 import com.pengsoft.system.biz.messaging.sender.MessageSender;
 import com.pengsoft.system.biz.messaging.sender.SmsMessageSender;
 import com.pengsoft.system.starter.autoconfigure.properties.MessagingAutoConfigureProperties;
-import org.apache.rocketmq.acl.common.AclClientRPCHook;
-import org.apache.rocketmq.acl.common.SessionCredentials;
-import org.apache.rocketmq.client.AccessChannel;
-import org.apache.rocketmq.client.consumer.DefaultMQPushConsumer;
-import org.apache.rocketmq.client.consumer.MQConsumer;
-import org.apache.rocketmq.client.consumer.listener.ConsumeConcurrentlyStatus;
-import org.apache.rocketmq.client.consumer.listener.MessageListenerConcurrently;
-import org.apache.rocketmq.client.consumer.rebalance.AllocateMessageQueueAveragely;
-import org.apache.rocketmq.client.exception.MQClientException;
-import org.apache.rocketmq.remoting.RPCHook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.util.SerializationUtils;
 
-import java.util.List;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Messaging auto configure
@@ -40,20 +41,17 @@ import java.util.List;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Slf4j
 @Configuration
 @ComponentScan("com.*.system.biz.messaging")
 @EnableConfigurationProperties({ MessageQueueAutoConfigureProperties.class, MessagingAutoConfigureProperties.class })
 public class MessagingAutoConfigure {
 
-    private static final Logger log = LoggerFactory.getLogger(MessagingAutoConfigure.class);
-
     @Bean
     @ConditionalOnProperty(name = "pengsoft.mq.enabled", havingValue = "true")
-    public MQConsumer consumer(final MessageQueueAutoConfigureProperties mqProperties,
-                               final MessagingAutoConfigureProperties messagingProperties,
-                               final List<MessageSender> messageSenders,
-                               final ApplicationContext applicationContext,
-                               final MessageFacade messageFacade) throws MQClientException {
+    public MQConsumer messagingConsumer(final MessageQueueAutoConfigureProperties mqProperties,
+            final MessagingAutoConfigureProperties messagingProperties, final ApplicationContext applicationContext,
+            final List<MessageSender> messageSenders, final MessageFacade messageFacade) throws MQClientException {
         final var rpcHook = getRpcHook(mqProperties);
         final DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(mqProperties.getGroupId(), rpcHook, new AllocateMessageQueueAveragely());
         if (rpcHook != null) {
@@ -61,8 +59,23 @@ public class MessagingAutoConfigure {
         }
         consumer.setNamesrvAddr(mqProperties.getNamesrvAddr());
         consumer.subscribe(messagingProperties.getMqTopic(), "*");
-        consumer.registerMessageListener((MessageListenerConcurrently) (messages, context) -> {
-            log.debug("message received!");
+        consumer.registerMessageListener(messagingMessageListener(applicationContext, messageSenders, messageFacade));
+        consumer.start();
+        return consumer;
+    }
+
+    private RPCHook getRpcHook(final MessageQueueAutoConfigureProperties properties) {
+        if (StringUtils.isNotBlank(properties.getAccessKey()) && StringUtils.isNotBlank(properties.getSecretKey())) {
+            return new AclClientRPCHook(new SessionCredentials(properties.getAccessKey(), properties.getSecretKey()));
+        } else {
+            return null;
+        }
+    }
+
+    public MessageListenerConcurrently messagingMessageListener(final ApplicationContext applicationContext, final List<MessageSender> messageSenders,
+            final MessageFacade messageFacade) {
+        return (messages, context) -> {
+            log.debug("messaging message received!");
             try {
                 for (final var messageExt : messages) {
                     final var messageBody = (MessageBody) SerializationUtils.deserialize(messageExt.getBody());
@@ -78,21 +91,11 @@ public class MessagingAutoConfigure {
                     }
                 }
             } catch (final Exception e) {
-                log.error("message processing failed", e);
+                log.error("messaging message processing failed", e);
             }
-            log.debug("message processed!");
+            log.debug("messaging message processed!");
             return ConsumeConcurrentlyStatus.CONSUME_SUCCESS;
-        });
-        consumer.start();
-        return consumer;
-    }
-
-    private RPCHook getRpcHook(final MessageQueueAutoConfigureProperties properties) {
-        if (StringUtils.isNotBlank(properties.getAccessKey()) && StringUtils.isNotBlank(properties.getSecretKey())) {
-            return new AclClientRPCHook(new SessionCredentials(properties.getAccessKey(), properties.getSecretKey()));
-        } else {
-            return null;
-        }
+        };
     }
 
     @Bean

@@ -23,8 +23,8 @@ export class MessageComponent extends BeanComponent<MessageService> {
         super(bean, modal, message);
     }
 
-    get fields(): Array<Field> {
-        return [
+    initFields(): void {
+        this.fields = [
             FieldUtils.buildSelect({
                 code: 'sender', name: '发件人',
                 list: { width: 150, render: (field: Field, row: any) => row[field.code].username },
@@ -84,8 +84,8 @@ export class MessageComponent extends BeanComponent<MessageService> {
         }
         this.user.findPage(params, { page: 0, size: 20, sort: [] }, {
             before: () => component.loading = true,
-            success: (res: any) => component.field.edit.input.options
-                = res.content.map((value: any) => Object.assign({ label: value.username, value: value.id, rawValue: value })),
+            success: (res: any) => component.edit.input.options
+                = res.content.map((value: any) => Object.assign({ label: value.username, value })),
             after: () => component.loading = false
         });
     }

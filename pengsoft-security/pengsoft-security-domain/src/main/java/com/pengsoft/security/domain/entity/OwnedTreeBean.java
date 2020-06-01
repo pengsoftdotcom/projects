@@ -13,7 +13,7 @@ import javax.persistence.MappedSuperclass;
  * @since 1.0.0
  */
 @MappedSuperclass
-public class OwnedTreeBean extends TreeBean<OwnedTreeBean> implements Owned {
+public class OwnedTreeBean<T extends OwnedTreeBean<T>> extends TreeBean<T> implements Owned {
 
     private static final long serialVersionUID = 8847928383056687590L;
 

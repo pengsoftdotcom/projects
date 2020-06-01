@@ -4,40 +4,43 @@ import { TreeBeanService } from 'src/app/services/commons/tree-bean.service';
 import { EntityUtils } from 'src/app/utils/entity-utils';
 import { FieldUtils } from 'src/app/utils/field-utils';
 import { BeanComponent } from './bean.component';
-import { Field } from './form-item/field';
 import { InputComponent } from './input/input.component';
 
 export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanComponent<S> implements OnInit {
 
-    get fields(): Array<Field> {
-        return [
+    abstract get lazy(): boolean;
+
+    abstract get parentFilterForm(): any;
+
+    initFields(): void {
+        this.fields = [
             FieldUtils.buildTreeSelect({
                 code: 'parent', name: '上级',
                 list: { visible: false },
                 edit: {
                     input: {
                         lazy: this.lazy,
-                        load: (inputComponent: InputComponent, event?: NzFormatEmitEvent) => {
+                        load: (component: InputComponent, event?: NzFormatEmitEvent) => {
                             const self = this.editForm;
                             if (this.lazy) {
                                 const parent = event ? event.node.origin.value : null;
                                 this.bean.findAllExcludeSelfAndItsChildrenByParent(parent, self, this.parentFilterForm, {
-                                    before: () => inputComponent.loading = true,
+                                    before: () => component.loading = true,
                                     success: (res: any) => {
                                         if (event) {
                                             event.node.addChildren(EntityUtils.convertListToTree(res));
                                         } else {
-                                            inputComponent.field.edit.input.options = EntityUtils.convertListToTree(res);
+                                            component.edit.input.options = EntityUtils.convertListToTree(res);
                                         }
                                     },
-                                    after: () => inputComponent.loading = false
+                                    after: () => component.loading = false
                                 });
                             } else {
                                 this.bean.findAllExcludeSelfAndItsChildren(self, this.parentFilterForm, {
-                                    before: () => inputComponent.loading = true,
+                                    before: () => component.loading = true,
                                     success: (res: any) =>
-                                        inputComponent.field.edit.input.options = EntityUtils.convertListToTree(res),
-                                    after: () => inputComponent.loading = false
+                                        component.edit.input.options = EntityUtils.convertListToTree(res),
+                                    after: () => component.loading = false
                                 });
                             }
                         }
@@ -46,10 +49,6 @@ export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanC
             })
         ];
     }
-
-    abstract get lazy(): boolean;
-
-    abstract get parentFilterForm(): any;
 
     list(): void {
         if (this.lazy) {
@@ -83,6 +82,22 @@ export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanC
                 after: () => this.listComponent.loading = false
             });
         }
+    }
+
+    afterListDataDeleted(deletedRows: Array<any>): void {
+        deletedRows.forEach(row => {
+            const i = this.listData.indexOf(row);
+            this.listData.splice(i, 1);
+            const parent = this.listData.find(value => row.parent && value.id === row.parent.id);
+            if (parent) {
+                parent.leaf = !this.listData.some(value => value.parentIds === row.parentIds);
+            }
+            let j: number;
+            do {
+                j = this.listData.findIndex(value => value.parentIds.endsWith(row.id));
+                this.listData.splice(j, 1);
+            } while (j > -1);
+        });
     }
 
     loadChildren(row: any): void {

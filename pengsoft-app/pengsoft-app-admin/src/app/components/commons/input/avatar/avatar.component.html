@@ -1,9 +1,9 @@
 <nz-upload [nzAction]="path" [nzHeaders]="headers" nzName="file" nzListType="picture-card" [nzShowUploadList]="false" (nzChange)="modelChange($event)"
     [style.marginBottom]="'-19px'">
-    <ng-container *ngIf="!form[field.code]">
-        <i nz-icon [nzType]="loading ? 'loading' : 'plus'" [style.width]="field.edit.input.width + 'px'"
-            [style.height]="field.edit.input.height + 'px'" [style.lineHeight]="field.edit.input.height + 'px'"></i>
+    <ng-container *ngIf="!form[edit.code]">
+        <i nz-icon [nzType]="loading ? 'loading' : 'plus'" [style.width]="edit.input.width + 'px'" [style.height]="edit.input.height + 'px'"
+            [style.lineHeight]="edit.input.height + 'px'"></i>
     </ng-container>
-    <img *ngIf="form[field.code]" [src]="thumbnail" [style.width]="field.edit.input.width + 'px'" [style.height]="field.edit.input.height + 'px'"
-        [style.lineHeight]="field.edit.input.height + 'px'" />
+    <img *ngIf="form[edit.code]" [src]="thumbnail" [style.width]="edit.input.width + 'px'" [style.height]="edit.input.height + 'px'"
+        [style.lineHeight]="edit.input.height + 'px'" />
 </nz-upload>

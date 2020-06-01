@@ -20,10 +20,11 @@ export class CaptchaComponent extends BeanComponent<CaptchaService> {
         protected message: NzMessageService
     ) {
         super(bean, modal, message);
-
     }
-    get fields(): Array<Field> {
-        return [
+
+    initFields(): void {
+        UserComponent.prototype.initFields();
+        this.fields = [
             FieldUtils.buildTextForCode({ width: 120, align: 'center', sortable: false }),
             FieldUtils.buildDatetimeForExpiredAt(),
             FieldUtils.buildText({
@@ -38,16 +39,14 @@ export class CaptchaComponent extends BeanComponent<CaptchaService> {
         ];
     }
 
-    get listToolbarButtons(): Array<Button> {
-        const buttons = super.listToolbarButtons;
-        buttons.splice(1, 1);
-        return buttons;
+    initListToolbarButtons(): void {
+        super.initListToolbarButtons();
+        this.listToolbarButtons.splice(1, 1);
     }
 
-    get listActionButtons(): Array<Button> {
-        const buttons = super.listActionButtons;
-        buttons.splice(0, 1);
-        return buttons;
+    initListActionButtons(): void {
+        super.initListActionButtons();
+        this.listActionButtons.splice(0, 1);
     }
 
 }

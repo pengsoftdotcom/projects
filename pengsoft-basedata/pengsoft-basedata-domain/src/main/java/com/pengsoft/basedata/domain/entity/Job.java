@@ -1,18 +1,24 @@
 package com.pengsoft.basedata.domain.entity;
 
-import com.pengsoft.support.domain.entity.TreeBean;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Job
@@ -20,18 +26,24 @@ import javax.validation.constraints.Size;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_job", indexes = {
         @Index(name = "i_job_department_id", columnList = "department_id, name", unique = true),
 })
-public class Job extends TreeBean<Job> {
+public class Job extends OwnedTreeBeanExt<Job> {
 
-    private static final long serialVersionUID = 3894899356020210653L;
+    private static final long serialVersionUID = 2756342891165187326L;
 
     @NotBlank
     @Size(max = 255)
     private String name;
+
+    private boolean departmentChief;
+
+    private boolean organizationChief;
 
     @NotNull
     @ManyToOne
@@ -43,28 +55,16 @@ public class Job extends TreeBean<Job> {
     @NotFound(action = NotFoundAction.IGNORE)
     private Department department;
 
-    public String getName() {
-        return name;
-    }
+    @JsonIgnore
+    @OneToMany(mappedBy = "job", cascade = CascadeType.REMOVE)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @NotFound(action = NotFoundAction.IGNORE)
+    private List<Staff> staffs = new ArrayList<>();
 
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public Post getPost() {
-        return post;
-    }
-
-    public void setPost(final Post post) {
-        this.post = post;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(final Department department) {
-        this.department = department;
-    }
+    @JsonIgnore
+    @OneToMany(mappedBy = "job", cascade = CascadeType.REMOVE)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @NotFound(action = NotFoundAction.IGNORE)
+    private List<JobRole> jobRoles = new ArrayList<>();
 
 }

@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 import static com.pengsoft.support.commons.util.StringUtils.ESCAPES;
 import static com.pengsoft.support.commons.util.StringUtils.PACKAGE_SEPARATOR;
@@ -50,19 +51,22 @@ public class SecurityUtils {
         return null;
     }
 
-    /**
-     * Returns the property of {@link UserDetails}
-     *
-     * @param expressionString The raw expression string to parse.
-     * @param clazz            The class the caller would like the result to be
-     */
-    public static <T> T get(final String expressionString, final Class<T> clazz) {
+    public static boolean hasAnyRole(final String... roleCodes) {
         final var userDetails = getUserDetails();
         if (userDetails == null) {
-            return null;
+            return false;
         } else {
-            final var expression = parser.parseExpression(expressionString);
-            return expression.getValue(userDetails, clazz);
+            return userDetails.getRoles().stream().anyMatch(role -> Arrays.stream(roleCodes).anyMatch(roleCode -> roleCode.equals(role.getCode())));
+        }
+    }
+
+    public static boolean hasAnyAuthority(final String... authorityCodes) {
+        final var userDetails = getUserDetails();
+        if (userDetails == null) {
+            return false;
+        } else {
+            return userDetails.getAuthorities().stream().anyMatch(authority ->
+                    Arrays.stream(authorityCodes).anyMatch(authorityCode -> authorityCode.equals(authority)));
         }
     }
 
@@ -77,24 +81,45 @@ public class SecurityUtils {
      * Returns the current user id.
      */
     public static String getUserId() {
-        return getPropertyId("user");
+        return getId("user");
     }
 
     /**
      * Return department id of the current user.
      */
     public static String getControlById() {
-        return getPropertyId("controlBy");
+        return getId("controlBy");
     }
 
     /**
      * Return organization id of the current user.
      */
     public static String getBelongsToId() {
-        return getPropertyId("belongsTo");
+        return getId("belongsTo");
     }
 
-    private static String getPropertyId(final String property) {
+    /**
+     * Returns the property of {@link UserDetails}
+     *
+     * @param property The raw expression string to parse.
+     * @param clazz    The class the caller would like the result to be
+     */
+    public static <T> T get(final String property, final Class<T> clazz) {
+        final var userDetails = getUserDetails();
+        if (userDetails == null) {
+            return null;
+        } else {
+            final var expression = parser.parseExpression(property);
+            return expression.getValue(userDetails, clazz);
+        }
+    }
+
+    /**
+     * Returns the property's id of {@link UserDetails}
+     *
+     * @param property The raw expression string to parse.
+     */
+    public static String getId(final String property) {
         if (isPropertyExists(property)) {
             return SecurityUtils.get(property + "?.id", String.class);
         } else {
@@ -151,7 +176,8 @@ public class SecurityUtils {
      * @return The module code.
      */
     public static String getModuleCodeFromPackageName(final String packageName) {
-        return StringUtils.substringAfter(StringUtils.substringBetween(packageName, "com" + PACKAGE_SEPARATOR, PACKAGE_SEPARATOR + "domain.entity"), PACKAGE_SEPARATOR);
+        return StringUtils.substringAfter(StringUtils.substringBetween(packageName, "com" + PACKAGE_SEPARATOR, PACKAGE_SEPARATOR + "domain.entity"),
+                PACKAGE_SEPARATOR);
     }
 
     /**

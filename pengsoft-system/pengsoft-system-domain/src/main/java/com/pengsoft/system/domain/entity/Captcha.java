@@ -3,6 +3,8 @@ package com.pengsoft.system.domain.entity;
 import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.support.domain.entity.Bean;
 import com.pengsoft.support.domain.entity.Codeable;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
@@ -22,6 +24,8 @@ import java.time.LocalDateTime;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_captcha", indexes = {
@@ -41,31 +45,5 @@ public class Captcha extends Bean implements Codeable {
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private User user;
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public LocalDateTime getExpiredAt() {
-        return expiredAt;
-    }
-
-    public void setExpiredAt(final LocalDateTime expiredAt) {
-        this.expiredAt = expiredAt;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(final User user) {
-        this.user = user;
-    }
 
 }

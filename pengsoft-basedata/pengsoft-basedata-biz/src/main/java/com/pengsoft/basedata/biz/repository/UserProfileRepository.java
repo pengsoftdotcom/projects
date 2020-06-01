@@ -2,6 +2,7 @@ package com.pengsoft.basedata.biz.repository;
 
 import com.pengsoft.basedata.domain.entity.QUserProfile;
 import com.pengsoft.basedata.domain.entity.UserProfile;
+import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.support.biz.repository.BeanRepository;
 import com.querydsl.core.types.dsl.StringPath;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 /**
@@ -31,8 +33,18 @@ public interface UserProfileRepository extends BeanRepository<QUserProfile, User
 
     /**
      * Returns an {@link Optional} of a {@link UserProfile} with given mobile.
+     *
+     * @param mobile {@link UserProfile}'s mobile
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
     Optional<UserProfile> findOneByMobile(@NotBlank String mobile);
+
+    /**
+     * Returns an {@link Optional} of a {@link UserProfile} with given user.
+     *
+     * @param user {@link UserProfile}'s user
+     */
+    @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
+    Optional<UserProfile> findOneByUser(@NotNull User user);
 
 }

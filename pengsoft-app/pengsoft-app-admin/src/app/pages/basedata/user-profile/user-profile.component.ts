@@ -7,6 +7,7 @@ import { DictionaryItemService } from 'src/app/services/system/dictionary-item.s
 import { FieldUtils } from 'src/app/utils/field-utils';
 import { InputComponent } from 'src/app/components/commons/input/input.component';
 import { DomSanitizer } from '@angular/platform-browser';
+import { ResetPasswordComponent } from 'src/app/components/modal/reset-password/reset-password.component';
 
 @Component({
     selector: 'app-user-profile',
@@ -16,7 +17,7 @@ import { DomSanitizer } from '@angular/platform-browser';
 export class UserProfileComponent extends BeanComponent<UserProfileService> {
 
     constructor(
-        private dictionaryItem: DictionaryItemService,
+        public dictionaryItem: DictionaryItemService,
         protected bean: UserProfileService,
         protected modal: NzModalService,
         protected message: NzMessageService
@@ -24,8 +25,8 @@ export class UserProfileComponent extends BeanComponent<UserProfileService> {
         super(bean, modal, message);
     }
 
-    get fields(): Array<Field> {
-        return [
+    initFields(): void {
+        this.fields = [
             FieldUtils.buildAvatar(),
             FieldUtils.buildTextForName({ code: 'name', name: '姓名', edit: { required: true } }),
             FieldUtils.buildText({ code: 'nickname', name: '昵称', filter: {} }),
@@ -34,12 +35,12 @@ export class UserProfileComponent extends BeanComponent<UserProfileService> {
                 list: { width: 80, align: 'center' },
                 edit: {
                     input: {
-                        load: (inputComponent: InputComponent) => {
+                        load: (component: InputComponent) => {
                             this.dictionaryItem.findAllByTypeCode('gender', null, {
-                                before: () => inputComponent.loading = true,
-                                success: (res: any) => inputComponent.field.edit.input.options
-                                    = res.map((value: any) => Object.assign({ label: value.name, value: value.id, rawValue: value })),
-                                after: () => inputComponent.loading = false
+                                before: () => component.loading = true,
+                                success: (res: any) => component.edit.input.options
+                                    = res.map((value: any) => Object.assign({ label: value.name, value })),
+                                after: () => component.loading = false
                             });
                         }
                     }
@@ -51,17 +52,51 @@ export class UserProfileComponent extends BeanComponent<UserProfileService> {
                 list: {
                     width: 140, align: 'center',
                     render: (field: Field, row: any, sanitizer: DomSanitizer) => {
-                        if (row.mobile) {
-                            return sanitizer.bypassSecurityTrustHtml(`<code>${row.mobile}</code>`);
+                        if (row[field.code]) {
+                            return sanitizer.bypassSecurityTrustHtml(`<code>${row[field.code]}</code>`);
                         } else {
                             return null;
                         }
                     }
                 },
-                edit: { required: true, disabled: (field: Field, form: any) => !!form.id },
+                edit: { required: true, disabled: (form: any) => !!form.id },
                 filter: {}
             })
         ];
+    }
+
+    initListActionButtons(): void {
+        super.initListActionButtons();
+        this.listActionButtons.splice(0, 0, {
+            name: '重置密码',
+            type: 'link',
+            divider: true,
+            width: 73,
+            authority: 'security::user::reset_password',
+            action: (row: any) => this.resetPassword(row)
+        });
+    }
+
+    resetPassword(row: any): void {
+        this.modal.create({
+            nzBodyStyle: { padding: '16px', marginBottom: '-24px' },
+            nzTitle: '重置密码',
+            nzContent: ResetPasswordComponent,
+            nzComponentParams: {
+                form: { id: row.user.id }
+            },
+            nzOnOk: component => new Promise(resolve => {
+                component.submit({
+                    before: () => component.loading = true,
+                    success: () => {
+                        this.message.info('重置成功');
+                        resolve(true);
+                    },
+                    failure: () => resolve(false),
+                    after: () => component.loading = false
+                });
+            })
+        });
     }
 
 }

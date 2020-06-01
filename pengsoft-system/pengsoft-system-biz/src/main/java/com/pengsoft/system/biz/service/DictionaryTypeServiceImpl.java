@@ -1,13 +1,14 @@
 package com.pengsoft.system.biz.service;
 
+import java.util.Optional;
+
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+
 import com.pengsoft.support.biz.service.BeanServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
 import com.pengsoft.system.biz.repository.DictionaryTypeRepository;
 import com.pengsoft.system.domain.entity.DictionaryType;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * The implementer of {@link DictionaryTypeService} based on JPA.
@@ -23,7 +24,7 @@ public class DictionaryTypeServiceImpl extends BeanServiceImpl<DictionaryTypeRep
     public DictionaryType save(final DictionaryType type) {
         findOneByCode(type.getCode()).ifPresent(source -> {
             if (EntityUtils.ne(source, type)) {
-                throw exceptions.constraintViolated("code", type.getCode());
+                throw getExceptions().constraintViolated("code", type.getCode());
             }
         });
         return super.save(type);

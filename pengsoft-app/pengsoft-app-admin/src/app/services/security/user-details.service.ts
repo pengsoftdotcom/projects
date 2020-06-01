@@ -36,4 +36,28 @@ export class UserDetailsService extends BaseService {
         }
     }
 
+    setCurrentJob(job: any, options: HttpOptions): void {
+        options.params = { id: job.id };
+        const url = this.getApiPath('set-current-job');
+        this.http.request('POST', url, options);
+    }
+
+    setMajorJob(job: any, options: HttpOptions): void {
+        options.params = { id: job.id };
+        const url = this.getApiPath('set-major-job');
+        this.http.request('POST', url, options);
+    }
+
+    setCurrentRole(role: any, options: HttpOptions): void {
+        options.params = { id: role.id };
+        const url = this.getApiPath('set-current-role');
+        this.http.request('POST', url, options);
+    }
+
+    setMajorRole(role: any, options: HttpOptions): void {
+        options.params = { id: role.id };
+        const url = this.getApiPath('set-major-role');
+        this.http.request('POST', url, options);
+    }
+
 }

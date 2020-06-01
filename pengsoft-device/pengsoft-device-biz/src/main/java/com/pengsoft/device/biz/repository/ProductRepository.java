@@ -1,7 +1,7 @@
 package com.pengsoft.device.biz.repository;
 
-import com.pengsoft.basedata.domain.entity.Product;
-import com.pengsoft.basedata.domain.entity.QProduct;
+import com.pengsoft.device.domain.entity.Product;
+import com.pengsoft.device.domain.entity.QProduct;
 import com.pengsoft.support.biz.repository.BeanRepository;
 import com.pengsoft.system.domain.entity.DictionaryItem;
 import com.querydsl.core.types.dsl.StringPath;

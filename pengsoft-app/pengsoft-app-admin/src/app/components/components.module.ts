@@ -20,7 +20,8 @@ import {
     NzRadioModule,
     NzTreeSelectModule,
     NzUploadModule,
-    NzCascaderModule
+    NzCascaderModule,
+    NzTabsModule,
 } from 'ng-zorro-antd';
 import { NzSpaceModule } from 'ng-zorro-antd/space';
 import { DirectivesModule } from '../directives/directives.module';
@@ -46,6 +47,8 @@ import { UploadComponent } from './commons/input/upload/upload.component';
 import { EditOneToManyComponent } from './commons/edit-one-to-many/edit-one-to-many.component';
 import { AvatarComponent } from './commons/input/avatar/avatar.component';
 import { CascaderComponent } from './commons/input/cascader/cascader.component';
+import { DateComponent } from './commons/input/date/date.component';
+import { SwitchOrganizationComponent } from './modal/switch-organization/switch-organization.component';
 
 @NgModule({
     declarations: [
@@ -69,7 +72,9 @@ import { CascaderComponent } from './commons/input/cascader/cascader.component';
         EditOneToManyComponent,
         UploadComponent,
         AvatarComponent,
-        CascaderComponent
+        CascaderComponent,
+        DateComponent,
+        SwitchOrganizationComponent
     ],
     imports: [
         CommonModule,
@@ -94,6 +99,7 @@ import { CascaderComponent } from './commons/input/cascader/cascader.component';
         NzRadioModule,
         NzUploadModule,
         NzCascaderModule,
+        NzTabsModule,
         IconsProviderModule,
         DirectivesModule
     ],

@@ -39,6 +39,7 @@ spring:
 logging:
   level:
     root: info
+    web: debug
     com.pengsoft: debug
     org.hibernate.SQL: debug
     org.hibernate.type.descriptor.sql.BasicBinder: trace

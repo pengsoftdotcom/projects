@@ -1,10 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { Field } from 'src/app/components/commons/form-item/field';
 import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
+import { SecurityService } from 'src/app/services/commons/security.service';
 import { DictionaryItemService } from 'src/app/services/system/dictionary-item.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
-import { SecurityService } from 'src/app/services/commons/security.service';
 
 @Component({
     selector: 'app-dictionary-item',
@@ -27,12 +26,20 @@ export class DictionaryItemComponent extends TreeBeanComponent<DictionaryItemSer
     }
 
     ngOnInit(): void {
+        this.initForm();
+        this.initSortable();
+        this.list();
+    }
+
+    initSortable() {
+        this.sortable = this.security.hasAnyAuthority(this.getAuthority('sort'));
+    }
+
+    initForm(): void {
         if (this.type) {
             this.filterForm = { 'type.id': this.type.id };
             this.editForm = { type: this.type };
         }
-        this.sortable = this.security.hasAnyAuthority(this.getAuthority('sort'));
-        super.list();
     }
 
     get lazy(): boolean {
@@ -45,16 +52,14 @@ export class DictionaryItemComponent extends TreeBeanComponent<DictionaryItemSer
         }
     }
 
-    get fields(): Array<Field> {
-        const fields = [
+    initFields(): void {
+        super.initFields();
+        this.fields.splice(1, 0,
             FieldUtils.buildSelect({ code: 'type', name: '类型', list: { visible: false }, edit: { visible: false } }),
             FieldUtils.buildTextForCode(),
             FieldUtils.buildTextForName(),
             FieldUtils.buildTexareaForRemark()
-        ];
-        const parent = super.fields[0];
-        fields.splice(1, 0, parent);
-        return fields;
+        );
     }
 
     afterEditFormFilled(): void {
@@ -63,11 +68,9 @@ export class DictionaryItemComponent extends TreeBeanComponent<DictionaryItemSer
         }
     }
 
-    afterFilterReset(): void {
+    afterFilterFormReset(): void {
         if (this.type) {
             this.filterForm = { 'type.id': this.type.id };
-        } else {
-            this.filterForm = {};
         }
         this.list();
     }

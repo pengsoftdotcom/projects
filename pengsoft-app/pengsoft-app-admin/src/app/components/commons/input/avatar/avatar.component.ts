@@ -24,8 +24,8 @@ export class AvatarComponent extends InputComponent {
     }
 
     get thumbnail(): string {
-        return this.form[this.field.code].accessPath + '?x-oss-process=image/resize,w_'
-            + this.field.edit.input.width + ',h_' + this.field.edit.input.height;
+        return this.form[this.edit.code].accessPath + '?x-oss-process=image/resize,w_'
+            + this.edit.input.width + ',h_' + this.edit.input.height;
     }
 
     modelChange(event: UploadChangeParam) {
@@ -37,7 +37,7 @@ export class AvatarComponent extends InputComponent {
                 this.loading = false;
                 const res = event.file.response;
                 if (res && res.length > 0) {
-                    this.form[this.field.code] = res[0];
+                    this.form[this.edit.code] = res[0];
                 }
                 break;
             case 'error':

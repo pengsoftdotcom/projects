@@ -9,6 +9,7 @@ import com.pengsoft.system.biz.messaging.MessageBody;
 import com.pengsoft.system.domain.entity.Message;
 import com.pengsoft.system.domain.entity.MessageTemplate;
 import com.pengsoft.system.domain.json.CaptchaWrapper;
+import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -20,23 +21,32 @@ import java.util.Map;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Slf4j
 @Named
 public class AuthenticationCaptchaMessageBuilder implements MessageBuilder {
 
     public static final String TEMPLATE_CODE = "authentication_captcha";
 
-    private final MessageTemplate template;
+    private MessageTemplate template;
 
-    private final User sender;
+    private User sender;
 
     @Inject
     private MessageFacade facade;
 
     public AuthenticationCaptchaMessageBuilder(final UserFacade userFacade, final MessageTemplateFacade messageTemplateFacade) {
-        sender = userFacade.findOneByUsername("admin")
-                .orElseThrow(() -> new MissingConfigurationException("no user(admin) configured."));
-        template = messageTemplateFacade.findOneByCode(TEMPLATE_CODE)
-                .orElseThrow(() -> new MissingConfigurationException("no message template(" + TEMPLATE_CODE + ") configured."));
+        final var optionalUser = userFacade.findOneByUsername("admin");
+        if (optionalUser.isPresent()) {
+            sender = optionalUser.get();
+        } else {
+            log.error("init AuthenticationCaptchaMessageBuilder error", new MissingConfigurationException("no user(admin) configured."));
+        }
+        final var optionalTemplate = messageTemplateFacade.findOneByCode(TEMPLATE_CODE);
+        if (optionalTemplate.isPresent()) {
+            template = optionalTemplate.get();
+        } else {
+            log.error("init AuthenticationCaptchaMessageBuilder error", new MissingConfigurationException("no message template(" + TEMPLATE_CODE + ") configured."));
+        }
     }
 
     @Override

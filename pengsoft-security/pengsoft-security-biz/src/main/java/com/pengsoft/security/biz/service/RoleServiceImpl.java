@@ -1,5 +1,15 @@
 package com.pengsoft.security.biz.service;
 
+import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.inject.Inject;
+
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+
 import com.pengsoft.security.biz.repository.RoleAuthorityRepository;
 import com.pengsoft.security.biz.repository.RoleRepository;
 import com.pengsoft.security.domain.entity.Authority;
@@ -9,14 +19,6 @@ import com.pengsoft.security.domain.util.SecurityUtils;
 import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
 import com.pengsoft.support.domain.entity.Beanable;
 import com.pengsoft.support.domain.util.EntityUtils;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 /**
  * The implementer of {@link RoleService} based on JPA.
@@ -35,12 +37,11 @@ public class RoleServiceImpl extends TreeBeanServiceImpl<RoleRepository, Role, S
     public Role save(final Role role) {
         findOneByCode(role.getCode()).ifPresent(source -> {
             if (EntityUtils.ne(source, role)) {
-                throw exceptions.constraintViolated("code", "Exists", role.getCode());
+                throw getExceptions().constraintViolated("code", "Exists", role.getCode());
             }
         });
         return super.save(role);
     }
-
 
     @Override
     public Role saveEntityAdmin(final Class<? extends Beanable<? extends Serializable>> entityClass) {

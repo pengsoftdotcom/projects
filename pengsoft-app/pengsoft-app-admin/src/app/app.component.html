@@ -44,15 +44,16 @@
                             <div class="menu">
                                 <a (click)="editProfile()">基本资料</a>
                                 <nz-divider nzType="vertical"></nz-divider>
-                                <a (click)="verify()">实名认证</a>
+                                <ng-container *ngIf="userDetails?.jobs?.length > 0; else elseBlock">
+                                    <a (click)="switchJob()">切换职位</a>
+                                </ng-container>
+                                <ng-template #elseBlock>
+                                    <a (click)="switchRole()" [attr.disabled]="!userDetails.roles">切换角色</a>
+                                </ng-template>
                                 <nz-divider nzType="vertical"></nz-divider>
-                                <a (click)="settings()">安全设置</a>
+                                <a (click)="changePassword()">修改密码</a>
                             </div>
                         </li>
-                        <li nz-menu-divider></li>
-                        <li class="user-menu" nz-menu-item><i nz-icon nzType="switcher" nzTheme="outline"></i>切换职位</li>
-                        <li class="user-menu" nz-menu-item><i nz-icon nzType="switcher" nzTheme="outline"></i>切换角色</li>
-                        <li class="user-menu" nz-menu-item (click)="changePassword()"><i nz-icon nzType="lock" nzTheme="outline"></i>修改密码</li>
                         <li nz-menu-divider></li>
                         <li nz-menu-item class="sign-out" (click)="signOut()">退出登录</li>
                     </ul>
@@ -73,4 +74,40 @@
     <ng-template #elseBlock>
         <nz-avatar [nzSize]="28" nzIcon="user" style="background-color:#1890ff;"></nz-avatar>
     </ng-template>
+</ng-template>
+<ng-template #jobs>
+    <div nz-row>
+        <div nz-col nzSpan="16">
+            <div *ngFor="let job of userDetails.jobs" style="line-height: 30px;">
+                {{job.department.organization.name}}{{job.department.name}}{{job.post.name}}
+            </div>
+        </div>
+        <div nz-col nzSpan="4">
+            <nz-radio-group [(ngModel)]="userDetails.currentJob" (ngModelChange)="currentJobChanged()">
+                <label *ngFor="let job of userDetails.jobs" nz-radio [nzValue]="job">当前</label>
+            </nz-radio-group>
+        </div>
+        <div nz-col nzSpan="4">
+            <nz-radio-group [(ngModel)]="userDetails.majorJob" (ngModelChange)="majorJobChanged()">
+                <label *ngFor="let job of userDetails.jobs" nz-radio [nzValue]="job">主要</label>
+            </nz-radio-group>
+        </div>
+    </div>
+</ng-template>
+<ng-template #roles>
+    <div nz-row>
+        <div nz-col nzSpan="16">
+            <div *ngFor="let role of userDetails.roles" style="line-height: 30px;">{{role.name}}</div>
+        </div>
+        <div nz-col nzSpan="4">
+            <nz-radio-group [(ngModel)]="userDetails.currentRole" (ngModelChange)="currentRoleChanged()">
+                <label *ngFor="let role of userDetails.roles" nz-radio [nzValue]="role">当前</label>
+            </nz-radio-group>
+        </div>
+        <div nz-col nzSpan="4">
+            <nz-radio-group [(ngModel)]="userDetails.majorRole" (ngModelChange)="majorRoleChanged()">
+                <label *ngFor="let role of userDetails.roles" nz-radio [nzValue]="role">主要</label>
+            </nz-radio-group>
+        </div>
+    </div>
 </ng-template>

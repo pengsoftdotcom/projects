@@ -32,7 +32,7 @@ public class DefaultUserDetailsServiceImpl implements DefaultUserDetailsService 
     @Inject
     private UserService userService;
 
-    private static List<GrantedAuthority> getAllAuthorities(final Role role) {
+    protected List<GrantedAuthority> getAllAuthorities(final Role role) {
         final var roles = new ArrayList<Role>();
         roles.add(role);
         final var deque = new ArrayDeque<Role>();
@@ -54,16 +54,19 @@ public class DefaultUserDetailsServiceImpl implements DefaultUserDetailsService 
     }
 
     @Override
-    public void setMajorRole(final Role role) {
-        userService.setMajorRole(SecurityUtils.getUser(), role);
+    public DefaultUserDetails setMajorRole(final Role role) {
+        final var userDetails = SecurityUtils.getUserDetails();
+        userDetails.setMajorRole(role);
+        userService.findOne(SecurityUtils.getUserId()).ifPresent(userDetails::setUser);
+        userService.setMajorRole(userDetails.getUser(), role);
+        return userDetails;
     }
 
     @Override
     public DefaultUserDetails setCurrentRole(final Role role) {
         final var userDetails = SecurityUtils.getUserDetails();
-        if (userDetails != null) {
-            userDetails.setRole(role);
-        }
+        userDetails.setCurrentRole(role);
+        userDetails.setAuthorities(getAllAuthorities(role));
         return userDetails;
     }
 

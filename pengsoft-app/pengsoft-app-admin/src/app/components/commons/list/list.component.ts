@@ -15,7 +15,7 @@ export class ListComponent extends BaseComponent implements OnInit {
 
     @Input() fields: Array<Field> = [];
 
-    visibleFields: Array<Field>;
+    tdFields = [];
 
     @Input() data = [];
 
@@ -47,34 +47,56 @@ export class ListComponent extends BaseComponent implements OnInit {
 
     pageable = true;
 
+    treeable = false;
+
+    groupable = false;
+
+    firstVisibleFieldIndex = -1;
+
     constructor(public sanitizer: DomSanitizer) {
         super();
         this.title = '列表';
     }
 
     ngOnInit(): void {
-        this.handlePageable();
-        this.handleVisibleFields();
-        this.handleTableWidthConfig();
-        this.handleTableBodyHeight();
+        this.initTdFields();
+        this.initGroupable();
+        this.initTreeable();
+        this.initPageable();
+        this.initTableWidthConfig();
+        this.initTableBodyHeight();
     }
 
-    get treeable(): boolean {
-        return this.fields.some(field => field.code === 'parent');
+    private initTdFields() {
+        this.fields.filter(field => field.list.visible).forEach(field => {
+            if (field.children) {
+                field.children.filter(subfield => subfield.list.visible).forEach(subfield => {
+                    subfield.list.code = field.code + '.' + subfield.code;
+                    this.tdFields.push(subfield);
+                });
+            } else {
+                field.list.code = field.code;
+                this.tdFields.push(field);
+            }
+        });
     }
 
-    get groupable(): boolean {
-        return this.fields.some(field => field.children);
+    private initGroupable() {
+        this.groupable = this.fields.some(field => field.children);
     }
 
-    private handlePageable() {
+    private initTreeable() {
+        this.treeable = this.fields.some(field => field.code === 'parent');
+    }
+
+    private initPageable() {
         if (this.page === undefined) {
             this.pageable = false;
             this.page = { page: 1, size: 20 };
         }
     }
 
-    private handleTableBodyHeight() {
+    private initTableBodyHeight() {
         const totalHeight = this.table.elementRef.nativeElement.parentNode.parentNode.offsetHeight;
         const listTitleHeight = 41;
         const toolbarButtonsHeight = 49;
@@ -91,7 +113,7 @@ export class ListComponent extends BaseComponent implements OnInit {
         this.tableBodyHeight += 'px';
     }
 
-    private handleTableWidthConfig() {
+    private initTableWidthConfig() {
         const totalWidth = this.table.elementRef.nativeElement.offsetWidth;
         const checkAllWidth = 46;
         const sortWidth = 82;
@@ -105,18 +127,18 @@ export class ListComponent extends BaseComponent implements OnInit {
             leftWidth -= sortWidth;
         }
         leftWidth -= actionWidth;
-        this.visibleFields.forEach(field => {
+        this.fields.forEach(field => {
             if (field.children) {
                 field.children.forEach(subfield =>
-                    ({ leftWidth, noWidthColumbCount } = this.handleLefWidthAndCount(subfield, leftWidth, noWidthColumbCount)));
+                    ({ leftWidth, noWidthColumbCount } = this.initLefWidthAndCount(subfield, leftWidth, noWidthColumbCount)));
             } else {
-                ({ leftWidth, noWidthColumbCount } = this.handleLefWidthAndCount(field, leftWidth, noWidthColumbCount));
+                ({ leftWidth, noWidthColumbCount } = this.initLefWidthAndCount(field, leftWidth, noWidthColumbCount));
             }
         });
         const defaultColumnWidth = leftWidth / noWidthColumbCount;
 
         this.tableWidthConfig.push(checkAllWidth);
-        this.visibleFields.forEach(field => {
+        this.fields.forEach(field => {
             if (field.children) {
                 field.children.forEach(subfield => this.fillWidthConfig(subfield, defaultColumnWidth));
             }
@@ -132,28 +154,25 @@ export class ListComponent extends BaseComponent implements OnInit {
     }
 
     private fillWidthConfig(field: Field, defaultColumnWidth: number) {
-        if (field.list.width) {
-            this.tableWidthConfig.push(field.list.width);
-        }
-        else {
-            this.tableWidthConfig.push(defaultColumnWidth);
+        if (field.list.visible) {
+            if (field.list.width) {
+                this.tableWidthConfig.push(field.list.width);
+            }
+            else {
+                this.tableWidthConfig.push(defaultColumnWidth);
+            }
         }
     }
 
-    private handleLefWidthAndCount(field: Field, leftWidth: any, noWidthColumbCount: number) {
-        if (field.list.width) {
-            leftWidth -= field.list.width;
-        }
-        else {
-            noWidthColumbCount++;
+    private initLefWidthAndCount(field: Field, leftWidth: any, noWidthColumbCount: number) {
+        if (field.list.visible) {
+            if (field.list.width) {
+                leftWidth -= field.list.width;
+            } else {
+                noWidthColumbCount++;
+            }
         }
         return { leftWidth, noWidthColumbCount };
-    }
-
-    private handleVisibleFields() {
-        this.visibleFields = this.fields.filter(field => field.list.visible && field.code !== 'sequence');
-        this.visibleFields.filter(field => field.children)
-            .forEach(field => field.children = field.children.filter(subfield => subfield.list.visible));
     }
 
     checkAll(allChecked: boolean): void {
@@ -189,25 +208,25 @@ export class ListComponent extends BaseComponent implements OnInit {
 
     getColspan(field: Field): number {
         if (field.children) {
-            return field.children.length;
+            return field.children.filter(subfield => subfield.list.visible).length;
         } else {
             return 1;
         }
     }
 
     render(field: Field, row: any): any {
-        if (field.code.indexOf('.') > -1) {
-            let result = Object.assign({}, row);
-            field.code.split('.').forEach(code => {
-                result = result[code];
-            });
-            row[field.code] = result;
-        }
         let value = null;
         if (field.list.render) {
-            value = field.list.render(field, row, this.sanitizer);
+            let data;
+            if (field.list.code.indexOf('.') > -1) {
+                data = row[field.list.code.split('.')[0]];
+            } else {
+                data = row;
+            }
+            value = field.list.render(field, data, this.sanitizer);
         } else {
-            value = row[field.code];
+            // tslint:disable-next-line: no-eval
+            value = eval('row.' + field.list.code);
         }
         if (value === undefined || value === null) {
             return '-';

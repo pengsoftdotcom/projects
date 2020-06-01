@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { BeanComponent } from 'src/app/components/commons/bean.component';
-import { Field } from 'src/app/components/commons/form-item/field';
 import { AuthorityService } from 'src/app/services/security/authority.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
 
@@ -20,8 +19,8 @@ export class AuthorityComponent extends BeanComponent<AuthorityService> {
         super(bean, modal, message);
     }
 
-    get fields(): Array<Field> {
-        return [
+    initFields(): void {
+        this.fields = [
             FieldUtils.buildTextForCode(),
             FieldUtils.buildTextForName(),
             FieldUtils.buildTexareaForRemark()

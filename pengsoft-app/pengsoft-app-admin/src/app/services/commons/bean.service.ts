@@ -15,9 +15,9 @@ export abstract class BeanService extends BaseService {
         return super.getApiPath('/' + this.entityPath + '/' + path);
     }
 
-    save(data: any, options: HttpOptions): void {
+    save(form: any, options: HttpOptions): void {
         const url = this.getApiPath('save');
-        options.body = data;
+        options.body = Object.assign({}, form);
         this.http.request('POST', url, options);
     }
 
@@ -55,7 +55,7 @@ export abstract class BeanService extends BaseService {
     findPage(params: any, page: Page, options: HttpOptions): void {
         const url = this.getApiPath('find-page');
         params = Object.assign({}, params);
-        params = Object.assign(params, { page: page.page - 1, size: page.size, sort: page.sort.map(s => s.code + ',' + s.direction) });
+        Object.assign(params, { page: page.page - 1, size: page.size, sort: page.sort.map(s => s.code + ',' + s.direction) });
         options.params = params;
         this.http.request('GET', url, options);
     }

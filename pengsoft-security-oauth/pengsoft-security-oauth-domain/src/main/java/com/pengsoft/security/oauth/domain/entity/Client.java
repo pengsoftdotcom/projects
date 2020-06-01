@@ -2,6 +2,8 @@ package com.pengsoft.security.oauth.domain.entity;
 
 import com.pengsoft.support.domain.entity.Bean;
 import com.pengsoft.support.domain.entity.Codeable;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -18,6 +20,8 @@ import javax.validation.constraints.Size;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_client", indexes = {
@@ -46,45 +50,4 @@ public class Client extends Bean implements Codeable {
     @Min(0)
     int validitySeconds;
 
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(final String secret) {
-        this.secret = secret;
-    }
-
-    public String getGrantTypes() {
-        return grantTypes;
-    }
-
-    public void setGrantTypes(final String grantTypes) {
-        this.grantTypes = grantTypes;
-    }
-
-    public int getValiditySeconds() {
-        return validitySeconds;
-    }
-
-    public void setValiditySeconds(final int validitySeconds) {
-        this.validitySeconds = validitySeconds;
-    }
 }

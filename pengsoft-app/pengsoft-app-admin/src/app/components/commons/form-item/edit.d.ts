@@ -9,9 +9,9 @@ export interface Edit {
 
     required?: boolean;
 
-    disabled?: boolean | ((field: Field, form: any) => boolean);
+    disabled?: boolean | ((form: any, edit: Edit) => boolean);
 
-    visible?: boolean | ((field: Field, form: any) => boolean);
+    visible?: boolean | ((form: any, edit: Edit) => boolean);
 
     label?: Label;
 

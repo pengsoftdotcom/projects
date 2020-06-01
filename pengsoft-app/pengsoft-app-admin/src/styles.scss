@@ -6,3 +6,28 @@
     height: 100% !important;
     width: calc(50% - 20px) !important;
 }
+
+.edit {
+    nz-tabs-nav {
+        margin-bottom: 0;
+    }
+
+    form {
+        overflow-y: auto;
+        padding: 16px;
+    }
+
+    .toolbar {
+        border-top: 1px solid #f0f0f0;
+        text-align: right;
+        padding: 16px;
+    }
+
+    nz-space-item:last-of-type {
+        margin-right: 0 !important;
+    }
+}
+
+.switch .ant-form-item {
+    margin: 0 !important;
+}

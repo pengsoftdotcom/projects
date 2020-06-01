@@ -31,4 +31,9 @@ public class TreeBeanFacadeImpl<S extends TreeBeanService<T, ID>, T extends Tree
         return getService().findAllExcludeSelfAndItsChildren(self, predicate, sort);
     }
 
+    @Override
+    public List<T> findAllByParentIdsStartsWith(final String parentIds) {
+        return getService().findAllByParentIdsStartsWith(parentIds);
+    }
+
 }

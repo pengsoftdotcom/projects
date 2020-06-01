@@ -8,7 +8,8 @@
                         (nzSearchChange)="searchChange($event)">
                         <ng-template #renderList let-onItemSelect="onItemSelect">
                             <nz-tree #treeComponent [nzData]="treeData" nzCheckStrictly nzCheckable nzHideUnMatched [nzSearchValue]="searchValue"
-                                (nzCheckBoxChange)="treeSelectChange($event, onItemSelect)">
+                                (nzCheckBoxChange)="treeSelectChange($event, onItemSelect)"
+                                [style.height]="(transferHeight - 32 - 39 - 44 - 24) + 'px'" [style.overflowY]="'auto'">
                             </nz-tree>
                         </ng-template>
                     </nz-transfer>

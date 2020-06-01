@@ -1,14 +1,15 @@
 package com.pengsoft.basedata.biz.service;
 
+import java.util.Optional;
+
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+
 import com.pengsoft.basedata.biz.repository.DepartmentRepository;
 import com.pengsoft.basedata.domain.entity.Department;
 import com.pengsoft.basedata.domain.entity.Organization;
 import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * The implementer of {@link DepartmentService} based on JPA.
@@ -24,7 +25,7 @@ public class DepartmentServiceImpl extends TreeBeanServiceImpl<DepartmentReposit
     public Department save(final Department department) {
         findOneByOrganizationAndParentAndName(department.getOrganization(), department.getParent(), department.getName()).ifPresent(source -> {
             if (EntityUtils.ne(source, department)) {
-                throw exceptions.constraintViolated("name", "Exists", department.getName());
+                throw getExceptions().constraintViolated("name", "Exists", department.getName());
             }
         });
         return super.save(department);

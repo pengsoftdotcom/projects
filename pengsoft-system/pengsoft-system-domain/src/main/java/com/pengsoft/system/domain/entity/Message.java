@@ -1,6 +1,8 @@
 package com.pengsoft.system.domain.entity;
 
 import com.pengsoft.security.domain.entity.User;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
@@ -19,6 +21,8 @@ import java.time.LocalDateTime;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_message", indexes = {
@@ -45,45 +49,5 @@ public class Message extends MessageMappedSuperclass {
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private MessageTemplate template;
-
-    public User getSender() {
-        return sender;
-    }
-
-    public void setSender(final User sender) {
-        this.sender = sender;
-    }
-
-    public User getRecipient() {
-        return recipient;
-    }
-
-    public void setRecipient(final User recipient) {
-        this.recipient = recipient;
-    }
-
-    public LocalDateTime getSentAt() {
-        return sentAt;
-    }
-
-    public void setSentAt(final LocalDateTime sentAt) {
-        this.sentAt = sentAt;
-    }
-
-    public LocalDateTime getReadAt() {
-        return readAt;
-    }
-
-    public void setReadAt(final LocalDateTime readAt) {
-        this.readAt = readAt;
-    }
-
-    public MessageTemplate getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(final MessageTemplate template) {
-        this.template = template;
-    }
 
 }

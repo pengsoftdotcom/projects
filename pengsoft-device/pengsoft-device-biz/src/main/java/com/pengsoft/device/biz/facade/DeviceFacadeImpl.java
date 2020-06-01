@@ -1,17 +1,24 @@
 package com.pengsoft.device.biz.facade;
 
-import com.pengsoft.device.biz.service.BatchService;
-import com.pengsoft.device.domain.entity.Batch;
+import com.pengsoft.device.biz.service.DeviceService;
+import com.pengsoft.device.domain.entity.Device;
 import com.pengsoft.support.biz.facade.BeanFacadeImpl;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
- * The implementer of {@link BatchFacade}
+ * The implementer of {@link DeviceFacade}
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
 @Service
-public class BatchFacadeImpl extends BeanFacadeImpl<BatchService, Batch, String> implements BatchFacade {
+public class DeviceFacadeImpl extends BeanFacadeImpl<DeviceService, Device, String> implements DeviceFacade {
+
+    @Override
+    public Optional<Device> findOneByCode(final String code) {
+        return getService().findOneByCode(code);
+    }
 
 }

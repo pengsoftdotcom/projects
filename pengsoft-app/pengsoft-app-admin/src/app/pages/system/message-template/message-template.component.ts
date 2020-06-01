@@ -23,8 +23,8 @@ export class MessageTemplateComponent extends BeanComponent<MessageTemplateServi
         super(bean, modal, message);
     }
 
-    get fields(): Array<Field> {
-        return [
+    initFields(): void {
+        this.fields = [
             FieldUtils.buildTextForCode(),
             FieldUtils.buildSelect({
                 code: 'types', name: '类型', list: {
@@ -55,12 +55,12 @@ export class MessageTemplateComponent extends BeanComponent<MessageTemplateServi
             }),
             FieldUtils.buildTextarea({ code: 'content', name: '内容' }),
             FieldUtils.buildText({
-                code: 'smsCode', name: '短线模版编码', list: {
+                code: 'smsCode', name: '短信模版编码', list: {
                     width: 140, align: 'center',
-                    render: (field: Field, row: any, sanitizer: DomSanitizer) => sanitizer.bypassSecurityTrustHtml(`<code>${row.smsCode}</code>`)
+                    render: (field: Field, row: any, sanitizer: DomSanitizer) => row[field.code] ? sanitizer.bypassSecurityTrustHtml(`<code>${row[field.code]}</code>`) : null
                 }
             }),
-            FieldUtils.buildText({ code: 'smsSignature', name: '短线模版签名', list: { width: 140 } })
+            FieldUtils.buildText({ code: 'smsSignature', name: '短信模版签名', list: { width: 140 } })
         ].map(field => {
             field.edit.label.span = 6;
             return field;

@@ -1,6 +1,6 @@
 package com.pengsoft.device.biz.service;
 
-import com.pengsoft.basedata.domain.entity.Product;
+import com.pengsoft.device.domain.entity.Product;
 import com.pengsoft.support.biz.service.BeanService;
 import com.pengsoft.system.domain.entity.DictionaryItem;
 

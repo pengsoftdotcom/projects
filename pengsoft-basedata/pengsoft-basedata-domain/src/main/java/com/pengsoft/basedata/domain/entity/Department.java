@@ -1,6 +1,8 @@
 package com.pengsoft.basedata.domain.entity;
 
-import com.pengsoft.support.domain.entity.TreeBean;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
@@ -24,12 +26,14 @@ import java.util.List;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_department", indexes = {
         @Index(name = "i_department_organization_id", columnList = "organization_id, parent_id, name", unique = true)
 })
-public class Department extends TreeBean<Department> {
+public class Department extends OwnedTreeBeanExt<Department> {
 
     private static final long serialVersionUID = 4258074923618744007L;
 
@@ -42,33 +46,10 @@ public class Department extends TreeBean<Department> {
     @NotFound(action = NotFoundAction.IGNORE)
     private Organization organization;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "department", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @NotFound(action = NotFoundAction.IGNORE)
-    private List<Job> jobs = new ArrayList<>();
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public Organization getOrganization() {
-        return organization;
-    }
-
-    public void setOrganization(final Organization organization) {
-        this.organization = organization;
-    }
-
-    public List<Job> getJobs() {
-        return jobs;
-    }
-
-    public void setJobs(final List<Job> jobs) {
-        this.jobs = jobs;
-    }
+    private final List<Job> jobs = new ArrayList<>();
 
 }

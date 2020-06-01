@@ -5,14 +5,17 @@ import com.pengsoft.basedata.domain.UserProfileUserDetails;
 import com.pengsoft.basedata.domain.entity.Job;
 import com.pengsoft.basedata.domain.entity.JobRole;
 import com.pengsoft.basedata.domain.entity.Staff;
+import com.pengsoft.basedata.domain.util.SecurityUtilsExt;
 import com.pengsoft.security.biz.service.DefaultUserDetailsServiceImpl;
 import com.pengsoft.security.domain.DefaultUserDetails;
+import com.pengsoft.security.domain.util.SecurityUtils;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.stream.Collectors;
 
@@ -22,6 +25,8 @@ import java.util.stream.Collectors;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Primary
+@Service
 public class StaffUserDetailsServiceImpl extends DefaultUserDetailsServiceImpl implements StaffUserDetailsService {
 
     @Inject
@@ -31,13 +36,23 @@ public class StaffUserDetailsServiceImpl extends DefaultUserDetailsServiceImpl i
     private UserProfileService userProfileService;
 
     @Override
-    public StaffUserDetails setMajorJob(@NotNull final Job job) {
-        return null;
+    public StaffUserDetails setMajorJob(final Job job) {
+        final var userDetails = (StaffUserDetails) SecurityUtils.getUserDetails();
+        userDetails.setMajorJob(job);
+        userProfileService.findOne(SecurityUtilsExt.getUserProfile().getId()).ifPresent(userDetails::setUserProfile);
+        staffService.setMajorJob(SecurityUtilsExt.getUserProfile(), job);
+        return userDetails;
     }
 
     @Override
-    public StaffUserDetails setCurrentJob(@NotNull final Job job) {
-        return null;
+    public StaffUserDetails setCurrentJob(final Job job) {
+        final var userDetails = (StaffUserDetails) SecurityUtils.getUserDetails();
+        userDetails.setCurrentJob(job);
+        userDetails.setRoles(job.getJobRoles().stream().map(JobRole::getRole).collect(Collectors.toList()));
+        final var authorities = new ArrayList<GrantedAuthority>();
+        userDetails.getRoles().forEach(role -> authorities.addAll(getAllAuthorities(role)));
+        userDetails.setAuthorities(authorities);
+        return userDetails;
     }
 
     @Override

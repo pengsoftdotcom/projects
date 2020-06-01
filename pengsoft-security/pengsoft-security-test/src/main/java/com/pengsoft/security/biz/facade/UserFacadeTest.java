@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * {@link UserFacade} unit test.
@@ -32,6 +33,8 @@ public class UserFacadeTest extends BaseFacadeTest<UserFacade> {
         authorityFacade.saveEntityAdminAuthorities(User.class);
 
         getFacade().resetPassword(createIfNotExists().getId(), "123123");
+        getFacade().findOneByUsername(Role.ADMIN)
+                .ifPresent(user -> roleFacade.findOneByCode(Role.ADMIN).map(List::of).ifPresent(roles -> getFacade().grantRoles(user, roles)));
     }
 
     private User createIfNotExists() {

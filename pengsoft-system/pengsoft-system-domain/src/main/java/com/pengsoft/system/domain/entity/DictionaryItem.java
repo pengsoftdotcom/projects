@@ -3,6 +3,8 @@ package com.pengsoft.system.domain.entity;
 import com.pengsoft.support.domain.entity.Codeable;
 import com.pengsoft.support.domain.entity.Sortable;
 import com.pengsoft.support.domain.entity.TreeBean;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
@@ -22,6 +24,8 @@ import javax.validation.constraints.Size;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_dictionary_item", indexes = {
@@ -48,49 +52,5 @@ public class DictionaryItem extends TreeBean<DictionaryItem> implements Codeable
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private DictionaryType type;
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    @Override
-    public long getSequence() {
-        return sequence;
-    }
-
-    @Override
-    public void setSequence(final long sequence) {
-        this.sequence = sequence;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(final String remark) {
-        this.remark = remark;
-    }
-
-    public DictionaryType getType() {
-        return type;
-    }
-
-    public void setType(final DictionaryType type) {
-        this.type = type;
-    }
 
 }

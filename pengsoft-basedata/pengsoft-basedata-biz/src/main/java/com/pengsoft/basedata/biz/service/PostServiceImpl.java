@@ -1,14 +1,15 @@
 package com.pengsoft.basedata.biz.service;
 
+import java.util.Optional;
+
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+
 import com.pengsoft.basedata.biz.repository.PostRepository;
 import com.pengsoft.basedata.domain.entity.Organization;
 import com.pengsoft.basedata.domain.entity.Post;
 import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * The implementer of {@link PostService} based on JPA.
@@ -24,7 +25,7 @@ public class PostServiceImpl extends TreeBeanServiceImpl<PostRepository, Post, S
     public Post save(final Post post) {
         findOneByOrganizationAndParentAndName(post.getOrganization(), post.getParent(), post.getName()).ifPresent(source -> {
             if (EntityUtils.ne(source, post)) {
-                throw exceptions.constraintViolated("name", "Exists", post.getName());
+                throw getExceptions().constraintViolated("name", "Exists", post.getName());
             }
         });
         return super.save(post);

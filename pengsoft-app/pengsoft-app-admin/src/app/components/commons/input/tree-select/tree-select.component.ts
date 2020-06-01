@@ -11,13 +11,15 @@ import { InputComponent } from '../input.component';
 export class TreeSelectComponent extends InputComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.form) {
-            if (this.form[this.field.code]) {
-                if (this.field.edit.input.multiple) {
-                    this.rawValue = this.form[this.field.code].split(',');
+        if (changes.form && this.edit) {
+            if (this.form[this.edit.code]) {
+                if (this.edit.input.multiple) {
+                    this.rawValue = this.form[this.edit.code].split(',');
                 } else {
-                    this.rawValue = this.form[this.field.code].id;
+                    this.rawValue = this.form[this.edit.code].id;
                 }
+            } else {
+                this.rawValue = undefined;
             }
         }
     }
@@ -29,15 +31,15 @@ export class TreeSelectComponent extends InputComponent implements OnChanges {
         } else {
             values = [this.rawValue];
         }
-        this.form[this.field.code] = EntityUtils.findTreeNodes((this.field.edit.input.options as Array<NzTreeNodeOptions>), values);
-        if (this.form[this.field.code].length > 0) {
-            if (this.field.edit.input.multiple) {
-                this.form[this.field.code] = this.form[this.field.code].map((node: NzTreeNodeOptions) => node.key).join(',');
+        this.form[this.edit.code] = EntityUtils.findTreeNodes((this.edit.input.options as Array<NzTreeNodeOptions>), values);
+        if (this.form[this.edit.code].length > 0) {
+            if (this.edit.input.multiple) {
+                this.form[this.edit.code] = this.form[this.edit.code].map((node: NzTreeNodeOptions) => node.key).join(',');
             } else {
-                this.form[this.field.code] = this.form[this.field.code][0].value;
+                this.form[this.edit.code] = this.form[this.edit.code][0].value;
             }
         } else {
-            this.form[this.field.code] = null;
+            this.form[this.edit.code] = null;
         }
     }
 

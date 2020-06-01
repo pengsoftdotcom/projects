@@ -3,6 +3,7 @@ import { BaseComponent } from '../base.component';
 import { NzDrawerService, NzDrawerRef } from 'ng-zorro-antd';
 import { Field } from '../form-item/field';
 import { Button } from '../button/button';
+import { FieldUtils } from 'src/app/utils/field-utils';
 
 @Component({
     selector: 'app-edit',
@@ -18,8 +19,6 @@ export class EditComponent extends BaseComponent implements OnInit {
     @Input() form = {};
 
     @Input() fields: Array<Field> = [];
-
-    visibleFields: Array<Field>;
 
     @Input() toolbarButtons: Array<Button> = [];
 
@@ -38,21 +37,14 @@ export class EditComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.handleVisibleFields();
-        this.handleFormHeight();
+        this.initFormHeight();
     }
 
-    private handleFormHeight() {
+    private initFormHeight() {
         const totalHeight = window.innerHeight;
         const titleHeight = 55;
         const toolbarHeight = 65;
         this.formHeight = totalHeight - titleHeight - toolbarHeight;
-    }
-
-    private handleVisibleFields() {
-        this.visibleFields = this.fields.filter(field => field.edit.visible);
-        this.visibleFields.filter(field => field.children)
-            .forEach(field => field.children = field.children.filter(subfield => subfield.edit.visible));
     }
 
     show(): void {

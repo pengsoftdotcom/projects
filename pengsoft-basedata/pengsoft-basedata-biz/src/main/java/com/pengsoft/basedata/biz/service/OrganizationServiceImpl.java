@@ -1,15 +1,17 @@
 package com.pengsoft.basedata.biz.service;
 
+import java.util.Optional;
+
+import javax.validation.constraints.NotBlank;
+
+import org.springframework.context.annotation.Primary;
+import org.springframework.stereotype.Service;
+
 import com.pengsoft.basedata.biz.repository.OrganizationRepository;
 import com.pengsoft.basedata.domain.entity.Organization;
 import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
 import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.util.EntityUtils;
-import org.springframework.context.annotation.Primary;
-import org.springframework.stereotype.Service;
-
-import javax.validation.constraints.NotBlank;
-import java.util.Optional;
 
 /**
  * The implementer of {@link OrganizationService} based on JPA.
@@ -25,12 +27,12 @@ public class OrganizationServiceImpl extends TreeBeanServiceImpl<OrganizationRep
     public Organization save(final Organization organization) {
         findOneByCode(organization.getCode()).ifPresent(source -> {
             if (EntityUtils.ne(source, organization)) {
-                throw exceptions.constraintViolated("code", "Exists", organization.getCode());
+                throw getExceptions().constraintViolated("code", "Exists", organization.getCode());
             }
         });
         findOneByName(organization.getName()).ifPresent(source -> {
             if (EntityUtils.ne(source, organization)) {
-                throw exceptions.constraintViolated("name", "Exists", organization.getCode());
+                throw getExceptions().constraintViolated("name", "Exists", organization.getCode());
             }
         });
         if (StringUtils.isBlank(organization.getSimpleName())) {

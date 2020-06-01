@@ -4,6 +4,7 @@
 
 export const environment = {
     production: false,
+    title: '管理后台',
     gateway: {
         path: 'http://localhost:8080'
     }

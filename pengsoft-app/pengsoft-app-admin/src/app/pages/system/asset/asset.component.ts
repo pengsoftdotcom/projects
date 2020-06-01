@@ -1,8 +1,6 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { BeanComponent } from 'src/app/components/commons/bean.component';
-import { Button } from 'src/app/components/commons/button/button';
-import { Field } from 'src/app/components/commons/form-item/field';
 import { AssetService } from 'src/app/services/system/asset.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
 
@@ -22,8 +20,8 @@ export class AssetComponent extends BeanComponent<AssetService> {
         super(bean, modal, message);
     }
 
-    get fields(): Array<Field> {
-        return [
+    initFields(): void {
+        this.fields = [
             FieldUtils.buildText({
                 code: 'originalName', name: '原名称',
                 edit: { disabled: true },
@@ -46,9 +44,9 @@ export class AssetComponent extends BeanComponent<AssetService> {
         ];
     }
 
-    get listToolbarButtons(): Array<Button> {
-        const buttons = super.listToolbarButtons;
-        buttons.splice(1, 1, {
+    initListToolbarButtons(): void {
+        super.initListToolbarButtons();
+        this.listToolbarButtons.splice(1, 1, {
             name: '上传', type: 'primary', action: () => {
                 this.modal.create({
                     nzTitle: '上传',
@@ -58,17 +56,15 @@ export class AssetComponent extends BeanComponent<AssetService> {
                 });
             }
         });
-        return buttons;
     }
 
-    get listActionButtons(): Array<Button> {
-        const buttons = super.listActionButtons;
-        buttons[0].name = '查看';
-        return buttons;
+    initListActionButtons(): void {
+        super.initListActionButtons();
+        this.listActionButtons[0].name = '查看';
     }
 
-    get editToolbarButtons(): Array<Button> {
-        return [];
+    intEditToolbarButtons(): void {
+        this.editToolbarButtons = [];
     }
 
 }

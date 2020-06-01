@@ -1,6 +1,10 @@
 package com.pengsoft.security.domain.entity;
 
 import com.pengsoft.support.domain.entity.Bean;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
@@ -17,6 +21,10 @@ import javax.persistence.Table;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_role_authority", indexes = {
@@ -33,30 +41,5 @@ public class RoleAuthority extends Bean {
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private Authority authority;
-
-    public RoleAuthority() {
-
-    }
-
-    public RoleAuthority(final Role role, final Authority authority) {
-        this.role = role;
-        this.authority = authority;
-    }
-
-    public Role getRole() {
-        return role;
-    }
-
-    public void setRole(final Role role) {
-        this.role = role;
-    }
-
-    public Authority getAuthority() {
-        return authority;
-    }
-
-    public void setAuthority(final Authority authority) {
-        this.authority = authority;
-    }
 
 }

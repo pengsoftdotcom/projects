@@ -7,6 +7,9 @@ import com.pengsoft.system.domain.entity.Message;
  * @since 1.0.0
  */
 public interface MessageSender {
+    
+
+    boolean support(Message message);
 
     void send(Message message) throws Exception;
 

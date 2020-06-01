@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnChanges, SimpleChanges } from '@angular/core';
 import { DateUtils } from 'src/app/utils/date-utils';
 import { InputComponent } from '../input.component';
 
@@ -7,21 +7,22 @@ import { InputComponent } from '../input.component';
     templateUrl: './datetime.component.html',
     styleUrls: ['./datetime.component.scss']
 })
-export class DatetimeComponent extends InputComponent implements OnInit {
+export class DatetimeComponent extends InputComponent implements OnChanges {
 
 
-    ngOnInit(): void {
-        if (this.form[this.field.code]) {
-            this.rawValue = DateUtils.parse(this.form[this.field.code]);
+    ngOnChanges(changes: SimpleChanges): void {
+        if (changes.form) {
+            if (this.form[this.edit.code]) {
+                this.rawValue = DateUtils.parse(this.form[this.edit.code]);
+            }
         }
     }
 
-
     modelChange(event: any): void {
         if (this.rawValue) {
-            this.form[this.field.code] = DateUtils.formatDateTime(this.rawValue);
+            this.form[this.edit.code] = DateUtils.formatDateTime(this.rawValue);
         } else {
-            this.form[this.field.code] = null;
+            this.form[this.edit.code] = null;
         }
     }
 

@@ -1,0 +1,4 @@
+pengsoft:
+  messaging:
+    sms:
+      enabled: false

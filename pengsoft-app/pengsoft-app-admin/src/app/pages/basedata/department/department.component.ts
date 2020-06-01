@@ -28,14 +28,6 @@ export class DepartmentComponent extends TreeBeanComponent<DepartmentService> im
         super(bean, modal, message);
     }
 
-    ngOnInit(): void {
-        if (this.organization) {
-            this.filterForm = { 'organization.id': this.organization.id };
-            this.editForm = { organization: this.organization };
-        }
-        super.list();
-    }
-
     get lazy(): boolean {
         return false;
     }
@@ -46,26 +38,36 @@ export class DepartmentComponent extends TreeBeanComponent<DepartmentService> im
         }
     }
 
-    get fields(): Array<Field> {
-        const fields = [
-            FieldUtils.buildTreeSelect({ code: 'organization', name: '机构', list: { visible: false }, edit: { visible: false } }),
-            FieldUtils.buildTextForName()
-        ];
-        const parent = super.fields[0];
-        fields.splice(1, 0, parent);
-        return fields;
+    ngOnInit(): void {
+        this.initForm();
+        this.list();
     }
 
-    get listActionButtons(): Array<Button> {
-        const buttons: Array<Button> = [{
+    initForm(): void {
+        if (this.organization) {
+            this.filterForm = { 'organization.id': this.organization.id };
+            this.editForm = { organization: this.organization };
+        }
+    }
+
+    initFields(): void {
+        this.fields.splice(1, 0,
+            FieldUtils.buildTreeSelect({ code: 'organization', name: '机构', list: { visible: false }, edit: { visible: false } }),
+            FieldUtils.buildTextForName()
+        );
+    }
+
+    initListActionButtons(): void {
+        super.initListActionButtons();
+        this.listActionButtons.splice(0, 0, {
             name: '职位', type: 'link', divider: true, width: 45,
             action: (row: any) => this.editJobs(row)
-        }];
-        return buttons.concat(super.listActionButtons);
+        });
     }
 
     editJobs(row: any): void {
         this.jobsComponent.component = JobComponent;
+        this.jobsComponent.width = '70%';
         this.jobsComponent.params = { title: row.name, department: row };
         this.jobsComponent.show();
     }
@@ -76,11 +78,9 @@ export class DepartmentComponent extends TreeBeanComponent<DepartmentService> im
         }
     }
 
-    afterFilterReset(): void {
+    afterFilterFormReset(): void {
         if (this.organization) {
             this.filterForm = { 'organization.id': this.organization.id };
-        } else {
-            this.filterForm = {};
         }
         this.list();
     }

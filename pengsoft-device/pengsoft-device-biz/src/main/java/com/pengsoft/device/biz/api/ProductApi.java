@@ -1,7 +1,7 @@
 package com.pengsoft.device.biz.api;
 
-import com.pengsoft.basedata.biz.facade.ProductFacade;
-import com.pengsoft.basedata.domain.entity.Product;
+import com.pengsoft.device.biz.facade.ProductFacade;
+import com.pengsoft.device.domain.entity.Product;
 import com.pengsoft.support.biz.api.BeanApi;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

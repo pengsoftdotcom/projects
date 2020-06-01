@@ -3,6 +3,9 @@ package com.pengsoft.security.domain.entity;
 import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.entity.Bean;
 import com.pengsoft.support.domain.entity.Codeable;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -22,6 +25,9 @@ import java.util.List;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
+@NoArgsConstructor
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_authority", indexes = {
@@ -46,46 +52,9 @@ public class Authority extends Bean implements Codeable {
     @OneToMany(mappedBy = "authority", cascade = CascadeType.REMOVE)
     private List<RoleAuthority> roleAuthorities = new ArrayList<>();
 
-    public Authority() {
-
-    }
-
     public Authority(@NotBlank @Size(max = 255) final String code) {
         this.code = code;
         this.name = StringUtils.replace(code, StringUtils.GLOBAL_SEPARATOR, StringUtils.SPACE);
     }
 
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(final String remark) {
-        this.remark = remark;
-    }
-
-    public List<RoleAuthority> getRoleAuthorities() {
-        return roleAuthorities;
-    }
-
-    public void setRoleAuthorities(final List<RoleAuthority> roleAuthorities) {
-        this.roleAuthorities = roleAuthorities;
-    }
 }

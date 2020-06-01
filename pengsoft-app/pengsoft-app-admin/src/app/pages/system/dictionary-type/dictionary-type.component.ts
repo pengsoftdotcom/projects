@@ -25,18 +25,19 @@ export class DictionaryTypeComponent extends BeanComponent<DictionaryTypeService
         super(bean, modal, message);
     }
 
-    get fields(): Array<Field> {
-        return [
+    initFields(): void {
+        this.fields = [
             FieldUtils.buildTextForCode(),
             FieldUtils.buildTextForName(),
             FieldUtils.buildTexareaForRemark()
         ];
     }
 
-    get listActionButtons(): Array<Button> {
-        return ([{
+    initListActionButtons(): void {
+        super.initListActionButtons();
+        this.listActionButtons.splice(0, 0, {
             name: '详情', type: 'link', divider: true, width: 45, action: (row: any) => this.editItems(row), authority: 'system::dictionary_item::find_all'
-        }] as Array<Button>).concat(super.listActionButtons);
+        });
     }
 
     editItems(row: any): void {

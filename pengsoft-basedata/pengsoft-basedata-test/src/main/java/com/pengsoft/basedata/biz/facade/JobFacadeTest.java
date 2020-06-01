@@ -33,4 +33,9 @@ public class JobFacadeTest extends BaseFacadeTest<JobFacade> {
         authorityFacade.saveEntityAdminAuthorities(Job.class);
     }
 
+    @Test
+    public void findAllByParentIdsStartsWith() {
+        getFacade().findAllByParentIdsStartsWith("");
+    }
+
 }

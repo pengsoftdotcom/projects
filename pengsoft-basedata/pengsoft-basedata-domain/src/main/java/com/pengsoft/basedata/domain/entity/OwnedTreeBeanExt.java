@@ -1,6 +1,7 @@
 package com.pengsoft.basedata.domain.entity;
 
-import com.pengsoft.security.domain.entity.OwnableTreeBean;
+import com.pengsoft.basedata.domain.util.SecurityUtilsExt;
+import com.pengsoft.security.domain.entity.OwnedTreeBean;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,7 @@ import javax.persistence.MappedSuperclass;
 import javax.validation.constraints.Size;
 
 /**
- * Ownable extension tree bean
+ * Owned tree bean extension
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
@@ -17,7 +18,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @MappedSuperclass
-public class OwnableExtTreeBean extends OwnableTreeBean {
+public class OwnedTreeBeanExt<T extends OwnedTreeBeanExt<T>> extends OwnedTreeBean<T> implements OwnedExt {
 
     private static final long serialVersionUID = 4530346280009240007L;
 
@@ -28,5 +29,12 @@ public class OwnableExtTreeBean extends OwnableTreeBean {
     @Size(max = 255)
     @Column(updatable = false)
     private String belongsTo;
+
+    @Override
+    public void preCreate() {
+        super.preCreate();
+        setControlledBy(SecurityUtilsExt.getDepartmentId());
+        setBelongsTo(SecurityUtilsExt.getOrganizationId());
+    }
 
 }

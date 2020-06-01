@@ -1,6 +1,8 @@
 package com.pengsoft.support.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
@@ -20,8 +22,10 @@ import java.util.List;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @MappedSuperclass
-public class TreeBean<T extends TreeBeanable<T, String>> extends Bean implements TreeBeanable<T, String> {
+public class TreeBean<T extends TreeBean<T>> extends Bean implements TreeBeanable<T, String> {
 
     private static final long serialVersionUID = 6320599185190171935L;
 
@@ -56,55 +60,5 @@ public class TreeBean<T extends TreeBeanable<T, String>> extends Bean implements
      * The depth of the tree, the default value is 1.
      */
     private long depth = 1;
-
-    @Override
-    public T getParent() {
-        return parent;
-    }
-
-    @Override
-    public void setParent(final T parent) {
-        this.parent = parent;
-    }
-
-    @Override
-    public String getParentIds() {
-        return parentIds;
-    }
-
-    @Override
-    public void setParentIds(final String parentIds) {
-        this.parentIds = parentIds;
-    }
-
-    @Override
-    public List<T> getChildren() {
-        return children;
-    }
-
-    @Override
-    public void setChildren(final List<T> children) {
-        this.children = children;
-    }
-
-    @Override
-    public boolean isLeaf() {
-        return leaf;
-    }
-
-    @Override
-    public void setLeaf(final boolean leaf) {
-        this.leaf = leaf;
-    }
-
-    @Override
-    public long getDepth() {
-        return depth;
-    }
-
-    @Override
-    public void setDepth(final long depth) {
-        this.depth = depth;
-    }
 
 }

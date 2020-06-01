@@ -1,8 +1,11 @@
 package com.pengsoft.basedata.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pengsoft.support.domain.entity.Codeable;
 import com.pengsoft.support.domain.entity.TreeBean;
 import com.pengsoft.system.domain.entity.DictionaryItem;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
@@ -21,11 +24,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * org
+ * Organization
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_organization", indexes = {
@@ -53,64 +58,16 @@ public class Organization extends TreeBean<Organization> implements Codeable {
     @NotFound(action = NotFoundAction.IGNORE)
     private DictionaryItem category;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "organization", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @NotFound(action = NotFoundAction.IGNORE)
     private List<Post> posts = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "organization", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @NotFound(action = NotFoundAction.IGNORE)
     private List<Department> departments = new ArrayList<>();
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getSimpleName() {
-        return simpleName;
-    }
-
-    public void setSimpleName(final String simpleName) {
-        this.simpleName = simpleName;
-    }
-
-    public DictionaryItem getCategory() {
-        return category;
-    }
-
-    public void setCategory(final DictionaryItem category) {
-        this.category = category;
-    }
-
-    public List<Post> getPosts() {
-        return posts;
-    }
-
-    public void setPosts(final List<Post> posts) {
-        this.posts = posts;
-    }
-
-    public List<Department> getDepartments() {
-        return departments;
-    }
-
-    public void setDepartments(final List<Department> departments) {
-        this.departments = departments;
-    }
 
 }

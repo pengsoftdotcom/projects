@@ -1,5 +1,19 @@
 package com.pengsoft.support.biz.service;
 
+import static com.pengsoft.support.commons.util.ClassUtils.getGenericType;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
+
+import javax.inject.Inject;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+
 import com.google.common.collect.Lists;
 import com.pengsoft.support.biz.repository.BeanRepository;
 import com.pengsoft.support.commons.exception.Exceptions;
@@ -7,19 +21,8 @@ import com.pengsoft.support.domain.entity.Beanable;
 import com.pengsoft.support.domain.entity.Codeable;
 import com.pengsoft.support.domain.entity.Sortable;
 import com.querydsl.core.types.Predicate;
-import org.springframework.context.MessageSource;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 
-import javax.inject.Inject;
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
-
-import static com.pengsoft.support.commons.util.ClassUtils.getGenericType;
+import lombok.Getter;
 
 /**
  * The implementer of {@link BeanService} based on JPA
@@ -30,18 +33,13 @@ import static com.pengsoft.support.commons.util.ClassUtils.getGenericType;
 public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beanable<ID>, ID extends Serializable>
         implements BeanService<T, ID> {
 
+    @Getter
     @Inject
-    protected Exceptions exceptions;
+    private Exceptions exceptions;
 
+    @Getter
     @Inject
     private R repository;
-
-    @Inject
-    private MessageSource messageSource;
-
-    public R getRepository() {
-        return repository;
-    }
 
     @SuppressWarnings("unchecked")
     @Override

@@ -1,3 +1,6 @@
+pengsoft:
+  security:
+    updating-authentication-mq-topic: pengsoft-updating-authentication
 spring:
   messages:
     basename: META-INF/messages, META-INF/messages-security

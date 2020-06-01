@@ -16,6 +16,7 @@ import {
     NzMessageModule,
     NzModalModule,
     NzSpinModule,
+    NzRadioModule,
     NZ_I18N,
     zh_CN
 } from 'ng-zorro-antd';
@@ -30,6 +31,7 @@ import { SignInComponent } from './pages/sign-in/sign-in.component';
 import { SecurityOAuthModule } from './pages/security-oauth/security-oauth.module';
 import { SystemModule } from './pages/system/system.module';
 import { BasedataModule } from './pages/basedata/basedata.module';
+import { DeviceModule } from './pages/device/device.module';
 
 registerLocaleData(zh);
 
@@ -56,9 +58,11 @@ registerLocaleData(zh);
         NzAvatarModule,
         NzDropDownModule,
         NzSpinModule,
+        NzRadioModule,
         IconsProviderModule,
         ComponentsModule,
         DirectivesModule,
+        DeviceModule,
         BasedataModule,
         SystemModule,
         SecurityOAuthModule,

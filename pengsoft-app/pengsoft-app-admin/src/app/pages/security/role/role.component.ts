@@ -1,12 +1,11 @@
 import { Component, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { Button } from 'src/app/components/commons/button/button';
 import { EditManyToManyComponent } from 'src/app/components/commons/edit-many-to-many/edit-many-to-many.component';
-import { Field } from 'src/app/components/commons/form-item/field';
 import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
 import { AuthorityService } from 'src/app/services/security/authority.service';
 import { RoleService } from 'src/app/services/security/role.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
+import { Button } from 'src/app/components/commons/button/button';
 
 @Component({
     selector: 'app-role',
@@ -14,6 +13,27 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     styleUrls: ['./role.component.scss']
 })
 export class RoleComponent extends TreeBeanComponent<RoleService> {
+
+    buttons: Array<Button> = [
+        {
+            name: '保存', type: 'primary', size: 'default',
+            authority: this.getAuthority('grantAuthorities'),
+            action: () => {
+                const role = this.editForm;
+                const authorities = this.editManyToManyComponent.items
+                    .filter(item => item.direction === 'right')
+                    .map(item => item.value);
+                this.bean.grantAuthorities(role, authorities, {
+                    before: () => this.editManyToManyComponent.loading = true,
+                    success: () => {
+                        this.message.info('保存成功');
+                        this.editManyToManyComponent.hide();
+                    },
+                    after: () => this.editManyToManyComponent.loading = false
+                });
+            }
+        }
+    ];
 
     @ViewChild('editManyToManyComponent', { static: true }) editManyToManyComponent: EditManyToManyComponent;
 
@@ -26,15 +46,6 @@ export class RoleComponent extends TreeBeanComponent<RoleService> {
         super(bean, modal, message);
     }
 
-    get fields(): Array<Field> {
-        return super.fields.concat([
-            FieldUtils.buildTextForCode(),
-            FieldUtils.buildTextForName(),
-            FieldUtils.buildTexareaForRemark()
-        ]);
-
-    }
-
     get lazy(): boolean {
         return false;
     }
@@ -43,38 +54,25 @@ export class RoleComponent extends TreeBeanComponent<RoleService> {
         return null;
     }
 
-    get listActionButtons(): Array<Button> {
-        const buttons = super.listActionButtons;
-        buttons.splice(1, 0, {
+    initFields(): void {
+        super.initFields();
+        this.fields.splice(1, 0,
+            FieldUtils.buildTextForCode(),
+            FieldUtils.buildTextForName(),
+            FieldUtils.buildTexareaForRemark()
+        );
+
+    }
+
+    initListActionButtons(): void {
+        super.initListActionButtons();
+        this.listActionButtons.splice(0, 0, {
             name: '分配权限',
             type: 'link',
             divider: true,
             width: 73,
             action: (row: any) => this.editGrantedAuthorities(row)
         });
-        return buttons;
-    }
-
-    get buttons(): Array<Button> {
-        return [
-            {
-                name: '保存', type: 'primary', size: 'default',
-                action: () => {
-                    const role = this.editForm;
-                    const authorities = this.editManyToManyComponent.items
-                        .filter(item => item.direction === 'right')
-                        .map(item => item.value);
-                    this.bean.grantAuthorities(role, authorities, {
-                        before: () => this.editManyToManyComponent.loading = true,
-                        success: () => {
-                            this.message.info('保存成功');
-                            this.editManyToManyComponent.hide();
-                        },
-                        after: () => this.editManyToManyComponent.loading = false
-                    });
-                }
-            }
-        ];
     }
 
     editGrantedAuthorities(row: any): void {

@@ -1,4 +1,4 @@
-import { Component, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { EntityUtils } from 'src/app/utils/entity-utils';
 import { Option } from '../../form-item/option';
@@ -14,23 +14,25 @@ export class SelectComponent extends InputComponent implements OnChanges {
     constructor(public sanitizer: DomSanitizer) { super(); }
 
     ngOnChanges(changes: SimpleChanges): void {
-        if (changes.form) {
-            if (this.form[this.field.code]) {
-                if (this.field.edit.input.multiple) {
-                    this.rawValue = this.form[this.field.code].split(',');
+        if (changes.form && this.edit) {
+            if (this.form[this.edit.code]) {
+                if (this.edit.input.multiple) {
+                    this.rawValue = this.form[this.edit.code].split(',');
                 } else {
-                    if (typeof this.form[this.field.code] === 'object') {
-                        this.rawValue = this.form[this.field.code].id;
-                        if (!this.field.edit.input.options.find(option => option.value === this.rawValue)) {
-                            this.field.edit.input.options.push({
-                                label: this.form[this.field.code].name,
-                                value: this.form[this.field.code].id
+                    if (typeof this.form[this.edit.code] === 'object') {
+                        this.rawValue = this.form[this.edit.code].id;
+                        if (!this.edit.input.options.find(option => option.value === this.rawValue)) {
+                            this.edit.input.options.push({
+                                label: this.form[this.edit.code].name,
+                                value: this.form[this.edit.code].id
                             });
                         }
                     } else {
-                        this.rawValue = this.form[this.field.code];
+                        this.rawValue = this.form[this.edit.code];
                     }
                 }
+            } else {
+                this.rawValue = undefined;
             }
         }
     }
@@ -46,22 +48,20 @@ export class SelectComponent extends InputComponent implements OnChanges {
         } else {
             values = [this.rawValue];
         }
-        this.form[this.field.code] = this.field.edit.input.options.filter(option => values.some(value => value === option.value));
-        if (this.form[this.field.code].length > 0) {
-            if (this.field.edit.input.multiple) {
-                this.form[this.field.code] = this.form[this.field.code].map((option: Option) => option.value).join(',');
+        if (values.length > 0) {
+            if (this.edit.input.multiple) {
+                this.form[this.edit.code] = values.join(',');
             } else {
-                this.form[this.field.code] = this.form[this.field.code][0].rawValue !== undefined ?
-                    this.form[this.field.code][0].rawValue : this.form[this.field.code][0].value;
+                this.form[this.edit.code] = values[0];
             }
         } else {
-            this.form[this.field.code] = null;
+            this.form[this.edit.code] = null;
         }
     }
 
     search(keywords: string): void {
-        if (this.field.edit.input.load) {
-            this.field.edit.input.load(this, keywords);
+        if (this.edit.input.load) {
+            this.edit.input.load(this, keywords);
         }
     }
 

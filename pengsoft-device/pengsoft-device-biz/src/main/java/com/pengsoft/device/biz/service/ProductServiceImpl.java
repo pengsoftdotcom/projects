@@ -1,7 +1,7 @@
 package com.pengsoft.device.biz.service;
 
-import com.pengsoft.basedata.biz.repository.ProductRepository;
-import com.pengsoft.basedata.domain.entity.Product;
+import com.pengsoft.device.biz.repository.ProductRepository;
+import com.pengsoft.device.domain.entity.Product;
 import com.pengsoft.support.biz.service.BeanServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
 import com.pengsoft.system.domain.entity.DictionaryItem;

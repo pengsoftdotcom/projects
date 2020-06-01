@@ -19,8 +19,8 @@ export class ClientComponent extends BeanComponent<ClientService> {
         super(bean, modal, message);
     }
 
-    get fields(): Array<Field> {
-        return [
+    initFields(): void {
+        this.fields = [
             FieldUtils.buildTextForCode(),
             FieldUtils.buildTextForName(),
             FieldUtils.buildText({ code: 'secret', name: '密码', list: { visible: false }, edit: { input: { placeholder: '如不需修改，请勿填写' } } }),

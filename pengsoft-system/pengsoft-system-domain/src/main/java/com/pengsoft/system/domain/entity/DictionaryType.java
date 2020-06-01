@@ -1,7 +1,10 @@
 package com.pengsoft.system.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pengsoft.support.domain.entity.Bean;
 import com.pengsoft.support.domain.entity.Codeable;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
@@ -23,6 +26,8 @@ import java.util.List;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_dictionary_type", indexes = {
@@ -43,43 +48,10 @@ public class DictionaryType extends Bean implements Codeable {
     @Size(max = 255)
     private String remark;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "type", cascade = CascadeType.REMOVE)
     @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
     @NotFound(action = NotFoundAction.IGNORE)
     private List<DictionaryItem> items = new ArrayList<>();
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(final String remark) {
-        this.remark = remark;
-    }
-
-    public List<DictionaryItem> getItems() {
-        return items;
-    }
-
-    public void setItems(final List<DictionaryItem> items) {
-        this.items = items;
-    }
 
 }

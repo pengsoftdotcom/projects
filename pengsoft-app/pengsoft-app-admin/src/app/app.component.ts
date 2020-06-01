@@ -1,9 +1,12 @@
 import { Location } from '@angular/common';
-import { Component } from '@angular/core';
-import { Router, Route } from '@angular/router';
-import { NzMessageService, NzModalService } from 'ng-zorro-antd';
+import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { Route, Router } from '@angular/router';
+import { NzMessageService, NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { environment } from 'src/environments/environment';
 import { ChangePasswordComponent } from './components/modal/change-password/change-password.component';
 import { SecurityService } from './services/commons/security.service';
+import { UserDetailsService } from './services/security/user-details.service';
 
 
 @Component({
@@ -11,7 +14,7 @@ import { SecurityService } from './services/commons/security.service';
     templateUrl: './app.component.html',
     styleUrls: ['./app.component.scss']
 })
-export class AppComponent {
+export class AppComponent implements OnInit {
 
     isCollapsed = false;
 
@@ -19,15 +22,46 @@ export class AppComponent {
 
     menus = [];
 
+    @ViewChild('jobs', { static: true }) jobs: TemplateRef<any>;
+
+    switchJobModal: NzModalRef;
+
+    @ViewChild('roles', { static: true }) roles: TemplateRef<any>;
+
+    switchRoleModal: NzModalRef;
+
     constructor(
+        private title: Title,
+        private userDetailsService: UserDetailsService,
         private security: SecurityService,
         private modal: NzModalService,
         private message: NzMessageService,
         private router: Router,
         private location: Location
     ) {
-        this.userDetails = this.security.userDetails;
+        this.title.setTitle(environment.title);
         this.menus = this.router.config.filter(route => route.data || route.children);
+    }
+
+    ngOnInit(): void {
+        this.userDetails = this.security.userDetails;
+        if (this.userDetails.roles && this.userDetails.roles.length > 0) {
+            if (this.userDetails.currentRole) {
+                this.userDetails.currentRole = this.userDetails.roles.find((role: any) => role.id === this.userDetails.currentRole.id);
+            }
+            if (this.userDetails.majorRole) {
+                this.userDetails.majorRole = this.userDetails.roles.find((role: any) => role.id === this.userDetails.majorRole.id);
+            }
+        }
+
+        if (this.userDetails.jobs && this.userDetails.jobs.length > 0) {
+            if (this.userDetails.currentJob) {
+                this.userDetails.currentJob = this.userDetails.jobs.find((job: any) => job.id === this.userDetails.currentJob.id);
+            }
+            if (this.userDetails.majorJob) {
+                this.userDetails.majorJob = this.userDetails.jobs.find((job: any) => job.id === this.userDetails.majorJob.id);
+            }
+        }
     }
 
     getMenuAuthority(route: Route): string {
@@ -71,11 +105,67 @@ export class AppComponent {
     }
 
     switchJob(): void {
-        this.message.info('暂未开放，敬请期待');
+        this.switchJobModal = this.modal.create({
+            nzStyle: { top: '30%' },
+            nzWidth: 450,
+            nzTitle: '切换职位',
+            nzContent: this.jobs,
+            nzFooter: null
+        });
+    }
+
+    currentJobChanged(): void {
+        this.userDetailsService.setCurrentJob(this.userDetails.currentJob, {
+            success: (res: any) => {
+                this.security.userDetails = res;
+                this.ngOnInit();
+                this.message.info('设置成功，页面将刷新', { nzDuration: 1000 }).onClose.subscribe(() => window.location.reload());
+            },
+            failure: () => this.message.error('设置失败')
+        });
+    }
+
+    majorJobChanged(): void {
+        this.userDetailsService.setMajorJob(this.userDetails.majorJob, {
+            success: (res: any) => {
+                this.security.userDetails = res;
+                this.ngOnInit();
+                this.message.info('设置成功', { nzDuration: 1000 }).onClose.subscribe(() => this.switchJobModal.close());
+            },
+            failure: () => this.message.error('设置失败')
+        });
     }
 
     switchRole(): void {
-        this.message.info('暂未开放，敬请期待');
+        this.switchRoleModal = this.modal.create({
+            nzStyle: { top: '30%' },
+            nzWidth: 450,
+            nzTitle: '切换角色',
+            nzContent: this.roles,
+            nzFooter: null
+        });
+    }
+
+    currentRoleChanged(): void {
+        this.userDetailsService.setCurrentRole(this.userDetails.currentRole, {
+            success: (res: any) => {
+                this.security.userDetails = res;
+                this.ngOnInit();
+                this.message.info('设置成功，页面将刷新', { nzDuration: 1000 }).onClose.subscribe(() => window.location.reload());
+            },
+            failure: () => this.message.error('设置失败')
+        });
+    }
+
+    majorRoleChanged(): void {
+        this.userDetailsService.setMajorRole(this.userDetails.majorRole, {
+            success: (res: any) => {
+                this.security.userDetails = res;
+                this.ngOnInit();
+                this.message.info('设置成功', { nzDuration: 1000 }).onClose.subscribe(() => this.switchRoleModal.close());
+            },
+            failure: () => this.message.error('设置失败')
+        });
     }
 
     changePassword(): void {

@@ -28,9 +28,9 @@ import java.util.Optional;
 @Service
 public class CaptchaServiceImpl extends BeanServiceImpl<CaptchaRepository, Captcha, String> implements CaptchaService {
 
-    private static final String EC_CAPTCHA_GENERATION_FAILED_EXCEEDED = "captcha.generation.failed.exceeded";
+    private static final String EC_CAPTCHA_GENERATE_EXCEEDED = "captcha.generate.exceeded";
 
-    private static final String EC_CAPTCHA_GENERATION_FAILED_FORBIDDEN = "captcha.generation.failed.forbidden";
+    private static final String EC_CAPTCHA_GENERATE_FORBIDDEN = "captcha.generate.forbidden";
 
     private static final int CAPTCHA_GENERATION_INTERVAL = 60;
 
@@ -40,7 +40,7 @@ public class CaptchaServiceImpl extends BeanServiceImpl<CaptchaRepository, Captc
     public Captcha generate(final User user, final int expiration) {
         final var root = QCaptcha.captcha;
         if (count(root.user.eq(user).and(root.createdAt.after(DateUtils.currentDate().atStartOfDay()))) >= CAPTCHA_GENERATION_MAX_COUNT) {
-            throw new BusinessException(EC_CAPTCHA_GENERATION_FAILED_EXCEEDED, CAPTCHA_GENERATION_MAX_COUNT);
+            throw new BusinessException(EC_CAPTCHA_GENERATE_EXCEEDED, CAPTCHA_GENERATION_MAX_COUNT);
         }
         final var optional = findUserLatest(user);
         final var currentDateTime = DateUtils.currentDateTime();
@@ -48,7 +48,7 @@ public class CaptchaServiceImpl extends BeanServiceImpl<CaptchaRepository, Captc
             final var captcha = optional.get();
             final var allowAt = captcha.getCreatedAt().plus(CAPTCHA_GENERATION_INTERVAL, ChronoUnit.SECONDS);
             if (allowAt.isAfter(currentDateTime)) {
-                throw new BusinessException(EC_CAPTCHA_GENERATION_FAILED_FORBIDDEN, Duration.between(currentDateTime, allowAt).toSeconds());
+                throw new BusinessException(EC_CAPTCHA_GENERATE_FORBIDDEN, Duration.between(currentDateTime, allowAt).toSeconds());
             }
         }
         final var captcha = new Captcha();

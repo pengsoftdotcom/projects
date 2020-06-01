@@ -1,7 +1,7 @@
 package com.pengsoft.device.biz.facade;
 
-import com.pengsoft.basedata.starter.BasedataApplication;
-import com.pengsoft.device.domain.entity.Batch;
+import com.pengsoft.device.domain.entity.Device;
+import com.pengsoft.device.starter.DeviceApplication;
 import com.pengsoft.security.biz.facade.AuthorityFacade;
 import com.pengsoft.security.biz.facade.RoleFacade;
 import com.pengsoft.support.test.BaseFacadeTest;
@@ -12,14 +12,14 @@ import org.springframework.test.context.ActiveProfiles;
 import javax.inject.Inject;
 
 /**
- * {@link BatchFacade} unit test.
+ * {@link DeviceFacade} unit test.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-@SpringBootTest(classes = BasedataApplication.class)
-@ActiveProfiles({ "security", "system", "basedata" })
-public class BatchFacadeTest extends BaseFacadeTest<BatchFacade> {
+@SpringBootTest(classes = DeviceApplication.class)
+@ActiveProfiles({ "security", "system", "basedata", "device" })
+public class DeviceFacadeTest extends BaseFacadeTest<DeviceFacade> {
 
     @Inject
     private RoleFacade roleFacade;
@@ -29,8 +29,8 @@ public class BatchFacadeTest extends BaseFacadeTest<BatchFacade> {
 
     @Test
     public void init() {
-        roleFacade.saveEntityAdmin(Batch.class);
-        authorityFacade.saveEntityAdminAuthorities(Batch.class);
+        roleFacade.saveEntityAdmin(Device.class);
+        authorityFacade.saveEntityAdminAuthorities(Device.class);
     }
 
 }

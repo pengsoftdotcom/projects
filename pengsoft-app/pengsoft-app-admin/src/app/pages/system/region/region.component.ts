@@ -20,20 +20,21 @@ export class RegionComponent extends TreeBeanComponent<RegionService> {
         super(bean, modal, message);
     }
 
-    get fields(): Array<Field> {
-        return super.fields.concat([
-            FieldUtils.buildTextForCode(),
-            FieldUtils.buildTextForName(),
-            FieldUtils.buildTexareaForRemark()
-        ]);
-    }
-
     get lazy(): boolean {
         return false;
     }
 
     get parentFilterForm(): any {
         return null;
+    }
+
+    initFields(): void {
+        super.initFields();
+        this.fields.splice(1, 0,
+            FieldUtils.buildTextForCode(),
+            FieldUtils.buildTextForName(),
+            FieldUtils.buildTexareaForRemark()
+        );
     }
 
 }

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { Field } from 'src/app/components/commons/form-item/field';
 import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
 import { PostService } from 'src/app/services/basedata/post.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
@@ -22,14 +21,6 @@ export class PostComponent extends TreeBeanComponent<PostService> implements OnI
         super(bean, modal, message);
     }
 
-    ngOnInit(): void {
-        if (this.organization) {
-            this.filterForm = { 'organization.id': this.organization.id };
-            this.editForm = { organization: this.organization };
-        }
-        super.list();
-    }
-
     get lazy(): boolean {
         return false;
     }
@@ -39,15 +30,24 @@ export class PostComponent extends TreeBeanComponent<PostService> implements OnI
             return { 'organization.id': this.organization.id };
         }
     }
+    ngOnInit(): void {
+        this.initForm();
+        this.list();
+    }
 
-    get fields(): Array<Field> {
-        const fields = [
+
+    initForm(): void {
+        if (this.organization) {
+            this.filterForm = { 'organization.id': this.organization.id };
+            this.editForm = { organization: this.organization };
+        }
+    }
+
+    initFields(): void {
+        this.fields.splice(1, 0,
             FieldUtils.buildTreeSelect({ code: 'organization', name: '机构', list: { visible: false }, edit: { visible: false } }),
             FieldUtils.buildTextForName()
-        ];
-        const parent = super.fields[0];
-        fields.splice(1, 0, parent);
-        return fields;
+        );
     }
 
     afterEditFormFilled(): void {
@@ -56,11 +56,9 @@ export class PostComponent extends TreeBeanComponent<PostService> implements OnI
         }
     }
 
-    afterFilterReset(): void {
+    afterFilterFormReset(): void {
         if (this.organization) {
             this.filterForm = { 'organization.id': this.organization.id };
-        } else {
-            this.filterForm = {};
         }
         this.list();
     }

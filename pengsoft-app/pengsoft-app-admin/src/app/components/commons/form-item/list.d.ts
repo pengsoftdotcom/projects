@@ -3,6 +3,8 @@ import { DomSanitizer, SafeHtml } from "@angular/platform-browser";
 
 export interface List {
 
+    code?: string;
+
     sortable?: boolean;
 
     sortPriority?: number;

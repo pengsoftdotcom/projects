@@ -2,10 +2,10 @@ package com.pengsoft.support.domain.entity;
 
 import com.pengsoft.support.commons.util.DateUtils;
 import com.pengsoft.support.commons.util.StringUtils;
-import com.vladmihalcea.hibernate.type.array.ListArrayType;
+import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
 
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -21,7 +21,9 @@ import java.time.LocalDateTime;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-@TypeDefs(@TypeDef(name = "array", typeClass = ListArrayType.class))
+@Getter
+@Setter
+@Data
 @MappedSuperclass
 public class Bean implements Beanable<String> {
 
@@ -39,45 +41,6 @@ public class Bean implements Beanable<String> {
     @Version
     private long version;
 
-    @Override
-    public String getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final String id) {
-        this.id = id;
-    }
-
-    @Override
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    @Override
-    public void setCreatedAt(final LocalDateTime createdAt) {
-        this.createdAt = createdAt;
-    }
-
-    @Override
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
-    }
-
-    @Override
-    public void setUpdatedAt(final LocalDateTime updatedAt) {
-        this.updatedAt = updatedAt;
-    }
-
-    @Override
-    public long getVersion() {
-        return version;
-    }
-
-    @Override
-    public void setVersion(final long version) {
-        this.version = version;
-    }
 
     /**
      * Before create.

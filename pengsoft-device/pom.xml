@@ -1,11 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <modules>
-        <module>pengsoft-device-commons</module>
-    </modules>
     <parent>
         <groupId>com.pengsoft.basedata</groupId>
         <artifactId>pengsoft-basedata</artifactId>
@@ -15,6 +12,14 @@
     <artifactId>pengsoft-device</artifactId>
     <packaging>pom</packaging>
 
+    <modules>
+        <module>pengsoft-device-commons</module>
+        <module>pengsoft-device-domain</module>
+        <module>pengsoft-device-biz</module>
+        <module>pengsoft-device-starter</module>
+        <module>pengsoft-device-test</module>
+    </modules>
+
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -23,6 +28,27 @@
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.pengsoft.device</groupId>
+                <artifactId>pengsoft-device-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.device</groupId>
+                <artifactId>pengsoft-device-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.device</groupId>
+                <artifactId>pengsoft-device-biz</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.device</groupId>
+                <artifactId>pengsoft-device-starter</artifactId>
+                <version>${project.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

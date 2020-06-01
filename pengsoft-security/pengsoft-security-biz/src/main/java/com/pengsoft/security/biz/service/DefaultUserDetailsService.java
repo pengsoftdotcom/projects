@@ -20,8 +20,9 @@ public interface DefaultUserDetailsService extends UserDetailsService {
      * Set the major role.
      *
      * @param role The major role.
+     * @return {@link DefaultUserDetails}
      */
-    void setMajorRole(@NotNull Role role);
+    DefaultUserDetails setMajorRole(@NotNull Role role);
 
     /**
      * Set the current role.

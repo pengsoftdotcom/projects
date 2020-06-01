@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.entity.Codeable;
 import com.pengsoft.support.domain.entity.TreeBean;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
@@ -25,6 +28,9 @@ import java.util.List;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
+@NoArgsConstructor
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_role", indexes = {
@@ -65,10 +71,6 @@ public class Role extends TreeBean<Role> implements Codeable {
     @NotFound(action = NotFoundAction.IGNORE)
     private List<RoleAuthority> roleAuthorities = new ArrayList<>();
 
-    public Role() {
-
-    }
-
     public Role(@NotBlank @Size(max = 255) final String code) {
         this.code = code;
         this.name = StringUtils.replace(code, StringUtils.UNDERLINE, StringUtils.SPACE);
@@ -89,49 +91,6 @@ public class Role extends TreeBean<Role> implements Codeable {
         setParent(parent);
         this.code = code;
         this.name = name;
-    }
-
-
-    @Override
-    public String getCode() {
-        return code;
-    }
-
-    @Override
-    public void setCode(final String code) {
-        this.code = code;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getRemark() {
-        return remark;
-    }
-
-    public void setRemark(final String remark) {
-        this.remark = remark;
-    }
-
-    public List<UserRole> getUserRoles() {
-        return userRoles;
-    }
-
-    public void setUserRoles(final List<UserRole> userRoles) {
-        this.userRoles = userRoles;
-    }
-
-    public List<RoleAuthority> getRoleAuthorities() {
-        return roleAuthorities;
-    }
-
-    public void setRoleAuthorities(final List<RoleAuthority> roleAuthorities) {
-        this.roleAuthorities = roleAuthorities;
     }
 
 }

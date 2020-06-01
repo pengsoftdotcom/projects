@@ -31,6 +31,10 @@ public class MessageTemplateFacadeTest extends BaseFacadeTest<MessageTemplateFac
     public void init() {
         roleFacade.saveEntityAdmin(MessageTemplate.class);
         authorityFacade.saveEntityAdminAuthorities(MessageTemplate.class);
+
+        final var messageTemplate = new MessageTemplate();
+        messageTemplate.setCode("authentication_captcha");
+        getFacade().save(messageTemplate);
     }
 
 }

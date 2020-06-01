@@ -43,4 +43,11 @@ public interface TreeBeanService<T extends TreeBeanable<T, ID>, ID extends Seria
      */
     List<T> findAllExcludeSelfAndItsChildren(T self, Predicate predicate, Sort sort);
 
+    /**
+     * Returns all entities that their 'parentIds' starts with the given value.
+     *
+     * @param parentIds The entity's parentIds
+     */
+    List<T> findAllByParentIdsStartsWith(String parentIds);
+
 }

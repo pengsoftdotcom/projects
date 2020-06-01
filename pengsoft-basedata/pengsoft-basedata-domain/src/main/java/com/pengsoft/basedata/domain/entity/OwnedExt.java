@@ -1,14 +1,14 @@
 package com.pengsoft.basedata.domain.entity;
 
-import com.pengsoft.security.domain.entity.Ownable;
+import com.pengsoft.security.domain.entity.Owned;
 
 /**
- * Ownable extension
+ * Owned extension
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface OwnableExt extends Ownable {
+public interface OwnedExt extends Owned {
 
     /**
      * Returns the value of the entity's 'controlledBy' field.

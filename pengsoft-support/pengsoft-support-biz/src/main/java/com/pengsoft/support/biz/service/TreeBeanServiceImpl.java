@@ -39,7 +39,8 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
         if (target.getParent() != null) {
             // set the current parent as a non-leaf node.
             if (EntityUtils.isNotPersisted(target.getParent())) {
-                target.setParent(findOne(target.getParent().getId()).orElseThrow(() -> exceptions.entityNotFound(target.getParent().getId().toString())));
+                target.setParent(
+                        findOne(target.getParent().getId()).orElseThrow(() -> getExceptions().entityNotFound(target.getParent().getId().toString())));
             }
             target.getParent().getChildren().add(target);
             target.getParent().setLeaf(false);
@@ -49,31 +50,35 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
             if (StringUtils.isBlank(target.getParent().getParentIds())) {
                 target.setParentIds(target.getParent().getId().toString());
             } else {
-                target.setParentIds(StringUtils.join(new Object[] { target.getParent().getParentIds(), target.getParent().getId() }, StringUtils.GLOBAL_SEPARATOR));
+                target.setParentIds(StringUtils.join(new Object[] { target.getParent().getParentIds(), target.getParent().getId() },
+                        StringUtils.GLOBAL_SEPARATOR));
             }
             target.setDepth(target.getParent().getDepth() + 1);
         }
         super.save(target);
 
-        // change parent ids and depth of children.
         if (parentChanged) {
-            final var deque = new ArrayDeque<>(target.getChildren());
-            var parent = target;
-            while (!deque.isEmpty()) {
-                final T child = deque.pop();
-                if (StringUtils.isBlank(parent.getParentIds())) {
-                    child.setParentIds(parent.getId().toString());
-                } else {
-                    child.setParentIds(StringUtils.join(new Object[] { parent.getParentIds(), parent.getId() }, StringUtils.GLOBAL_SEPARATOR));
-                }
-                child.setDepth(parent.getDepth() + 1);
-                super.save(child);
-                parent = child;
-                deque.addAll(parent.getChildren());
-            }
+            updateTheParentIdsAndDepthOfChildNodes(target);
         }
 
         return target;
+    }
+
+    private void updateTheParentIdsAndDepthOfChildNodes(final T target) {
+        final var deque = new ArrayDeque<>(target.getChildren());
+        var parent = target;
+        while (!deque.isEmpty()) {
+            final T child = deque.pop();
+            if (StringUtils.isBlank(parent.getParentIds())) {
+                child.setParentIds(parent.getId().toString());
+            } else {
+                child.setParentIds(StringUtils.join(new Object[] { parent.getParentIds(), parent.getId() }, StringUtils.GLOBAL_SEPARATOR));
+            }
+            child.setDepth(parent.getDepth() + 1);
+            super.save(child);
+            parent = child;
+            deque.addAll(parent.getChildren());
+        }
     }
 
     @Override
@@ -108,7 +113,10 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
             if (StringUtils.isBlank(self.getParentIds())) {
                 predicate = QueryDslUtils.merge(parentIdsPath.notLike(self.getId().toString() + "%"), predicate);
             } else {
-                predicate = QueryDslUtils.merge(parentIdsPath.notLike(StringUtils.join(new String[] { self.getParentIds(), self.getId().toString() }, StringUtils.GLOBAL_SEPARATOR) + "%"), predicate);
+                predicate = QueryDslUtils.merge(
+                        parentIdsPath.notLike(
+                                StringUtils.join(new String[] { self.getParentIds(), self.getId().toString() }, StringUtils.GLOBAL_SEPARATOR) + "%"),
+                        predicate);
             }
         }
         return predicate;
@@ -117,6 +125,11 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
     @Override
     public List<T> findAllExcludeSelfAndItsChildren(final T self, final Predicate predicate, final Sort sort) {
         return findAll(getPredicateOfExcludeSelfAndItsChildren(self, predicate), sort);
+    }
+
+    @Override
+    public List<T> findAllByParentIdsStartsWith(final String parentIds) {
+        return getRepository().findAllByParentIdsStartsWith(parentIds);
     }
 
 }

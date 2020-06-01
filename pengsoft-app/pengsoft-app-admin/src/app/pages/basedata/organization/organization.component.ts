@@ -1,6 +1,5 @@
-import { Component, ViewChild, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { Button } from 'src/app/components/commons/button/button';
 import { EditOneToManyComponent } from 'src/app/components/commons/edit-one-to-many/edit-one-to-many.component';
 import { Field } from 'src/app/components/commons/form-item/field';
 import { InputComponent } from 'src/app/components/commons/input/input.component';
@@ -32,36 +31,6 @@ export class OrganizationComponent extends TreeBeanComponent<OrganizationService
         super(bean, modal, message);
     }
 
-    ngOnInit(): void {
-        super.ngOnInit();
-        this.editComponent.width = '40%';
-    }
-
-    get fields(): Array<Field> {
-        return [
-            FieldUtils.buildTextForCode({ width: 200, align: 'center' }),
-            FieldUtils.buildTextForName(),
-            FieldUtils.buildText({ code: 'simpleName', name: '简称' }),
-            FieldUtils.buildCascader({
-                code: 'category', name: '类别',
-                list: { width: 200, align: 'center' },
-                edit: {
-                    required: true,
-                    input: {
-                        load: (inputComponent: InputComponent) => {
-                            this.dictionaryItem.findAllByTypeCode('organization_category', null, {
-                                before: () => inputComponent.loading = true,
-                                success: (res: any) => inputComponent.field.edit.input.options = EntityUtils.convertListToTree(res),
-                                after: () => inputComponent.loading = false
-                            });
-                        }
-                    }
-                },
-                filter: {}
-            })
-        ];
-    }
-
     get lazy(): boolean {
         return false;
     }
@@ -70,15 +39,46 @@ export class OrganizationComponent extends TreeBeanComponent<OrganizationService
         return null;
     }
 
-    get listActionButtons(): Array<Button> {
-        const buttons: Array<Button> = [{
+    ngOnInit(): void {
+        super.ngOnInit();
+        this.editComponent.width = '40%';
+    }
+
+    initFields(): void {
+        super.initFields();
+        this.fields.splice(1, 0,
+            FieldUtils.buildTextForCode({ width: 300 }),
+            FieldUtils.buildTextForName(),
+            FieldUtils.buildText({ code: 'simpleName', name: '简称' }),
+            FieldUtils.buildCascader({
+                code: 'category', name: '类别',
+                list: { width: 200, align: 'center' },
+                edit: {
+                    required: true,
+                    input: {
+                        load: (component: InputComponent) => {
+                            this.dictionaryItem.findAllByTypeCode('organization_category', null, {
+                                before: () => component.loading = true,
+                                success: (res: any) => component.edit.input.options = EntityUtils.convertListToTree(res),
+                                after: () => component.loading = false
+                            });
+                        }
+                    }
+                },
+                filter: {}
+            })
+        );
+    }
+
+    initListActionButtons(): void {
+        super.initListActionButtons();
+        this.listActionButtons.splice(0, 0, {
             name: '职务', type: 'link', divider: true, width: 45,
             action: (row: any) => this.editPosts(row)
         }, {
             name: '部门', type: 'link', divider: true, width: 45,
             action: (row: any) => this.editDepartments(row)
-        }];
-        return buttons.concat(super.listActionButtons);
+        });
     }
 
     editPosts(row: any): void {
