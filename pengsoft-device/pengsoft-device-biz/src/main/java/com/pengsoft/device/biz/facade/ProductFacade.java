@@ -1,0 +1,15 @@
+package com.pengsoft.device.biz.facade;
+
+import com.pengsoft.basedata.biz.service.ProductService;
+import com.pengsoft.basedata.domain.entity.Product;
+import com.pengsoft.support.biz.facade.BeanFacade;
+
+/**
+ * The facade interface of {@link Product}
+ *
+ * @author dang.peng@pengsoft.com
+ * @since 1.0.0
+ */
+public interface ProductFacade extends BeanFacade<ProductService, Product, String>, ProductService {
+
+}
