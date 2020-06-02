@@ -30,6 +30,14 @@ public interface ProductRepository extends BeanRepository<QProduct, Product, Str
     }
 
     /**
+     * Returns an {@link Optional} of a {@link Product} with given code.
+     *
+     * @param code     {@link Product}'s code
+     */
+    @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
+    Optional<Product> findOneByCode(@NotBlank String code);
+
+    /**
      * Returns an {@link Optional} of a {@link Product} with given category and name.
      *
      * @param category {@link Product}'s category

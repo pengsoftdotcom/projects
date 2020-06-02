@@ -22,12 +22,22 @@ public class ProductServiceImpl extends BeanServiceImpl<ProductRepository, Produ
 
     @Override
     public Product save(final Product product) {
+        findOneByCode(product.getCode()).ifPresent(source -> {
+            if (EntityUtils.ne(source, product)) {
+                throw getExceptions().constraintViolated("code", "Exists", product.getCode());
+            }
+        });
         findOneByCategoryAndName(product.getCategory(), product.getName()).ifPresent(source -> {
             if (EntityUtils.ne(source, product)) {
                 throw getExceptions().constraintViolated("name", "Exists", product.getName());
             }
         });
         return super.save(product);
+    }
+
+    @Override
+    public Optional<Product> findOneByCode(final String code) {
+        return getRepository().findOneByCode(code);
     }
 
     @Override

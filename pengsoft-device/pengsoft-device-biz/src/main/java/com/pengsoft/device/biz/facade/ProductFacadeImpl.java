@@ -18,6 +18,11 @@ import java.util.Optional;
 public class ProductFacadeImpl extends BeanFacadeImpl<ProductService, Product, String> implements ProductFacade {
 
     @Override
+    public Optional<Product> findOneByCode(final String code) {
+        return getService().findOneByCode(code);
+    }
+
+    @Override
     public Optional<Product> findOneByCategoryAndName(final DictionaryItem category, final String name) {
         return getService().findOneByCategoryAndName(category, name);
     }

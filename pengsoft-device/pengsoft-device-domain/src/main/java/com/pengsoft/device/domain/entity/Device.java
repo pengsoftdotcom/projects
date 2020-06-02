@@ -33,7 +33,7 @@ import javax.validation.constraints.Size;
 })
 public class Device extends OwnedBeanExt implements Codeable {
 
-    private static final long serialVersionUID = 7117396550821211138L;
+    private static final long serialVersionUID = 8282672612050803652L;
 
     @NotBlank
     @Size(max = 255)
@@ -43,9 +43,19 @@ public class Device extends OwnedBeanExt implements Codeable {
     @Size(max = 255)
     private String name;
 
+    @Size(max = 255)
+    private String host;
+
+    private int part;
+
     @NotNull
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private Product product;
+
+    @NotNull
+    @ManyToOne
+    @NotFound(action = NotFoundAction.IGNORE)
+    private Group group;
 
 }

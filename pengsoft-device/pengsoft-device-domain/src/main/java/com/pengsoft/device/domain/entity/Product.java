@@ -1,6 +1,7 @@
 package com.pengsoft.device.domain.entity;
 
 import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.Codeable;
 import com.pengsoft.system.domain.entity.DictionaryItem;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,11 +29,16 @@ import javax.validation.constraints.Size;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_product", indexes = {
-        @Index(name = "i_product_name", columnList = "name", unique = true)
+        @Index(name = "i_product_code", columnList = "code", unique = true),
+        @Index(name = "i_product_category_id", columnList = "category_id, name", unique = true)
 })
-public class Product extends Bean {
+public class Product extends Bean implements Codeable {
 
     private static final long serialVersionUID = -3314314410978706372L;
+
+    @NotBlank
+    @Size(max = 255)
+    private String code;
 
     @NotBlank
     @Size(max = 255)
