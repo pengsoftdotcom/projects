@@ -9,7 +9,7 @@ import java.util.List;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface TreeBeanable<T extends TreeBeanable<T, ID>, ID extends Serializable> extends Beanable<ID> {
+public interface TreeEntity<T extends TreeEntity<T, ID>, ID extends Serializable> extends Entity<ID> {
 
     /**
      * Get the value of the entity's 'parent' field.

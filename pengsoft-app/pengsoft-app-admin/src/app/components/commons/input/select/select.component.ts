@@ -1,7 +1,6 @@
 import { Component, OnChanges, SimpleChanges, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { EntityUtils } from 'src/app/utils/entity-utils';
-import { Option } from '../../form-item/option';
 import { InputComponent } from '../input.component';
 
 @Component({
@@ -15,20 +14,21 @@ export class SelectComponent extends InputComponent implements OnChanges {
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.form && this.edit) {
-            if (this.form[this.edit.code]) {
+            const value = this.form[this.edit.code];
+            if (value) {
                 if (this.edit.input.multiple) {
-                    this.rawValue = this.form[this.edit.code].split(',');
+                    this.rawValue = value.split(',');
                 } else {
-                    if (typeof this.form[this.edit.code] === 'object') {
-                        this.rawValue = this.form[this.edit.code].id;
-                        if (!this.edit.input.options.find(option => option.value === this.rawValue)) {
+                    this.rawValue = value;
+                    if (typeof this.rawValue === 'object') {
+                        const options = this.edit.input.options;
+                        if (!options.find(option => EntityUtils.equals(option.value, this.rawValue))) {
+                            const render = this.edit.input.optionLabelRender;
                             this.edit.input.options.push({
-                                label: this.form[this.edit.code].name,
-                                value: this.form[this.edit.code].id
+                                label: !render ? this.rawValue.name : this.edit.input.optionLabelRender(this.edit, this.form),
+                                value: this.rawValue
                             });
                         }
-                    } else {
-                        this.rawValue = this.form[this.edit.code];
                     }
                 }
             } else {

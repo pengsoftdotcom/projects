@@ -15,7 +15,7 @@ import java.util.Map;
 @Setter
 public class Request {
 
-    private String version;
+    private String version = "1.0";
 
     private String type;
 

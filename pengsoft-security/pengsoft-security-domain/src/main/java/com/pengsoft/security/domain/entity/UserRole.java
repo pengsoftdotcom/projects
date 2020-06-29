@@ -1,6 +1,6 @@
 package com.pengsoft.security.domain.entity;
 
-import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.EntityImpl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -11,6 +11,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
@@ -31,7 +32,7 @@ import javax.persistence.Table;
 @Table(name = "t_user_role", indexes = {
         @Index(name = "i_user_role", columnList = "user_id, role_id", unique = true)
 })
-public class UserRole extends Bean {
+public class UserRole extends EntityImpl {
 
     private static final long serialVersionUID = 1105413409437052244L;
 
@@ -46,8 +47,9 @@ public class UserRole extends Bean {
     private Role role;
 
     /**
-     * Whether the major role.
+     * Whether the primary role.
      */
-    private boolean major;
+    @Column(name = "`primary`")
+    private boolean primary;
 
 }

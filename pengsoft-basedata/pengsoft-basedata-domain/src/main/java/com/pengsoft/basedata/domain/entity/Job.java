@@ -33,7 +33,7 @@ import java.util.List;
 @Table(name = "t_job", indexes = {
         @Index(name = "i_job_department_id", columnList = "department_id, name", unique = true),
 })
-public class Job extends OwnedTreeBeanExt<Job> {
+public class Job extends OwnedExtTreeEntity<Job> {
 
     private static final long serialVersionUID = 2756342891165187326L;
 

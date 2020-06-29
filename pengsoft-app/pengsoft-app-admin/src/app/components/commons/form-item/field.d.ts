@@ -5,6 +5,8 @@ export interface Field {
 
     code: string;
 
+    parentCode?: string;
+
     name?: string;
 
     list?: List;

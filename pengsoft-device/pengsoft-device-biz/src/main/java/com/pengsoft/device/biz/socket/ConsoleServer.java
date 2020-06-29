@@ -1,7 +1,5 @@
 package com.pengsoft.device.biz.socket;
 
-import com.fasterxml.jackson.databind.type.MapType;
-import com.pengsoft.device.biz.facade.DeviceFacade;
 import com.pengsoft.support.commons.json.ObjectMapper;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.ByteBuf;
@@ -20,32 +18,32 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-import java.util.Map;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 /**
+ * Console Server
+ *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
 @Slf4j
-@Named
-public class LonglianConsoleServer extends Thread {
+//@Named
+public class ConsoleServer extends Thread {
 
-    @Value("${pengsoft.device.host}")
-    private String host;
+    private final String host;
 
-    @Value("${pengsoft.device.port}")
-    private int port;
-
-    @Inject
-    private DeviceFacade deviceFacade;
+    private final int port;
 
     @Inject
     private ObjectMapper objectMapper;
 
-    private MapType mapType;
+    @Inject
+    private List<RequestHandler> handlers;
 
-    public LonglianConsoleServer() {
+    public ConsoleServer(@Value("${pengsoft.device.host}") final String host, @Value("${pengsoft.device.port}") final int port) {
+        this.host = host;
+        this.port = port;
         this.start();
     }
 
@@ -60,7 +58,7 @@ public class LonglianConsoleServer extends Thread {
                     .childHandler(new ChannelInitializer<SocketChannel>() {
                         @Override
                         public void initChannel(final SocketChannel ch) throws Exception {
-                            final var delimiter = Unpooled.copiedBuffer("\0".getBytes("UTF-8"));
+                            final var delimiter = Unpooled.copiedBuffer("\0".getBytes(StandardCharsets.UTF_8));
                             ch.pipeline().addLast(new DelimiterBasedFrameDecoder(8096, delimiter));
                             ch.pipeline().addLast(new ChannelInboundHandlerAdapter() {
                                 @Override
@@ -70,25 +68,25 @@ public class LonglianConsoleServer extends Thread {
                                     while (byteBuf.isReadable()) {
                                         builder.append((char) byteBuf.readByte());
                                     }
-                                    log.debug("received message: \n" + builder.toString());
-                                    if (mapType == null) {
-                                        mapType = objectMapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class);
-                                    }
-                                    final Map<String, Object> req = objectMapper.readValue(builder.toString(), mapType);
-                                    switch (req.get("type").toString()) {
-                                        case "login_req": {
-                                            final var data = Map.of("status", 0, "config", Map.of("device_name", "测试"));
-                                            final var res = objectMapper.writeValueAsString(Map.of("type", "login_req", "data", data));
-                                            log.debug("sent message: \n" + res);
-                                            ctx.writeAndFlush(Unpooled.copiedBuffer((res + "\0").getBytes("UTF-8")));
-                                            break;
-                                        }
-                                        default: {
-                                            log.warn("unsolved message: \n" + builder.toString());
-                                            break;
-                                        }
+                                    final var req = objectMapper.readValue(builder.toString(), Request.class);
+                                    log.debug("received request from device('{}'): \n{}", req.getSn(), builder.toString());
+                                    handlers.stream()
+                                            .filter(handler -> handler.support(req))
+                                            .map(handler -> handler.handle(req))
+                                            .forEach(data -> {
+                                                try {
+                                                    final var res = new Response();
+                                                    res.setSeq(req.getSeq() + 1);
+                                                    res.setType(req.getType().replace("req", "rsp"));
+                                                    res.setData(data);
+                                                    final var value = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(res);
+                                                    log.debug("sent response to device('{}'):\n{}", req.getSn(), value);
+                                                    ctx.writeAndFlush(Unpooled.copiedBuffer((value + "\0").getBytes(StandardCharsets.UTF_8)));
+                                                } catch (final Exception e) {
+                                                    log.error("write json error", e);
+                                                }
+                                            });
 
-                                    }
                                 }
                             });
                         }
@@ -100,7 +98,7 @@ public class LonglianConsoleServer extends Thread {
 
             f.channel().closeFuture().sync();
         } catch (final Exception e) {
-            log.error("console start error", e);
+            log.error("console server start error", e);
         } finally {
             workerGroup.shutdownGracefully();
             bossGroup.shutdownGracefully();

@@ -1,34 +1,34 @@
 package com.pengsoft.support.biz.facade;
 
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
+import com.pengsoft.support.biz.service.EntityService;
+import com.pengsoft.support.commons.exception.Exceptions;
+import com.pengsoft.support.domain.entity.Entity;
+import com.querydsl.core.types.Predicate;
+import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 
-import com.pengsoft.support.biz.service.BeanService;
-import com.pengsoft.support.domain.entity.Beanable;
-import com.querydsl.core.types.Predicate;
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
 
 /**
- * The implementer of {@link BeanFacade}
+ * The implementer of {@link EntityFacade}
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public class BeanFacadeImpl<S extends BeanService<T, ID>, T extends Beanable<ID>, ID extends Serializable> implements BeanFacade<S, T, ID> {
+public class EntityFacadeImpl<S extends EntityService<T, ID>, T extends Entity<ID>, ID extends Serializable> implements EntityFacade<S, T, ID> {
 
+    @Getter
+    @Inject
+    private Exceptions exceptions;
+
+    @Getter
     @Inject
     private S service;
-
-    @Override
-    public S getService() {
-        return service;
-    }
 
     @Override
     public Class<T> getEntityClass() {
@@ -41,23 +41,23 @@ public class BeanFacadeImpl<S extends BeanService<T, ID>, T extends Beanable<ID>
     }
 
     @Override
-    public T save(final T bean) {
-        return service.save(bean);
+    public T save(final T entity) {
+        return service.save(entity);
     }
 
     @Override
-    public List<T> save(final List<T> beans) {
-        return service.save(beans);
+    public List<T> save(final List<T> entities) {
+        return service.save(entities);
     }
 
     @Override
-    public void delete(final T bean) {
-        service.delete(bean);
+    public void delete(final T entity) {
+        service.delete(entity);
     }
 
     @Override
-    public void delete(final List<T> beans) {
-        service.delete(beans);
+    public void delete(final List<T> entities) {
+        service.delete(entities);
     }
 
     @Override

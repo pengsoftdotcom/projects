@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.facade;
 
-import com.pengsoft.support.biz.facade.TreeBeanFacadeImpl;
+import com.pengsoft.support.biz.facade.TreeEntityFacadeImpl;
 import com.pengsoft.system.biz.service.RegionService;
 import com.pengsoft.system.domain.entity.Region;
 import org.springframework.stereotype.Service;
@@ -14,7 +14,7 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Service
-public class RegionFacadeImpl extends TreeBeanFacadeImpl<RegionService, Region, String> implements RegionFacade {
+public class RegionFacadeImpl extends TreeEntityFacadeImpl<RegionService, Region, String> implements RegionFacade {
 
     @Override
     public Optional<Region> findOneByCode(final String code) {

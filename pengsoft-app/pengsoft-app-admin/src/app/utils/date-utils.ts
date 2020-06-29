@@ -15,7 +15,7 @@ export class DateUtils {
     }
 
     static parse(dateTime: string): Date {
-        return parse(dateTime, 'yyyy-MM-dd HH:mm:ss', new Date());
+        return parse(dateTime, 'yyyy-MM-dd', new Date());
     }
 
     static isAfter(dateTime: string): boolean {

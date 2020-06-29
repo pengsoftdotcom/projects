@@ -1,7 +1,7 @@
 package com.pengsoft.support.biz.service;
 
-import com.pengsoft.support.domain.entity.TreeBean;
-import com.pengsoft.support.domain.entity.TreeBeanable;
+import com.pengsoft.support.domain.entity.TreeEntityImpl;
+import com.pengsoft.support.domain.entity.TreeEntity;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Sort;
 
@@ -9,12 +9,12 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * The service interface of {@link TreeBean}.
+ * The service interface of {@link TreeEntityImpl}.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface TreeBeanService<T extends TreeBeanable<T, ID>, ID extends Serializable> extends BeanService<T, ID> {
+public interface TreeEntityService<T extends TreeEntity<T, ID>, ID extends Serializable> extends EntityService<T, ID> {
 
     /**
      * Returns all entities under the parent specified in {@link Predicate}

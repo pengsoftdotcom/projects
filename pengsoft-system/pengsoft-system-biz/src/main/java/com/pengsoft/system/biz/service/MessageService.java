@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.service;
 
-import com.pengsoft.support.biz.service.BeanService;
+import com.pengsoft.support.biz.service.EntityService;
 import com.pengsoft.system.domain.entity.Message;
 
 /**
@@ -9,6 +9,6 @@ import com.pengsoft.system.domain.entity.Message;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface MessageService extends BeanService<Message, String> {
+public interface MessageService extends EntityService<Message, String> {
 
 }

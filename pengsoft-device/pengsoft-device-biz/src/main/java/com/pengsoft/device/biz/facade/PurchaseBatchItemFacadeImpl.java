@@ -1,39 +1,58 @@
 package com.pengsoft.device.biz.facade;
 
+import com.pengsoft.device.biz.service.DeviceConfigService;
 import com.pengsoft.device.biz.service.DeviceService;
+import com.pengsoft.device.biz.service.ProductService;
+import com.pengsoft.device.biz.service.PurchaseBatchItemService;
 import com.pengsoft.device.domain.entity.Device;
-import com.pengsoft.support.biz.facade.BeanFacadeImpl;
+import com.pengsoft.device.domain.entity.DeviceConfig;
+import com.pengsoft.device.domain.entity.PurchaseBatchItem;
+import com.pengsoft.support.biz.facade.EntityFacadeImpl;
+import com.pengsoft.support.commons.util.StringUtils;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import javax.inject.Inject;
 
 /**
- * The implementer of {@link DeviceFacade}
+ * The implementer of {@link PurchaseBatchItemFacade}
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
 @Service
-public class DeviceFacadeImpl extends BeanFacadeImpl<DeviceService, Device, String> implements DeviceFacade {
+public class PurchaseBatchItemFacadeImpl extends EntityFacadeImpl<PurchaseBatchItemService, PurchaseBatchItem, String> implements PurchaseBatchItemFacade {
+
+    @Inject
+    private ProductService productService;
+
+    @Inject
+    private DeviceService deviceService;
+
+    @Inject
+    private DeviceConfigService deviceConfigService;
 
     @Override
-    public void activate(final String code) {
-        getService().activate(code);
-    }
-
-    @Override
-    public void online(final Device device) {
-        getService().online(device);
-    }
-
-    @Override
-    public void offline(final Device device) {
-        getService().offline(device);
-    }
-
-    @Override
-    public Optional<Device> findOneByCode(final String code) {
-        return getService().findOneByCode(code);
+    public PurchaseBatchItem save(final PurchaseBatchItem purchaseBatchItem) {
+        super.save(purchaseBatchItem);
+        final var count = deviceService.countByPurchaseBatchItemAndActivatedTrue(purchaseBatchItem);
+        final var leftQuantity = purchaseBatchItem.getQuantity() - count;
+        for (int i = 0; i < leftQuantity; i++) {
+            final var device = new Device();
+            final var code = "unactivated" + StringUtils.HYPHEN + System.currentTimeMillis();
+            device.setCode(code);
+            device.setName(code);
+            device.setPurchaseBatchItem(purchaseBatchItem);
+            deviceService.save(device);
+            productService.findOne(purchaseBatchItem.getProduct().getId()).ifPresent(product -> product.getConfigs().forEach(productConfig -> {
+                final var deviceConfig = new DeviceConfig();
+                BeanUtils.copyProperties(productConfig, deviceConfig);
+                deviceConfig.setDevice(device);
+                deviceConfigService.save(deviceConfig);
+                device.getConfigs().add(deviceConfig);
+            }));
+        }
+        return purchaseBatchItem;
     }
 
 }

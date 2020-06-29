@@ -66,30 +66,4 @@ export class SecurityService {
         return false;
     }
 
-    hasAnyRole(roleCodes: string): boolean {
-        let codes: Array<string>;
-        if (roleCodes.indexOf(',') === -1) {
-            codes = [roleCodes];
-        } else {
-            codes = roleCodes.split(',').map(code => code.trim());
-        }
-        if (this.userDetails) {
-            const role: any = this.userDetails.role;
-            if (role) {
-                const queue = [];
-                queue.push(role);
-                while (queue.length > 0) {
-                    const parent = queue.pop();
-                    if (codes.some(code => code === parent.code)) {
-                        return true;
-                    }
-                    if (parent.children) {
-                        parent.children.forEach(child => queue.push(child));
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
 }

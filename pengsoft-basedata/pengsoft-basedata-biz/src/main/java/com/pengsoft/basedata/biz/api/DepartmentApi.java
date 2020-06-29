@@ -2,7 +2,7 @@ package com.pengsoft.basedata.biz.api;
 
 import com.pengsoft.basedata.biz.facade.DepartmentFacade;
 import com.pengsoft.basedata.domain.entity.Department;
-import com.pengsoft.support.biz.api.TreeBeanApi;
+import com.pengsoft.support.biz.api.TreeEntityApi;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("api/department")
-public class DepartmentApi extends TreeBeanApi<DepartmentFacade, Department, String> {
+public class DepartmentApi extends TreeEntityApi<DepartmentFacade, Department, String> {
 
 }

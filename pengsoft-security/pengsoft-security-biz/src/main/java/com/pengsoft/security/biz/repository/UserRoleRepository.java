@@ -2,7 +2,7 @@ package com.pengsoft.security.biz.repository;
 
 import com.pengsoft.security.domain.entity.QUserRole;
 import com.pengsoft.security.domain.entity.UserRole;
-import com.pengsoft.support.biz.repository.BeanRepository;
+import com.pengsoft.support.biz.repository.EntityRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
  * @since 1.0.0
  */
 @Repository
-public interface UserRoleRepository extends BeanRepository<QUserRole, UserRole, String> {
+public interface UserRoleRepository extends EntityRepository<QUserRole, UserRole, String> {
 
 }

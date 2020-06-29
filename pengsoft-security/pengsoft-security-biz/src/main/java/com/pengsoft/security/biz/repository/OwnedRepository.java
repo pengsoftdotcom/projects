@@ -1,15 +1,18 @@
 package com.pengsoft.security.biz.repository;
 
-import org.springframework.data.jpa.repository.QueryHints;
-
-import javax.persistence.QueryHint;
 import java.util.Collection;
 
+import javax.persistence.QueryHint;
+
+import org.springframework.data.jpa.repository.QueryHints;
+
+import com.pengsoft.security.domain.entity.Owned;
+
 /**
- * The repository interface of {@link OwnedBean} based on JPA
+ * The repository interface of {@link Owned} based on JPA
  *
  * @author dang.peng@pengsoft.com
- * @since 1.0.0
+ * @since  1.0.0
  */
 public interface OwnedRepository {
 

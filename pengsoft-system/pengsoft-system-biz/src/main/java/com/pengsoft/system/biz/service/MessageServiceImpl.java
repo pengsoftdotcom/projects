@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.service;
 
-import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.system.biz.repository.MessageRepository;
 import com.pengsoft.system.domain.entity.Message;
 import org.springframework.context.annotation.Primary;
@@ -14,6 +14,6 @@ import org.springframework.stereotype.Service;
  */
 @Primary
 @Service
-public class MessageServiceImpl extends BeanServiceImpl<MessageRepository, Message, String> implements MessageService {
+public class MessageServiceImpl extends EntityServiceImpl<MessageRepository, Message, String> implements MessageService {
 
 }

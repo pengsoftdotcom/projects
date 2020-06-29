@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
+import com.pengsoft.support.biz.service.TreeEntityServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
 import com.pengsoft.system.biz.repository.RegionRepository;
 import com.pengsoft.system.domain.entity.Region;
@@ -18,7 +18,7 @@ import com.pengsoft.system.domain.entity.Region;
  */
 @Primary
 @Service
-public class RegionServiceImpl extends TreeBeanServiceImpl<RegionRepository, Region, String> implements RegionService {
+public class RegionServiceImpl extends TreeEntityServiceImpl<RegionRepository, Region, String> implements RegionService {
 
     @Override
     public Region save(final Region region) {

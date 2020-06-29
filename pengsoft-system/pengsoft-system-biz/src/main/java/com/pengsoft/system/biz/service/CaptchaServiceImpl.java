@@ -1,7 +1,7 @@
 package com.pengsoft.system.biz.service;
 
 import com.pengsoft.security.domain.entity.User;
-import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.support.commons.exception.BusinessException;
 import com.pengsoft.support.commons.util.DateUtils;
 import com.pengsoft.system.biz.repository.CaptchaRepository;
@@ -26,7 +26,7 @@ import java.util.Optional;
  */
 @Primary
 @Service
-public class CaptchaServiceImpl extends BeanServiceImpl<CaptchaRepository, Captcha, String> implements CaptchaService {
+public class CaptchaServiceImpl extends EntityServiceImpl<CaptchaRepository, Captcha, String> implements CaptchaService {
 
     private static final String EC_CAPTCHA_GENERATE_EXCEEDED = "captcha.generate.exceeded";
 

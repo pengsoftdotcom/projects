@@ -2,8 +2,8 @@ package com.pengsoft.security.biz.service;
 
 import com.pengsoft.security.domain.entity.Authority;
 import com.pengsoft.security.domain.entity.Role;
-import com.pengsoft.support.biz.service.TreeBeanService;
-import com.pengsoft.support.domain.entity.Beanable;
+import com.pengsoft.support.biz.service.TreeEntityService;
+import com.pengsoft.support.domain.entity.Entity;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -17,7 +17,7 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface RoleService extends TreeBeanService<Role, String> {
+public interface RoleService extends TreeEntityService<Role, String> {
 
     /**
      * Save the entity admin by the given entity class
@@ -25,7 +25,7 @@ public interface RoleService extends TreeBeanService<Role, String> {
      * @param entityClass The entity class
      * @return The entity admin.
      */
-    Role saveEntityAdmin(Class<? extends Beanable<? extends Serializable>> entityClass);
+    Role saveEntityAdmin(Class<? extends Entity<? extends Serializable>> entityClass);
 
     /**
      * Grant authorities.

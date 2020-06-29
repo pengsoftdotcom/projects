@@ -1,16 +1,16 @@
 package com.pengsoft.support.test;
 
-import com.pengsoft.support.biz.facade.BeanFacade;
+import com.pengsoft.support.biz.facade.EntityFacade;
 
 import javax.inject.Inject;
 
 /**
- * The base test superclass for {@link BeanFacade}
+ * The base test superclass for {@link EntityFacade}
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public class BaseFacadeTest<F extends BeanFacade<?, ?, ?>> extends BaseTest {
+public class BaseFacadeTest<F extends EntityFacade<?, ?, ?>> extends BaseTest {
 
     @Inject
     private F facade;

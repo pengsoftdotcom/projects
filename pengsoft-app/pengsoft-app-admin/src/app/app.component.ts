@@ -30,6 +30,10 @@ export class AppComponent implements OnInit {
 
     switchRoleModal: NzModalRef;
 
+    @ViewChild('organizations', { static: true }) organizations: TemplateRef<any>;
+
+    switchOrganizationModal: NzModalRef;
+
     constructor(
         private title: Title,
         private userDetailsService: UserDetailsService,
@@ -49,8 +53,8 @@ export class AppComponent implements OnInit {
             if (this.userDetails.currentRole) {
                 this.userDetails.currentRole = this.userDetails.roles.find((role: any) => role.id === this.userDetails.currentRole.id);
             }
-            if (this.userDetails.majorRole) {
-                this.userDetails.majorRole = this.userDetails.roles.find((role: any) => role.id === this.userDetails.majorRole.id);
+            if (this.userDetails.primaryRole) {
+                this.userDetails.primaryRole = this.userDetails.roles.find((role: any) => role.id === this.userDetails.primaryRole.id);
             }
         }
 
@@ -58,30 +62,37 @@ export class AppComponent implements OnInit {
             if (this.userDetails.currentJob) {
                 this.userDetails.currentJob = this.userDetails.jobs.find((job: any) => job.id === this.userDetails.currentJob.id);
             }
-            if (this.userDetails.majorJob) {
-                this.userDetails.majorJob = this.userDetails.jobs.find((job: any) => job.id === this.userDetails.majorJob.id);
+            if (this.userDetails.primaryJob) {
+                this.userDetails.primaryJob = this.userDetails.jobs.find((job: any) => job.id === this.userDetails.primaryJob.id);
+            }
+        }
+
+        if (this.userDetails.organizations && this.userDetails.organizations.length > 0) {
+            if (this.userDetails.organization) {
+                this.userDetails.organization
+                    = this.userDetails.organizations.find((organization: any) => organization.id === this.userDetails.organization.id);
             }
         }
     }
 
     getMenuAuthority(route: Route): string {
         let authority: string;
-        if (route.data && route.data.code) {
-            authority = route.data.code;
-        } else {
+        if (route.children) {
             authority = route.children.map(child => child.data.code).join(',');
+        } else if (route.data) {
+            authority = route.data.code;
         }
         return authority;
     }
 
     get avatar(): string {
-        return this.userDetails.userProfile.avatar.accessPath + '?x-oss-process=image/resize,w_28,h_28';
+        return this.userDetails.person.avatar.accessPath + '?x-oss-process=image/resize,w_28,h_28';
     }
 
     get name(): string {
         let name = this.userDetails.user.username;
-        if (this.userDetails.userProfile) {
-            name = this.userDetails.userProfile.nickname;
+        if (this.userDetails.person) {
+            name = this.userDetails.person.nickname;
         }
         return name;
     }
@@ -92,7 +103,7 @@ export class AppComponent implements OnInit {
         return menu.path === paths.shift();
     }
 
-    editProfile(): void {
+    editPerson(): void {
         this.message.info('暂未开放，敬请期待');
     }
 
@@ -119,14 +130,14 @@ export class AppComponent implements OnInit {
             success: (res: any) => {
                 this.security.userDetails = res;
                 this.ngOnInit();
-                this.message.info('设置成功，页面将刷新', { nzDuration: 1000 }).onClose.subscribe(() => window.location.reload());
+                this.message.info('设置成功，页面即将刷新', { nzDuration: 1000 }).onClose.subscribe(() => window.location.reload());
             },
             failure: () => this.message.error('设置失败')
         });
     }
 
-    majorJobChanged(): void {
-        this.userDetailsService.setMajorJob(this.userDetails.majorJob, {
+    primaryJobChanged(): void {
+        this.userDetailsService.setPrimaryJob(this.userDetails.primaryJob, {
             success: (res: any) => {
                 this.security.userDetails = res;
                 this.ngOnInit();
@@ -151,18 +162,39 @@ export class AppComponent implements OnInit {
             success: (res: any) => {
                 this.security.userDetails = res;
                 this.ngOnInit();
-                this.message.info('设置成功，页面将刷新', { nzDuration: 1000 }).onClose.subscribe(() => window.location.reload());
+                this.message.info('设置成功，页面即将刷新', { nzDuration: 1000 }).onClose.subscribe(() => window.location.reload());
             },
             failure: () => this.message.error('设置失败')
         });
     }
 
-    majorRoleChanged(): void {
-        this.userDetailsService.setMajorRole(this.userDetails.majorRole, {
+    primaryRoleChanged(): void {
+        this.userDetailsService.setPrimaryRole(this.userDetails.primaryRole, {
             success: (res: any) => {
                 this.security.userDetails = res;
                 this.ngOnInit();
                 this.message.info('设置成功', { nzDuration: 1000 }).onClose.subscribe(() => this.switchRoleModal.close());
+            },
+            failure: () => this.message.error('设置失败')
+        });
+    }
+
+    switchOrganization(): void {
+        this.switchJobModal = this.modal.create({
+            nzStyle: { top: '30%' },
+            nzWidth: 450,
+            nzTitle: '切换机构',
+            nzContent: this.organizations,
+            nzFooter: null
+        });
+    }
+
+    currentOrganizationChanged(): void {
+        this.userDetailsService.setOrganization(this.userDetails.organization, {
+            success: (res: any) => {
+                this.security.userDetails = res;
+                this.ngOnInit();
+                this.message.info('设置成功，页面即将刷新', { nzDuration: 1000 }).onClose.subscribe(() => window.location.reload());
             },
             failure: () => this.message.error('设置失败')
         });

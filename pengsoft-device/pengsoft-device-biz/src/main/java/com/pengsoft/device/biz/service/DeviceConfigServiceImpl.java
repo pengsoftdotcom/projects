@@ -1,48 +1,49 @@
 package com.pengsoft.device.biz.service;
 
-import com.pengsoft.device.biz.repository.ProductConfigRepository;
-import com.pengsoft.device.domain.entity.Product;
-import com.pengsoft.device.domain.entity.ProductConfig;
-import com.pengsoft.support.biz.service.BeanServiceImpl;
-import com.pengsoft.support.domain.util.EntityUtils;
+import java.util.Optional;
+
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import com.pengsoft.device.biz.repository.DeviceConfigRepository;
+import com.pengsoft.device.domain.entity.Device;
+import com.pengsoft.device.domain.entity.DeviceConfig;
+import com.pengsoft.support.biz.service.EntityServiceImpl;
+import com.pengsoft.support.domain.util.EntityUtils;
 
 /**
  * The implementer of {@link DeviceService} based on JPA.
  *
  * @author dang.peng@pengsoft.com
- * @since 1.0.0
+ * @since  1.0.0
  */
 @Primary
 @Service
-public class ProductConfigServiceImpl extends BeanServiceImpl<ProductConfigRepository, ProductConfig, String> implements ProductConfigService {
+public class DeviceConfigServiceImpl extends EntityServiceImpl<DeviceConfigRepository, DeviceConfig, String> implements DeviceConfigService {
 
     @Override
-    public ProductConfig save(final ProductConfig productConfig) {
-        findOneByProductAndCode(productConfig.getProduct(), productConfig.getCode()).ifPresent(source -> {
-            if (EntityUtils.ne(source, productConfig)) {
-                throw getExceptions().constraintViolated("code", "Exists", productConfig.getCode());
+    public DeviceConfig save(final DeviceConfig deviceConfig) {
+        findOneByDeviceAndCode(deviceConfig.getDevice(), deviceConfig.getCode()).ifPresent(source -> {
+            if (EntityUtils.ne(source, deviceConfig)) {
+                throw getExceptions().constraintViolated("code", "Exists", deviceConfig.getCode());
             }
         });
-        findOneByProductAndName(productConfig.getProduct(), productConfig.getName()).ifPresent(source -> {
-            if (EntityUtils.ne(source, productConfig)) {
-                throw getExceptions().constraintViolated("name", "Exists", productConfig.getName());
+        findOneByDeviceAndName(deviceConfig.getDevice(), deviceConfig.getName()).ifPresent(source -> {
+            if (EntityUtils.ne(source, deviceConfig)) {
+                throw getExceptions().constraintViolated("name", "Exists", deviceConfig.getName());
             }
         });
-        return super.save(productConfig);
+        return super.save(deviceConfig);
     }
 
     @Override
-    public Optional<ProductConfig> findOneByProductAndCode(final Product product, final String code) {
-        return getRepository().findOneByProductAndCode(product, code);
+    public Optional<DeviceConfig> findOneByDeviceAndCode(final Device device, final String code) {
+        return getRepository().findOneByDeviceAndCode(device, code);
     }
 
     @Override
-    public Optional<ProductConfig> findOneByProductAndName(final Product product, final String name) {
-        return getRepository().findOneByProductAndName(product, name);
+    public Optional<DeviceConfig> findOneByDeviceAndName(final Device device, final String name) {
+        return getRepository().findOneByDeviceAndName(device, name);
     }
 
 }

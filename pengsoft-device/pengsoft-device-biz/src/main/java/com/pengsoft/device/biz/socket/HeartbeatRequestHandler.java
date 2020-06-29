@@ -13,7 +13,7 @@ import java.util.Map;
  * @since 1.0.0
  */
 @Named
-public class HeartbeatClientRequestHandler implements ClientRequestHandler {
+public class HeartbeatRequestHandler implements RequestHandler {
 
     @Inject
     private DeviceFacade deviceFacade;

@@ -1,9 +1,9 @@
 package com.pengsoft.support.biz.service;
 
-import com.pengsoft.support.biz.repository.TreeBeanRepository;
+import com.pengsoft.support.biz.repository.TreeEntityRepository;
 import com.pengsoft.support.biz.util.QueryDslUtils;
 import com.pengsoft.support.commons.util.StringUtils;
-import com.pengsoft.support.domain.entity.TreeBeanable;
+import com.pengsoft.support.domain.entity.TreeEntity;
 import com.pengsoft.support.domain.util.EntityUtils;
 import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.StringPath;
@@ -14,21 +14,21 @@ import java.util.ArrayDeque;
 import java.util.List;
 
 /**
- * The implementer of {@link TreeBeanService} based on JPA
+ * The implementer of {@link TreeEntityService} based on JPA
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T extends TreeBeanable<T, ID>, ID extends Serializable>
-        extends BeanServiceImpl<R, T, ID> implements TreeBeanService<T, ID> {
+public class TreeEntityServiceImpl<R extends TreeEntityRepository<?, T, ID>, T extends TreeEntity<T, ID>, ID extends Serializable>
+        extends EntityServiceImpl<R, T, ID> implements TreeEntityService<T, ID> {
 
     @Override
-    public T save(final T target) {
+    public T save(final T entity) {
         var parentChanged = false;
-        final T source = target.getId() == null ? null : findOne(target.getId()).orElse(null);
+        final T source = entity.getId() == null ? null : findOne(entity.getId()).orElse(null);
         if (source != null) {
-            target.setChildren(source.getChildren());
-            parentChanged = EntityUtils.ne(source.getParent(), target.getParent());
+            entity.setChildren(source.getChildren());
+            parentChanged = EntityUtils.ne(source.getParent(), entity.getParent());
             // check the original parent if is a leaf node.
             if (parentChanged && source.getParent() != null) {
                 source.getParent().setLeaf(source.getParent().getChildren().size() == 1);
@@ -36,32 +36,32 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
             }
         }
 
-        if (target.getParent() != null) {
+        if (entity.getParent() != null) {
             // set the current parent as a non-leaf node.
-            if (EntityUtils.isNotPersisted(target.getParent())) {
-                target.setParent(
-                        findOne(target.getParent().getId()).orElseThrow(() -> getExceptions().entityNotFound(target.getParent().getId().toString())));
+            if (EntityUtils.isNotPersisted(entity.getParent())) {
+                entity.setParent(
+                        findOne(entity.getParent().getId()).orElseThrow(() -> getExceptions().entityNotFound(entity.getParent().getId().toString())));
             }
-            target.getParent().getChildren().add(target);
-            target.getParent().setLeaf(false);
-            super.save(target.getParent());
+            entity.getParent().getChildren().add(entity);
+            entity.getParent().setLeaf(false);
+            super.save(entity.getParent());
 
             // change parent ids and depth.
-            if (StringUtils.isBlank(target.getParent().getParentIds())) {
-                target.setParentIds(target.getParent().getId().toString());
+            if (StringUtils.isBlank(entity.getParent().getParentIds())) {
+                entity.setParentIds(entity.getParent().getId().toString());
             } else {
-                target.setParentIds(StringUtils.join(new Object[] { target.getParent().getParentIds(), target.getParent().getId() },
+                entity.setParentIds(StringUtils.join(new Object[]{ entity.getParent().getParentIds(), entity.getParent().getId() },
                         StringUtils.GLOBAL_SEPARATOR));
             }
-            target.setDepth(target.getParent().getDepth() + 1);
+            entity.setDepth(entity.getParent().getDepth() + 1);
         }
-        super.save(target);
+        super.save(entity);
 
         if (parentChanged) {
-            updateTheParentIdsAndDepthOfChildNodes(target);
+            updateTheParentIdsAndDepthOfChildNodes(entity);
         }
 
-        return target;
+        return entity;
     }
 
     private void updateTheParentIdsAndDepthOfChildNodes(final T target) {
@@ -72,7 +72,7 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
             if (StringUtils.isBlank(parent.getParentIds())) {
                 child.setParentIds(parent.getId().toString());
             } else {
-                child.setParentIds(StringUtils.join(new Object[] { parent.getParentIds(), parent.getId() }, StringUtils.GLOBAL_SEPARATOR));
+                child.setParentIds(StringUtils.join(new Object[]{ parent.getParentIds(), parent.getId() }, StringUtils.GLOBAL_SEPARATOR));
             }
             child.setDepth(parent.getDepth() + 1);
             super.save(child);
@@ -82,8 +82,8 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
     }
 
     @Override
-    public void delete(final T bean) {
-        findOne(bean.getId()).ifPresent(node -> {
+    public void delete(final T entity) {
+        findOne(entity.getId()).ifPresent(node -> {
             super.delete(node);
             if (node.getParent() != null) {
                 final var parent = node.getParent();
@@ -115,7 +115,7 @@ public class TreeBeanServiceImpl<R extends TreeBeanRepository<?, T, ID>, T exten
             } else {
                 predicate = QueryDslUtils.merge(
                         parentIdsPath.notLike(
-                                StringUtils.join(new String[] { self.getParentIds(), self.getId().toString() }, StringUtils.GLOBAL_SEPARATOR) + "%"),
+                                StringUtils.join(new String[]{ self.getParentIds(), self.getId().toString() }, StringUtils.GLOBAL_SEPARATOR) + "%"),
                         predicate);
             }
         }

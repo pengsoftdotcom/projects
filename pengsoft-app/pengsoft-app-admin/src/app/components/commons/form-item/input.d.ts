@@ -1,6 +1,7 @@
-import { NzTreeNodeOptions, NzCascaderOption } from "ng-zorro-antd";
+import { NzTreeNodeOptions } from "ng-zorro-antd";
 import { InputType } from "src/app/enums/input-type.enum";
 import { InputComponent } from "../input/input.component";
+import { Edit } from "./edit";
 import { Option } from "./option";
 
 export interface Input {
@@ -19,7 +20,9 @@ export interface Input {
 
     modelChange?: (component: InputComponent) => void;
 
-    options?: Array<Option | NzTreeNodeOptions>
+    options?: Array<Option | NzTreeNodeOptions>;
+
+    optionLabelRender?: (edit: Edit, form: any) => string;
 
     loaded?: boolean;
 

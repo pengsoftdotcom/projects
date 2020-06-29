@@ -1,6 +1,5 @@
-import { BaseComponent } from '../base.component';
 import { Input, OnInit } from '@angular/core';
-import { Field } from '../form-item/field';
+import { BaseComponent } from '../base.component';
 import { Edit } from '../form-item/edit';
 
 export class InputComponent extends BaseComponent implements OnInit {
@@ -13,28 +12,33 @@ export class InputComponent extends BaseComponent implements OnInit {
 
     @Input() filterable = false;
 
+    disabled = false;
+
+    placeholder = '';
+
 
     ngOnInit(): void {
+        this.initDisabled();
+        this.initPlaceholder();
         if (this.edit.input.load) {
             this.edit.input.load(this);
         }
     }
 
-    get disabled(): boolean {
+    initDisabled(): void {
         if (!this.filterable) {
             if (typeof this.edit.disabled === 'function') {
-                return this.edit.disabled(this.form, this.edit);
+                this.disabled = this.edit.disabled(this.form, this.edit);
             } else {
-                return this.edit.disabled === true;
+                this.disabled = this.edit.disabled === true;
             }
-        } else {
-            return false;
         }
     }
 
-    get placeholder(): string {
-        const placeholder = this.edit.input.placeholder;
-        return placeholder ? placeholder : '';
+    initPlaceholder(): void {
+        if (this.edit.input.placeholder) {
+            this.placeholder = this.edit.input.placeholder;
+        }
     }
 
     modelChange(event: any): void {

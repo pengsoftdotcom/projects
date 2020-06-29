@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
 @Table(name = "t_post", indexes = {
         @Index(name = "i_post_organization_id", columnList = "organization_id, name", unique = true)
 })
-public class Post extends OwnedTreeBeanExt<Post> {
+public class Post extends OwnedExtTreeEntity<Post> {
 
     private static final long serialVersionUID = 4974303630293223990L;
 

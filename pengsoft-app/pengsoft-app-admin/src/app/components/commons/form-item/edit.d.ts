@@ -7,6 +7,8 @@ export interface Edit {
 
     code?: string;
 
+    parentCode?: string;
+
     required?: boolean;
 
     disabled?: boolean | ((form: any, edit: Edit) => boolean);

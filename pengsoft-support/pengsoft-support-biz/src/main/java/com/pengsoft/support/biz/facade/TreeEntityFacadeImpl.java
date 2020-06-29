@@ -1,7 +1,7 @@
 package com.pengsoft.support.biz.facade;
 
-import com.pengsoft.support.biz.service.TreeBeanService;
-import com.pengsoft.support.domain.entity.TreeBeanable;
+import com.pengsoft.support.biz.service.TreeEntityService;
+import com.pengsoft.support.domain.entity.TreeEntity;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Sort;
 
@@ -9,12 +9,12 @@ import java.io.Serializable;
 import java.util.List;
 
 /**
- * The implementer of {@link TreeBeanFacade}
+ * The implementer of {@link TreeEntityFacade}
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public class TreeBeanFacadeImpl<S extends TreeBeanService<T, ID>, T extends TreeBeanable<T, ID>, ID extends Serializable> extends BeanFacadeImpl<S, T, ID> implements TreeBeanFacade<S, T, ID> {
+public class TreeEntityFacadeImpl<S extends TreeEntityService<T, ID>, T extends TreeEntity<T, ID>, ID extends Serializable> extends EntityFacadeImpl<S, T, ID> implements TreeEntityFacade<S, T, ID> {
 
     @Override
     public List<T> findAllByParent(final Predicate predicate, final Sort sort) {

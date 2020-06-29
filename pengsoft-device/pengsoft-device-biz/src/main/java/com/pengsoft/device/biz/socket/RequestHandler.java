@@ -3,12 +3,12 @@ package com.pengsoft.device.biz.socket;
 import java.util.Map;
 
 /**
- * Device request handler.
+ * Default TCP/IP request handler.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface ClientRequestHandler {
+public interface RequestHandler {
 
     String getType();
 

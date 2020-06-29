@@ -16,8 +16,8 @@ import com.pengsoft.security.domain.entity.Authority;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.RoleAuthority;
 import com.pengsoft.security.domain.util.SecurityUtils;
-import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
-import com.pengsoft.support.domain.entity.Beanable;
+import com.pengsoft.support.biz.service.TreeEntityServiceImpl;
+import com.pengsoft.support.domain.entity.Entity;
 import com.pengsoft.support.domain.util.EntityUtils;
 
 /**
@@ -28,7 +28,7 @@ import com.pengsoft.support.domain.util.EntityUtils;
  */
 @Primary
 @Service
-public class RoleServiceImpl extends TreeBeanServiceImpl<RoleRepository, Role, String> implements RoleService {
+public class RoleServiceImpl extends TreeEntityServiceImpl<RoleRepository, Role, String> implements RoleService {
 
     @Inject
     private RoleAuthorityRepository roleAuthorityRepository;
@@ -44,7 +44,7 @@ public class RoleServiceImpl extends TreeBeanServiceImpl<RoleRepository, Role, S
     }
 
     @Override
-    public Role saveEntityAdmin(final Class<? extends Beanable<? extends Serializable>> entityClass) {
+    public Role saveEntityAdmin(final Class<? extends Entity<? extends Serializable>> entityClass) {
         final var admin = createRoleIfNotExists(null, Role.ADMIN);
         final var moduleAdminCode = SecurityUtils.getModuleAdminCode(entityClass);
         final var moduleAdmin = createRoleIfNotExists(admin, moduleAdminCode);

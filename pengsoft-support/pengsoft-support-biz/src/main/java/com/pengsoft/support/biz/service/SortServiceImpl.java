@@ -1,6 +1,6 @@
 package com.pengsoft.support.biz.service;
 
-import com.pengsoft.support.domain.entity.Beanable;
+import com.pengsoft.support.domain.entity.Entity;
 import com.pengsoft.support.domain.entity.Sortable;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +29,7 @@ public class SortServiceImpl implements SortService {
                 final Query query = entityManager.createQuery(ql);
                 int index = 1;
                 query.setParameter(index++, sequence);
-                query.setParameter(index, ((Beanable<?>) sortable).getId());
+                query.setParameter(index, ((Entity<?>) sortable).getId());
                 query.executeUpdate();
             });
         }

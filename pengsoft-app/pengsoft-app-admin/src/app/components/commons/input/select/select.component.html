@@ -1,5 +1,5 @@
 <nz-select [(ngModel)]="rawValue" nzAllowClear nzShowSearch [compareWith]="compareWith" [nzPlaceHolder]="placeholder" [nzDisabled]="disabled"
-    (ngModelChange)="modelChange($event)" [nzLoading]="loading" [nzServerSearch]="!!edit.input.load" (onSearch)="search($event)"
+    (ngModelChange)="modelChange($event)" [nzLoading]="loading" [nzServerSearch]="!!edit.input.load" (nzOnSearch)="search($event)"
     [nzMode]="edit.input.multiple ? 'tags': 'default'">
     <nz-option *ngFor="let option of edit.input.options" [nzValue]="option.value" [nzLabel]="option.label" [nzCustomContent]="option.customContent">
         <span *ngIf="option.customContent" [innerHTML]="option.customRender(sanitizer)"></span>

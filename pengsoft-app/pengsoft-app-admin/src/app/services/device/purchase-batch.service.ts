@@ -5,7 +5,7 @@ import { BeanService } from '../commons/bean.service';
 @Injectable({
     providedIn: 'root'
 })
-export class BatchService extends BeanService {
+export class PurchaseBatchService extends BeanService {
 
     constructor(protected http: HttpService) { super(http); }
 
@@ -14,7 +14,7 @@ export class BatchService extends BeanService {
     }
 
     get entityPath(): string {
-        return 'batch';
+        return 'purchase-batch';
     }
 
 }

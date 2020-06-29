@@ -2,7 +2,7 @@ package com.pengsoft.security.biz.repository;
 
 import com.pengsoft.security.domain.entity.QRoleAuthority;
 import com.pengsoft.security.domain.entity.RoleAuthority;
-import com.pengsoft.support.biz.repository.BeanRepository;
+import com.pengsoft.support.biz.repository.EntityRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
  * @since 1.0.0
  */
 @Repository
-public interface RoleAuthorityRepository extends BeanRepository<QRoleAuthority, RoleAuthority, String> {
+public interface RoleAuthorityRepository extends EntityRepository<QRoleAuthority, RoleAuthority, String> {
 
 }

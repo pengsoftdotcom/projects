@@ -2,7 +2,7 @@ package com.pengsoft.basedata.biz.api;
 
 import com.pengsoft.basedata.biz.facade.PersonFacade;
 import com.pengsoft.basedata.domain.entity.Person;
-import com.pengsoft.support.biz.api.BeanApi;
+import com.pengsoft.support.biz.api.EntityApi;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("api/person")
-public class PersonApi extends BeanApi<PersonFacade, Person, String> {
+public class PersonApi extends EntityApi<PersonFacade, Person, String> {
 
 }

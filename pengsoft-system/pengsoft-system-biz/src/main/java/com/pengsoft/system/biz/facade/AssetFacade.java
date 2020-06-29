@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.facade;
 
-import com.pengsoft.support.biz.facade.BeanFacade;
+import com.pengsoft.support.biz.facade.EntityFacade;
 import com.pengsoft.system.biz.service.AssetService;
 import com.pengsoft.system.domain.entity.Asset;
 
@@ -10,6 +10,6 @@ import com.pengsoft.system.domain.entity.Asset;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface AssetFacade extends BeanFacade<AssetService, Asset, String>, AssetService {
+public interface AssetFacade extends EntityFacade<AssetService, Asset, String>, AssetService {
 
 }

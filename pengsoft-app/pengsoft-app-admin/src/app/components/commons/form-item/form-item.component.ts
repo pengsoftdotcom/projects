@@ -23,8 +23,11 @@ export class FormItemComponent extends BaseComponent implements OnInit {
 
     edit: Edit;
 
+    code: string;
+
     ngOnInit(): void {
         this.edit = this.filterable ? this.field.filter : this.field.edit;
+        this.code = this.edit.parentCode ? this.edit.parentCode + '.' + this.edit.code : this.edit.code;
         if (this.edit === undefined) {
             throw new Error('The edit is not configured.');
         }
@@ -42,7 +45,11 @@ export class FormItemComponent extends BaseComponent implements OnInit {
     }
 
     get status(): string {
-        return JSON.stringify(this.errors) === '{}' ? null : this.errors[this.edit.code] ? 'error' : null;
+        if (JSON.stringify(this.errors) !== '{}' && this.errors[this.code]) {
+            return 'error';
+        } else {
+            return null;
+        }
     }
 
     get required(): boolean {

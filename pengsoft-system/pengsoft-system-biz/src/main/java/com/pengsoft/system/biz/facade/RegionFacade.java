@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.facade;
 
-import com.pengsoft.support.biz.facade.TreeBeanFacade;
+import com.pengsoft.support.biz.facade.TreeEntityFacade;
 import com.pengsoft.system.biz.service.RegionService;
 import com.pengsoft.system.domain.entity.Region;
 
@@ -10,6 +10,6 @@ import com.pengsoft.system.domain.entity.Region;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface RegionFacade extends TreeBeanFacade<RegionService, Region, String>, RegionService {
+public interface RegionFacade extends TreeEntityFacade<RegionService, Region, String>, RegionService {
 
 }

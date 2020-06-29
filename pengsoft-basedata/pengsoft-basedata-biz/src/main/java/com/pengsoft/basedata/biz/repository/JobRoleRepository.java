@@ -2,7 +2,7 @@ package com.pengsoft.basedata.biz.repository;
 
 import com.pengsoft.basedata.domain.entity.JobRole;
 import com.pengsoft.basedata.domain.entity.QJobRole;
-import com.pengsoft.support.biz.repository.BeanRepository;
+import com.pengsoft.support.biz.repository.EntityRepository;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
  * @since 1.0.0
  */
 @Repository
-public interface JobRoleRepository extends BeanRepository<QJobRole, JobRole, String> {
+public interface JobRoleRepository extends EntityRepository<QJobRole, JobRole, String> {
 
 }

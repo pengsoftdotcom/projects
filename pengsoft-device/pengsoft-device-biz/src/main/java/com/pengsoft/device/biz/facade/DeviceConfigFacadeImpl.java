@@ -1,30 +1,30 @@
 package com.pengsoft.device.biz.facade;
 
-import com.pengsoft.device.biz.service.ProductConfigService;
-import com.pengsoft.device.domain.entity.Product;
-import com.pengsoft.device.domain.entity.ProductConfig;
-import com.pengsoft.support.biz.facade.BeanFacadeImpl;
+import com.pengsoft.device.biz.service.DeviceConfigService;
+import com.pengsoft.device.domain.entity.Device;
+import com.pengsoft.device.domain.entity.DeviceConfig;
+import com.pengsoft.support.biz.facade.EntityFacadeImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 /**
- * The implementer of {@link ProductConfigFacade}
+ * The implementer of {@link DeviceConfigFacade}
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
 @Service
-public class ProductConfigFacadeImpl extends BeanFacadeImpl<ProductConfigService, ProductConfig, String> implements ProductConfigFacade {
+public class DeviceConfigFacadeImpl extends EntityFacadeImpl<DeviceConfigService, DeviceConfig, String> implements DeviceConfigFacade {
 
     @Override
-    public Optional<ProductConfig> findOneByProductAndCode(final Product product, final String code) {
-        return getService().findOneByProductAndCode(product, code);
+    public Optional<DeviceConfig> findOneByDeviceAndCode(final Device device, final String code) {
+        return getService().findOneByDeviceAndCode(device, code);
     }
 
     @Override
-    public Optional<ProductConfig> findOneByProductAndName(final Product product, final String name) {
-        return getService().findOneByProductAndName(product, name);
+    public Optional<DeviceConfig> findOneByDeviceAndName(final Device device, final String name) {
+        return getService().findOneByDeviceAndName(device, name);
     }
 
 }

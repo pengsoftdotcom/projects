@@ -1,7 +1,7 @@
 package com.pengsoft.security.biz.service;
 
 import com.pengsoft.security.domain.entity.Authority;
-import com.pengsoft.support.biz.service.BeanService;
+import com.pengsoft.support.biz.service.EntityService;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface AuthorityService extends BeanService<Authority, String> {
+public interface AuthorityService extends EntityService<Authority, String> {
 
     /**
      * Returns an {@link Optional} of a {@link Authority} with given code.

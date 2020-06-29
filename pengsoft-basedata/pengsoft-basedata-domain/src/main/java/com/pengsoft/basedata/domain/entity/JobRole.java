@@ -1,7 +1,7 @@
 package com.pengsoft.basedata.domain.entity;
 
 import com.pengsoft.security.domain.entity.Role;
-import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.EntityImpl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -32,7 +32,7 @@ import javax.persistence.Table;
 @Table(name = "t_job_role", indexes = {
         @Index(name = "i_job_role", columnList = "job_id, role_id", unique = true)
 })
-public class JobRole extends Bean {
+public class JobRole extends EntityImpl {
 
     private static final long serialVersionUID = -2605345847395420443L;
 

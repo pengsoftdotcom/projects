@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.repository;
 
-import com.pengsoft.support.biz.repository.BeanRepository;
+import com.pengsoft.support.biz.repository.EntityRepository;
 import com.pengsoft.system.domain.entity.DictionaryType;
 import com.pengsoft.system.domain.entity.QDictionaryType;
 import com.querydsl.core.types.dsl.StringPath;
@@ -19,11 +19,11 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Repository
-public interface DictionaryTypeRepository extends BeanRepository<QDictionaryType, DictionaryType, String> {
+public interface DictionaryTypeRepository extends EntityRepository<QDictionaryType, DictionaryType, String> {
 
     @Override
     default void customize(final QuerydslBindings bindings, final QDictionaryType root) {
-        BeanRepository.super.customize(bindings, root);
+        EntityRepository.super.customize(bindings, root);
         bindings.bind(root.code).first(StringPath::contains);
         bindings.bind(root.name).first(StringPath::contains);
     }

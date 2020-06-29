@@ -2,7 +2,7 @@ package com.pengsoft.basedata.biz.api;
 
 import com.pengsoft.basedata.biz.facade.PostFacade;
 import com.pengsoft.basedata.domain.entity.Post;
-import com.pengsoft.support.biz.api.TreeBeanApi;
+import com.pengsoft.support.biz.api.TreeEntityApi;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("api/post")
-public class PostApi extends TreeBeanApi<PostFacade, Post, String> {
+public class PostApi extends TreeEntityApi<PostFacade, Post, String> {
 
 }

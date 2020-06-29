@@ -5,7 +5,7 @@ import java.util.Optional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
 import com.pengsoft.system.biz.repository.DictionaryTypeRepository;
 import com.pengsoft.system.domain.entity.DictionaryType;
@@ -18,7 +18,7 @@ import com.pengsoft.system.domain.entity.DictionaryType;
  */
 @Primary
 @Service
-public class DictionaryTypeServiceImpl extends BeanServiceImpl<DictionaryTypeRepository, DictionaryType, String> implements DictionaryTypeService {
+public class DictionaryTypeServiceImpl extends EntityServiceImpl<DictionaryTypeRepository, DictionaryType, String> implements DictionaryTypeService {
 
     @Override
     public DictionaryType save(final DictionaryType type) {

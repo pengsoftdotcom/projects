@@ -1,52 +1,54 @@
 package com.pengsoft.basedata.biz.repository;
 
-import com.pengsoft.basedata.domain.entity.Job;
-import com.pengsoft.basedata.domain.entity.QStaff;
-import com.pengsoft.basedata.domain.entity.Staff;
-import com.pengsoft.basedata.domain.entity.UserProfile;
-import com.pengsoft.support.biz.repository.BeanRepository;
-import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.stereotype.Repository;
+import java.util.List;
+import java.util.Optional;
 
 import javax.persistence.QueryHint;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Optional;
+
+import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.stereotype.Repository;
+
+import com.pengsoft.basedata.domain.entity.Job;
+import com.pengsoft.basedata.domain.entity.Person;
+import com.pengsoft.basedata.domain.entity.QStaff;
+import com.pengsoft.basedata.domain.entity.Staff;
+import com.pengsoft.support.biz.repository.EntityRepository;
 
 /**
  * The repository interface of {@link Staff} based on JPA
  *
  * @author dang.peng@pengsoft.com
- * @since 1.0.0
+ * @since  1.0.0
  */
 @Repository
-public interface StaffRepository extends BeanRepository<QStaff, Staff, String> {
+public interface StaffRepository extends EntityRepository<QStaff, Staff, String>, OwnedExtRepository {
 
     /**
-     * Returns an {@link Optional} of a {@link Staff} with given user profile and job.
+     * Returns an {@link Optional} of a {@link Staff} with given person and job.
      *
-     * @param userProfile {@link Staff}'s userProfile
-     * @param job         {@link Staff}'s job
+     * @param person {@link Staff}'s person
+     * @param job    {@link Staff}'s job
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<Staff> findOneByUserProfileAndJob(@NotNull UserProfile userProfile, @NotNull Job job);
+    Optional<Staff> findOneByPersonAndJob(@NotNull Person person, @NotNull Job job);
 
     /**
-     * Returns an {@link Optional} of a {@link Staff} with given user profile and major true.
+     * Returns an {@link Optional} of a {@link Staff} with given person and primary true.
      *
-     * @param userProfile {@link Staff}'s userProfile
+     * @param person {@link Staff}'s person
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<Staff> findOneByUserProfileAndMajorTrue(@NotNull UserProfile userProfile);
+    Optional<Staff> findOneByPersonAndPrimaryTrue(@NotNull Person person);
 
     /**
-     * Returns all {@link Staff}s with given user profile.
+     * Returns all {@link Staff}s with given person.
      *
-     * @param userProfile {@link Staff}'s userProfile
+     * @param person {@link Staff}'s person
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    List<Staff> findAllByUserProfile(@NotNull UserProfile userProfile);
+    List<Staff> findAllByPerson(@NotNull Person person);
 
     /**
      * Returns all {@link Staff}s with given jobs

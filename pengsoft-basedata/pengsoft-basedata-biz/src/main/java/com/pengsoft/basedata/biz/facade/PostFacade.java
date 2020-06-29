@@ -2,7 +2,7 @@ package com.pengsoft.basedata.biz.facade;
 
 import com.pengsoft.basedata.biz.service.PostService;
 import com.pengsoft.basedata.domain.entity.Post;
-import com.pengsoft.support.biz.facade.TreeBeanFacade;
+import com.pengsoft.support.biz.facade.TreeEntityFacade;
 
 /**
  * The facade interface of {@link Post}
@@ -10,6 +10,6 @@ import com.pengsoft.support.biz.facade.TreeBeanFacade;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface PostFacade extends TreeBeanFacade<PostService, Post, String>, PostService {
+public interface PostFacade extends TreeEntityFacade<PostService, Post, String>, PostService {
 
 }

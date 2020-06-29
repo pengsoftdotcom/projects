@@ -10,5 +10,6 @@ export enum InputType {
     DATE,
     BOOLEAN,
     UPLOAD,
-    AVATAR
+    AVATAR,
+    JSON
 }

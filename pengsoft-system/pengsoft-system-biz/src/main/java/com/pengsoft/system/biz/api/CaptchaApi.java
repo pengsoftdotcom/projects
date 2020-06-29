@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pengsoft.security.biz.facade.UserFacade;
-import com.pengsoft.support.biz.api.BeanApi;
+import com.pengsoft.support.biz.api.EntityApi;
 import com.pengsoft.support.commons.validation.Mobile;
 import com.pengsoft.system.biz.facade.CaptchaFacade;
 import com.pengsoft.system.biz.messaging.Messaging;
@@ -24,7 +24,7 @@ import com.pengsoft.system.domain.json.CaptchaWrapper;
  */
 @RestController
 @RequestMapping("api/captcha")
-public class CaptchaApi extends BeanApi<CaptchaFacade, Captcha, String> {
+public class CaptchaApi extends EntityApi<CaptchaFacade, Captcha, String> {
 
     @Inject
     private UserFacade userFacade;

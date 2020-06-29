@@ -2,7 +2,6 @@ package com.pengsoft.support.domain.entity;
 
 import com.pengsoft.support.commons.util.DateUtils;
 import com.pengsoft.support.commons.util.StringUtils;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -16,16 +15,15 @@ import javax.persistence.Version;
 import java.time.LocalDateTime;
 
 /**
- * The Default implementer of {@link Beanable}.
+ * The Default implementer of {@link Entity}.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
 @Getter
 @Setter
-@Data
 @MappedSuperclass
-public class Bean implements Beanable<String> {
+public class EntityImpl implements Entity<String> {
 
     private static final long serialVersionUID = 314634114783440828L;
 
@@ -41,10 +39,6 @@ public class Bean implements Beanable<String> {
     @Version
     private long version;
 
-
-    /**
-     * Before create.
-     */
     @PrePersist
     public void preCreate() {
         final var now = DateUtils.currentDateTime();
@@ -52,9 +46,6 @@ public class Bean implements Beanable<String> {
         setUpdatedAt(now);
     }
 
-    /**
-     * Before update.
-     */
     @PreUpdate
     public void preUpdate() {
         final var now = DateUtils.currentDateTime();

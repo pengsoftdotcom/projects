@@ -2,14 +2,14 @@ package com.pengsoft.security.biz.facade;
 
 import com.pengsoft.security.biz.service.AuthorityService;
 import com.pengsoft.security.biz.service.RoleService;
-import com.pengsoft.security.commons.annotation.Authenticated;
+import com.pengsoft.security.commons.annotation.Authorized;
 import com.pengsoft.security.domain.entity.Authority;
 import com.pengsoft.security.domain.util.SecurityUtils;
-import com.pengsoft.support.biz.facade.BeanFacadeImpl;
+import com.pengsoft.support.biz.facade.EntityFacadeImpl;
 import com.pengsoft.support.commons.exception.MissingConfigurationException;
 import com.pengsoft.support.commons.util.StringUtils;
-import com.pengsoft.support.domain.entity.Beanable;
 import com.pengsoft.support.domain.entity.Enable;
+import com.pengsoft.support.domain.entity.Entity;
 import com.pengsoft.support.domain.entity.Sortable;
 import org.apache.commons.lang3.RegExUtils;
 import org.apache.commons.lang3.reflect.MethodUtils;
@@ -35,13 +35,13 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Service
-public class AuthorityFacadeImpl extends BeanFacadeImpl<AuthorityService, Authority, String> implements AuthorityFacade {
+public class AuthorityFacadeImpl extends EntityFacadeImpl<AuthorityService, Authority, String> implements AuthorityFacade {
 
     @Inject
     private RoleService roleService;
 
     @Override
-    public void saveEntityAdminAuthorities(final Class<? extends Beanable<? extends Serializable>> entityClass) {
+    public void saveEntityAdminAuthorities(final Class<? extends Entity<? extends Serializable>> entityClass) {
         final var entityAdminCode = SecurityUtils.getEntityAdminCode(entityClass);
         final var entityAdmin = roleService.findOneByCode(entityAdminCode)
                 .orElseThrow(() -> new MissingConfigurationException("'" + entityClass.getName() + "' entity admin not found"));
@@ -62,10 +62,10 @@ public class AuthorityFacadeImpl extends BeanFacadeImpl<AuthorityService, Author
         roleService.grantAuthorities(entityAdmin, authorities);
     }
 
-    private List<Authority> getAuthoritiesFromApi(final Class<?> apiClass, final Class<? extends Beanable<? extends Serializable>> entityClass, final Class<? extends Annotation> mappingClass, final String authorityCodePrefix) {
+    private List<Authority> getAuthoritiesFromApi(final Class<?> apiClass, final Class<? extends Entity<? extends Serializable>> entityClass, final Class<? extends Annotation> mappingClass, final String authorityCodePrefix) {
         final var authorities = new ArrayList<Authority>();
         MethodUtils.getMethodsListWithAnnotation(apiClass, mappingClass, true, false).stream()
-                .filter(method -> method.getAnnotation(Authenticated.class) == null)
+                .filter(method -> method.getAnnotation(Authorized.class) == null)
                 .map(method -> {
                     String authorityCode;
                     try {

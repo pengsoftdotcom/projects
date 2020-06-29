@@ -1,6 +1,6 @@
 package com.pengsoft.device.biz.service;
 
-import com.pengsoft.device.biz.repository.GroupRepository;
+import com.pengsoft.device.biz.repository.DeviceGroupRepository;
 import com.pengsoft.device.domain.entity.DeviceGroup;
 import com.pengsoft.support.biz.service.TreeEntityServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
@@ -11,14 +11,14 @@ import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
 /**
- * The implementer of {@link GroupService} based on JPA.
+ * The implementer of {@link DeviceGroupService} based on JPA.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
 @Primary
 @Service
-public class GroupServiceImpl extends TreeEntityServiceImpl<GroupRepository, DeviceGroup, String> implements GroupService {
+public class DeviceGroupServiceImpl extends TreeEntityServiceImpl<DeviceGroupRepository, DeviceGroup, String> implements DeviceGroupService {
 
     @Override
     public DeviceGroup save(final DeviceGroup deviceGroup) {

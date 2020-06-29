@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
-import { NzMessageService, NzModalService } from 'ng-zorro-antd';
+import { NzMessageService, NzModalService, NzTreeNodeOptions, NzFormatEmitEvent } from 'ng-zorro-antd';
 import { BeanComponent } from 'src/app/components/commons/bean.component';
 import { Field } from 'src/app/components/commons/form-item/field';
 import { InputComponent } from 'src/app/components/commons/input/input.component';
@@ -9,10 +9,13 @@ import { ResetPasswordComponent } from 'src/app/components/modal/reset-password/
 import { SwitchOrganizationComponent } from 'src/app/components/modal/switch-organization/switch-organization.component';
 import { JobService } from 'src/app/services/basedata/job.service';
 import { StaffService } from 'src/app/services/basedata/staff.service';
+import { SecurityService } from 'src/app/services/commons/security.service';
 import { DictionaryItemService } from 'src/app/services/system/dictionary-item.service';
 import { EntityUtils } from 'src/app/utils/entity-utils';
 import { FieldUtils } from 'src/app/utils/field-utils';
-import { UserProfileComponent } from '../user-profile/user-profile.component';
+import { PersonComponent } from '../person/person.component';
+import { DepartmentService } from 'src/app/services/basedata/department.service';
+
 
 @Component({
     selector: 'app-staff',
@@ -23,34 +26,29 @@ export class StaffComponent extends BeanComponent<StaffService> implements OnIni
 
     organization: any;
 
+    department: any;
+
+    navData: Array<NzTreeNodeOptions>;
+
     constructor(
         private location: Location,
         private dictionaryItem: DictionaryItemService,
         private job: JobService,
+        private departmentService: DepartmentService,
+        private security: SecurityService,
         protected bean: StaffService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
         super(bean, modal, message);
-        this.initFields();
-        this.initListToolbarButtons();
-
-    }
-
-    ngOnInit(): void {
-        if (!this.organization) {
-            this.switchOrganization();
-        }
+        this.organization = this.security.userDetails.organization;
     }
 
     initFields(): void {
-        if (!this.dictionaryItem) {
-            return;
-        }
-        UserProfileComponent.prototype.dictionaryItem = this.dictionaryItem;
-        UserProfileComponent.prototype.initFields();
+        PersonComponent.prototype.dictionaryItem = this.dictionaryItem;
+        PersonComponent.prototype.initFields();
         this.fields = [
-            FieldUtils.buildText({ code: 'userProfile', name: '用户信息', children: UserProfileComponent.prototype.fields }),
+            FieldUtils.buildText({ code: 'person', name: '人员', children: PersonComponent.prototype.fields }),
             FieldUtils.buildTreeSelect({
                 code: 'job', name: '职位',
                 list: { width: 100, align: 'center' },
@@ -66,7 +64,7 @@ export class StaffComponent extends BeanComponent<StaffService> implements OnIni
                 }
             }),
             FieldUtils.buildBoolean({
-                code: 'major', name: '主要', list: {
+                code: 'primary', name: '主要', list: {
                     render: (field: Field, row: any, sanitizer: DomSanitizer) => {
                         if (row[field.code]) {
                             return sanitizer.bypassSecurityTrustHtml('<span style="color: #0b8235">是</span>');
@@ -77,16 +75,18 @@ export class StaffComponent extends BeanComponent<StaffService> implements OnIni
                 }
             })
         ];
-        FieldUtils.resetSubfieldEditCode(this.fields);
     }
 
     initListToolbarButtons(): void {
         super.initListToolbarButtons();
-        this.listToolbarButtons.splice(1, 0, {
-            name: '切换机构',
-            type: 'link',
-            action: () => this.switchOrganization()
-        });
+        if (!this.security.userDetails.organization) {
+            this.listToolbarButtons.splice(1, 0, {
+                name: '切换机构',
+                type: 'link',
+                authority: 'basedata::organization::find_all',
+                action: () => this.switchOrganization()
+            });
+        }
     }
 
 
@@ -96,10 +96,24 @@ export class StaffComponent extends BeanComponent<StaffService> implements OnIni
             name: '重置密码',
             type: 'link',
             divider: true,
-            width: 73,
+            width: 75,
             authority: 'security::user::reset_password',
             action: (row: any) => this.resetPassword(row)
         });
+    }
+
+    afterInit(): void {
+        if (!this.organization) {
+            this.switchOrganization();
+        } else {
+            this.filterForm['organization.id'] = this.organization.id;
+            this.loadNavData();
+        }
+    }
+
+    beforeEditFormFilled(): void {
+        super.beforeEditFormFilled();
+        this.editForm.person = {};
     }
 
     resetPassword(row: any): void {
@@ -108,7 +122,7 @@ export class StaffComponent extends BeanComponent<StaffService> implements OnIni
             nzTitle: '重置密码',
             nzContent: ResetPasswordComponent,
             nzComponentParams: {
-                form: { id: row.userProfile.user.id }
+                form: { id: row.person.user.id }
             },
             nzOnOk: component => new Promise(resolve => {
                 component.submit({
@@ -130,8 +144,8 @@ export class StaffComponent extends BeanComponent<StaffService> implements OnIni
             nzContent: SwitchOrganizationComponent,
             nzOnOk: component => {
                 this.organization = component.form.organization;
-                this.filterForm['organization.id'] = this.organization.id;
-                this.list();
+                this.title = this.organization.name;
+                this.afterInit();
             },
             nzOnCancel: () => {
                 if (!this.organization) {
@@ -144,6 +158,47 @@ export class StaffComponent extends BeanComponent<StaffService> implements OnIni
                 }
             }
         });
+    }
+
+    private loadNavData() {
+        this.departmentService.findAll({ 'organization.id': this.organization.id }, {
+            success: (res: any) => {
+                this.navData = EntityUtils.convertListToTree(res);
+                if (this.organization) {
+                    this.navData = [{
+                        key: this.organization.id,
+                        title: this.organization.name,
+                        value: this.organization,
+                        isLeaf: !this.navData || this.navData.length === 0,
+                        children: this.navData
+                    }];
+                }
+            }
+        });
+    }
+
+    nav(event: NzFormatEmitEvent): void {
+        if (this.organization && this.organization.id === event.node.key) {
+            this.filterForm['organization.id'] = this.organization.id;
+            delete this.filterForm['department.id'];
+            this.department = null;
+        } else {
+            const queue = [];
+            this.navData.forEach(node => queue.push(node));
+            while (queue.length > 0) {
+                const parent = queue.pop();
+                if (parent.key === event.node.key) {
+                    this.department = parent.value;
+                    break;
+                }
+                if (parent.children) {
+                    parent.children.forEach(child => queue.push(child));
+                }
+            }
+            this.filterForm['department.id'] = this.department.id;
+            delete this.filterForm['organization.id'];
+        }
+        this.list();
     }
 
 }

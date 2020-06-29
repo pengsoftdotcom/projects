@@ -1,5 +1,7 @@
 package com.pengsoft.system.starter.autoconfigure.properties;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -8,27 +10,13 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @ConfigurationProperties("pengsoft.messaging")
 public class MessagingAutoConfigureProperties {
 
     private String mqTopic;
 
     private Sms sms;
-
-    public String getMqTopic() {
-        return mqTopic;
-    }
-
-    public void setMqTopic(final String mqTopic) {
-        this.mqTopic = mqTopic;
-    }
-
-    public Sms getSms() {
-        return sms;
-    }
-
-    public void setSms(final Sms sms) {
-        this.sms = sms;
-    }
 
 }

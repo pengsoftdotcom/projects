@@ -40,14 +40,14 @@ public class DefaultQuerydslPredicateArgumentResolver extends QuerydslPredicateA
 
     @Override
     public Object resolveArgument(final MethodParameter parameter, final ModelAndViewContainer mavContainer, final NativeWebRequest webRequest,
-                                  final WebDataBinderFactory binderFactory) throws Exception {
+                                  final WebDataBinderFactory binderFactory) {
         final var parameters = new LinkedMultiValueMap<String, String>();
 
         for (final var entry : webRequest.getParameterMap().entrySet()) {
             parameters.put(entry.getKey(), Arrays.asList(entry.getValue()));
         }
 
-        final var domainType = ClassTypeInformation.from(ClassUtils.getGenericType(parameter.getContainingClass(), 1));
+        final var domainType = ClassTypeInformation.from(ClassUtils.getSuperclassGenericType(parameter.getContainingClass(), 1));
         final var bindings = bindingsFactory.createBindingsFor(domainType);
         return Optional.ofNullable(predicateBuilder.getPredicate(domainType, parameters, bindings)).orElse(new BooleanBuilder());
     }

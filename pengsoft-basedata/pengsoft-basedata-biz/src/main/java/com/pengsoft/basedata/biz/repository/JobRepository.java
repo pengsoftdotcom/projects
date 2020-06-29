@@ -1,31 +1,33 @@
 package com.pengsoft.basedata.biz.repository;
 
-import com.pengsoft.basedata.domain.entity.Department;
-import com.pengsoft.basedata.domain.entity.Job;
-import com.pengsoft.basedata.domain.entity.QJob;
-import com.pengsoft.support.biz.repository.TreeBeanRepository;
-import com.querydsl.core.types.dsl.StringPath;
-import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.data.querydsl.binding.QuerydslBindings;
-import org.springframework.stereotype.Repository;
+import java.util.Optional;
 
 import javax.persistence.QueryHint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.util.Optional;
+
+import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.stereotype.Repository;
+
+import com.pengsoft.basedata.domain.entity.Department;
+import com.pengsoft.basedata.domain.entity.Job;
+import com.pengsoft.basedata.domain.entity.QJob;
+import com.pengsoft.support.biz.repository.TreeEntityRepository;
+import com.querydsl.core.types.dsl.StringPath;
 
 /**
  * The repository interface of {@link Job} based on JPA
  *
  * @author dang.peng@pengsoft.com
- * @since 1.0.0
+ * @since  1.0.0
  */
 @Repository
-public interface JobRepository extends TreeBeanRepository<QJob, Job, String> {
+public interface JobRepository extends TreeEntityRepository<QJob, Job, String>, OwnedExtRepository {
 
     @Override
     default void customize(final QuerydslBindings bindings, final QJob root) {
-        TreeBeanRepository.super.customize(bindings, root);
+        TreeEntityRepository.super.customize(bindings, root);
         bindings.bind(root.name).first(StringPath::contains);
     }
 

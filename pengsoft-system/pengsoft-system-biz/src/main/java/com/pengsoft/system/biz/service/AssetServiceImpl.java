@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.service;
 
-import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.system.biz.repository.AssetRepository;
 import com.pengsoft.system.domain.entity.Asset;
 import org.springframework.context.annotation.Primary;
@@ -14,6 +14,6 @@ import org.springframework.stereotype.Service;
  */
 @Primary
 @Service
-public class AssetServiceImpl extends BeanServiceImpl<AssetRepository, Asset, String> implements AssetService {
+public class AssetServiceImpl extends EntityServiceImpl<AssetRepository, Asset, String> implements AssetService {
 
 }

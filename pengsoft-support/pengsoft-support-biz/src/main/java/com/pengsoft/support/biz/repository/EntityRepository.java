@@ -1,8 +1,11 @@
 package com.pengsoft.support.biz.repository;
 
-import java.io.Serializable;
-import java.util.Optional;
-
+import com.pengsoft.support.biz.util.QueryDslUtils;
+import com.pengsoft.support.domain.entity.EntityImpl;
+import com.pengsoft.support.domain.entity.Entity;
+import com.querydsl.core.types.dsl.EntityPathBase;
+import com.querydsl.core.types.dsl.NumberPath;
+import com.querydsl.core.types.dsl.StringPath;
 import org.apache.commons.lang3.reflect.MethodUtils;
 import org.springframework.data.jpa.repository.support.JpaRepositoryImplementation;
 import org.springframework.data.querydsl.QuerydslPredicateExecutor;
@@ -11,21 +14,17 @@ import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.data.repository.NoRepositoryBean;
 import org.springframework.validation.annotation.Validated;
 
-import com.pengsoft.support.biz.util.QueryDslUtils;
-import com.pengsoft.support.domain.entity.Bean;
-import com.pengsoft.support.domain.entity.Beanable;
-import com.querydsl.core.types.dsl.EntityPathBase;
-import com.querydsl.core.types.dsl.NumberPath;
-import com.querydsl.core.types.dsl.StringPath;
+import java.io.Serializable;
+import java.util.Optional;
 
 /**
- * The repository interface of {@link Bean} based on JPA
+ * The repository interface of {@link EntityImpl} based on JPA
  *
  * @author dang.peng@pengsoft.com
  */
 @Validated
 @NoRepositoryBean
-public interface BeanRepository<Q extends EntityPathBase<T>, T extends Beanable<ID>, ID extends Serializable>
+public interface EntityRepository<Q extends EntityPathBase<T>, T extends Entity<ID>, ID extends Serializable>
         extends JpaRepositoryImplementation<T, ID>, QuerydslPredicateExecutor<T>, QuerydslBinderCustomizer<Q> {
 
     @Override

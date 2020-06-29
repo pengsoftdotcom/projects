@@ -3,7 +3,8 @@ package com.pengsoft.basedata.biz.api;
 import com.pengsoft.basedata.biz.service.StaffUserDetailsService;
 import com.pengsoft.basedata.domain.StaffUserDetails;
 import com.pengsoft.basedata.domain.entity.Job;
-import com.pengsoft.security.commons.annotation.Authenticated;
+import com.pengsoft.basedata.domain.entity.Organization;
+import com.pengsoft.security.commons.annotation.Authorized;
 import com.pengsoft.security.commons.annotation.UpdatingAuthentication;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,7 @@ import javax.inject.Inject;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-@Authenticated
+@Authorized
 @RestController
 @RequestMapping("api/user-details")
 public class StaffUserDetailsApi {
@@ -28,15 +29,21 @@ public class StaffUserDetailsApi {
     private StaffUserDetailsService service;
 
     @UpdatingAuthentication
-    @PostMapping("set-major-job")
-    public UserDetails setMajorJob(@RequestParam("id") final Job job) {
-        return service.setMajorJob(job);
+    @PostMapping("set-primary-job")
+    public UserDetails setPrimaryJob(@RequestParam("id") final Job job) {
+        return service.setPrimaryJob(job);
     }
 
     @UpdatingAuthentication
     @PostMapping("set-current-job")
     public UserDetails setCurrentJob(@RequestParam("id") final Job job) {
         return service.setCurrentJob(job);
+    }
+
+    @UpdatingAuthentication
+    @PostMapping("set-organization")
+    public UserDetails setOrganization(@RequestParam("id") final Organization organization) {
+        return service.setOrganization(organization);
     }
 
 }

@@ -1,5 +1,7 @@
 package com.pengsoft.security.oauth.starter.autoconfigure.properties;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 /**
@@ -8,6 +10,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Getter
+@Setter
 @ConfigurationProperties("pengsoft.security.oauth")
 public class OAuthAutoConfigureProperties {
 
@@ -20,21 +24,5 @@ public class OAuthAutoConfigureProperties {
      * Optional values are 'enabled' and 'disabled'.
      */
     private String resourceServer;
-
-    public String getAuthorizationServer() {
-        return authorizationServer;
-    }
-
-    public void setAuthorizationServer(final String authorizationServer) {
-        this.authorizationServer = authorizationServer;
-    }
-
-    public String getResourceServer() {
-        return resourceServer;
-    }
-
-    public void setResourceServer(final String resourceServer) {
-        this.resourceServer = resourceServer;
-    }
 
 }

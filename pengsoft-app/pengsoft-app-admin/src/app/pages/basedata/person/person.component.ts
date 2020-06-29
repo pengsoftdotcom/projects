@@ -1,24 +1,24 @@
 import { Component } from '@angular/core';
+import { DomSanitizer } from '@angular/platform-browser';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { BeanComponent } from 'src/app/components/commons/bean.component';
 import { Field } from 'src/app/components/commons/form-item/field';
-import { UserProfileService } from 'src/app/services/basedata/user-profile.service';
+import { InputComponent } from 'src/app/components/commons/input/input.component';
+import { ResetPasswordComponent } from 'src/app/components/modal/reset-password/reset-password.component';
+import { PersonService } from 'src/app/services/basedata/person.service';
 import { DictionaryItemService } from 'src/app/services/system/dictionary-item.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
-import { InputComponent } from 'src/app/components/commons/input/input.component';
-import { DomSanitizer } from '@angular/platform-browser';
-import { ResetPasswordComponent } from 'src/app/components/modal/reset-password/reset-password.component';
 
 @Component({
-    selector: 'app-user-profile',
-    templateUrl: './user-profile.component.html',
-    styleUrls: ['./user-profile.component.scss']
+    selector: 'app-person',
+    templateUrl: './person.component.html',
+    styleUrls: ['./person.component.scss']
 })
-export class UserProfileComponent extends BeanComponent<UserProfileService> {
+export class PersonComponent extends BeanComponent<PersonService> {
 
     constructor(
         public dictionaryItem: DictionaryItemService,
-        protected bean: UserProfileService,
+        protected bean: PersonService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
@@ -52,7 +52,7 @@ export class UserProfileComponent extends BeanComponent<UserProfileService> {
                 list: {
                     width: 140, align: 'center',
                     render: (field: Field, row: any, sanitizer: DomSanitizer) => {
-                        if (row[field.code]) {
+                        if (row && row[field.code]) {
                             return sanitizer.bypassSecurityTrustHtml(`<code>${row[field.code]}</code>`);
                         } else {
                             return null;
@@ -71,7 +71,7 @@ export class UserProfileComponent extends BeanComponent<UserProfileService> {
             name: '重置密码',
             type: 'link',
             divider: true,
-            width: 73,
+            width: 75,
             authority: 'security::user::reset_password',
             action: (row: any) => this.resetPassword(row)
         });

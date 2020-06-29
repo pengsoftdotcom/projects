@@ -18,11 +18,4 @@ export class StaffService extends BeanService {
         return 'staff';
     }
 
-    save(data: any, options: HttpOptions): void {
-        if (data.userProfile) {
-            delete data.userProfile.user;
-        }
-        super.save(data, options);
-    }
-
 }

@@ -8,13 +8,13 @@ import { EditComponent } from 'src/app/components/commons/edit/edit.component';
 })
 export class EditStaffComponent extends EditComponent implements OnInit {
 
-    userProfileFields = [];
+    personFields = [];
 
     jobFields = [];
 
     ngOnInit(): void {
         super.ngOnInit();
-        this.userProfileFields = this.fields[0].children;
+        this.personFields = this.fields[0].children;
         this.jobFields = this.fields.slice(1);
     }
 

@@ -4,7 +4,7 @@ import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.security.domain.validation.Password;
 import com.pengsoft.security.domain.validation.Username;
-import com.pengsoft.support.biz.service.BeanService;
+import com.pengsoft.support.biz.service.EntityService;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -17,7 +17,7 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface UserService extends BeanService<User, String> {
+public interface UserService extends EntityService<User, String> {
 
     /**
      * Change password.
@@ -45,12 +45,12 @@ public interface UserService extends BeanService<User, String> {
     void grantRoles(@NotNull User user, List<Role> roles);
 
     /**
-     * Set the major role.
+     * Set the primary role.
      *
      * @param user The {@link User}.
-     * @param role The major {@link Role}.
+     * @param role The primary {@link Role}.
      */
-    void setMajorRole(@NotNull User user, @NotNull Role role);
+    void setPrimaryRole(@NotNull User user, @NotNull Role role);
 
     /**
      * Save the sign in date and clear the sign in failure count.

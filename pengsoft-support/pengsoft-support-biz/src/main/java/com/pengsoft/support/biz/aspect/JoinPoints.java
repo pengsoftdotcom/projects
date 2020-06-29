@@ -8,13 +8,13 @@ package com.pengsoft.support.biz.aspect;
  */
 public class JoinPoints {
 
-    private JoinPoints() {
-    }
+    public static final String ALL_SERVICE = "execution(public * com..biz.service.*Service.*(..))";
 
-    public static final String ALL_SERVICE = "execution(public * com..biz.service.impl.*ServiceImpl.*(..))";
-
-    public static final String ALL_FACADE = "execution(public * com..biz.facade.impl.*FacadeImpl.*(..))";
+    public static final String ALL_FACADE = "execution(public * com..biz.facade.*Facade.*(..))";
 
     public static final String ALL_API = "execution(public * com..biz.api.*Api.*(..))";
+
+    private JoinPoints() {
+    }
 
 }

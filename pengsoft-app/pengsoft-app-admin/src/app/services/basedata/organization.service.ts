@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../commons/http.service';
 import { TreeBeanService } from '../commons/tree-bean.service';
+import { HttpOptions } from '../commons/http-options';
 
 @Injectable({
     providedIn: 'root'

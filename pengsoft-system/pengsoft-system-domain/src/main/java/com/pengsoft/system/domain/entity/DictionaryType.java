@@ -1,7 +1,7 @@
 package com.pengsoft.system.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.EntityImpl;
 import com.pengsoft.support.domain.entity.Codeable;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,7 +33,7 @@ import java.util.List;
 @Table(name = "t_dictionary_type", indexes = {
         @Index(name = "i_dictionary_type_code", columnList = "code", unique = true)
 })
-public class DictionaryType extends Bean implements Codeable {
+public class DictionaryType extends EntityImpl implements Codeable {
 
     private static final long serialVersionUID = 7355743632684719076L;
 

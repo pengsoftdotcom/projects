@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.service;
 
-import com.pengsoft.support.biz.service.BeanService;
+import com.pengsoft.support.biz.service.EntityService;
 import com.pengsoft.system.domain.entity.DictionaryType;
 
 import javax.validation.constraints.NotBlank;
@@ -12,7 +12,7 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface DictionaryTypeService extends BeanService<DictionaryType, String> {
+public interface DictionaryTypeService extends EntityService<DictionaryType, String> {
 
     /**
      * Returns an {@link Optional} of a {@link DictionaryType} with given code.

@@ -24,7 +24,7 @@ export class RegionComponent extends TreeBeanComponent<RegionService> {
         return false;
     }
 
-    get parentFilterForm(): any {
+    get parentParams(): any {
         return null;
     }
 
@@ -33,7 +33,7 @@ export class RegionComponent extends TreeBeanComponent<RegionService> {
         this.fields.splice(1, 0,
             FieldUtils.buildTextForCode(),
             FieldUtils.buildTextForName(),
-            FieldUtils.buildTexareaForRemark()
+            FieldUtils.buildTextareaForRemark()
         );
     }
 

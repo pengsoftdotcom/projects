@@ -1,4 +1,5 @@
-<app-list #listComponent title="员工列表" [fields]="fields" [data]="listData" [page]="pageData" [toolbarButtons]="listToolbarButtons"
-    [actionButtons]="listActionButtons" (pageChange)="list()"></app-list>
-<app-edit-staff #editComponent title="员工编辑" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons" [errors]="errors">
+<app-list #listComponent [title]="(title ? title : '') + '员工列表'" [fields]="fields" [navData]="navData" (nav)="nav($event)" [listData]="listData"
+    [page]="pageData" [toolbarButtons]="listToolbarButtons" [actionButtons]="listActionButtons" (pageChange)="list()"></app-list>
+<app-edit-staff #editComponent [title]="(title ? title : '') + '员工编辑'" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons"
+    [errors]="errors">
 </app-edit-staff>

@@ -1,7 +1,7 @@
 package com.pengsoft.basedata.biz.facade;
 
+import com.pengsoft.basedata.domain.entity.Person;
 import com.pengsoft.basedata.domain.entity.Staff;
-import com.pengsoft.basedata.domain.entity.UserProfile;
 import com.pengsoft.basedata.starter.BasedataApplication;
 import com.pengsoft.security.biz.facade.AuthorityFacade;
 import com.pengsoft.security.biz.facade.RoleFacade;
@@ -31,9 +31,6 @@ public class StaffFacadeTest extends BaseFacadeTest<StaffFacade> {
     private AuthorityFacade authorityFacade;
 
     @Inject
-    private UserProfileFacade userProfileFacade;
-
-    @Inject
     private JobFacade jobFacade;
 
     @Test
@@ -46,10 +43,10 @@ public class StaffFacadeTest extends BaseFacadeTest<StaffFacade> {
     public void save() {
         final var staff = new Staff();
         staff.setJob(jobFacade.findPage(new BooleanBuilder(), PageRequest.of(0, 1)).getContent().get(0));
-        final var userProfile = new UserProfile();
-        userProfile.setName("党鹏");
-        userProfile.setMobile("18508101366");
-        staff.setUserProfile(userProfile);
+        final var person = new Person();
+        person.setName("党鹏");
+        person.setMobile("18508101366");
+        staff.setPerson(person);
         getFacade().save(staff);
     }
 

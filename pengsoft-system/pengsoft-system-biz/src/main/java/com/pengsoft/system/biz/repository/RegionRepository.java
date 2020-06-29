@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.repository;
 
-import com.pengsoft.support.biz.repository.TreeBeanRepository;
+import com.pengsoft.support.biz.repository.TreeEntityRepository;
 import com.pengsoft.system.domain.entity.QRegion;
 import com.pengsoft.system.domain.entity.Region;
 import com.querydsl.core.types.dsl.StringPath;
@@ -19,11 +19,11 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Repository
-public interface RegionRepository extends TreeBeanRepository<QRegion, Region, String> {
+public interface RegionRepository extends TreeEntityRepository<QRegion, Region, String> {
 
     @Override
     default void customize(final QuerydslBindings bindings, final QRegion root) {
-        TreeBeanRepository.super.customize(bindings, root);
+        TreeEntityRepository.super.customize(bindings, root);
         bindings.bind(root.code).first(StringPath::startsWith);
     }
 

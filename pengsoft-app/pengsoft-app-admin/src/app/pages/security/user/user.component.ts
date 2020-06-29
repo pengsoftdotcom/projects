@@ -4,7 +4,7 @@ import { BeanComponent } from 'src/app/components/commons/bean.component';
 import { EditManyToManyComponent } from 'src/app/components/commons/edit-many-to-many/edit-many-to-many.component';
 import { Field } from 'src/app/components/commons/form-item/field';
 import { ResetPasswordComponent } from 'src/app/components/modal/reset-password/reset-password.component';
-import { SetMajorRoleComponent } from 'src/app/components/modal/set-major-role/set-major-role.component';
+import { SetPrimaryRoleComponent } from 'src/app/components/modal/set-primary-role/set-primary-role.component';
 import { RoleService } from 'src/app/services/security/role.service';
 import { UserService } from 'src/app/services/security/user.service';
 import { EntityUtils } from 'src/app/utils/entity-utils';
@@ -20,8 +20,8 @@ export class UserComponent extends BeanComponent<UserService> {
     buttons = [
         {
             name: '设置主要角色', size: 'default',
-            authority: this.getAuthority('setMajorRole'),
-            action: () => this.editMajorRole()
+            authority: this.getAuthority('setPrimaryRole'),
+            action: () => this.editPrimaryRole()
         },
         {
             name: '保存', type: 'primary', size: 'default',
@@ -97,14 +97,14 @@ export class UserComponent extends BeanComponent<UserService> {
             name: '重置密码',
             type: 'link',
             divider: true,
-            width: 73,
+            width: 75,
             authority: this.getAuthority('resetPassword'),
             action: (row: any) => this.resetPassword(row)
         }, {
             name: '分配角色',
             type: 'link',
             divider: true,
-            width: 73,
+            width: 75,
             authority: this.getAuthority('findAllUserRolesByUser'),
             action: (row: any) => this.editGrantedRoles(row)
         });
@@ -157,12 +157,12 @@ export class UserComponent extends BeanComponent<UserService> {
         });
     }
 
-    editMajorRole(): void {
+    editPrimaryRole(): void {
         this.bean.findAllUserRolesByUser(this.editForm, {
             success: (res: any) => this.modal.create({
                 nzBodyStyle: { padding: '16px' },
                 nzTitle: '设置主要角色',
-                nzContent: SetMajorRoleComponent,
+                nzContent: SetPrimaryRoleComponent,
                 nzComponentParams: { items: res },
                 nzOnOk: component => new Promise(resolve => {
                     component.submit({

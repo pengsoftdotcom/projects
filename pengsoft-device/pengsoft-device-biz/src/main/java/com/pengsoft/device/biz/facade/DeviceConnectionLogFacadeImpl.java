@@ -3,7 +3,7 @@ package com.pengsoft.device.biz.facade;
 import com.pengsoft.device.biz.service.DeviceConnectionLogService;
 import com.pengsoft.device.domain.entity.Device;
 import com.pengsoft.device.domain.entity.DeviceConnectionLog;
-import com.pengsoft.support.biz.facade.BeanFacadeImpl;
+import com.pengsoft.support.biz.facade.EntityFacadeImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
  * @since 1.0.0
  */
 @Service
-public class DeviceConnectionLogFacadeImpl extends BeanFacadeImpl<DeviceConnectionLogService, DeviceConnectionLog, String> implements DeviceConnectionLogFacade {
+public class DeviceConnectionLogFacadeImpl extends EntityFacadeImpl<DeviceConnectionLogService, DeviceConnectionLog, String> implements DeviceConnectionLogFacade {
 
     @Override
     public Page<DeviceConnectionLog> findPageByDevice(final Device device, final Pageable pageable) {

@@ -2,7 +2,7 @@ package com.pengsoft.device.biz.api;
 
 import com.pengsoft.device.biz.facade.ProductFacade;
 import com.pengsoft.device.domain.entity.Product;
-import com.pengsoft.support.biz.api.BeanApi;
+import com.pengsoft.support.biz.api.EntityApi;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("api/product")
-public class ProductApi extends BeanApi<ProductFacade, Product, String> {
+public class ProductApi extends EntityApi<ProductFacade, Product, String> {
 
 }

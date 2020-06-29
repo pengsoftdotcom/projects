@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.repository;
 
-import com.pengsoft.support.biz.repository.TreeBeanRepository;
+import com.pengsoft.support.biz.repository.TreeEntityRepository;
 import com.pengsoft.system.domain.entity.DictionaryItem;
 import com.pengsoft.system.domain.entity.DictionaryType;
 import com.pengsoft.system.domain.entity.QDictionaryItem;
@@ -22,11 +22,11 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Repository
-public interface DictionaryItemRepository extends TreeBeanRepository<QDictionaryItem, DictionaryItem, String> {
+public interface DictionaryItemRepository extends TreeEntityRepository<QDictionaryItem, DictionaryItem, String> {
 
     @Override
     default void customize(final QuerydslBindings bindings, final QDictionaryItem root) {
-        TreeBeanRepository.super.customize(bindings, root);
+        TreeEntityRepository.super.customize(bindings, root);
         bindings.bind(root.code).first(StringPath::contains);
         bindings.bind(root.name).first(StringPath::contains);
     }

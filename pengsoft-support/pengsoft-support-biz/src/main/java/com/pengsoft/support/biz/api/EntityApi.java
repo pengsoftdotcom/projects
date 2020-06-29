@@ -1,14 +1,15 @@
 package com.pengsoft.support.biz.api;
 
-import java.io.Serializable;
-import java.lang.reflect.InvocationTargetException;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
+import com.pengsoft.support.biz.facade.EntityFacade;
+import com.pengsoft.support.biz.service.EnableService;
+import com.pengsoft.support.biz.service.SortService;
+import com.pengsoft.support.biz.util.QueryDslUtils;
+import com.pengsoft.support.commons.exception.Exceptions;
+import com.pengsoft.support.domain.entity.Enable;
+import com.pengsoft.support.domain.entity.Entity;
+import com.pengsoft.support.domain.entity.Sortable;
+import com.querydsl.core.types.Predicate;
+import lombok.Getter;
 import org.apache.commons.lang3.NotImplementedException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,25 +22,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.pengsoft.support.biz.facade.BeanFacade;
-import com.pengsoft.support.biz.service.EnableService;
-import com.pengsoft.support.biz.service.SortService;
-import com.pengsoft.support.biz.util.QueryDslUtils;
-import com.pengsoft.support.commons.exception.Exceptions;
-import com.pengsoft.support.domain.entity.Beanable;
-import com.pengsoft.support.domain.entity.Enable;
-import com.pengsoft.support.domain.entity.Sortable;
-import com.querydsl.core.types.Predicate;
-
-import lombok.Getter;
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
- * The web api of {@link Beanable}
+ * The web api of {@link Entity}
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public class BeanApi<F extends BeanFacade<?, T, ID>, T extends Beanable<ID>, ID extends Serializable> {
+public class EntityApi<F extends EntityFacade<?, T, ID>, T extends Entity<ID>, ID extends Serializable> {
 
     @Getter
     @Inject
@@ -56,8 +52,8 @@ public class BeanApi<F extends BeanFacade<?, T, ID>, T extends Beanable<ID>, ID 
     private SortService sortService;
 
     @PostMapping("save")
-    public T save(@RequestBody final T bean) {
-        return facade.save(bean);
+    public T save(@RequestBody final T entity) {
+        return facade.save(entity);
     }
 
     @DeleteMapping("delete")
@@ -97,13 +93,8 @@ public class BeanApi<F extends BeanFacade<?, T, ID>, T extends Beanable<ID>, ID 
     }
 
     @GetMapping("find-one")
-    public T findOne(final Predicate predicate)
-            throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Optional<T> optional = Optional.empty();
-        if (QueryDslUtils.contains(predicate, getFacade().getEntityClass(), "id")) {
-            optional = facade.findOne(predicate);
-        }
-        return optional.orElse(getFacade().getEntityClass().getDeclaredConstructor().newInstance());
+    public T findOne(@RequestParam(value = "id", required = false) final T entity) throws Exception {
+        return Optional.ofNullable(entity).orElse(getFacade().getEntityClass().getDeclaredConstructor().newInstance());
     }
 
     @GetMapping("find-page")

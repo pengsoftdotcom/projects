@@ -3,10 +3,52 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>org.example</groupId>
+    <modules>
+        <module>pengsoft-portal-commons</module>
+        <module>pengsoft-portal-domain</module>
+        <module>pengsoft-portal-biz</module>
+        <module>pengsoft-portal-starter</module>
+        <module>pengsoft-portal-test</module>
+    </modules>
+    <parent>
+        <groupId>com.pengsoft.basedata</groupId>
+        <artifactId>pengsoft-basedata</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+    <groupId>com.pengsoft.portal</groupId>
     <artifactId>pengsoft-portal</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.pengsoft.basedata</groupId>
+                <artifactId>pengsoft-basedata</artifactId>
+                <version>${project.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
 
+            <dependency>
+                <groupId>com.pengsoft.portal</groupId>
+                <artifactId>pengsoft-portal-commons</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.portal</groupId>
+                <artifactId>pengsoft-portal-domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.portal</groupId>
+                <artifactId>pengsoft-portal-biz</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.pengsoft.portal</groupId>
+                <artifactId>pengsoft-portal-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 </project>

@@ -3,7 +3,7 @@ package com.pengsoft.basedata.biz.facade;
 import com.pengsoft.basedata.biz.service.DepartmentService;
 import com.pengsoft.basedata.domain.entity.Department;
 import com.pengsoft.basedata.domain.entity.Organization;
-import com.pengsoft.support.biz.facade.TreeBeanFacadeImpl;
+import com.pengsoft.support.biz.facade.TreeEntityFacadeImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,7 +15,7 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Service
-public class DepartmentFacadeImpl extends TreeBeanFacadeImpl<DepartmentService, Department, String> implements DepartmentFacade {
+public class DepartmentFacadeImpl extends TreeEntityFacadeImpl<DepartmentService, Department, String> implements DepartmentFacade {
 
     @Override
     public Optional<Organization> findOneByOrganizationAndParentAndName(final Organization organization, final Department parent, final String name) {

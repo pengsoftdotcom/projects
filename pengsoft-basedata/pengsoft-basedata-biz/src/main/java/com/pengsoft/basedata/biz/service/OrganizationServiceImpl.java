@@ -1,17 +1,17 @@
 package com.pengsoft.basedata.biz.service;
 
-import java.util.Optional;
-
-import javax.validation.constraints.NotBlank;
-
+import com.pengsoft.basedata.biz.repository.OrganizationRepository;
+import com.pengsoft.basedata.domain.entity.Organization;
+import com.pengsoft.basedata.domain.entity.Person;
+import com.pengsoft.support.biz.service.TreeEntityServiceImpl;
+import com.pengsoft.support.commons.util.StringUtils;
+import com.pengsoft.support.domain.util.EntityUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import com.pengsoft.basedata.biz.repository.OrganizationRepository;
-import com.pengsoft.basedata.domain.entity.Organization;
-import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
-import com.pengsoft.support.commons.util.StringUtils;
-import com.pengsoft.support.domain.util.EntityUtils;
+import javax.validation.constraints.NotBlank;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * The implementer of {@link OrganizationService} based on JPA.
@@ -21,7 +21,7 @@ import com.pengsoft.support.domain.util.EntityUtils;
  */
 @Primary
 @Service
-public class OrganizationServiceImpl extends TreeBeanServiceImpl<OrganizationRepository, Organization, String> implements OrganizationService {
+public class OrganizationServiceImpl extends TreeEntityServiceImpl<OrganizationRepository, Organization, String> implements OrganizationService {
 
     @Override
     public Organization save(final Organization organization) {
@@ -38,7 +38,11 @@ public class OrganizationServiceImpl extends TreeBeanServiceImpl<OrganizationRep
         if (StringUtils.isBlank(organization.getSimpleName())) {
             organization.setSimpleName(organization.getName());
         }
-        return super.save(organization);
+        super.save(organization);
+        if (!StringUtils.equals(organization.getId(), organization.getBelongsTo())) {
+            getRepository().updateBelongsTo(organization.getId());
+        }
+        return organization;
     }
 
     @Override
@@ -49,6 +53,11 @@ public class OrganizationServiceImpl extends TreeBeanServiceImpl<OrganizationRep
     @Override
     public Optional<Organization> findOneByName(@NotBlank final String name) {
         return getRepository().findOneByName(name);
+    }
+
+    @Override
+    public List<Organization> findAllByAdmin(final Person admin) {
+        return getRepository().findAllByAdmin(admin);
     }
 
 }

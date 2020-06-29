@@ -3,7 +3,7 @@ package com.pengsoft.basedata.biz.service;
 import com.pengsoft.basedata.domain.entity.Department;
 import com.pengsoft.basedata.domain.entity.Job;
 import com.pengsoft.security.domain.entity.Role;
-import com.pengsoft.support.biz.service.TreeBeanService;
+import com.pengsoft.support.biz.service.TreeEntityService;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -16,7 +16,7 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface JobService extends TreeBeanService<Job, String> {
+public interface JobService extends TreeEntityService<Job, String> {
 
     /**
      * Grant roles.

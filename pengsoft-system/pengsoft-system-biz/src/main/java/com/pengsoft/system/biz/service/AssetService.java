@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.service;
 
-import com.pengsoft.support.biz.service.BeanService;
+import com.pengsoft.support.biz.service.EntityService;
 import com.pengsoft.system.domain.entity.Asset;
 
 /**
@@ -9,6 +9,6 @@ import com.pengsoft.system.domain.entity.Asset;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface AssetService extends BeanService<Asset, String> {
+public interface AssetService extends EntityService<Asset, String> {
 
 }

@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.facade;
 
-import com.pengsoft.support.biz.facade.TreeBeanFacadeImpl;
+import com.pengsoft.support.biz.facade.TreeEntityFacadeImpl;
 import com.pengsoft.system.biz.service.DictionaryItemService;
 import com.pengsoft.system.domain.entity.DictionaryItem;
 import com.pengsoft.system.domain.entity.DictionaryType;
@@ -16,7 +16,7 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Service
-public class DictionaryItemFacadeImpl extends TreeBeanFacadeImpl<DictionaryItemService, DictionaryItem, String> implements DictionaryItemFacade {
+public class DictionaryItemFacadeImpl extends TreeEntityFacadeImpl<DictionaryItemService, DictionaryItem, String> implements DictionaryItemFacade {
 
     @Override
     public List<DictionaryItem> findAllByTypeCode(final String code) {

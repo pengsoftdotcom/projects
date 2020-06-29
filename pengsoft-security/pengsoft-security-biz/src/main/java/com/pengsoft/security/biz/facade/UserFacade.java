@@ -2,7 +2,7 @@ package com.pengsoft.security.biz.facade;
 
 import com.pengsoft.security.biz.service.UserService;
 import com.pengsoft.security.domain.entity.User;
-import com.pengsoft.support.biz.facade.BeanFacade;
+import com.pengsoft.support.biz.facade.EntityFacade;
 
 /**
  * The facade interface of {@link User}
@@ -10,4 +10,4 @@ import com.pengsoft.support.biz.facade.BeanFacade;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface UserFacade extends BeanFacade<UserService, User, String>, UserService {}
+public interface UserFacade extends EntityFacade<UserService, User, String>, UserService {}

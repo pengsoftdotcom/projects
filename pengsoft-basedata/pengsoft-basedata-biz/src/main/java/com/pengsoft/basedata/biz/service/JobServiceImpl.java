@@ -6,7 +6,7 @@ import com.pengsoft.basedata.domain.entity.Department;
 import com.pengsoft.basedata.domain.entity.Job;
 import com.pengsoft.basedata.domain.entity.JobRole;
 import com.pengsoft.security.domain.entity.Role;
-import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
+import com.pengsoft.support.biz.service.TreeEntityServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @Primary
 @Service
-public class JobServiceImpl extends TreeBeanServiceImpl<JobRepository, Job, String> implements JobService {
+public class JobServiceImpl extends TreeEntityServiceImpl<JobRepository, Job, String> implements JobService {
 
     @Inject
     private JobRoleRepository jobRoleRepository;

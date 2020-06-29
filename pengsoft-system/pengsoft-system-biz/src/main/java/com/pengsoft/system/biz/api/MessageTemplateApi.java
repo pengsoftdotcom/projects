@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.api;
 
-import com.pengsoft.support.biz.api.BeanApi;
+import com.pengsoft.support.biz.api.EntityApi;
 import com.pengsoft.system.biz.facade.MessageTemplateFacade;
 import com.pengsoft.system.domain.entity.MessageTemplate;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("api/message-template")
-public class MessageTemplateApi extends BeanApi<MessageTemplateFacade, MessageTemplate, String> {
+public class MessageTemplateApi extends EntityApi<MessageTemplateFacade, MessageTemplate, String> {
 
 }

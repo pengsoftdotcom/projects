@@ -15,7 +15,7 @@ import java.util.Map;
 @Setter
 public class Response {
 
-    private String version = "1.1";
+    private String version = "1.0";
 
     private String type;
 

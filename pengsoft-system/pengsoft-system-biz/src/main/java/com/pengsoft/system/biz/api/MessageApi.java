@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.api;
 
-import com.pengsoft.support.biz.api.BeanApi;
+import com.pengsoft.support.biz.api.EntityApi;
 import com.pengsoft.system.biz.facade.MessageFacade;
 import com.pengsoft.system.domain.entity.Message;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("api/message")
-public class MessageApi extends BeanApi<MessageFacade, Message, String> {
+public class MessageApi extends EntityApi<MessageFacade, Message, String> {
 
 }

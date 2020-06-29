@@ -4,7 +4,7 @@ import com.pengsoft.security.biz.facade.UserFacade;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.security.domain.entity.UserRole;
-import com.pengsoft.support.biz.api.BeanApi;
+import com.pengsoft.support.biz.api.EntityApi;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("api/user")
-public class UserApi extends BeanApi<UserFacade, User, String> {
+public class UserApi extends EntityApi<UserFacade, User, String> {
 
     @PostMapping("reset-password")
     public void resetPassword(final String id, final String password) {
@@ -34,9 +34,9 @@ public class UserApi extends BeanApi<UserFacade, User, String> {
         getFacade().grantRoles(user, roles);
     }
 
-    @PostMapping("set-major-role")
-    public void setMajorRole(@RequestParam("user.id") final User user, @RequestParam("role.id") final Role role) {
-        getFacade().setMajorRole(user, role);
+    @PostMapping("set-primary-role")
+    public void setPrimaryRole(@RequestParam("user.id") final User user, @RequestParam("role.id") final Role role) {
+        getFacade().setPrimaryRole(user, role);
     }
 
     @GetMapping("find-all-user-roles-by-user")

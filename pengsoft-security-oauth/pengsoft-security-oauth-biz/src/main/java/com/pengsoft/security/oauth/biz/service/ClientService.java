@@ -1,7 +1,7 @@
 package com.pengsoft.security.oauth.biz.service;
 
 import com.pengsoft.security.oauth.domain.entity.Client;
-import com.pengsoft.support.biz.service.BeanService;
+import com.pengsoft.support.biz.service.EntityService;
 
 import javax.validation.constraints.NotBlank;
 import java.util.Optional;
@@ -12,7 +12,7 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface ClientService extends BeanService<Client, String> {
+public interface ClientService extends EntityService<Client, String> {
 
     /**
      * Returns an {@link Optional} of a {@link Client} with given code.

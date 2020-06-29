@@ -33,13 +33,16 @@ import java.util.List;
 @Table(name = "t_department", indexes = {
         @Index(name = "i_department_organization_id", columnList = "organization_id, parent_id, name", unique = true)
 })
-public class Department extends OwnedTreeBeanExt<Department> {
+public class Department extends OwnedExtTreeEntity<Department> {
 
     private static final long serialVersionUID = 4258074923618744007L;
 
     @NotBlank
     @Size(max = 255)
     private String name;
+
+    @Size(max = 255)
+    private String simpleName;
 
     @NotNull
     @ManyToOne

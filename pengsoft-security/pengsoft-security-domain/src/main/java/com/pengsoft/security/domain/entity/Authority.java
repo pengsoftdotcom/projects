@@ -1,7 +1,7 @@
 package com.pengsoft.security.domain.entity;
 
 import com.pengsoft.support.commons.util.StringUtils;
-import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.EntityImpl;
 import com.pengsoft.support.domain.entity.Codeable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +34,7 @@ import java.util.List;
         @Index(name = "i_authority_code", columnList = "code", unique = true),
         @Index(name = "i_authority_name", columnList = "name", unique = true)
 })
-public class Authority extends Bean implements Codeable {
+public class Authority extends EntityImpl implements Codeable {
 
     private static final long serialVersionUID = -4116533377602985015L;
 

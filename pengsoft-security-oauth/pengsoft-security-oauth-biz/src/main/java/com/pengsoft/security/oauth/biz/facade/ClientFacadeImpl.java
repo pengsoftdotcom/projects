@@ -2,7 +2,7 @@ package com.pengsoft.security.oauth.biz.facade;
 
 import com.pengsoft.security.oauth.biz.service.ClientService;
 import com.pengsoft.security.oauth.domain.entity.Client;
-import com.pengsoft.support.biz.facade.BeanFacadeImpl;
+import com.pengsoft.support.biz.facade.EntityFacadeImpl;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -14,7 +14,7 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Service
-public class ClientFacadeImpl extends BeanFacadeImpl<ClientService, Client, String> implements ClientFacade {
+public class ClientFacadeImpl extends EntityFacadeImpl<ClientService, Client, String> implements ClientFacade {
 
     @Override
     public Optional<Client> findOneByCode(String code) {

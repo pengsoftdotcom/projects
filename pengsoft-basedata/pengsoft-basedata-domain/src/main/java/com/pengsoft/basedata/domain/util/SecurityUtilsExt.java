@@ -2,10 +2,12 @@ package com.pengsoft.basedata.domain.util;
 
 import com.pengsoft.basedata.domain.entity.Department;
 import com.pengsoft.basedata.domain.entity.Job;
+import com.pengsoft.basedata.domain.entity.JobRole;
 import com.pengsoft.basedata.domain.entity.Organization;
-import com.pengsoft.basedata.domain.entity.UserProfile;
+import com.pengsoft.basedata.domain.entity.Person;
 import com.pengsoft.security.domain.util.SecurityUtils;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 /**
@@ -21,10 +23,10 @@ public class SecurityUtilsExt {
     }
 
     /**
-     * Returns current user profile.
+     * Returns current person.
      */
-    public static UserProfile getUserProfile() {
-        return SecurityUtils.get("userProfile", UserProfile.class);
+    public static Person getPerson() {
+        return SecurityUtils.get("person", Person.class);
     }
 
     /**
@@ -35,17 +37,17 @@ public class SecurityUtilsExt {
     }
 
     /**
-     * Returns current user's major job.
+     * Returns current user's primary job.
      */
-    public static Job getMajorJob() {
-        return SecurityUtils.get("majorJob", Job.class);
+    public static Job getPrimaryJob() {
+        return SecurityUtils.get("primaryJob", Job.class);
     }
 
     /**
      * Returns current user's department.
      */
     public static Department getDepartment() {
-        return Optional.ofNullable(SecurityUtils.get("currentJob", Job.class)).map(Job::getDepartment).orElse(null);
+        return Optional.ofNullable(SecurityUtils.get("department", Department.class)).orElse(null);
     }
 
     /**
@@ -59,7 +61,7 @@ public class SecurityUtilsExt {
      * Returns current user's organization.
      */
     public static Organization getOrganization() {
-        return Optional.ofNullable(getDepartment()).map(Department::getOrganization).orElse(null);
+        return Optional.ofNullable(SecurityUtils.get("organization", Organization.class)).orElse(null);
     }
 
     /**
@@ -67,6 +69,14 @@ public class SecurityUtilsExt {
      */
     public static String getOrganizationId() {
         return Optional.ofNullable(getOrganization()).map(Organization::getId).orElse(null);
+    }
+
+    public static boolean hasAnyRole(final String... roleCodes) {
+        if (SecurityUtils.hasAnyRole(roleCodes)) {
+            return true;
+        } else {
+            return getCurrentJob().getJobRoles().stream().map(JobRole::getRole).anyMatch(role -> Arrays.stream(roleCodes).anyMatch(roleCode -> roleCode.equals(role.getCode())));
+        }
     }
 
 }

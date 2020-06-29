@@ -18,6 +18,8 @@ export class ButtonComponent extends BaseComponent implements OnInit {
 
     @Input() size: 'large' | 'small' | 'default';
 
+    @Input() disabled: any = false;
+
     @Output() action = new EventEmitter<any>();
 
     ngOnInit(): void {

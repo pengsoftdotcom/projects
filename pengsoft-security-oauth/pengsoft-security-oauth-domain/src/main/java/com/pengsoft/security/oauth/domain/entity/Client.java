@@ -1,6 +1,6 @@
 package com.pengsoft.security.oauth.domain.entity;
 
-import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.EntityImpl;
 import com.pengsoft.support.domain.entity.Codeable;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,7 +28,7 @@ import javax.validation.constraints.Size;
         @Index(name = "i_client_code", columnList = "code", unique = true),
         @Index(name = "i_client_name", columnList = "name", unique = true)
 })
-public class Client extends Bean implements Codeable {
+public class Client extends EntityImpl implements Codeable {
 
     private static final long serialVersionUID = -319215300315862407L;
 

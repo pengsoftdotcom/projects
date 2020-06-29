@@ -1,6 +1,6 @@
 package com.pengsoft.system.domain.entity;
 
-import com.pengsoft.security.domain.entity.OwnedBean;
+import com.pengsoft.security.domain.entity.OwnedEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
@@ -27,7 +27,7 @@ import java.io.InputStream;
         @Index(name = "i_asset_created_by", columnList = "createdBy, originalName, contentType, contentLength, createdAt, updatedAt"),
         @Index(name = "i_asset_updated_by", columnList = "updatedBy, originalName, contentType, contentLength, createdAt, updatedAt")
 })
-public class Asset extends OwnedBean {
+public class Asset extends OwnedEntity {
 
     private static final long serialVersionUID = -1180939469919353491L;
 

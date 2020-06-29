@@ -2,7 +2,7 @@ package com.pengsoft.basedata.biz.service;
 
 import com.pengsoft.basedata.domain.entity.Person;
 import com.pengsoft.security.domain.entity.User;
-import com.pengsoft.support.biz.service.BeanService;
+import com.pengsoft.support.biz.service.EntityService;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface PersonService extends BeanService<Person, String> {
+public interface PersonService extends EntityService<Person, String> {
 
     /**
      * Returns an {@link Optional} of a {@link Person} with given mobile.

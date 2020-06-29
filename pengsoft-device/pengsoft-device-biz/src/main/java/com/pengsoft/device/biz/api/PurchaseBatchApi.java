@@ -2,7 +2,7 @@ package com.pengsoft.device.biz.api;
 
 import com.pengsoft.device.biz.facade.PurchaseBatchFacade;
 import com.pengsoft.device.domain.entity.PurchaseBatch;
-import com.pengsoft.support.biz.api.BeanApi;
+import com.pengsoft.support.biz.api.EntityApi;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("api/purchase-batch")
-public class PurchaseBatchApi extends BeanApi<PurchaseBatchFacade, PurchaseBatch, String> {
+public class PurchaseBatchApi extends EntityApi<PurchaseBatchFacade, PurchaseBatch, String> {
 
 }

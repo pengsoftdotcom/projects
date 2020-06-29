@@ -1,8 +1,7 @@
 package com.pengsoft.device.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.pengsoft.basedata.domain.entity.OwnedExt;
-import com.pengsoft.support.domain.entity.TreeEntityImpl;
+import com.pengsoft.basedata.domain.entity.OwnedExtTreeEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
@@ -11,7 +10,6 @@ import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
 import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.OneToMany;
@@ -31,10 +29,10 @@ import java.util.List;
 @Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
-@Table(name = "t_group", indexes = {
-        @Index(name = "i_group_parent_id", columnList = "parent_id, name", unique = true)
+@Table(name = "t_device_group", indexes = {
+        @Index(name = "i_device_group_parent_id", columnList = "parent_id, name", unique = true)
 })
-public class Group extends TreeEntityImpl<Group> implements OwnedExt {
+public class DeviceGroup extends OwnedExtTreeEntity<DeviceGroup> {
 
     private static final long serialVersionUID = -1039853621712384938L;
 
@@ -47,18 +45,5 @@ public class Group extends TreeEntityImpl<Group> implements OwnedExt {
     @OneToMany(mappedBy = "group", cascade = CascadeType.REMOVE)
     @NotFound(action = NotFoundAction.IGNORE)
     private List<Device> devices = new ArrayList<>();
-
-    @Column(updatable = false)
-    private String createdBy;
-
-    private String updatedBy;
-
-    @Size(max = 255)
-    @Column(updatable = false)
-    private String controlledBy;
-
-    @Size(max = 255)
-    @Column(updatable = false)
-    private String belongsTo;
 
 }

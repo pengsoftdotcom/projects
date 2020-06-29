@@ -16,4 +16,6 @@ export interface Button {
 
     action: (params?: any) => void;
 
+    disabled?: (form?: any) => boolean;
+
 }

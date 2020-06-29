@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
+import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.format.datetime.standard.DateTimeFormatterRegistrar;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -34,6 +35,7 @@ import java.util.List;
  */
 @Configuration
 @ComponentScan({ "com.*.*.commons", "com.*.*.*.commons", "com.*.*.biz.api", "com.*.*.*.biz.api" })
+@EnableSpringDataWebSupport
 @EnableConfigurationProperties(WebMvcAutoConfigureProperties.class)
 public class WebMvcAutoConfigure implements WebMvcConfigurer {
 
@@ -44,7 +46,7 @@ public class WebMvcAutoConfigure implements WebMvcConfigurer {
     private MessageSource messageSource;
 
     @Inject
-    private DefaultQuerydslPredicateArgumentResolver querydslPredicateArgumentResolver;
+    private DefaultQuerydslPredicateArgumentResolver predicateArgumentResolver;
 
     @Bean
     private static ObjectMapper objectMapper() {
@@ -58,7 +60,7 @@ public class WebMvcAutoConfigure implements WebMvcConfigurer {
 
     @Override
     public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> argumentResolvers) {
-        argumentResolvers.add(0, querydslPredicateArgumentResolver);
+        argumentResolvers.add(0, predicateArgumentResolver);
     }
 
     @Override

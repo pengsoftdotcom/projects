@@ -1,5 +1,6 @@
-<app-list #listComponent [title]="title + '职位列表'" [fields]="fields" [data]="listData" [toolbarButtons]="listToolbarButtons"
-    [actionButtons]="listActionButtons" (pageChange)="list()"></app-list>
-<app-edit #editComponent [title]="title + '职位编辑'" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons" [errors]="errors">
+<app-list #listComponent [title]="(title ? title : '') + '职位列表'" [fields]="fields" [navData]="navData" (nav)="nav($event)" [listData]="listData"
+    [toolbarButtons]="listToolbarButtons" [actionButtons]="listActionButtons" (pageChange)="list()"></app-list>
+<app-edit #editComponent [title]="(title ? title : '') + '职位编辑'" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons"
+    [errors]="errors">
 </app-edit>
 <app-edit-many-to-many #jobRolesComponent title="分配角色" [toolbarButtons]="buttons"></app-edit-many-to-many>

@@ -1,5 +1,6 @@
 package com.pengsoft.security.biz.facade;
 
+import com.pengsoft.security.domain.entity.QRole;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.starter.SecurityApplication;
 import com.pengsoft.support.test.BaseFacadeTest;
@@ -26,6 +27,11 @@ public class RoleFacadeTest extends BaseFacadeTest<RoleFacade> {
     public void init() {
         getFacade().saveEntityAdmin(Role.class);
         authorityFacade.saveEntityAdminAuthorities(Role.class);
+    }
+
+    @Test
+    public void findOneByCode() {
+        getFacade().findOneByCode("admin").ifPresent(role -> System.out.println(getFacade().count(QRole.role.parent.eq(role))));
     }
 
 }

@@ -2,7 +2,7 @@ package com.pengsoft.security.biz.repository;
 
 import com.pengsoft.security.domain.entity.Authority;
 import com.pengsoft.security.domain.entity.QAuthority;
-import com.pengsoft.support.biz.repository.BeanRepository;
+import com.pengsoft.support.biz.repository.EntityRepository;
 import com.querydsl.core.types.dsl.StringPath;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
@@ -19,11 +19,11 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Repository
-public interface AuthorityRepository extends BeanRepository<QAuthority, Authority, String> {
+public interface AuthorityRepository extends EntityRepository<QAuthority, Authority, String> {
 
     @Override
     default void customize(final QuerydslBindings bindings, final QAuthority root) {
-        BeanRepository.super.customize(bindings, root);
+        EntityRepository.super.customize(bindings, root);
         bindings.bind(root.code).first(StringPath::contains);
     }
 

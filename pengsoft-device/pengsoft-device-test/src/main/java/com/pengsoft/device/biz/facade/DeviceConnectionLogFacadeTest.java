@@ -12,14 +12,14 @@ import org.springframework.test.context.ActiveProfiles;
 import javax.inject.Inject;
 
 /**
- * {@link DeviceLogFacade} unit test.
+ * {@link DeviceConnectionLogFacade} unit test.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
 @SpringBootTest(classes = DeviceApplication.class)
 @ActiveProfiles({ "security", "system", "basedata", "device" })
-public class DeviceConnectionLogFacadeTest extends BaseFacadeTest<DeviceLogFacade> {
+public class DeviceConnectionLogFacadeTest extends BaseFacadeTest<DeviceConnectionLogFacade> {
 
     @Inject
     private RoleFacade roleFacade;

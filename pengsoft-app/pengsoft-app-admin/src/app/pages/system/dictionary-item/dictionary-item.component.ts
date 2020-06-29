@@ -25,31 +25,12 @@ export class DictionaryItemComponent extends TreeBeanComponent<DictionaryItemSer
         super(bean, modal, message);
     }
 
-    ngOnInit(): void {
-        this.initForm();
-        this.initSortable();
-        this.list();
-    }
-
-    initSortable() {
-        this.sortable = this.security.hasAnyAuthority(this.getAuthority('sort'));
-    }
-
-    initForm(): void {
-        if (this.type) {
-            this.filterForm = { 'type.id': this.type.id };
-            this.editForm = { type: this.type };
-        }
-    }
-
     get lazy(): boolean {
         return false;
     }
 
-    get parentFilterForm(): any {
-        if (this.type) {
-            return { 'type.id': this.type.id };
-        }
+    get parentParams(): any {
+        return { 'type.id': this.type.id };
     }
 
     initFields(): void {
@@ -58,20 +39,33 @@ export class DictionaryItemComponent extends TreeBeanComponent<DictionaryItemSer
             FieldUtils.buildSelect({ code: 'type', name: '类型', list: { visible: false }, edit: { visible: false } }),
             FieldUtils.buildTextForCode(),
             FieldUtils.buildTextForName(),
-            FieldUtils.buildTexareaForRemark()
+            FieldUtils.buildTextareaForRemark()
         );
     }
 
+    initSortable() {
+        this.sortable = this.security.hasAnyAuthority(this.getAuthority('sort'));
+    }
+
+    initForm(): void {
+        this.filterForm = { 'type.id': this.type.id };
+        this.editForm = { type: this.type };
+    }
+
+    afterInit(): void {
+        this.initForm();
+        this.initSortable();
+        this.list();
+    }
+
     afterEditFormFilled(): void {
-        if (!this.editForm.id && this.type) {
+        if (!this.editForm.id) {
             this.editForm.type = this.type;
         }
     }
 
     afterFilterFormReset(): void {
-        if (this.type) {
-            this.filterForm = { 'type.id': this.type.id };
-        }
+        this.filterForm = { 'type.id': this.type.id };
         this.list();
     }
 

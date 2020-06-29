@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 
 import com.pengsoft.security.biz.repository.AuthorityRepository;
 import com.pengsoft.security.domain.entity.Authority;
-import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
 
 /**
@@ -20,7 +20,7 @@ import com.pengsoft.support.domain.util.EntityUtils;
  */
 @Primary
 @Service
-public class AuthorityServiceImpl extends BeanServiceImpl<AuthorityRepository, Authority, String> implements AuthorityService {
+public class AuthorityServiceImpl extends EntityServiceImpl<AuthorityRepository, Authority, String> implements AuthorityService {
 
     @Override
     public Authority save(final Authority authority) {

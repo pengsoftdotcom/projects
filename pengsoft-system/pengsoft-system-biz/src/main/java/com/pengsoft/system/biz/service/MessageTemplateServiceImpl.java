@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.service;
 
-import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.system.biz.repository.MessageTemplateRepository;
 import com.pengsoft.system.domain.entity.MessageTemplate;
 import org.springframework.context.annotation.Primary;
@@ -16,7 +16,7 @@ import java.util.Optional;
  */
 @Primary
 @Service
-public class MessageTemplateServiceImpl extends BeanServiceImpl<MessageTemplateRepository, MessageTemplate, String> implements MessageTemplateService {
+public class MessageTemplateServiceImpl extends EntityServiceImpl<MessageTemplateRepository, MessageTemplate, String> implements MessageTemplateService {
 
     @Override
     public Optional<MessageTemplate> findOneByCode(final String code) {

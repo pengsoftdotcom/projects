@@ -1,6 +1,5 @@
 package com.pengsoft.basedata.domain.entity;
 
-import com.pengsoft.support.domain.entity.Bean;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
@@ -8,6 +7,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.NotFound;
 import org.hibernate.annotations.NotFoundAction;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Index;
 import javax.persistence.ManyToOne;
@@ -26,9 +26,9 @@ import javax.validation.constraints.NotNull;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_staff", indexes = {
-        @Index(name = "i_staff_user_profile_id", columnList = "user_profile_id, job_id", unique = true)
+        @Index(name = "i_staff_person_id_job_id", columnList = "person_id, job_id", unique = true)
 })
-public class Staff extends Bean {
+public class Staff extends OwnedExtEntity {
 
     private static final long serialVersionUID = -5537370953204778193L;
 
@@ -36,14 +36,15 @@ public class Staff extends Bean {
     @NotNull
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
-    private UserProfile userProfile = new UserProfile();
+    private Person person = new Person();
 
     @NotNull
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private Job job;
 
-    private boolean major = true;
+    @Column(name = "`primary`")
+    private boolean primary = true;
 
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)

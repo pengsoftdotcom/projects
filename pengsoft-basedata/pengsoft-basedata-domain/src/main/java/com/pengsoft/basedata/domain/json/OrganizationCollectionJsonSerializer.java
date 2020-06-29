@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
 import com.pengsoft.basedata.domain.entity.Job;
+import com.pengsoft.basedata.domain.entity.Organization;
 
 import java.io.IOException;
 import java.util.Collection;
@@ -14,15 +15,15 @@ import java.util.Collection;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public class JobCollectionJsonSerializer extends JsonSerializer<Collection<Job>> {
+public class OrganizationCollectionJsonSerializer extends JsonSerializer<Collection<Organization>> {
 
-    private final JobJsonSerializer jobSerializer = new JobJsonSerializer();
+    private final OrganizationJsonSerializer organizationJsonSerializer = new OrganizationJsonSerializer();
 
     @Override
-    public void serialize(final Collection<Job> jobs, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
+    public void serialize(final Collection<Organization> organizations, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
         gen.writeStartArray();
-        for (final Job job : jobs) {
-            jobSerializer.serialize(job, gen, serializers);
+        for (final Organization organization : organizations) {
+            organizationJsonSerializer.serialize(organization, gen, serializers);
         }
         gen.writeEndArray();
     }

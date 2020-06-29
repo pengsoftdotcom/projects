@@ -3,7 +3,7 @@ package com.pengsoft.device.biz.repository;
 import com.pengsoft.device.domain.entity.Device;
 import com.pengsoft.device.domain.entity.DeviceConnectionLog;
 import com.pengsoft.device.domain.entity.QDeviceConnectionLog;
-import com.pengsoft.support.biz.repository.BeanRepository;
+import com.pengsoft.support.biz.repository.EntityRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -19,7 +19,7 @@ import javax.validation.constraints.NotNull;
  * @since 1.0.0
  */
 @Repository
-public interface DeviceConnectionLogRepository extends BeanRepository<QDeviceConnectionLog, DeviceConnectionLog, String> {
+public interface DeviceConnectionLogRepository extends EntityRepository<QDeviceConnectionLog, DeviceConnectionLog, String> {
 
     /**
      * Returns a {@link Page} of devices with given device.

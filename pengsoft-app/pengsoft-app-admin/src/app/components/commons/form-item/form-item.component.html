@@ -12,17 +12,18 @@
         <app-input-boolean *ngSwitchCase="InputType.BOOLEAN" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-boolean>
         <app-input-datetime *ngSwitchCase="InputType.DATETIME" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-datetime>
         <app-input-date *ngSwitchCase="InputType.DATE" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-date>
-        <app-input-select *ngSwitchCase="InputType.SELECT" [form]="form" [edit]="edit" [filterable]="true"></app-input-select>
+        <app-input-select *ngSwitchCase="InputType.SELECT" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-select>
         <app-input-tree-select *ngSwitchCase="InputType.TREE_SELECT" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-tree-select>
         <app-input-cascader *ngSwitchCase="InputType.CASCADER" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-cascader>
         <app-input-textarea *ngSwitchCase="InputType.TEXTAREA" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-textarea>
         <app-input-upload *ngSwitchCase="InputType.UPLOAD" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-upload>
         <app-input-avatar *ngSwitchCase="InputType.AVATAR" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-avatar>
+        <app-input-json *ngSwitchCase="InputType.JSON" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-json>
         <app-input-text *ngSwitchDefault [form]="form" [edit]="edit" [filterable]="filterable"></app-input-text>
     </nz-form-control>
 </nz-form-item>
 <ng-template #error let-control>
     <ul style="margin: 0px 0px 0px -20px">
-        <li *ngFor="let error of errors[edit.code]">{{error}}</li>
+        <li *ngFor="let error of errors[code]">{{error}}</li>
     </ul>
 </ng-template>

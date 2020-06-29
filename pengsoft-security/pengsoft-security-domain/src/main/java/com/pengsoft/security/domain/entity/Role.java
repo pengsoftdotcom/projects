@@ -3,7 +3,7 @@ package com.pengsoft.security.domain.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.entity.Codeable;
-import com.pengsoft.support.domain.entity.TreeBean;
+import com.pengsoft.support.domain.entity.TreeEntityImpl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -37,7 +37,7 @@ import java.util.List;
         @Index(name = "i_role_code", columnList = "code", unique = true),
         @Index(name = "i_role_name", columnList = "name", unique = true)
 })
-public class Role extends TreeBean<Role> implements Codeable {
+public class Role extends TreeEntityImpl<Role> implements Codeable {
 
     /**
      * Role code: admin

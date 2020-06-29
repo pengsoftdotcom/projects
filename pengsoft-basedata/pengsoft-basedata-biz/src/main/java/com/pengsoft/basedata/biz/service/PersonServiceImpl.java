@@ -3,7 +3,7 @@ package com.pengsoft.basedata.biz.service;
 import com.pengsoft.basedata.biz.repository.PersonRepository;
 import com.pengsoft.basedata.domain.entity.Person;
 import com.pengsoft.security.domain.entity.User;
-import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.util.EntityUtils;
 import org.springframework.context.annotation.Primary;
@@ -19,7 +19,7 @@ import java.util.Optional;
  */
 @Primary
 @Service
-public class PersonServiceImpl extends BeanServiceImpl<PersonRepository, Person, String> implements PersonService {
+public class PersonServiceImpl extends EntityServiceImpl<PersonRepository, Person, String> implements PersonService {
 
     @Override
     public Person save(final Person person) {

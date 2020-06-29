@@ -11,14 +11,14 @@ import java.lang.reflect.ParameterizedType;
 public class ClassUtils extends org.apache.commons.lang3.ClassUtils {
 
     /**
-     * Return the generic type of the superclass.
+     * Return the generic type of the class's superclass.
      *
-     * @param superclass the superclass
-     * @param index      the index of arguments.
+     * @param clazz the class
+     * @param index the index of arguments.
      * @return The generic type.
      */
-    public static Class<?> getGenericType(final Class<?> superclass, final int index) {
-        final var genericSuperclass = superclass.getGenericSuperclass();
+    public static Class<?> getSuperclassGenericType(final Class<?> clazz, final int index) {
+        final var genericSuperclass = clazz.getGenericSuperclass();
         if (!(genericSuperclass instanceof ParameterizedType)) {
             return Object.class;
         }

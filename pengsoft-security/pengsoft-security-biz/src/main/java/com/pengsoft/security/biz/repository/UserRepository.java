@@ -2,7 +2,7 @@ package com.pengsoft.security.biz.repository;
 
 import com.pengsoft.security.domain.entity.QUser;
 import com.pengsoft.security.domain.entity.User;
-import com.pengsoft.support.biz.repository.BeanRepository;
+import com.pengsoft.support.biz.repository.EntityRepository;
 import com.querydsl.core.types.dsl.DateTimePath;
 import com.querydsl.core.types.dsl.StringPath;
 import org.springframework.data.jpa.repository.Modifying;
@@ -22,11 +22,11 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Repository
-public interface UserRepository extends BeanRepository<QUser, User, String> {
+public interface UserRepository extends EntityRepository<QUser, User, String> {
 
     @Override
     default void customize(final QuerydslBindings bindings, final QUser root) {
-        BeanRepository.super.customize(bindings, root);
+        EntityRepository.super.customize(bindings, root);
         bindings.bind(root.username).first(StringPath::contains);
         bindings.bind(root.expiredAt).first(DateTimePath::before);
     }

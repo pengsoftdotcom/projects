@@ -6,7 +6,7 @@ import java.util.Optional;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
+import com.pengsoft.support.biz.service.TreeEntityServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
 import com.pengsoft.system.biz.repository.DictionaryItemRepository;
 import com.pengsoft.system.domain.entity.DictionaryItem;
@@ -20,7 +20,7 @@ import com.pengsoft.system.domain.entity.DictionaryType;
  */
 @Primary
 @Service
-public class DictionaryItemServiceImpl extends TreeBeanServiceImpl<DictionaryItemRepository, DictionaryItem, String>
+public class DictionaryItemServiceImpl extends TreeEntityServiceImpl<DictionaryItemRepository, DictionaryItem, String>
         implements DictionaryItemService {
 
     @Override

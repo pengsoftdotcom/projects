@@ -1,37 +1,34 @@
 package com.pengsoft.support.biz.service;
 
-import static com.pengsoft.support.commons.util.ClassUtils.getGenericType;
-
-import java.io.Serializable;
-import java.util.List;
-import java.util.Optional;
-
-import javax.inject.Inject;
-
+import com.google.common.collect.Lists;
+import com.pengsoft.support.biz.repository.EntityRepository;
+import com.pengsoft.support.commons.exception.Exceptions;
+import com.pengsoft.support.domain.entity.Codeable;
+import com.pengsoft.support.domain.entity.Entity;
+import com.pengsoft.support.domain.entity.Sortable;
+import com.querydsl.core.types.Predicate;
+import lombok.Getter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 
-import com.google.common.collect.Lists;
-import com.pengsoft.support.biz.repository.BeanRepository;
-import com.pengsoft.support.commons.exception.Exceptions;
-import com.pengsoft.support.domain.entity.Beanable;
-import com.pengsoft.support.domain.entity.Codeable;
-import com.pengsoft.support.domain.entity.Sortable;
-import com.querydsl.core.types.Predicate;
+import javax.inject.Inject;
+import java.io.Serializable;
+import java.util.List;
+import java.util.Optional;
 
-import lombok.Getter;
+import static com.pengsoft.support.commons.util.ClassUtils.getSuperclassGenericType;
 
 /**
- * The implementer of {@link BeanService} based on JPA
+ * The implementer of {@link EntityService} based on JPA
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beanable<ID>, ID extends Serializable>
-        implements BeanService<T, ID> {
+public class EntityServiceImpl<R extends EntityRepository<?, T, ID>, T extends Entity<ID>, ID extends Serializable>
+        implements EntityService<T, ID> {
 
     @Getter
     @Inject
@@ -44,18 +41,18 @@ public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beana
     @SuppressWarnings("unchecked")
     @Override
     public Class<T> getEntityClass() {
-        return (Class<T>) getGenericType(getClass(), 1);
+        return (Class<T>) getSuperclassGenericType(getClass(), 1);
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Class<ID> getIdClass() {
-        return (Class<ID>) getGenericType(getClass(), 2);
+        return (Class<ID>) getSuperclassGenericType(getClass(), 2);
     }
 
     @Override
-    public T save(final T bean) {
-        return repository.save(bean);
+    public T save(final T entity) {
+        return repository.save(entity);
     }
 
     @Override
@@ -73,8 +70,8 @@ public class BeanServiceImpl<R extends BeanRepository<?, T, ID>, T extends Beana
     }
 
     @Override
-    public void delete(final T bean) {
-        repository.delete(bean);
+    public void delete(final T entity) {
+        repository.delete(entity);
     }
 
     @Override

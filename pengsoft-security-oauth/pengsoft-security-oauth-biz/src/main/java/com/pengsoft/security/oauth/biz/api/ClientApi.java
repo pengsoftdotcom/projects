@@ -2,7 +2,7 @@ package com.pengsoft.security.oauth.biz.api;
 
 import com.pengsoft.security.oauth.biz.facade.ClientFacade;
 import com.pengsoft.security.oauth.domain.entity.Client;
-import com.pengsoft.support.biz.api.BeanApi;
+import com.pengsoft.support.biz.api.EntityApi;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,5 +14,5 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("api/client")
-public class ClientApi extends BeanApi<ClientFacade, Client, String> {
+public class ClientApi extends EntityApi<ClientFacade, Client, String> {
 }

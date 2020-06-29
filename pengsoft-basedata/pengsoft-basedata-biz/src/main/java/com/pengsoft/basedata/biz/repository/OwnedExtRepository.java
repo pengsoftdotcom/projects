@@ -1,7 +1,7 @@
 package com.pengsoft.basedata.biz.repository;
 
-import com.pengsoft.security.biz.repository.OwnedBeanRepository;
-import com.querydsl.core.types.dsl.EntityPathBase;
+import com.pengsoft.basedata.domain.entity.OwnedExt;
+import com.pengsoft.security.biz.repository.OwnedRepository;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.repository.NoRepositoryBean;
 
@@ -9,13 +9,13 @@ import javax.persistence.QueryHint;
 import java.util.Collection;
 
 /**
- * The repository interface of {@link OwnedBeanExt} based on JPA
+ * The repository interface of {@link OwnedExt} based on JPA
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
 @NoRepositoryBean
-public interface OwnedBeanExtRepository<Q extends EntityPathBase<T>, T extends OwnedBeanExt> extends OwnedBeanRepository<Q, T> {
+public interface OwnedExtRepository extends OwnedRepository {
 
 
     /**

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { UploadFile } from 'ng-zorro-antd';
+import { UploadFile, NzUploadFile } from 'ng-zorro-antd';
 import { Observable } from 'rxjs';
 import { SecurityService } from 'src/app/services/commons/security.service';
 import { AssetService } from 'src/app/services/system/asset.service';
@@ -11,7 +11,7 @@ import { InputComponent } from '../input.component';
     templateUrl: './upload.component.html',
     styleUrls: ['./upload.component.scss']
 })
-export class UploadComponent extends InputComponent {
+export class UploadComponent extends InputComponent implements OnInit {
 
     files = [];
 
@@ -25,12 +25,16 @@ export class UploadComponent extends InputComponent {
         return this.security.getBearerAuthorizationHeaders();
     }
 
-    download(file: UploadFile): void {
+    ngOnInit(): void {
+
+    }
+
+    download(file: NzUploadFile): void {
         const asset = file.response[0];
         window.open(asset.accessPath);
     }
 
-    remove(file: UploadFile): boolean | Observable<boolean> {
+    remove(file: NzUploadFile): boolean | Observable<boolean> {
         return new Observable(observer => this.asset.delete([file.response[0].id], {
             success: () => observer.next(true),
             failure: () => observer.next(false)

@@ -40,7 +40,10 @@ public class UserFacadeTest extends BaseFacadeTest<UserFacade> {
     private User createIfNotExists() {
         final var optional = getFacade().findOneByUsername(Role.ADMIN);
         if (optional.isEmpty()) {
-            return getFacade().save(new User(Role.ADMIN, "!@#123qwe"));
+            final var user = new User();
+            user.setUsername(Role.ADMIN);
+            user.setPassword("!@#123qwe");
+            return getFacade().save(user);
         } else {
             return optional.get();
         }

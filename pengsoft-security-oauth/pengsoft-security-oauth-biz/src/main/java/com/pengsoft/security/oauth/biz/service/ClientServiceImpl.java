@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 
 import com.pengsoft.security.oauth.biz.repository.ClientRepository;
 import com.pengsoft.security.oauth.domain.entity.Client;
-import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
 
 /**
@@ -23,7 +23,7 @@ import com.pengsoft.support.domain.util.EntityUtils;
  */
 @Primary
 @Service
-public class ClientServiceImpl extends BeanServiceImpl<ClientRepository, Client, String> implements ClientService {
+public class ClientServiceImpl extends EntityServiceImpl<ClientRepository, Client, String> implements ClientService {
 
     @Inject
     private PasswordEncoder passwordEncoder;

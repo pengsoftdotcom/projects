@@ -1,71 +1,73 @@
 package com.pengsoft.basedata.biz.facade;
 
-import com.pengsoft.basedata.biz.service.StaffService;
-import com.pengsoft.basedata.biz.service.UserProfileService;
-import com.pengsoft.basedata.domain.entity.Job;
-import com.pengsoft.basedata.domain.entity.Staff;
-import com.pengsoft.basedata.domain.entity.UserProfile;
-import com.pengsoft.security.biz.service.UserService;
-import com.pengsoft.security.domain.entity.User;
-import com.pengsoft.support.biz.facade.BeanFacadeImpl;
-import com.pengsoft.support.commons.util.StringUtils;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import javax.inject.Inject;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import com.pengsoft.basedata.biz.service.PersonService;
+import com.pengsoft.basedata.biz.service.StaffService;
+import com.pengsoft.basedata.domain.entity.Job;
+import com.pengsoft.basedata.domain.entity.Person;
+import com.pengsoft.basedata.domain.entity.Staff;
+import com.pengsoft.security.biz.service.UserService;
+import com.pengsoft.security.domain.entity.User;
+import com.pengsoft.support.biz.facade.EntityFacadeImpl;
+import com.pengsoft.support.commons.util.StringUtils;
 
 /**
  * The implementer of {@link StaffFacade}
  *
  * @author dang.peng@pengsoft.com
- * @since 1.0.0
+ * @since  1.0.0
  */
 @Service
-public class StaffFacadeImpl extends BeanFacadeImpl<StaffService, Staff, String> implements StaffFacade {
+public class StaffFacadeImpl extends EntityFacadeImpl<StaffService, Staff, String> implements StaffFacade {
 
     @Inject
-    private UserProfileService userProfileService;
+    private PersonService personService;
 
     @Inject
     private UserService userService;
 
     @Override
     public Staff save(final Staff staff) {
-        final var userProfile = userProfileService.findOneByMobile(staff.getUserProfile().getMobile()).orElse(staff.getUserProfile());
-        if (StringUtils.isBlank(userProfile.getId())) {
-            final var user = userService.findOneByMobile(userProfile.getMobile()).orElse(new User(userProfile.getMobile(), UUID.randomUUID().toString()));
+        final var person = personService.findOneByMobile(staff.getPerson().getMobile()).orElse(staff.getPerson());
+        if (StringUtils.isBlank(person.getId())) {
+            final var user = userService.findOneByMobile(person.getMobile()).orElse(new User(person.getMobile(), UUID.randomUUID().toString()));
             if (StringUtils.isBlank(user.getId())) {
                 userService.save(user);
             }
-            userProfile.setUser(user);
+            person.setUser(user);
         } else {
-            BeanUtils.copyProperties(staff.getUserProfile(), userProfile, "id", "mobile", "user", "version");
+            BeanUtils.copyProperties(staff.getPerson(), person, "id", "mobile", "user", "version");
         }
-        staff.setUserProfile(userProfileService.save(userProfile));
+        staff.setPerson(personService.save(person));
         return super.save(staff);
     }
 
     @Override
-    public void setMajorJob(final UserProfile userProfile, final Job job) {
-        getService().setMajorJob(userProfile, job);
+    public void setPrimaryJob(final Person person, final Job job) {
+        getService().setPrimaryJob(person, job);
     }
 
     @Override
-    public Optional<Staff> findOneByUserProfileAndJob(final UserProfile userProfile, final Job job) {
-        return getService().findOneByUserProfileAndJob(userProfile, job);
+    public Optional<Staff> findOneByPersonAndJob(final Person person, final Job job) {
+        return getService().findOneByPersonAndJob(person, job);
     }
 
     @Override
-    public Optional<Staff> findOneByUserProfileAndMajorTrue(final UserProfile userProfile) {
-        return getService().findOneByUserProfileAndMajorTrue(userProfile);
+    public Optional<Staff> findOneByPersonAndPrimaryTrue(final Person person) {
+        return getService().findOneByPersonAndPrimaryTrue(person);
     }
 
     @Override
-    public List<Staff> findAllByUserProfile(final UserProfile userProfile) {
-        return getService().findAllByUserProfile(userProfile);
+    public List<Staff> findAllByPerson(final Person person) {
+        return getService().findAllByPerson(person);
     }
 
     @Override

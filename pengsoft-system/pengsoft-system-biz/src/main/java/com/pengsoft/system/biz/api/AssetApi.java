@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.api;
 
-import com.pengsoft.support.biz.api.BeanApi;
+import com.pengsoft.support.biz.api.EntityApi;
 import com.pengsoft.system.biz.facade.AssetFacade;
 import com.pengsoft.system.biz.service.ObjectStorageService;
 import com.pengsoft.system.domain.entity.Asset;
@@ -23,7 +23,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("api/asset")
-public class AssetApi extends BeanApi<AssetFacade, Asset, String> {
+public class AssetApi extends EntityApi<AssetFacade, Asset, String> {
 
     @Inject
     private ObjectStorageService objectStorageService;

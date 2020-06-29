@@ -36,7 +36,7 @@ import javax.validation.constraints.Size;
         @Index(name = "i_person_mobile", columnList = "mobile", unique = true),
         @Index(name = "i_person_name", columnList = "name")
 })
-public class Person extends OwnedBeanExt {
+public class Person extends OwnedExtEntity {
 
     private static final long serialVersionUID = -2643213888713403689L;
 

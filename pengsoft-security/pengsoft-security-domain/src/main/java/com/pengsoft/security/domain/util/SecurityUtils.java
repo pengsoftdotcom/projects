@@ -1,9 +1,10 @@
 package com.pengsoft.security.domain.util;
 
 import com.pengsoft.security.domain.DefaultUserDetails;
+import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.support.commons.util.StringUtils;
-import com.pengsoft.support.domain.entity.Beanable;
+import com.pengsoft.support.domain.entity.Entity;
 import org.apache.commons.lang3.reflect.FieldUtils;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.security.core.Authentication;
@@ -65,8 +66,8 @@ public class SecurityUtils {
         if (userDetails == null) {
             return false;
         } else {
-            return userDetails.getAuthorities().stream().anyMatch(authority ->
-                    Arrays.stream(authorityCodes).anyMatch(authorityCode -> authorityCode.equals(authority)));
+            return userDetails.getAuthorities().stream()
+                    .anyMatch(authority -> Arrays.stream(authorityCodes).anyMatch(authorityCode -> authorityCode.equals(authority.getAuthority())));
         }
     }
 
@@ -85,17 +86,31 @@ public class SecurityUtils {
     }
 
     /**
-     * Return department id of the current user.
+     * Returns the current role.
      */
-    public static String getControlById() {
-        return getId("controlBy");
+    public static Role getCurrentRole() {
+        return get("currentRole", Role.class);
     }
 
     /**
-     * Return organization id of the current user.
+     * Returns the current role id.
      */
-    public static String getBelongsToId() {
-        return getId("belongsTo");
+    public static String getCurrentRoleId() {
+        return getId("currentRole");
+    }
+
+    /**
+     * Returns the primary role.
+     */
+    public static Role getPrimaryRole() {
+        return get("primaryRole", Role.class);
+    }
+
+    /**
+     * Returns the primary role id.
+     */
+    public static String getPrimaryRoleId() {
+        return getId("primaryRole");
     }
 
     /**
@@ -109,8 +124,12 @@ public class SecurityUtils {
         if (userDetails == null) {
             return null;
         } else {
-            final var expression = parser.parseExpression(property);
-            return expression.getValue(userDetails, clazz);
+            final var expression = StringUtils.substringBefore(StringUtils.substringBefore(property, PACKAGE_SEPARATOR), "?");
+            if (FieldUtils.getField(userDetails.getClass(), expression, true) != null) {
+                return parser.parseExpression(property).getValue(userDetails, clazz);
+            } else {
+                return null;
+            }
         }
     }
 
@@ -142,7 +161,7 @@ public class SecurityUtils {
      * @param entityClass The entity class.
      * @return The module admin role code.
      */
-    public static String getModuleAdminCode(final Class<? extends Beanable<? extends Serializable>> entityClass) {
+    public static String getModuleAdminCode(final Class<? extends Entity<? extends Serializable>> entityClass) {
         final var moduleCode = getModuleCodeFromEntityClass(entityClass).replaceAll(ESCAPES + PACKAGE_SEPARATOR, StringUtils.UNDERLINE);
         return StringUtils.join(new String[] { moduleCode, ADMIN }, StringUtils.UNDERLINE);
     }
@@ -153,7 +172,7 @@ public class SecurityUtils {
      * @param entityClass The entity class.
      * @return The entity admin role code
      */
-    public static String getEntityAdminCode(final Class<? extends Beanable<? extends Serializable>> entityClass) {
+    public static String getEntityAdminCode(final Class<? extends Entity<? extends Serializable>> entityClass) {
         final var moduleCode = getModuleCodeFromEntityClass(entityClass);
         final var entityCode = getEntityCodeFromEntityClass(entityClass);
         return StringUtils.join(new String[] { moduleCode, entityCode, ADMIN }, StringUtils.UNDERLINE);
@@ -165,7 +184,7 @@ public class SecurityUtils {
      * @param entityClass The entity class.
      * @return The entity code.
      */
-    public static String getModuleCodeFromEntityClass(final Class<? extends Beanable<? extends Serializable>> entityClass) {
+    public static String getModuleCodeFromEntityClass(final Class<? extends Entity<? extends Serializable>> entityClass) {
         return getModuleCodeFromPackageName(entityClass.getPackageName()).replaceAll(ESCAPES + PACKAGE_SEPARATOR, StringUtils.UNDERLINE);
     }
 
@@ -186,7 +205,7 @@ public class SecurityUtils {
      * @param entityClass The entity class.
      * @return The entity code.
      */
-    public static String getEntityCodeFromEntityClass(final Class<? extends Beanable<? extends Serializable>> entityClass) {
+    public static String getEntityCodeFromEntityClass(final Class<? extends Entity<? extends Serializable>> entityClass) {
         return StringUtils.camelCaseToSnakeCase(entityClass.getSimpleName(), false);
     }
 
@@ -196,7 +215,7 @@ public class SecurityUtils {
      * @param entityClass The entity class.
      * @return The entity admin authority code prefix.
      */
-    public static String getEntityAdminAuthorityCodePrefixFromEntityClass(final Class<? extends Beanable<? extends Serializable>> entityClass) {
+    public static String getEntityAdminAuthorityCodePrefixFromEntityClass(final Class<? extends Entity<? extends Serializable>> entityClass) {
         final var moduleCode = getModuleCodeFromEntityClass(entityClass);
         final var entityCode = getEntityCodeFromEntityClass(entityClass);
         return StringUtils.join(new String[] { moduleCode, entityCode }, StringUtils.GLOBAL_SEPARATOR);

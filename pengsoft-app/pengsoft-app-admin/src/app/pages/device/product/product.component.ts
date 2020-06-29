@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { BeanComponent } from 'src/app/components/commons/bean.component';
-import { ProductService } from 'src/app/services/device/product.service';
-import { Field } from 'src/app/components/commons/form-item/field';
-import { DictionaryItemService } from 'src/app/services/system/dictionary-item.service';
-import { FieldUtils } from 'src/app/utils/field-utils';
 import { InputComponent } from 'src/app/components/commons/input/input.component';
+import { ProductService } from 'src/app/services/device/product.service';
+import { DictionaryItemService } from 'src/app/services/system/dictionary-item.service';
 import { EntityUtils } from 'src/app/utils/entity-utils';
+import { FieldUtils } from 'src/app/utils/field-utils';
+import { EditOneToManyComponent } from 'src/app/components/commons/edit-one-to-many/edit-one-to-many.component';
+import { ProductConfigComponent } from '../product-config/product-config.component';
 
 @Component({
     selector: 'app-product',
@@ -14,6 +15,8 @@ import { EntityUtils } from 'src/app/utils/entity-utils';
     styleUrls: ['./product.component.scss']
 })
 export class ProductComponent extends BeanComponent<ProductService> {
+
+    @ViewChild('configsComponent', { static: true }) configsComponent: EditOneToManyComponent;
 
     constructor(
         private dictionaryItem: DictionaryItemService,
@@ -38,9 +41,23 @@ export class ProductComponent extends BeanComponent<ProductService> {
                     }
                 }
             }),
+            FieldUtils.buildTextForCode({ width: 300 }),
             FieldUtils.buildTextForName(),
             FieldUtils.buildTextarea({ code: 'contact', name: '联系方式', edit: { input: { placeholder: '维修联系方式' } } })
         ];
+    }
+
+    initListActionButtons(): void {
+        super.initListActionButtons();
+        this.listActionButtons.splice(0, 0, {
+            name: '配置', type: 'link', divider: true, width: 47, action: (row: any) => this.editConfigs(row), authority: 'device::product_config::find_all'
+        });
+    }
+
+    editConfigs(row: any): void {
+        this.configsComponent.component = ProductConfigComponent;
+        this.configsComponent.params = { title: row.name, product: row };
+        this.configsComponent.show();
     }
 
 }

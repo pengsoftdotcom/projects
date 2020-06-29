@@ -1,17 +1,17 @@
 package com.pengsoft.support.biz.facade;
 
-import com.pengsoft.support.biz.service.TreeBeanService;
-import com.pengsoft.support.domain.entity.TreeBeanable;
+import com.pengsoft.support.biz.service.TreeEntityService;
+import com.pengsoft.support.domain.entity.TreeEntity;
 
 import java.io.Serializable;
 
 /**
- * The facade interface of {@link TreeBeanable}.
+ * The facade interface of {@link TreeEntity}.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface TreeBeanFacade<S extends TreeBeanService<T, ID>, T extends TreeBeanable<T, ID>, ID extends Serializable>
-        extends TreeBeanService<T, ID>, BeanFacade<S, T, ID> {
+public interface TreeEntityFacade<S extends TreeEntityService<T, ID>, T extends TreeEntity<T, ID>, ID extends Serializable>
+        extends TreeEntityService<T, ID>, EntityFacade<S, T, ID> {
 
 }

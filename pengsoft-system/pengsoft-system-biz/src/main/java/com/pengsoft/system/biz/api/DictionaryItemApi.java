@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.api;
 
-import com.pengsoft.support.biz.api.TreeBeanApi;
+import com.pengsoft.support.biz.api.TreeEntityApi;
 import com.pengsoft.system.biz.facade.DictionaryItemFacade;
 import com.pengsoft.system.domain.entity.DictionaryItem;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("api/dictionary-item")
-public class DictionaryItemApi extends TreeBeanApi<DictionaryItemFacade, DictionaryItem, String> {
+public class DictionaryItemApi extends TreeEntityApi<DictionaryItemFacade, DictionaryItem, String> {
 
     @GetMapping("find-all-by-type-code")
     public List<DictionaryItem> findAllByTypeCode(final String code) {

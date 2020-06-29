@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BatchService } from './batch.service';
+import { ProductConfigService } from './product-config.service';
 
-describe('BatchService', () => {
-  let service: BatchService;
+describe('ProductConfigService', () => {
+  let service: ProductConfigService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(BatchService);
+    service = TestBed.inject(ProductConfigService);
   });
 
   it('should be created', () => {

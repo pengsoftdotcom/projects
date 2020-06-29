@@ -1,6 +1,6 @@
 package com.pengsoft.security.domain.entity;
 
-import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.EntityImpl;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -30,7 +30,7 @@ import javax.persistence.Table;
 @Table(name = "t_role_authority", indexes = {
         @Index(name = "i_role_authority", columnList = "role_id, authority_id", unique = true)
 })
-public class RoleAuthority extends Bean {
+public class RoleAuthority extends EntityImpl {
 
     private static final long serialVersionUID = -4067024465738087267L;
 

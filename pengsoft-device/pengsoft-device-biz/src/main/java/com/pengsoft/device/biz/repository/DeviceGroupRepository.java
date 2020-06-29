@@ -2,7 +2,7 @@ package com.pengsoft.device.biz.repository;
 
 import com.pengsoft.basedata.biz.repository.OwnedExtRepository;
 import com.pengsoft.device.domain.entity.DeviceGroup;
-import com.pengsoft.device.domain.entity.QGroup;
+import com.pengsoft.device.domain.entity.QDeviceGroup;
 import com.pengsoft.support.biz.repository.TreeEntityRepository;
 import com.querydsl.core.types.dsl.StringPath;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -20,10 +20,10 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Repository
-public interface GroupRepository extends TreeEntityRepository<QGroup, DeviceGroup, String>, OwnedExtRepository {
+public interface DeviceGroupRepository extends TreeEntityRepository<QDeviceGroup, DeviceGroup, String>, OwnedExtRepository {
 
     @Override
-    default void customize(final QuerydslBindings bindings, final QGroup root) {
+    default void customize(final QuerydslBindings bindings, final QDeviceGroup root) {
         TreeEntityRepository.super.customize(bindings, root);
         bindings.bind(root.name).first(StringPath::contains);
     }

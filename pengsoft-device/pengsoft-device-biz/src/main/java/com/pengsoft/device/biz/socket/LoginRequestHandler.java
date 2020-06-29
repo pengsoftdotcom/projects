@@ -1,10 +1,10 @@
 package com.pengsoft.device.biz.socket;
 
-import com.pengsoft.device.biz.facade.DeviceConfigFacade;
 import com.pengsoft.device.biz.facade.DeviceFacade;
 import com.pengsoft.device.biz.facade.ProductFacade;
 import com.pengsoft.device.biz.facade.PurchaseBatchItemFacade;
 import com.pengsoft.device.domain.entity.Device;
+import com.pengsoft.device.domain.entity.DeviceConfig;
 import com.pengsoft.device.domain.entity.Product;
 import com.pengsoft.support.commons.exception.Exceptions;
 import com.pengsoft.support.commons.util.DateUtils;
@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Named
-public class LoginClientRequestHandler implements ClientRequestHandler {
+public class LoginRequestHandler implements RequestHandler {
 
     public static final String PRODUCT_CODE = "pengsoft_face_recognition";
 
@@ -38,9 +38,6 @@ public class LoginClientRequestHandler implements ClientRequestHandler {
 
     @Inject
     private DeviceFacade deviceFacade;
-
-    @Inject
-    private DeviceConfigFacade deviceConfigFacade;
 
     @Inject
     private Exceptions exceptions;
@@ -77,10 +74,10 @@ public class LoginClientRequestHandler implements ClientRequestHandler {
         }
         return Map.of("status", 0, "config", device.getConfigs().stream()
                 .filter(config -> StringUtils.isNotBlank(config.getValue()))
-                .collect(Collectors.toMap(config -> config.getCode(), config -> switch (config.getType()) {
+                .collect(Collectors.toMap(DeviceConfig::getCode, config -> switch (config.getType()) {
                     case "int" -> Integer.parseInt(config.getValue());
                     case "float" -> Float.parseFloat(config.getValue());
-                    default -> config.getValue().toString();
+                    default -> config.getValue();
                 })));
     }
 

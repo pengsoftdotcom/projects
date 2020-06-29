@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { UserProfileService } from './user-profile.service';
+import { PurchaseBatchService } from './purchase-batch.service';
 
-describe('UserProfileService', () => {
-  let service: UserProfileService;
+describe('PurchaseBatchService', () => {
+  let service: PurchaseBatchService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(UserProfileService);
+    service = TestBed.inject(PurchaseBatchService);
   });
 
   it('should be created', () => {

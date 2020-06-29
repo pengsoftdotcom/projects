@@ -1,8 +1,8 @@
 package com.pengsoft.device.biz.api;
 
-import com.pengsoft.device.biz.facade.GroupFacade;
+import com.pengsoft.device.biz.facade.DeviceGroupFacade;
 import com.pengsoft.device.domain.entity.DeviceGroup;
-import com.pengsoft.support.biz.api.EntityApi;
+import com.pengsoft.support.biz.api.TreeEntityApi;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @since 1.0.0
  */
 @RestController
-@RequestMapping("api/group")
-public class GroupApi extends EntityApi<GroupFacade, DeviceGroup, String> {
+@RequestMapping("api/device-group")
+public class DeviceGroupApi extends TreeEntityApi<DeviceGroupFacade, DeviceGroup, String> {
 
 }

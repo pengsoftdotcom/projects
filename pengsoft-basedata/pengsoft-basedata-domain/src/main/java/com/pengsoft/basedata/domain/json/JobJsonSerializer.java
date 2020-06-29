@@ -27,10 +27,10 @@ public class JobJsonSerializer extends JsonSerializer<Job> {
         gen.writeObjectFieldStart("department");
         gen.writeStringField("id", job.getDepartment().getId());
         gen.writeStringField("name", job.getDepartment().getName());
+        gen.writeEndObject();
         gen.writeObjectFieldStart("organization");
         gen.writeStringField("id", job.getDepartment().getOrganization().getId());
         gen.writeStringField("name", job.getDepartment().getOrganization().getName());
-        gen.writeEndObject();
         gen.writeEndObject();
         gen.writeEndObject();
     }

@@ -17,12 +17,12 @@ import javax.validation.constraints.NotNull;
 public interface DefaultUserDetailsService extends UserDetailsService {
 
     /**
-     * Set the major role.
+     * Set the primary role.
      *
-     * @param role The major role.
+     * @param role The primary role.
      * @return {@link DefaultUserDetails}
      */
-    DefaultUserDetails setMajorRole(@NotNull Role role);
+    DefaultUserDetails setPrimaryRole(@NotNull Role role);
 
     /**
      * Set the current role.

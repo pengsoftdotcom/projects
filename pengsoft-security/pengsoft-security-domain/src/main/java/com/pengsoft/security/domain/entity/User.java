@@ -1,10 +1,9 @@
 package com.pengsoft.security.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-import com.fasterxml.jackson.databind.ser.std.NullSerializer;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.pengsoft.security.domain.validation.Username;
-import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.EntityImpl;
 import com.pengsoft.support.domain.entity.Enable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -46,7 +45,7 @@ import java.util.Locale;
         @Index(name = "i_user_username", columnList = "username", unique = true),
         @Index(name = "i_user_expired_at", columnList = "expiredAt")
 })
-public class User extends Bean implements Enable {
+public class User extends EntityImpl implements Enable {
 
     private static final long serialVersionUID = -4947447323105702218L;
 
@@ -66,7 +65,7 @@ public class User extends Bean implements Enable {
     private String mpOpenId;
 
     @NonNull
-    @JsonSerialize(using = NullSerializer.class)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(updatable = false)
     private String password;
 

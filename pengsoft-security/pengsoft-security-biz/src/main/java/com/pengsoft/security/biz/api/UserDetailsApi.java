@@ -2,7 +2,7 @@ package com.pengsoft.security.biz.api;
 
 import com.pengsoft.security.biz.facade.UserFacade;
 import com.pengsoft.security.biz.service.DefaultUserDetailsService;
-import com.pengsoft.security.commons.annotation.Authenticated;
+import com.pengsoft.security.commons.annotation.Authorized;
 import com.pengsoft.security.commons.annotation.UpdatingAuthentication;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.util.SecurityUtils;
@@ -21,7 +21,7 @@ import javax.inject.Inject;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-@Authenticated
+@Authorized
 @RestController
 @RequestMapping("api/user-details")
 public class UserDetailsApi {
@@ -38,9 +38,9 @@ public class UserDetailsApi {
     }
 
     @UpdatingAuthentication
-    @PostMapping("set-major-role")
-    public UserDetails setMajorRole(@RequestParam("id") final Role role) {
-        return service.setMajorRole(role);
+    @PostMapping("set-primary-role")
+    public UserDetails setPrimaryRole(@RequestParam("id") final Role role) {
+        return service.setPrimaryRole(role);
     }
 
     @UpdatingAuthentication

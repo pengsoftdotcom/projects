@@ -2,7 +2,7 @@ package com.pengsoft.basedata.biz.facade;
 
 import com.pengsoft.basedata.biz.service.DepartmentService;
 import com.pengsoft.basedata.domain.entity.Department;
-import com.pengsoft.support.biz.facade.TreeBeanFacade;
+import com.pengsoft.support.biz.facade.TreeEntityFacade;
 
 /**
  * The facade interface of {@link Department}
@@ -10,6 +10,6 @@ import com.pengsoft.support.biz.facade.TreeBeanFacade;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface DepartmentFacade extends TreeBeanFacade<DepartmentService, Department, String>, DepartmentService {
+public interface DepartmentFacade extends TreeEntityFacade<DepartmentService, Department, String>, DepartmentService {
 
 }

@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.facade;
 
-import com.pengsoft.support.biz.facade.BeanFacadeImpl;
+import com.pengsoft.support.biz.facade.EntityFacadeImpl;
 import com.pengsoft.system.biz.service.MessageService;
 import com.pengsoft.system.domain.entity.Message;
 import org.springframework.stereotype.Service;
@@ -12,6 +12,6 @@ import org.springframework.stereotype.Service;
  * @since 1.0.0
  */
 @Service
-public class MessageFacadeImpl extends BeanFacadeImpl<MessageService, Message, String> implements MessageFacade {
+public class MessageFacadeImpl extends EntityFacadeImpl<MessageService, Message, String> implements MessageFacade {
 
 }

@@ -1,6 +1,6 @@
 package com.pengsoft.device.domain.entity;
 
-import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.EntityImpl;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
@@ -23,10 +23,10 @@ import javax.validation.constraints.NotNull;
 @Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
-@Table(name = "t_connection_device_log")
-public class DeviceConnectionLog extends Bean {
+@Table(name = "t_device_connection_log")
+public class DeviceConnectionLog extends EntityImpl {
 
-    private static final long serialVersionUID = -441513322672935234L;
+    private static final long serialVersionUID = 1406266906011162320L;
 
     @NotNull
     @ManyToOne

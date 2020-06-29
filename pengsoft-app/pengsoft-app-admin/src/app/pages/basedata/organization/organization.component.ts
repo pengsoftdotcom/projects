@@ -1,7 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { EditOneToManyComponent } from 'src/app/components/commons/edit-one-to-many/edit-one-to-many.component';
-import { Field } from 'src/app/components/commons/form-item/field';
 import { InputComponent } from 'src/app/components/commons/input/input.component';
 import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
 import { OrganizationService } from 'src/app/services/basedata/organization.service';
@@ -10,6 +9,7 @@ import { EntityUtils } from 'src/app/utils/entity-utils';
 import { FieldUtils } from 'src/app/utils/field-utils';
 import { DepartmentComponent } from '../department/department.component';
 import { PostComponent } from '../post/post.component';
+import { PersonComponent } from '../person/person.component';
 
 @Component({
     selector: 'app-organization',
@@ -35,17 +35,23 @@ export class OrganizationComponent extends TreeBeanComponent<OrganizationService
         return false;
     }
 
-    get parentFilterForm(): any {
+    get parentParams(): any {
         return null;
-    }
-
-    ngOnInit(): void {
-        super.ngOnInit();
-        this.editComponent.width = '40%';
     }
 
     initFields(): void {
         super.initFields();
+        PersonComponent.prototype.dictionaryItem = this.dictionaryItem;
+        PersonComponent.prototype.initFields();
+        PersonComponent.prototype.fields.forEach(field => {
+            switch (field.code) {
+                case 'nickname':
+                case 'gender':
+                    field.list.visible = false;
+                    break;
+                default: break;
+            }
+        });
         this.fields.splice(1, 0,
             FieldUtils.buildTextForCode({ width: 300 }),
             FieldUtils.buildTextForName(),
@@ -66,31 +72,37 @@ export class OrganizationComponent extends TreeBeanComponent<OrganizationService
                     }
                 },
                 filter: {}
-            })
+            }),
+            FieldUtils.buildText({ code: 'admin', name: '管理员', children: PersonComponent.prototype.fields })
         );
     }
 
     initListActionButtons(): void {
         super.initListActionButtons();
         this.listActionButtons.splice(0, 0, {
-            name: '职务', type: 'link', divider: true, width: 45,
-            action: (row: any) => this.editPosts(row)
-        }, {
-            name: '部门', type: 'link', divider: true, width: 45,
+            name: '部门', type: 'link', divider: true, width: 47,
             action: (row: any) => this.editDepartments(row)
+        }, {
+            name: '职务', type: 'link', divider: true, width: 47,
+            action: (row: any) => this.editPosts(row)
         });
     }
 
-    editPosts(row: any): void {
-        this.departmentsComponent.component = PostComponent;
-        this.departmentsComponent.params = { title: row.name, organization: row };
-        this.departmentsComponent.show();
+    beforeEditFormFilled(): void {
+        super.beforeEditFormFilled();
+        this.editForm.admin = {};
     }
 
     editDepartments(row: any): void {
         this.departmentsComponent.component = DepartmentComponent;
         this.departmentsComponent.params = { title: row.name, organization: row };
         this.departmentsComponent.show();
+    }
+
+    editPosts(row: any): void {
+        this.postsComponent.component = PostComponent;
+        this.postsComponent.params = { title: row.name, organization: row };
+        this.postsComponent.show();
     }
 
 }

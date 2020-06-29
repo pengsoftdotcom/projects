@@ -40,8 +40,8 @@ export class UserService extends BeanService {
         this.http.request('POST', url, options);
     }
 
-    setMajorRole(user: any, role: any, options: HttpOptions): void {
-        const url = this.getApiPath('set-major-role');
+    setPrimaryRole(user: any, role: any, options: HttpOptions): void {
+        const url = this.getApiPath('set-primary-role');
         options.params = { 'user.id': user.id, 'role.id': role.id };
         this.http.request('POST', url, options);
     }

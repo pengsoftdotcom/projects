@@ -11,6 +11,8 @@ import { Page } from './list/page';
 
 export abstract class BeanComponent<S extends BeanService> extends BaseComponent implements OnInit {
 
+    filterable = false;
+
     filterForm: any = {};
 
     filterWidth = 900;
@@ -43,18 +45,19 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
         protected message: NzMessageService
     ) {
         super();
-        this.init();
     }
 
-    private init() {
+    ngOnInit(): void {
         this.initFields();
+        this.fields.filter(field => field.children).forEach(field => field.children.forEach(subfield => {
+            subfield.parentCode = field.code;
+            subfield.list.parentCode = field.code;
+            subfield.edit.parentCode = field.code;
+        }));
         this.intEditToolbarButtons();
         this.initListToolbarButtons();
         this.initListActionButtons();
-    }
-
-    ngOnInit() {
-        this.list();
+        this.afterInit();
     }
 
     abstract initFields(): void;
@@ -66,52 +69,47 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
     }
 
     initListToolbarButtons(): void {
-        this.listToolbarButtons = [];
+        this.listToolbarButtons = [
+            { name: '刷新', type: 'default', action: () => this.list() },
+            { name: '新增', type: 'primary', action: () => this.edit(), authority: this.getAuthority('findOne') },
+            { name: '批量删除', type: 'primary', danger: true, action: () => this.delete(), authority: this.getAuthority('delete') }
+        ];
         if (this.fields.some(field => field.filter)
             || this.fields.filter(field => field.children).some(field => field.children.some(subfield => subfield.filter))) {
-            this.listToolbarButtons.push({
-                name: '搜索', type: 'link', action: () => this.filter(),
-                authority: [
-                    this.getAuthority('findPage'),
-                    this.getAuthority('findAll'),
-                    this.getAuthority('findAllByParent')
-                ].join(',')
+            this.listToolbarButtons.splice(0, 0, {
+                name: '搜索', type: 'link', action: () => this.filter()
             });
         }
-        this.listToolbarButtons.push({ name: '新增', type: 'primary', action: () => this.edit(), authority: this.getAuthority('findOne') });
-        this.listToolbarButtons.push({
-            name: '批量删除', type: 'primary', danger: true, action: () => this.delete(), authority: this.getAuthority('delete')
-        });
     }
 
     initListActionButtons(): void {
         this.listActionButtons = [
-            { name: '修改', type: 'link', divider: true, width: 45, action: (row: any) => this.edit(row), authority: this.getAuthority('findOne') },
-            { name: '删除', type: 'link', danger: true, width: 28, action: (row: any) => this.delete(row), authority: this.getAuthority('delete') }
+            { name: '修改', type: 'link', divider: true, width: 47, action: (row: any) => this.edit(row), authority: this.getAuthority('findOne') },
+            { name: '删除', type: 'link', danger: true, width: 30, action: (row: any) => this.delete(row), authority: this.getAuthority('delete') }
         ];
     }
 
+    afterInit(): void {
+        this.list();
+    }
+
     edit(row?: any): void {
-        this.errors = {};
+        this.beforeEditFormFilled();
         const id = row ? row.id : null;
-        this.editForm = { id };
         this.editComponent.show();
         this.bean.findOne(id, {
             before: () => this.editComponent.loading = true,
             success: (res: any) => {
-                this.fields.filter(field => !!field.children).forEach(field => {
-                    for (const key in res[field.code]) {
-                        if (res[field.code].hasOwnProperty(key)) {
-                            res[field.code + '.' + key] = res[field.code][key];
-                        }
-                    }
-                    delete res[field.code];
-                });
                 this.editForm = res;
                 this.afterEditFormFilled();
             },
             after: () => this.editComponent.loading = false
         });
+    }
+
+    beforeEditFormFilled(): void {
+        this.editForm = {};
+        this.errors = {};
     }
 
     afterEditFormFilled(): void { }

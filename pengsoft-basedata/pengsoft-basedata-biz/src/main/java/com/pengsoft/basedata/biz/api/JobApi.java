@@ -4,7 +4,7 @@ import com.pengsoft.basedata.biz.facade.JobFacade;
 import com.pengsoft.basedata.domain.entity.Job;
 import com.pengsoft.basedata.domain.entity.JobRole;
 import com.pengsoft.security.domain.entity.Role;
-import com.pengsoft.support.biz.api.TreeBeanApi;
+import com.pengsoft.support.biz.api.TreeEntityApi;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("api/job")
-public class JobApi extends TreeBeanApi<JobFacade, Job, String> {
+public class JobApi extends TreeEntityApi<JobFacade, Job, String> {
 
     @PostMapping("grant-roles")
     public void grantRoles(@RequestParam("job.id") final Job job, @RequestParam(value = "role.id", defaultValue = "") final List<Role> roles) {

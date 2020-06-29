@@ -12,7 +12,7 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface GroupService extends TreeEntityService<DeviceGroup, String> {
+public interface DeviceGroupService extends TreeEntityService<DeviceGroup, String> {
 
     /**
      * Returns an {@link Optional} of a {@link DeviceGroup} with given parent and name.

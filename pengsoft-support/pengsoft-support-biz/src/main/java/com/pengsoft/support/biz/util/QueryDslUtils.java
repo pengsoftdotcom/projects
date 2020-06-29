@@ -1,12 +1,11 @@
 package com.pengsoft.support.biz.util;
 
 import com.pengsoft.support.commons.util.StringUtils;
-import com.pengsoft.support.domain.entity.Beanable;
-import com.pengsoft.support.domain.entity.TreeBeanable;
+import com.pengsoft.support.domain.entity.Entity;
+import com.pengsoft.support.domain.entity.TreeEntity;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Path;
 import com.querydsl.core.types.Predicate;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.EntityPathBase;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.core.types.dsl.StringPath;
@@ -42,7 +41,7 @@ public class QueryDslUtils {
      * @param entityClass The entity class
      */
     @SuppressWarnings("unchecked")
-    public static <Q extends EntityPathBase<T>, T extends Beanable<ID>, ID extends Serializable> Class<Q> getQueryClass(final Class<T> entityClass) {
+    public static <Q extends EntityPathBase<T>, T extends Entity<ID>, ID extends Serializable> Class<Q> getQueryClass(final Class<T> entityClass) {
         final int index = entityClass.getName().lastIndexOf('.');
         try {
             return (Class<Q>) Class.forName(entityClass.getName().substring(0, index + 1) + "Q" + entityClass.getName().substring(index + 1));
@@ -57,7 +56,7 @@ public class QueryDslUtils {
      *
      * @param entityClass The entity class
      */
-    public static <T extends Beanable<ID>, ID extends Serializable> Object getRoot(final Class<T> entityClass) {
+    public static <T extends Entity<ID>, ID extends Serializable> Object getRoot(final Class<T> entityClass) {
         final var queryClass = getQueryClass(entityClass);
         Assert.notNull(queryClass, String.format("get query class wrong from entity class: %s", entityClass.getName()));
         try {
@@ -73,7 +72,7 @@ public class QueryDslUtils {
      *
      * @param entityClass The entity class
      */
-    public static <T extends Beanable<ID>, ID extends Serializable> Object getPath(final Class<T> entityClass, final String field) {
+    public static <T extends Entity<ID>, ID extends Serializable> Object getPath(final Class<T> entityClass, final String field) {
         final var queryClass = getQueryClass(entityClass);
         Assert.notNull(queryClass, String.format("get query class wrong from entity class: %s", entityClass.getName()));
         final var root = getRoot(entityClass);
@@ -99,7 +98,7 @@ public class QueryDslUtils {
      *
      * @param entityClass The entity class
      */
-    public static <T extends Beanable<ID>, ID extends Serializable> StringPath getIdStringPath(final Class<T> entityClass) {
+    public static <T extends Entity<ID>, ID extends Serializable> StringPath getIdStringPath(final Class<T> entityClass) {
         return (StringPath) getPath(entityClass, PATH_ID);
     }
 
@@ -109,7 +108,7 @@ public class QueryDslUtils {
      * @param entityClass The entity class
      */
     @SuppressWarnings("unchecked")
-    public static <T extends Beanable<ID>, ID extends Serializable> NumberPath<Long> getIdNumberPath(final Class<T> entityClass) {
+    public static <T extends Entity<ID>, ID extends Serializable> NumberPath<Long> getIdNumberPath(final Class<T> entityClass) {
         return (NumberPath<Long>) getPath(entityClass, PATH_ID);
     }
 
@@ -119,7 +118,7 @@ public class QueryDslUtils {
      * @param entityClass The entity class
      */
     @SuppressWarnings("unchecked")
-    public static <T extends TreeBeanable<T, ID>, ID extends Serializable> EntityPathBase<T> getParentPath(final Class<T> entityClass) {
+    public static <T extends TreeEntity<T, ID>, ID extends Serializable> EntityPathBase<T> getParentPath(final Class<T> entityClass) {
         return (EntityPathBase<T>) getPath(entityClass, PATH_PARENT);
     }
 
@@ -128,7 +127,7 @@ public class QueryDslUtils {
      *
      * @param entityClass The entity class
      */
-    public static <T extends Beanable<ID>, ID extends Serializable> StringPath getParentIdsPath(final Class<T> entityClass) {
+    public static <T extends Entity<ID>, ID extends Serializable> StringPath getParentIdsPath(final Class<T> entityClass) {
         return (StringPath) getPath(entityClass, PATH_ID);
     }
 
@@ -137,7 +136,7 @@ public class QueryDslUtils {
      *
      * @param entityClass The entity class
      */
-    public static <T extends TreeBeanable<T, ID>, ID extends Serializable> Predicate byParent(final Class<T> entityClass) {
+    public static <T extends TreeEntity<T, ID>, ID extends Serializable> Predicate byParent(final Class<T> entityClass) {
         return byParent(null, entityClass);
     }
 
@@ -147,7 +146,7 @@ public class QueryDslUtils {
      * @param predicate   {@link Predicate}
      * @param entityClass The entity class
      */
-    public static <T extends TreeBeanable<T, ID>, ID extends Serializable> Predicate byParent(final Predicate predicate, final Class<T> entityClass) {
+    public static <T extends TreeEntity<T, ID>, ID extends Serializable> Predicate byParent(final Predicate predicate, final Class<T> entityClass) {
         if (contains(predicate, entityClass, PATH_PARENT_ID)) {
             return predicate;
         } else {
@@ -167,7 +166,7 @@ public class QueryDslUtils {
      * @param entityClass The entity class
      * @param parentIds   The entity parentIds
      */
-    public static <T extends TreeBeanable<T, ID>, ID extends Serializable> Predicate byParent(final Class<T> entityClass, final String parentIds) {
+    public static <T extends TreeEntity<T, ID>, ID extends Serializable> Predicate byParent(final Class<T> entityClass, final String parentIds) {
         return byParent(null, entityClass, parentIds);
     }
 
@@ -178,7 +177,7 @@ public class QueryDslUtils {
      * @param entityClass The entity class
      * @param parentIds   The entity parentIds
      */
-    public static <T extends TreeBeanable<T, ID>, ID extends Serializable> Predicate byParent(final Predicate predicate, final Class<T> entityClass, final String parentIds) {
+    public static <T extends TreeEntity<T, ID>, ID extends Serializable> Predicate byParent(final Predicate predicate, final Class<T> entityClass, final String parentIds) {
         if (StringUtils.isBlank(parentIds)) {
             return byParent(predicate, entityClass);
         } else {
@@ -249,18 +248,18 @@ public class QueryDslUtils {
         if (targetPredicate == null) {
             targetPredicate = new BooleanBuilder();
         }
-        if (sourcePredicate instanceof BooleanExpression) {
+        if (sourcePredicate instanceof BooleanBuilder) {
             if (conjunction) {
-                targetPredicate = ((BooleanExpression) sourcePredicate).and(targetPredicate);
+                targetPredicate = ((BooleanBuilder) sourcePredicate).and(targetPredicate);
             } else {
-                targetPredicate = ((BooleanExpression) sourcePredicate).or(targetPredicate);
+                targetPredicate = ((BooleanBuilder) sourcePredicate).or(targetPredicate);
             }
             return targetPredicate;
-        } else if (targetPredicate instanceof BooleanExpression) {
+        } else if (targetPredicate instanceof BooleanBuilder) {
             if (conjunction) {
-                sourcePredicate = ((BooleanExpression) targetPredicate).and(sourcePredicate);
+                sourcePredicate = ((BooleanBuilder) targetPredicate).and(sourcePredicate);
             } else {
-                sourcePredicate = ((BooleanExpression) targetPredicate).or(sourcePredicate);
+                sourcePredicate = ((BooleanBuilder) targetPredicate).or(sourcePredicate);
             }
             return sourcePredicate;
         } else {

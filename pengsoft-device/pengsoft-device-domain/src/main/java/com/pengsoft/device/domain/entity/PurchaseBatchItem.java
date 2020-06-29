@@ -1,21 +1,26 @@
 package com.pengsoft.device.domain.entity;
 
-import com.pengsoft.basedata.domain.entity.OwnedBeanExt;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.pengsoft.basedata.domain.entity.OwnedExtEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.Index;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Product purchased Batch
+ * Product purchased batch item
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
@@ -24,18 +29,31 @@ import java.time.LocalDate;
 @Setter
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
-@Table(name = "t_purchase_batch", indexes = {
-        @Index(name = "purchase_batch_name", columnList = "name", unique = true)
-})
-public class PurchaseBatch extends OwnedBeanExt {
+@Table(name = "t_purchase_batch_item")
+public class PurchaseBatchItem extends OwnedExtEntity {
 
-    private static final long serialVersionUID = -2631527128191884199L;
-
-    @NotBlank
-    @Size(max = 255)
-    private String name;
+    private static final long serialVersionUID = 8797547891163243256L;
 
     @NotNull
-    private LocalDate purchasedAt;
+    @ManyToOne
+    @NotFound(action = NotFoundAction.IGNORE)
+    private PurchaseBatch purchaseBatch;
+
+    @NotNull
+    @ManyToOne
+    @NotFound(action = NotFoundAction.IGNORE)
+    private Product product;
+
+    @Min(1)
+    private long quantity = 1;
+
+    @Min(0)
+    private long usedQuantity;
+
+    @JsonIgnore
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @OneToMany(mappedBy = "purchaseBatchItem", cascade = CascadeType.REMOVE)
+    @NotFound(action = NotFoundAction.IGNORE)
+    private List<Device> devices = new ArrayList<>();
 
 }

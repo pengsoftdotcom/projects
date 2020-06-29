@@ -2,7 +2,7 @@ package com.pengsoft.basedata.biz.api;
 
 import com.pengsoft.basedata.biz.facade.OrganizationFacade;
 import com.pengsoft.basedata.domain.entity.Organization;
-import com.pengsoft.support.biz.api.TreeBeanApi;
+import com.pengsoft.support.biz.api.TreeEntityApi;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("api/organization")
-public class OrganizationApi extends TreeBeanApi<OrganizationFacade, Organization, String> {
+public class OrganizationApi extends TreeEntityApi<OrganizationFacade, Organization, String> {
 
 }

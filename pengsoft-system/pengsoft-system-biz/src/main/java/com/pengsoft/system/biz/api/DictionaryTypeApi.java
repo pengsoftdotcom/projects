@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.api;
 
-import com.pengsoft.support.biz.api.BeanApi;
+import com.pengsoft.support.biz.api.EntityApi;
 import com.pengsoft.system.biz.facade.DictionaryTypeFacade;
 import com.pengsoft.system.domain.entity.DictionaryType;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("api/dictionary-type")
-public class DictionaryTypeApi extends BeanApi<DictionaryTypeFacade, DictionaryType, String> {
+public class DictionaryTypeApi extends EntityApi<DictionaryTypeFacade, DictionaryType, String> {
 
 }

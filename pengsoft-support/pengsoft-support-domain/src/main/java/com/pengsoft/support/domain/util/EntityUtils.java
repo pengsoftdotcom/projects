@@ -1,6 +1,6 @@
 package com.pengsoft.support.domain.util;
 
-import com.pengsoft.support.domain.entity.Beanable;
+import com.pengsoft.support.domain.entity.Entity;
 
 import java.io.Serializable;
 import java.util.Optional;
@@ -17,7 +17,7 @@ public class EntityUtils {
         
     }
 
-    public static boolean eq(final Beanable<? extends Serializable> b1, final Beanable<? extends Serializable> b2) {
+    public static boolean eq(final Entity<? extends Serializable> b1, final Entity<? extends Serializable> b2) {
         if (b1 == b2) {
             return true;
         }
@@ -36,15 +36,15 @@ public class EntityUtils {
         return i1.equals(i2);
     }
 
-    public static boolean ne(final Beanable<? extends Serializable> b1, final Beanable<? extends Serializable> b2) {
+    public static boolean ne(final Entity<? extends Serializable> b1, final Entity<? extends Serializable> b2) {
         return !eq(b1, b2);
     }
 
-    public static <T extends Beanable<? extends Serializable>> boolean isPersisted(final T bean) {
+    public static <T extends Entity<? extends Serializable>> boolean isPersisted(final T bean) {
         return Optional.ofNullable(bean).filter(b -> b.getId() != null && b.getCreatedAt() != null).isPresent();
     }
 
-    public static <T extends Beanable<? extends Serializable>> boolean isNotPersisted(final T bean) {
+    public static <T extends Entity<? extends Serializable>> boolean isNotPersisted(final T bean) {
         return !isPersisted(bean);
     }
 }

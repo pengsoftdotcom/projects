@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.service;
 
-import com.pengsoft.support.biz.service.TreeBeanService;
+import com.pengsoft.support.biz.service.TreeEntityService;
 import com.pengsoft.system.domain.entity.DictionaryItem;
 import com.pengsoft.system.domain.entity.DictionaryType;
 
@@ -15,7 +15,7 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface DictionaryItemService extends TreeBeanService<DictionaryItem, String> {
+public interface DictionaryItemService extends TreeEntityService<DictionaryItem, String> {
 
     /**
      * Returns a collection of {@link DictionaryItem} with given code.

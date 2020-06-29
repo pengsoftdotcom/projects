@@ -1,20 +1,19 @@
 package com.pengsoft.device.biz.api;
 
+import com.pengsoft.device.biz.facade.DeviceConfigFacade;
+import com.pengsoft.device.domain.entity.DeviceConfig;
+import com.pengsoft.support.biz.api.EntityApi;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.pengsoft.device.biz.facade.ProductConfigFacade;
-import com.pengsoft.device.domain.entity.ProductConfig;
-import com.pengsoft.support.biz.api.BeanApi;
-
 /**
- * The web api of {@link ProductConfig}
+ * The web api of {@link DeviceConfig}
  *
  * @author dang.peng@pengsoft.com
- * @since  1.0.0
+ * @since 1.0.0
  */
 @RestController
-@RequestMapping("api/product-config")
-public class ProductConfigApi extends BeanApi<ProductConfigFacade, ProductConfig, String> {
+@RequestMapping("api/device-config")
+public class DeviceConfigApi extends EntityApi<DeviceConfigFacade, DeviceConfig, String> {
 
 }

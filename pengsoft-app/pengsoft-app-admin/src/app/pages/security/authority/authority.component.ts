@@ -23,7 +23,7 @@ export class AuthorityComponent extends BeanComponent<AuthorityService> {
         this.fields = [
             FieldUtils.buildTextForCode(),
             FieldUtils.buildTextForName(),
-            FieldUtils.buildTexareaForRemark()
+            FieldUtils.buildTextareaForRemark()
         ];
     }
 

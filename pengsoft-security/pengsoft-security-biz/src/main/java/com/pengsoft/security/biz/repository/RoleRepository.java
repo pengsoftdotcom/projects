@@ -2,7 +2,7 @@ package com.pengsoft.security.biz.repository;
 
 import com.pengsoft.security.domain.entity.QRole;
 import com.pengsoft.security.domain.entity.Role;
-import com.pengsoft.support.biz.repository.TreeBeanRepository;
+import com.pengsoft.support.biz.repository.TreeEntityRepository;
 import com.querydsl.core.types.dsl.StringPath;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
@@ -19,11 +19,11 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Repository
-public interface RoleRepository extends TreeBeanRepository<QRole, Role, String> {
+public interface RoleRepository extends TreeEntityRepository<QRole, Role, String> {
 
     @Override
     default void customize(final QuerydslBindings bindings, final QRole root) {
-        TreeBeanRepository.super.customize(bindings, root);
+        TreeEntityRepository.super.customize(bindings, root);
         bindings.bind(root.code).first(StringPath::contains);
     }
 

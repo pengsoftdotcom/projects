@@ -14,7 +14,7 @@ import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.List;
+import java.util.Collection;
 
 /**
  * The default implementer of {@link UserDetails}
@@ -29,7 +29,7 @@ public class DefaultUserDetails implements UserDetails {
     @Getter
     @Setter
     @JsonSerialize(using = RoleCollectionJsonSerializer.class)
-    private List<Role> roles;
+    private Collection<Role> roles;
 
     @Getter
     @Setter
@@ -44,23 +44,23 @@ public class DefaultUserDetails implements UserDetails {
     @Getter
     @Setter
     @JsonSerialize(using = RoleJsonSerializer.class)
-    private Role majorRole;
+    private Role primaryRole;
 
     @Getter
     @Setter
     @JsonSerialize(using = GrantedAuthorityCollectionJsonSerializer.class)
-    private List<? extends GrantedAuthority> authorities;
+    private Collection<? extends GrantedAuthority> authorities;
 
-    public DefaultUserDetails(final User user, final List<Role> roles) {
+    public DefaultUserDetails(final User user, final Collection<Role> roles) {
         this.user = user;
         this.roles = roles;
     }
 
-    public DefaultUserDetails(final User user, final List<Role> roles, final Role majorRole, final List<? extends GrantedAuthority> authorities) {
+    public DefaultUserDetails(final User user, final Collection<Role> roles, final Role primaryRole, final Collection<? extends GrantedAuthority> authorities) {
         this.roles = roles;
         this.user = user;
-        this.majorRole = majorRole;
-        currentRole = majorRole;
+        this.primaryRole = primaryRole;
+        currentRole = primaryRole;
         this.authorities = authorities;
     }
 

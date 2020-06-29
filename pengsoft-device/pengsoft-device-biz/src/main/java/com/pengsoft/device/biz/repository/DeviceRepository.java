@@ -1,29 +1,35 @@
 package com.pengsoft.device.biz.repository;
 
-import com.pengsoft.device.domain.entity.Device;
-import com.pengsoft.device.domain.entity.QDevice;
-import com.pengsoft.support.biz.repository.BeanRepository;
-import com.querydsl.core.types.dsl.StringPath;
+import java.util.Optional;
+
+import javax.persistence.QueryHint;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.QueryHint;
-import javax.validation.constraints.NotBlank;
-import java.util.Optional;
+import com.pengsoft.basedata.biz.repository.OwnedExtRepository;
+import com.pengsoft.device.domain.entity.Device;
+import com.pengsoft.device.domain.entity.Product;
+import com.pengsoft.device.domain.entity.PurchaseBatchItem;
+import com.pengsoft.device.domain.entity.QDevice;
+import com.pengsoft.support.biz.repository.EntityRepository;
+import com.querydsl.core.types.dsl.StringPath;
 
 /**
  * The repository interface of {@link Device} based on JPA
  *
  * @author dang.peng@pengsoft.com
- * @since 1.0.0
+ * @since  1.0.0
  */
 @Repository
-public interface DeviceRepository extends BeanRepository<QDevice, Device, String> {
+public interface DeviceRepository extends EntityRepository<QDevice, Device, String>, OwnedExtRepository {
 
     @Override
     default void customize(final QuerydslBindings bindings, final QDevice root) {
-        BeanRepository.super.customize(bindings, root);
+        EntityRepository.super.customize(bindings, root);
         bindings.bind(root.name).first(StringPath::contains);
     }
 
@@ -34,5 +40,22 @@ public interface DeviceRepository extends BeanRepository<QDevice, Device, String
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
     Optional<Device> findOneByCode(@NotBlank String code);
+
+    /**
+     * Returns an {@link Optional} of a {@link Device} with given not activated and product and code.
+     *
+     * @param product {@link Device}'s product
+     * @param code    {@link Device}'s code
+     */
+    @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
+    Optional<Device> findFirstByActivatedFalseAndProductAndCodeStartsWith(@NotNull Product product, @NotBlank String code);
+
+    /**
+     * Returns count of {@link Device} with given {@link PurchaseBatchItem} and activated.
+     *
+     * @param purchaseBatchItem {@link Device}'s purchaseBatchItem
+     */
+    @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"))
+    long countByPurchaseBatchItemAndActivatedTrue(@NotNull PurchaseBatchItem purchaseBatchItem);
 
 }

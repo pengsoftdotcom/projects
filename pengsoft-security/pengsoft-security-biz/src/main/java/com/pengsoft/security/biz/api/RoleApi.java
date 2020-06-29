@@ -4,7 +4,7 @@ import com.pengsoft.security.biz.facade.RoleFacade;
 import com.pengsoft.security.domain.entity.Authority;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.RoleAuthority;
-import com.pengsoft.support.biz.api.TreeBeanApi;
+import com.pengsoft.support.biz.api.TreeEntityApi;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -22,7 +22,7 @@ import java.util.Optional;
  */
 @RestController
 @RequestMapping("api/role")
-public class RoleApi extends TreeBeanApi<RoleFacade, Role, String> {
+public class RoleApi extends TreeEntityApi<RoleFacade, Role, String> {
 
     @PostMapping("grant-authorities")
     public void grantAuthorities(@RequestParam("role.id") final Role role, @RequestParam(value = "authority.id", defaultValue = "") final List<Authority> authorities) {

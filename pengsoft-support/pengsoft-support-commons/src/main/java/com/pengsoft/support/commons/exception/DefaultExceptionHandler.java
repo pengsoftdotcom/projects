@@ -1,15 +1,14 @@
 package com.pengsoft.support.commons.exception;
 
-import java.util.List;
-
-import javax.inject.Inject;
-
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * The default exception handler.
@@ -21,8 +20,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @ControllerAdvice
 public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @Inject
-    private List<ExceptionResponseEntityConverter> converters;
+    private final List<ExceptionResponseEntityConverter> converters;
+
+    public DefaultExceptionHandler(final List<ExceptionResponseEntityConverter> converters) {
+        Collections.reverse(converters);
+        this.converters = converters;
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleUnexpectedException(final Exception e) {

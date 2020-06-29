@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface Beanable<ID extends Serializable> extends Serializable {
+public interface Entity<ID extends Serializable> extends Serializable {
 
     /**
      * Get the value of the entity's 'id' field.

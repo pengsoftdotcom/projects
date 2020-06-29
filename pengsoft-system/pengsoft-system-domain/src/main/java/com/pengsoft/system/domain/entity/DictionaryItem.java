@@ -2,7 +2,7 @@ package com.pengsoft.system.domain.entity;
 
 import com.pengsoft.support.domain.entity.Codeable;
 import com.pengsoft.support.domain.entity.Sortable;
-import com.pengsoft.support.domain.entity.TreeBean;
+import com.pengsoft.support.domain.entity.TreeEntityImpl;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
@@ -31,7 +31,7 @@ import javax.validation.constraints.Size;
 @Table(name = "t_dictionary_item", indexes = {
         @Index(name = "i_dictionary_item_type_id", columnList = "type_id, parent_id, code", unique = true)
 })
-public class DictionaryItem extends TreeBean<DictionaryItem> implements Codeable, Sortable {
+public class DictionaryItem extends TreeEntityImpl<DictionaryItem> implements Codeable, Sortable {
 
     private static final long serialVersionUID = 2316680631249751994L;
 

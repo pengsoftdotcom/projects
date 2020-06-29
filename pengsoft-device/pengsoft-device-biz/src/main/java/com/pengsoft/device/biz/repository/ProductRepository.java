@@ -2,7 +2,7 @@ package com.pengsoft.device.biz.repository;
 
 import com.pengsoft.device.domain.entity.Product;
 import com.pengsoft.device.domain.entity.QProduct;
-import com.pengsoft.support.biz.repository.BeanRepository;
+import com.pengsoft.support.biz.repository.EntityRepository;
 import com.pengsoft.system.domain.entity.DictionaryItem;
 import com.querydsl.core.types.dsl.StringPath;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -21,18 +21,18 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Repository
-public interface ProductRepository extends BeanRepository<QProduct, Product, String> {
+public interface ProductRepository extends EntityRepository<QProduct, Product, String> {
 
     @Override
     default void customize(final QuerydslBindings bindings, final QProduct root) {
-        BeanRepository.super.customize(bindings, root);
+        EntityRepository.super.customize(bindings, root);
         bindings.bind(root.name).first(StringPath::contains);
     }
 
     /**
      * Returns an {@link Optional} of a {@link Product} with given code.
      *
-     * @param code     {@link Product}'s code
+     * @param code {@link Product}'s code
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
     Optional<Product> findOneByCode(@NotBlank String code);

@@ -2,7 +2,7 @@ package com.pengsoft.security.biz.api;
 
 import com.pengsoft.security.biz.facade.AuthorityFacade;
 import com.pengsoft.security.domain.entity.Authority;
-import com.pengsoft.support.biz.api.BeanApi;
+import com.pengsoft.support.biz.api.EntityApi;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("api/authority")
-public class AuthorityApi extends BeanApi<AuthorityFacade, Authority, String> {
+public class AuthorityApi extends EntityApi<AuthorityFacade, Authority, String> {
 
 }

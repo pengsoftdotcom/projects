@@ -1,9 +1,9 @@
 package com.pengsoft.basedata.biz.service;
 
 import com.pengsoft.basedata.domain.entity.Job;
+import com.pengsoft.basedata.domain.entity.Person;
 import com.pengsoft.basedata.domain.entity.Staff;
-import com.pengsoft.basedata.domain.entity.UserProfile;
-import com.pengsoft.support.biz.service.BeanService;
+import com.pengsoft.support.biz.service.EntityService;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -16,37 +16,37 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface StaffService extends BeanService<Staff, String> {
+public interface StaffService extends EntityService<Staff, String> {
 
     /**
-     * Set the major job.
+     * Set the primary job.
      *
-     * @param userProfile The {@link UserProfile}.
-     * @param job         The major {@link Job}.
+     * @param person The {@link Person}.
+     * @param job    The primary {@link Job}.
      */
-    void setMajorJob(@NotNull UserProfile userProfile, @NotNull Job job);
+    void setPrimaryJob(@NotNull Person person, @NotNull Job job);
 
     /**
-     * Returns an {@link Optional} of a {@link Staff} with given user profile and job.
+     * Returns an {@link Optional} of a {@link Staff} with given person and job.
      *
-     * @param userProfile {@link Staff}'s userProfile
-     * @param job         {@link Staff}'s job
+     * @param person {@link Staff}'s person
+     * @param job    {@link Staff}'s job
      */
-    Optional<Staff> findOneByUserProfileAndJob(@NotNull UserProfile userProfile, @NotNull Job job);
+    Optional<Staff> findOneByPersonAndJob(@NotNull Person person, @NotNull Job job);
 
     /**
-     * Returns an {@link Optional} of a {@link Staff} with given user profile and major true.
+     * Returns an {@link Optional} of a {@link Staff} with given person and primary true.
      *
-     * @param userProfile {@link Staff}'s userProfile
+     * @param person {@link Staff}'s person
      */
-    Optional<Staff> findOneByUserProfileAndMajorTrue(@NotNull UserProfile userProfile);
+    Optional<Staff> findOneByPersonAndPrimaryTrue(@NotNull Person person);
 
     /**
-     * Returns all {@link Staff}s with given user profile.
+     * Returns all {@link Staff}s with given person.
      *
-     * @param userProfile {@link Staff}'s userProfile
+     * @param person {@link Staff}'s person
      */
-    List<Staff> findAllByUserProfile(@NotNull UserProfile userProfile);
+    List<Staff> findAllByPerson(@NotNull Person person);
 
     /**
      * Returns all {@link Staff}s with given jobs

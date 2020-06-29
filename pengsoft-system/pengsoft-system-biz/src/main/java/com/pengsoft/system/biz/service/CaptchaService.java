@@ -1,7 +1,7 @@
 package com.pengsoft.system.biz.service;
 
 import com.pengsoft.security.domain.entity.User;
-import com.pengsoft.support.biz.service.BeanService;
+import com.pengsoft.support.biz.service.EntityService;
 import com.pengsoft.system.domain.entity.Captcha;
 
 /**
@@ -10,7 +10,7 @@ import com.pengsoft.system.domain.entity.Captcha;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface CaptchaService extends BeanService<Captcha, String> {
+public interface CaptchaService extends EntityService<Captcha, String> {
 
     /**
      * Generate a captcha.

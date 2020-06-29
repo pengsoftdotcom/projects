@@ -1,9 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { BeanComponent } from 'src/app/components/commons/bean.component';
-import { Button } from 'src/app/components/commons/button/button';
 import { EditOneToManyComponent } from 'src/app/components/commons/edit-one-to-many/edit-one-to-many.component';
-import { Field } from 'src/app/components/commons/form-item/field';
 import { DictionaryTypeService } from 'src/app/services/system/dictionary-type.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
 import { DictionaryItemComponent } from '../dictionary-item/dictionary-item.component';
@@ -29,14 +27,14 @@ export class DictionaryTypeComponent extends BeanComponent<DictionaryTypeService
         this.fields = [
             FieldUtils.buildTextForCode(),
             FieldUtils.buildTextForName(),
-            FieldUtils.buildTexareaForRemark()
+            FieldUtils.buildTextareaForRemark()
         ];
     }
 
     initListActionButtons(): void {
         super.initListActionButtons();
         this.listActionButtons.splice(0, 0, {
-            name: '详情', type: 'link', divider: true, width: 45, action: (row: any) => this.editItems(row), authority: 'system::dictionary_item::find_all'
+            name: '详情', type: 'link', divider: true, width: 47, action: (row: any) => this.editItems(row), authority: 'system::dictionary_item::find_all'
         });
     }
 

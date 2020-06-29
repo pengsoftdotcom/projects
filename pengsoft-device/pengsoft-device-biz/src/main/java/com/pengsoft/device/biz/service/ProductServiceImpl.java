@@ -2,7 +2,7 @@ package com.pengsoft.device.biz.service;
 
 import com.pengsoft.device.biz.repository.ProductRepository;
 import com.pengsoft.device.domain.entity.Product;
-import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
 import com.pengsoft.system.domain.entity.DictionaryItem;
 import org.springframework.context.annotation.Primary;
@@ -18,7 +18,7 @@ import java.util.Optional;
  */
 @Primary
 @Service
-public class ProductServiceImpl extends BeanServiceImpl<ProductRepository, Product, String> implements ProductService {
+public class ProductServiceImpl extends EntityServiceImpl<ProductRepository, Product, String> implements ProductService {
 
     @Override
     public Product save(final Product product) {

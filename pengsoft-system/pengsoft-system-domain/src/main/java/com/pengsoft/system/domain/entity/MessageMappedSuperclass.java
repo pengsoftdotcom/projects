@@ -1,6 +1,6 @@
 package com.pengsoft.system.domain.entity;
 
-import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.EntityImpl;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Type;
@@ -18,7 +18,7 @@ import javax.validation.constraints.Size;
 @Getter
 @Setter
 @MappedSuperclass
-public class MessageMappedSuperclass extends Bean {
+public class MessageMappedSuperclass extends EntityImpl {
 
     private static final long serialVersionUID = 4104623952728351613L;
 

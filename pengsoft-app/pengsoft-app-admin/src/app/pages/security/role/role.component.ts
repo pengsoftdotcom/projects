@@ -50,7 +50,7 @@ export class RoleComponent extends TreeBeanComponent<RoleService> {
         return false;
     }
 
-    get parentFilterForm(): any {
+    get parentParams(): any {
         return null;
     }
 
@@ -59,7 +59,7 @@ export class RoleComponent extends TreeBeanComponent<RoleService> {
         this.fields.splice(1, 0,
             FieldUtils.buildTextForCode(),
             FieldUtils.buildTextForName(),
-            FieldUtils.buildTexareaForRemark()
+            FieldUtils.buildTextareaForRemark()
         );
 
     }
@@ -70,7 +70,7 @@ export class RoleComponent extends TreeBeanComponent<RoleService> {
             name: '分配权限',
             type: 'link',
             divider: true,
-            width: 73,
+            width: 75,
             action: (row: any) => this.editGrantedAuthorities(row)
         });
     }

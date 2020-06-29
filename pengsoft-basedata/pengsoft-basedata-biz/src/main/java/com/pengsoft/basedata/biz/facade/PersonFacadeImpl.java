@@ -6,7 +6,7 @@ import com.pengsoft.security.biz.service.RoleService;
 import com.pengsoft.security.biz.service.UserService;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.User;
-import com.pengsoft.support.biz.facade.BeanFacadeImpl;
+import com.pengsoft.support.biz.facade.EntityFacadeImpl;
 import com.pengsoft.support.commons.exception.MissingConfigurationException;
 import org.springframework.stereotype.Service;
 
@@ -24,7 +24,7 @@ import java.util.UUID;
  * @since 1.0.0
  */
 @Service
-public class PersonFacadeImpl extends BeanFacadeImpl<PersonService, Person, String> implements PersonFacade {
+public class PersonFacadeImpl extends EntityFacadeImpl<PersonService, Person, String> implements PersonFacade {
 
     @Inject
     private UserService userService;

@@ -2,8 +2,8 @@ package com.pengsoft.security.biz.facade;
 
 import com.pengsoft.security.biz.service.AuthorityService;
 import com.pengsoft.security.domain.entity.Authority;
-import com.pengsoft.support.biz.facade.BeanFacade;
-import com.pengsoft.support.domain.entity.Beanable;
+import com.pengsoft.support.biz.facade.EntityFacade;
+import com.pengsoft.support.domain.entity.Entity;
 
 import java.io.Serializable;
 
@@ -13,13 +13,13 @@ import java.io.Serializable;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface AuthorityFacade extends BeanFacade<AuthorityService, Authority, String>, AuthorityService {
+public interface AuthorityFacade extends EntityFacade<AuthorityService, Authority, String>, AuthorityService {
 
     /**
      * Save the authorities of entity admin.
      *
      * @param entityClass The entity class
      */
-    void saveEntityAdminAuthorities(Class<? extends Beanable<? extends Serializable>> entityClass);
+    void saveEntityAdminAuthorities(Class<? extends Entity<? extends Serializable>> entityClass);
 
 }

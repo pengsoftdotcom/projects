@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.facade;
 
-import com.pengsoft.support.biz.facade.BeanFacade;
+import com.pengsoft.support.biz.facade.EntityFacade;
 import com.pengsoft.system.biz.service.DictionaryTypeService;
 import com.pengsoft.system.domain.entity.DictionaryType;
 
@@ -10,6 +10,6 @@ import com.pengsoft.system.domain.entity.DictionaryType;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface DictionaryTypeFacade extends BeanFacade<DictionaryTypeService, DictionaryType, String>, DictionaryTypeService {
+public interface DictionaryTypeFacade extends EntityFacade<DictionaryTypeService, DictionaryType, String>, DictionaryTypeService {
 
 }

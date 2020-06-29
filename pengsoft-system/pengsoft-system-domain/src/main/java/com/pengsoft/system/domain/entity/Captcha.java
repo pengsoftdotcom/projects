@@ -1,7 +1,7 @@
 package com.pengsoft.system.domain.entity;
 
 import com.pengsoft.security.domain.entity.User;
-import com.pengsoft.support.domain.entity.Bean;
+import com.pengsoft.support.domain.entity.EntityImpl;
 import com.pengsoft.support.domain.entity.Codeable;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,7 +31,7 @@ import java.time.LocalDateTime;
 @Table(name = "t_captcha", indexes = {
         @Index(name = "i_captcha_user_id", columnList = "user_id, expiredAt")
 })
-public class Captcha extends Bean implements Codeable {
+public class Captcha extends EntityImpl implements Codeable {
 
     private static final long serialVersionUID = 6091683647880038510L;
 

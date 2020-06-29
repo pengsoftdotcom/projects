@@ -1,9 +1,8 @@
-import { Component, Input, OnInit, ViewChild, TemplateRef } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd';
 import { BaseComponent } from '../base.component';
-import { NzDrawerService, NzDrawerRef } from 'ng-zorro-antd';
-import { Field } from '../form-item/field';
 import { Button } from '../button/button';
-import { FieldUtils } from 'src/app/utils/field-utils';
+import { Field } from '../form-item/field';
 
 @Component({
     selector: 'app-edit',
@@ -16,13 +15,13 @@ export class EditComponent extends BaseComponent implements OnInit {
 
     @Input() span = 24;
 
-    @Input() form = {};
+    @Input() form: any = {};
 
     @Input() fields: Array<Field> = [];
 
     @Input() toolbarButtons: Array<Button> = [];
 
-    @Input() errors = {};
+    @Input() errors: any = {};
 
     @ViewChild('content', { static: true }) content: TemplateRef<any>;
 

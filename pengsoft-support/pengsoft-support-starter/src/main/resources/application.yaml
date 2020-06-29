@@ -2,10 +2,9 @@ pengsoft:
   transaction:
     readonly:
       - find*
+      - get*
       - count*
       - exists*
-    required:
-      - "*"
   mq:
     enabled: true
 spring:
@@ -27,7 +26,7 @@ spring:
       hibernate.jdbc.batch_size: 25
       hibernate.order_inserts: true
       hibernate.order_updates: true
-      hibernate.generate_statistics: true
+      hibernate.generate_statistics: false
       hibernate.enable_lazy_load_no_trans: true
       hibernate.physical_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringPhysicalNamingStrategy
       hibernate.implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy

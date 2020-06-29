@@ -1,24 +1,22 @@
 package com.pengsoft.security.biz.service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
-import javax.inject.Inject;
-
-import org.springframework.context.annotation.Primary;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
 import com.pengsoft.security.biz.repository.UserRepository;
 import com.pengsoft.security.biz.repository.UserRoleRepository;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.security.domain.entity.UserRole;
-import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.support.commons.util.DateUtils;
 import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.util.EntityUtils;
+import org.springframework.context.annotation.Primary;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The implementer of {@link UserService} based on JPA.
@@ -28,7 +26,7 @@ import com.pengsoft.support.domain.util.EntityUtils;
  */
 @Primary
 @Service
-public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, String> implements UserService {
+public class UserServiceImpl extends EntityServiceImpl<UserRepository, User, String> implements UserService {
 
     @Inject
     private PasswordEncoder passwordEncoder;
@@ -88,20 +86,20 @@ public class UserServiceImpl extends BeanServiceImpl<UserRepository, User, Strin
         userRoleRepository.saveAll(created);
         source.addAll(created);
         super.save(user);
-        if (!source.isEmpty() && source.stream().noneMatch(UserRole::isMajor)) {
-            setMajorRole(user, source.get(0).getRole());
+        if (!source.isEmpty() && source.stream().noneMatch(UserRole::isPrimary)) {
+            setPrimaryRole(user, source.get(0).getRole());
         }
     }
 
     @Override
-    public void setMajorRole(final User user, final Role role) {
+    public void setPrimaryRole(final User user, final Role role) {
         user.getUserRoles().forEach(userRole -> {
-            if (userRole.isMajor() && EntityUtils.ne(userRole.getRole(), role)) {
-                userRole.setMajor(false);
+            if (userRole.isPrimary() && EntityUtils.ne(userRole.getRole(), role)) {
+                userRole.setPrimary(false);
                 userRoleRepository.save(userRole);
             }
-            if (!userRole.isMajor() && EntityUtils.eq(userRole.getRole(), role)) {
-                userRole.setMajor(true);
+            if (!userRole.isPrimary() && EntityUtils.eq(userRole.getRole(), role)) {
+                userRole.setPrimary(true);
                 userRoleRepository.save(userRole);
             }
         });

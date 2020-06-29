@@ -1,7 +1,9 @@
 package com.pengsoft.basedata.biz.service;
 
+import com.pengsoft.basedata.domain.PersonUserDetails;
 import com.pengsoft.basedata.domain.StaffUserDetails;
 import com.pengsoft.basedata.domain.entity.Job;
+import com.pengsoft.basedata.domain.entity.Organization;
 import com.pengsoft.security.biz.service.DefaultUserDetailsService;
 import com.pengsoft.security.domain.DefaultUserDetails;
 
@@ -16,20 +18,28 @@ import javax.validation.constraints.NotNull;
 public interface StaffUserDetailsService extends DefaultUserDetailsService {
 
     /**
-     * Set the major job.
+     * Set the primary job.
      *
-     * @param job The major job.
-     * @return {@link DefaultUserDetails}
+     * @param job The primary job.
+     * @return {@link StaffUserDetails}
      */
-    StaffUserDetails setMajorJob(@NotNull Job job);
+    DefaultUserDetails setPrimaryJob(@NotNull Job job);
 
     /**
      * Set the current job.
      *
      * @param job The current job.
-     * @return {@link DefaultUserDetails}
+     * @return {@link StaffUserDetails}
      */
-    StaffUserDetails setCurrentJob(@NotNull Job job);
+    DefaultUserDetails setCurrentJob(@NotNull Job job);
+
+    /**
+     * set the current organization
+     *
+     * @param organization The current organization.
+     * @Return {@link PersonUserDetails}
+     */
+    DefaultUserDetails setOrganization(@NotNull Organization organization);
 
 
 }

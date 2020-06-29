@@ -2,9 +2,9 @@ package com.pengsoft.basedata.biz.service;
 
 import com.pengsoft.basedata.biz.repository.StaffRepository;
 import com.pengsoft.basedata.domain.entity.Job;
+import com.pengsoft.basedata.domain.entity.Person;
 import com.pengsoft.basedata.domain.entity.Staff;
-import com.pengsoft.basedata.domain.entity.UserProfile;
-import com.pengsoft.support.biz.service.BeanServiceImpl;
+import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.support.commons.exception.BusinessException;
 import com.pengsoft.support.domain.util.EntityUtils;
 import org.springframework.context.annotation.Primary;
@@ -21,13 +21,13 @@ import java.util.Optional;
  */
 @Primary
 @Service
-public class StaffServiceImpl extends BeanServiceImpl<StaffRepository, Staff, String> implements StaffService {
+public class StaffServiceImpl extends EntityServiceImpl<StaffRepository, Staff, String> implements StaffService {
 
     @Override
     public Staff save(final Staff staff) {
-        findOneByUserProfileAndJob(staff.getUserProfile(), staff.getJob()).ifPresent(source -> {
+        findOneByPersonAndJob(staff.getPerson(), staff.getJob()).ifPresent(source -> {
             if (EntityUtils.ne(source, staff)) {
-                throw new BusinessException("staff.save.unique", staff.getUserProfile().getName(), staff.getJob().getName());
+                throw new BusinessException("staff.save.unique", staff.getPerson().getName(), staff.getJob().getName());
             }
         });
         final var department = staff.getJob().getDepartment();
@@ -35,21 +35,21 @@ public class StaffServiceImpl extends BeanServiceImpl<StaffRepository, Staff, St
         final var organization = department.getOrganization();
         staff.setOrganization(organization);
         super.save(staff);
-        if (staff.isMajor()) {
-            setMajorJob(staff.getUserProfile(), staff.getJob());
+        if (staff.isPrimary()) {
+            setPrimaryJob(staff.getPerson(), staff.getJob());
         }
         return staff;
     }
 
     @Override
-    public void setMajorJob(final UserProfile userProfile, final Job job) {
-        findAllByUserProfile(userProfile).forEach(staff -> {
+    public void setPrimaryJob(final Person person, final Job job) {
+        findAllByPerson(person).forEach(staff -> {
             if (EntityUtils.eq(staff.getJob(), job)) {
-                staff.setMajor(true);
+                staff.setPrimary(true);
                 super.save(staff);
             } else {
-                if (staff.isMajor()) {
-                    staff.setMajor(false);
+                if (staff.isPrimary()) {
+                    staff.setPrimary(false);
                     super.save(staff);
                 }
             }
@@ -57,18 +57,18 @@ public class StaffServiceImpl extends BeanServiceImpl<StaffRepository, Staff, St
     }
 
     @Override
-    public Optional<Staff> findOneByUserProfileAndJob(final UserProfile userProfile, final Job job) {
-        return getRepository().findOneByUserProfileAndJob(userProfile, job);
+    public Optional<Staff> findOneByPersonAndJob(final Person person, final Job job) {
+        return getRepository().findOneByPersonAndJob(person, job);
     }
 
     @Override
-    public Optional<Staff> findOneByUserProfileAndMajorTrue(final UserProfile userProfile) {
-        return getRepository().findOneByUserProfileAndMajorTrue(userProfile);
+    public Optional<Staff> findOneByPersonAndPrimaryTrue(final Person person) {
+        return getRepository().findOneByPersonAndPrimaryTrue(person);
     }
 
     @Override
-    public List<Staff> findAllByUserProfile(final UserProfile userProfile) {
-        return getRepository().findAllByUserProfile(userProfile);
+    public List<Staff> findAllByPerson(final Person person) {
+        return getRepository().findAllByPerson(person);
     }
 
     @Override

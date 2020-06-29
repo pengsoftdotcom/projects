@@ -2,7 +2,7 @@ package com.pengsoft.device.biz.facade;
 
 import com.pengsoft.device.biz.service.ProductService;
 import com.pengsoft.device.domain.entity.Product;
-import com.pengsoft.support.biz.facade.BeanFacadeImpl;
+import com.pengsoft.support.biz.facade.EntityFacadeImpl;
 import com.pengsoft.system.domain.entity.DictionaryItem;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +15,7 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Service
-public class ProductFacadeImpl extends BeanFacadeImpl<ProductService, Product, String> implements ProductFacade {
+public class ProductFacadeImpl extends EntityFacadeImpl<ProductService, Product, String> implements ProductFacade {
 
     @Override
     public Optional<Product> findOneByCode(final String code) {

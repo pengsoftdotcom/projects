@@ -41,7 +41,7 @@ import { ListComponent } from './commons/list/list.component';
 import { ChangePasswordComponent } from './modal/change-password/change-password.component';
 import { ResetPasswordComponent } from './modal/reset-password/reset-password.component';
 import { EditManyToManyComponent } from './commons/edit-many-to-many/edit-many-to-many.component';
-import { SetMajorRoleComponent } from './modal/set-major-role/set-major-role.component';
+import { SetPrimaryRoleComponent } from './modal/set-primary-role/set-primary-role.component';
 import { TreeSelectComponent } from './commons/input/tree-select/tree-select.component';
 import { UploadComponent } from './commons/input/upload/upload.component';
 import { EditOneToManyComponent } from './commons/edit-one-to-many/edit-one-to-many.component';
@@ -49,6 +49,8 @@ import { AvatarComponent } from './commons/input/avatar/avatar.component';
 import { CascaderComponent } from './commons/input/cascader/cascader.component';
 import { DateComponent } from './commons/input/date/date.component';
 import { SwitchOrganizationComponent } from './modal/switch-organization/switch-organization.component';
+import { JsonComponent } from './commons/input/json/json.component';
+import { NgJsonEditorModule } from 'ang-jsoneditor';
 
 @NgModule({
     declarations: [
@@ -67,14 +69,15 @@ import { SwitchOrganizationComponent } from './modal/switch-organization/switch-
         TextareaComponent,
         ResetPasswordComponent,
         EditManyToManyComponent,
-        SetMajorRoleComponent,
+        SetPrimaryRoleComponent,
         TreeSelectComponent,
         EditOneToManyComponent,
         UploadComponent,
         AvatarComponent,
         CascaderComponent,
         DateComponent,
-        SwitchOrganizationComponent
+        SwitchOrganizationComponent,
+        JsonComponent
     ],
     imports: [
         CommonModule,
@@ -100,6 +103,7 @@ import { SwitchOrganizationComponent } from './modal/switch-organization/switch-
         NzUploadModule,
         NzCascaderModule,
         NzTabsModule,
+        NgJsonEditorModule,
         IconsProviderModule,
         DirectivesModule
     ],

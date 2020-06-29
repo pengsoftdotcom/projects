@@ -1,6 +1,6 @@
 package com.pengsoft.system.biz.service;
 
-import com.pengsoft.support.biz.service.BeanService;
+import com.pengsoft.support.biz.service.EntityService;
 import com.pengsoft.system.domain.entity.MessageTemplate;
 
 import javax.validation.constraints.NotBlank;
@@ -12,7 +12,7 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface MessageTemplateService extends BeanService<MessageTemplate, String> {
+public interface MessageTemplateService extends EntityService<MessageTemplate, String> {
 
     /**
      * Returns an {@link Optional} of a {@link MessageTemplate} with given code.

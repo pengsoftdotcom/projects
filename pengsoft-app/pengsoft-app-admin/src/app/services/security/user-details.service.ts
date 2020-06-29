@@ -42,9 +42,9 @@ export class UserDetailsService extends BaseService {
         this.http.request('POST', url, options);
     }
 
-    setMajorJob(job: any, options: HttpOptions): void {
+    setPrimaryJob(job: any, options: HttpOptions): void {
         options.params = { id: job.id };
-        const url = this.getApiPath('set-major-job');
+        const url = this.getApiPath('set-primary-job');
         this.http.request('POST', url, options);
     }
 
@@ -54,9 +54,15 @@ export class UserDetailsService extends BaseService {
         this.http.request('POST', url, options);
     }
 
-    setMajorRole(role: any, options: HttpOptions): void {
+    setPrimaryRole(role: any, options: HttpOptions): void {
         options.params = { id: role.id };
-        const url = this.getApiPath('set-major-role');
+        const url = this.getApiPath('set-primary-role');
+        this.http.request('POST', url, options);
+    }
+
+    setOrganization(organization: any, options: HttpOptions): void {
+        options.params = { id: organization.id };
+        const url = this.getApiPath('set-organization');
         this.http.request('POST', url, options);
     }
 

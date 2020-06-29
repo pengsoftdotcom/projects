@@ -1,22 +1,23 @@
 package com.pengsoft.basedata.biz.facade;
 
-import com.pengsoft.basedata.biz.service.DepartmentService;
-import com.pengsoft.basedata.biz.service.JobService;
 import com.pengsoft.basedata.biz.service.OrganizationService;
-import com.pengsoft.basedata.biz.service.PostService;
-import com.pengsoft.basedata.domain.entity.Department;
-import com.pengsoft.basedata.domain.entity.Job;
+import com.pengsoft.basedata.biz.service.PersonService;
 import com.pengsoft.basedata.domain.entity.Organization;
-import com.pengsoft.basedata.domain.entity.Post;
-import com.pengsoft.support.biz.facade.TreeBeanFacadeImpl;
+import com.pengsoft.basedata.domain.entity.Person;
+import com.pengsoft.security.biz.service.RoleService;
+import com.pengsoft.security.biz.service.UserService;
+import com.pengsoft.security.domain.entity.User;
+import com.pengsoft.security.domain.entity.UserRole;
+import com.pengsoft.support.biz.facade.TreeEntityFacadeImpl;
 import com.pengsoft.support.commons.util.StringUtils;
-import org.springframework.context.MessageSource;
-import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * The implementer of {@link OrganizationFacade}
@@ -25,52 +26,56 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Service
-public class OrganizationFacadeImpl extends TreeBeanFacadeImpl<OrganizationService, Organization, String> implements OrganizationFacade {
+public class OrganizationFacadeImpl extends TreeEntityFacadeImpl<OrganizationService, Organization, String> implements OrganizationFacade {
+
+    public static final String ORGANIZATION_ADMIN = "organization_admin";
 
     @Inject
-    private MessageSource messageSource;
+    private PersonService personService;
 
     @Inject
-    private PostService postService;
+    private UserService userService;
 
     @Inject
-    private DepartmentService departmentService;
-
-    @Inject
-    private JobService jobService;
+    private RoleService roleService;
 
     @Override
     public Organization save(final Organization organization) {
-        final var creating = StringUtils.isBlank(organization.getId());
-        super.save(organization);
-        if (creating) {
-            final var post = new Post();
-            post.setOrganization(organization);
-            post.setName(messageSource.getMessage("default.post.name", null, LocaleContextHolder.getLocale()));
-            postService.save(post);
-
-            final var department = new Department();
-            department.setOrganization(organization);
-            department.setName(messageSource.getMessage("default.department.name", null, LocaleContextHolder.getLocale()));
-            departmentService.save(department);
-
-            final var job = new Job();
-            job.setPost(post);
-            job.setDepartment(department);
-            job.setName(messageSource.getMessage("default.post.name", null, LocaleContextHolder.getLocale()));
-            jobService.save(job);
+        if (organization.getAdmin() != null) {
+            final var person = personService.findOneByMobile(organization.getAdmin().getMobile()).orElse(organization.getAdmin());
+            if (StringUtils.isBlank(person.getId())) {
+                final var user = userService.findOneByMobile(person.getMobile()).orElse(new User(person.getMobile(), UUID.randomUUID().toString()));
+                if (StringUtils.isBlank(user.getId())) {
+                    userService.save(user);
+                }
+                person.setUser(user);
+            } else {
+                BeanUtils.copyProperties(organization.getAdmin(), person, "id", "mobile", "user", "version");
+            }
+            organization.setAdmin(personService.save(person));
+            final var roles = person.getUser().getUserRoles().stream().map(UserRole::getRole).collect(Collectors.toList());
+            if (roles.stream().noneMatch(role -> ORGANIZATION_ADMIN.equals(role.getCode()))) {
+                final var role = roleService.findOneByCode(ORGANIZATION_ADMIN).orElseThrow(() -> getExceptions().entityNotFound(ORGANIZATION_ADMIN));
+                roles.add(role);
+                userService.grantRoles(person.getUser(), roles);
+            }
         }
-        return organization;
+        return super.save(organization);
     }
 
     @Override
-    public Optional<Organization> findOneByCode(@NotBlank final String code) {
+    public Optional<Organization> findOneByCode(final String code) {
         return getService().findOneByCode(code);
     }
 
     @Override
-    public Optional<Organization> findOneByName(@NotBlank final String name) {
+    public Optional<Organization> findOneByName(final String name) {
         return getService().findOneByName(name);
+    }
+
+    @Override
+    public List<Organization> findAllByAdmin(final Person admin) {
+        return getService().findAllByAdmin(admin);
     }
 
 }

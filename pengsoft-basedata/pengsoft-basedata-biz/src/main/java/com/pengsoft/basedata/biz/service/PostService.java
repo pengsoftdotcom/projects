@@ -2,7 +2,7 @@ package com.pengsoft.basedata.biz.service;
 
 import com.pengsoft.basedata.domain.entity.Organization;
 import com.pengsoft.basedata.domain.entity.Post;
-import com.pengsoft.support.biz.service.TreeBeanService;
+import com.pengsoft.support.biz.service.TreeEntityService;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -14,7 +14,7 @@ import java.util.Optional;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface PostService extends TreeBeanService<Post, String> {
+public interface PostService extends TreeEntityService<Post, String> {
 
     /**
      * Returns an {@link Optional} of a {@link Post} with given organization, parent and name.

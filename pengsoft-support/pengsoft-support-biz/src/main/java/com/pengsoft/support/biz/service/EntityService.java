@@ -1,7 +1,7 @@
 package com.pengsoft.support.biz.service;
 
-import com.pengsoft.support.domain.entity.Bean;
-import com.pengsoft.support.domain.entity.Beanable;
+import com.pengsoft.support.domain.entity.Entity;
+import com.pengsoft.support.domain.entity.EntityImpl;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,13 +17,13 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
- * The service interface of {@link Bean}.
+ * The service interface of {@link EntityImpl}.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
 @Validated
-public interface BeanService<T extends Beanable<ID>, ID extends Serializable> {
+public interface EntityService<T extends Entity<ID>, ID extends Serializable> {
 
     /**
      * Returns the domain class.
@@ -38,35 +38,35 @@ public interface BeanService<T extends Beanable<ID>, ID extends Serializable> {
     /**
      * Save one entity.
      *
-     * @param bean entity
+     * @param entity entity
      * @return the saved entity
      */
-    T save(@Valid @NotNull T bean);
+    T save(@Valid @NotNull T entity);
 
     /**
      * Save entities.
      *
-     * @param beans entities
+     * @param entities entities
      * @return the saved entities
      */
-    default List<T> save(@NotEmpty final List<T> beans) {
-        return beans.stream().map(this::save).collect(Collectors.toList());
+    default List<T> save(@NotEmpty final List<T> entities) {
+        return entities.stream().map(this::save).collect(Collectors.toList());
     }
 
     /**
      * Delete one entity.
      *
-     * @param bean 实体
+     * @param entity 实体
      */
-    void delete(@NotNull T bean);
+    void delete(@NotNull T entity);
 
     /**
      * Delete entities.
      *
-     * @param beans entities
+     * @param entities entities
      */
-    default void delete(@NotEmpty final List<T> beans) {
-        beans.forEach(this::delete);
+    default void delete(@NotEmpty final List<T> entities) {
+        entities.forEach(this::delete);
     }
 
     /**

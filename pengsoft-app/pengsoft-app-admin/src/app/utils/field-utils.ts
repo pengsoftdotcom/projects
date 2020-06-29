@@ -9,6 +9,12 @@ import { DateUtils } from './date-utils';
 
 export class FieldUtils {
 
+    static buildJson(field?: Field): Field {
+        field = this.getList(field, { visible: false });
+        field = this.getEdit(field, { input: { type: InputType.JSON } });
+        return field;
+    }
+
     static buildAvatar(field?: Field): Field {
         field = Object.assign({ code: 'avatar', name: '头像' }, field);
         field = this.getList(field, { visible: false });
@@ -51,7 +57,7 @@ export class FieldUtils {
         return field;
     }
 
-    static buildTexareaForRemark(): Field {
+    static buildTextareaForRemark(): Field {
         return this.buildTextarea({ code: 'remark', name: '备注' });
     }
 
@@ -174,6 +180,7 @@ export class FieldUtils {
             align: 'left'
         }, list);
         field.list = Object.assign(list, field.list);
+        field.list.code = field.code;
         return field;
     }
 
@@ -226,19 +233,6 @@ export class FieldUtils {
             field.edit.input = Object.assign(input, field.edit.input);
         }
         return field;
-    }
-
-    static resetSubfieldEditCode(fields: Array<Field>): void {
-        fields.forEach(field => {
-            if (field.children) {
-                field.children.forEach(subfield => {
-                    subfield.edit.code = field.edit.code + '.' + subfield.edit.code;
-                    if (subfield.filter) {
-                        subfield.filter.code = subfield.edit.code;
-                    }
-                });
-            }
-        });
     }
 
 }

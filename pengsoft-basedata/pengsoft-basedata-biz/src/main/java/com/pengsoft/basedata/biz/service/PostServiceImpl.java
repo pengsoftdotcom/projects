@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.pengsoft.basedata.biz.repository.PostRepository;
 import com.pengsoft.basedata.domain.entity.Organization;
 import com.pengsoft.basedata.domain.entity.Post;
-import com.pengsoft.support.biz.service.TreeBeanServiceImpl;
+import com.pengsoft.support.biz.service.TreeEntityServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
 
 /**
@@ -19,7 +19,7 @@ import com.pengsoft.support.domain.util.EntityUtils;
  */
 @Primary
 @Service
-public class PostServiceImpl extends TreeBeanServiceImpl<PostRepository, Post, String> implements PostService {
+public class PostServiceImpl extends TreeEntityServiceImpl<PostRepository, Post, String> implements PostService {
 
     @Override
     public Post save(final Post post) {

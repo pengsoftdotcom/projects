@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Tree bean
+ * Tree entity
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
@@ -25,7 +25,7 @@ import java.util.List;
 @Getter
 @Setter
 @MappedSuperclass
-public class TreeBean<T extends TreeBean<T>> extends Bean implements TreeBeanable<T, String> {
+public class TreeEntityImpl<T extends TreeEntityImpl<T>> extends EntityImpl implements TreeEntity<T, String> {
 
     private static final long serialVersionUID = 6320599185190171935L;
 

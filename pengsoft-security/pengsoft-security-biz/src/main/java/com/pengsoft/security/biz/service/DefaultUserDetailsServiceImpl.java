@@ -40,7 +40,6 @@ public class DefaultUserDetailsServiceImpl implements DefaultUserDetailsService 
             deque.push(root);
             while (!deque.isEmpty()) {
                 final var parent = deque.pop();
-                parent.setParent(null);
                 roles.add(parent);
                 parent.getChildren().forEach(deque::push);
             }
@@ -54,11 +53,11 @@ public class DefaultUserDetailsServiceImpl implements DefaultUserDetailsService 
     }
 
     @Override
-    public DefaultUserDetails setMajorRole(final Role role) {
+    public DefaultUserDetails setPrimaryRole(final Role role) {
         final var userDetails = SecurityUtils.getUserDetails();
-        userDetails.setMajorRole(role);
+        userDetails.setPrimaryRole(role);
         userService.findOne(SecurityUtils.getUserId()).ifPresent(userDetails::setUser);
-        userService.setMajorRole(userDetails.getUser(), role);
+        userService.setPrimaryRole(userDetails.getUser(), role);
         return userDetails;
     }
 
@@ -101,7 +100,7 @@ public class DefaultUserDetailsServiceImpl implements DefaultUserDetailsService 
     private UserDetails buildUserDetails(final User user) {
         final var roles = user.getUserRoles().stream().map(UserRole::getRole).collect(Collectors.toList());
         return user.getUserRoles().stream()
-                .filter(UserRole::isMajor)
+                .filter(UserRole::isPrimary)
                 .map(UserRole::getRole).findFirst()
                 .map(role -> new DefaultUserDetails(user, roles, role, getAllAuthorities(role)))
                 .orElse(new DefaultUserDetails(user, roles));

@@ -2,7 +2,6 @@ package com.pengsoft.basedata.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.pengsoft.support.domain.entity.Codeable;
-import com.pengsoft.support.domain.entity.TreeBean;
 import com.pengsoft.system.domain.entity.DictionaryItem;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,6 +16,7 @@ import javax.persistence.Index;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -38,7 +38,7 @@ import java.util.List;
         @Index(name = "i_organization_name", columnList = "name", unique = true),
         @Index(name = "i_organization_simple_name", columnList = "simpleName")
 })
-public class Organization extends TreeBean<Organization> implements Codeable {
+public class Organization extends OwnedExtTreeEntity<Organization> implements Codeable {
 
     private static final long serialVersionUID = -8823819150888810983L;
 
@@ -57,6 +57,12 @@ public class Organization extends TreeBean<Organization> implements Codeable {
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private DictionaryItem category;
+
+    @Valid
+    @NotNull
+    @ManyToOne
+    @NotFound(action = NotFoundAction.IGNORE)
+    private Person admin = new Person();
 
     @JsonIgnore
     @OneToMany(mappedBy = "organization", cascade = CascadeType.REMOVE)

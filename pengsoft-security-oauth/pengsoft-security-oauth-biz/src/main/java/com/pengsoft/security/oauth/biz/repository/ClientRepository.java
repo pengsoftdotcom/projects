@@ -2,7 +2,7 @@ package com.pengsoft.security.oauth.biz.repository;
 
 import com.pengsoft.security.oauth.domain.entity.Client;
 import com.pengsoft.security.oauth.domain.entity.QClient;
-import com.pengsoft.support.biz.repository.BeanRepository;
+import com.pengsoft.support.biz.repository.EntityRepository;
 import com.querydsl.core.types.dsl.StringPath;
 import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.data.querydsl.binding.QuerydslBindings;
@@ -19,11 +19,11 @@ import java.util.Optional;
  * @since 1.0.0
  */
 @Repository
-public interface ClientRepository extends BeanRepository<QClient, Client, String> {
+public interface ClientRepository extends EntityRepository<QClient, Client, String> {
 
     @Override
     default void customize(final QuerydslBindings bindings, final QClient root) {
-        BeanRepository.super.customize(bindings, root);
+        EntityRepository.super.customize(bindings, root);
         bindings.bind(root.code).first(StringPath::contains);
         bindings.bind(root.grantTypes).first(StringPath::contains);
     }
