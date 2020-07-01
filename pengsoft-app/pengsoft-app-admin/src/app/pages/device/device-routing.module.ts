@@ -7,20 +7,20 @@ import { PurchaseBatchComponent } from './purchase-batch/purchase-batch.componen
 
 
 const routes: Routes = [
-  {
-    path: 'device',
-    data: { name: '设备管理', icon: 'book' },
-    children: [
-      { path: 'product', component: ProductComponent, data: { code: 'device::product::find_page', name: '产品' } },
-      { path: 'purchase-batch', component: PurchaseBatchComponent, data: { code: 'device::purchase_batch::find_page', name: '批次' } },
-      { path: 'device-group', component: DeviceGroupComponent, data: { code: 'device::device_group::find_page', name: '分组' } },
-      { path: 'device', component: DeviceComponent, data: { code: 'device::device::find_page', name: '设备' } }
-    ]
-  }
+    {
+        path: 'device',
+        data: { name: '设备管理', icon: 'book' },
+        children: [
+            { path: 'product', component: ProductComponent, data: { code: 'device::product::find_page', name: '产品' } },
+            { path: 'purchase-batch', component: PurchaseBatchComponent, data: { code: 'device::purchase_batch::find_page', name: '批次' } },
+            { path: 'device-group', component: DeviceGroupComponent, data: { code: 'device::device_group::find_page', name: '分组' } },
+            { path: 'device', component: DeviceComponent, data: { code: 'device::device::find_page', name: '设备' } }
+        ]
+    }
 ];
 
 @NgModule({
-  imports: [RouterModule.forChild(routes)],
-  exports: [RouterModule]
+    imports: [RouterModule.forChild(routes)],
+    exports: [RouterModule]
 })
 export class DeviceRoutingModule { }

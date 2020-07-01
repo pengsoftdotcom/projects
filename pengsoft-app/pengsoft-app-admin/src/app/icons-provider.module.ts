@@ -16,7 +16,8 @@ import {
     DownloadOutline,
     BookOutline,
     PlusOutline,
-    ReloadOutline
+    ReloadOutline,
+    GlobalOutline
 } from '@ant-design/icons-angular/icons';
 
 const icons = [
@@ -34,7 +35,8 @@ const icons = [
     DownloadOutline,
     BookOutline,
     PlusOutline,
-    ReloadOutline
+    ReloadOutline,
+    GlobalOutline
 ];
 
 @NgModule({

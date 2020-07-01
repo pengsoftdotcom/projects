@@ -32,6 +32,7 @@ import { SecurityOAuthModule } from './pages/security-oauth/security-oauth.modul
 import { SystemModule } from './pages/system/system.module';
 import { BasedataModule } from './pages/basedata/basedata.module';
 import { DeviceModule } from './pages/device/device.module';
+import { PortalModule } from './pages/portal/portal.module';
 
 registerLocaleData(zh);
 
@@ -62,6 +63,7 @@ registerLocaleData(zh);
         IconsProviderModule,
         ComponentsModule,
         DirectivesModule,
+        PortalModule,
         DeviceModule,
         BasedataModule,
         SystemModule,
