@@ -1,0 +1,57 @@
+<nz-layout>
+    <nz-header nz-row>
+        <div nz-col nzXs="24" nzSm="0" nzMd="0" nzLg="0" nzXl="0" nzXXl="0">
+            <nz-collapse [nzBordered]="false">
+                <nz-collapse-panel #p [nzHeader]="header" [nzExpandedIcon]="expandedIcon">
+                    <ng-container *ngTemplateOutlet="search"></ng-container>
+                    <nz-divider></nz-divider>
+                    <nz-list>
+                        <nz-list-item *ngFor="let menu of menus">
+                            {{menu.name}}
+                        </nz-list-item>
+                    </nz-list>
+                </nz-collapse-panel>
+            </nz-collapse>
+        </div>
+        <div nz-col nzXs="0" nzSm="24" nzMd="24" nzLg="24" nzXl="24" nzXXl="24">
+            <div nz-row style="padding: 0 50px">
+                <div nz-col nzFlex="32px">
+                    <ng-container *ngTemplateOutlet="header"></ng-container>
+                </div>
+                <div nz-col nzFlex="auto">
+                    <ul nz-menu nzMode="horizontal">
+                        <li *ngFor="let menu of menus" nz-menu-item>
+                            {{menu.name}}
+                        </li>
+                    </ul>
+                </div>
+                <div nz-col nzFlex="32px">
+                    <button nz-button nzShape="circle" style="border: none" (click)="showSearch()">
+                        <i nz-icon nzType="search"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nz-header>
+    <nz-content>
+        <router-outlet></router-outlet>
+    </nz-content>
+    <nz-footer>Copyright ©2020 Pengsoft Inc. All rights reserved.</nz-footer>
+</nz-layout>
+<ng-template #header>
+    <div class="logo" routerLink="/home"></div>
+</ng-template>
+<ng-template #expandedIcon>
+    <i nz-icon [nzType]="p.nzActive ? 'close' : 'menu'" class="icon-menu"></i>
+</ng-template>
+<ng-template #search>
+    <nz-input-group nzSize="large" [nzPrefix]="prefixIcon" [nzSuffix]="suffixIcon">
+        <input type="text" nz-input [(ngModel)]="keywords" placeholder="搜索本网站" />
+    </nz-input-group>
+</ng-template>
+<ng-template #prefixIcon>
+    <i nz-icon nzType="search"></i>
+</ng-template>
+<ng-template #suffixIcon>
+    <i *ngIf="keywords" nz-icon nzTheme="fill" nzType="close-circle" (click)="clearKeywords()"></i>
+</ng-template>

@@ -1,0 +1,57 @@
+$header-bg-color: #ffffff;
+$header-color: #000000;
+
+.ant-layout-header {
+    height: 48px;
+    line-height: 48px;
+    padding: 0;
+    background-color: $header-bg-color;
+}
+
+.icon-menu {
+    color: $header-color;
+    font-style: normal;
+    line-height: 0;
+    text-align: center;
+    text-transform: none;
+    vertical-align: -0.125em;
+    position: absolute;
+    top: 50%;
+    left: 16px;
+    display: inline-block;
+    transform: translateY(-50%);
+}
+
+.ant-layout-header .logo {
+    width: 20px;
+    height: 20px;
+    background-image: url("/assets/logo.png");
+    background-size: cover;
+    margin: 14px 6px;
+    position: relative;
+    left: calc(50% - 10px);
+}
+
+.ant-layout-header .ant-input-affix-wrapper {
+    border-radius: 6px;
+}
+
+.ant-layout-header .ant-list {
+    margin: 0 6%;
+    padding: 4px 12px;
+}
+
+.ant-layout-header .ant-divider {
+    margin: 16px 0 -4px;
+    width: calc(100% + 32px);
+    left: -16px;
+}
+
+.ant-layout-content {
+    margin: 0;
+}
+
+.ant-layout-footer {
+    background-color: #ffffff;
+    padding: 16px 50px;
+}
