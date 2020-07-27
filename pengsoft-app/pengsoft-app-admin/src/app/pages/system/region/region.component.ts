@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { Field } from 'src/app/components/commons/form-item/field';
-import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
+import { TreeEntityComponent } from 'src/app/components/commons/tree-entity.component';
 import { RegionService } from 'src/app/services/system/region.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
 
@@ -10,14 +9,14 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './region.component.html',
     styleUrls: ['./region.component.scss']
 })
-export class RegionComponent extends TreeBeanComponent<RegionService> {
+export class RegionComponent extends TreeEntityComponent<RegionService> {
 
     constructor(
-        protected bean: RegionService,
+        protected entity: RegionService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     get lazy(): boolean {
@@ -29,12 +28,13 @@ export class RegionComponent extends TreeBeanComponent<RegionService> {
     }
 
     initFields(): void {
-        super.initFields();
-        this.fields.splice(1, 0,
+
+        this.fields = [
+            FieldUtils.buildCascaderForRegion(this.entity, { code: 'parent', name: '上级', list: { visible: false } }),
             FieldUtils.buildTextForCode(),
             FieldUtils.buildTextForName(),
             FieldUtils.buildTextareaForRemark()
-        );
+        ];
     }
 
 }

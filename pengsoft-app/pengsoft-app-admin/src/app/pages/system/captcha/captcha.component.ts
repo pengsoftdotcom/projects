@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { Button } from 'src/app/components/commons/button/button';
 import { Field } from 'src/app/components/commons/form-item/field';
 import { CaptchaService } from 'src/app/services/system/captcha.service';
@@ -12,14 +12,14 @@ import { UserComponent } from '../../security/user/user.component';
     templateUrl: './captcha.component.html',
     styleUrls: ['./captcha.component.scss']
 })
-export class CaptchaComponent extends BeanComponent<CaptchaService> {
+export class CaptchaComponent extends EntityComponent<CaptchaService> {
 
     constructor(
-        protected bean: CaptchaService,
+        protected entity: CaptchaService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {
@@ -29,7 +29,6 @@ export class CaptchaComponent extends BeanComponent<CaptchaService> {
             FieldUtils.buildDatetimeForExpiredAt(),
             FieldUtils.buildText({
                 code: 'user', name: '用户', children: UserComponent.prototype.fields.map((field: Field) => {
-                    field.edit.label.span = 4;
                     if (field.code === 'expiredAt') {
                         delete field.filter;
                     }

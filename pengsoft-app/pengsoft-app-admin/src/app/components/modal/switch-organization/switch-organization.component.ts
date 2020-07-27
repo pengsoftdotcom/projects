@@ -1,9 +1,9 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { OrganizationService } from 'src/app/services/basedata/organization.service';
-import { BaseComponent } from '../../commons/base.component';
-import { FieldUtils } from 'src/app/utils/field-utils';
-import { InputComponent } from '../../commons/input/input.component';
 import { EntityUtils } from 'src/app/utils/entity-utils';
+import { FieldUtils } from 'src/app/utils/field-utils';
+import { BaseComponent } from '../../commons/base.component';
+import { InputComponent } from '../../commons/input/input.component';
 
 @Component({
     selector: 'app-switch-organization',

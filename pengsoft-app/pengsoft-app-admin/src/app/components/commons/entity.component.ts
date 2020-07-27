@@ -1,6 +1,6 @@
-import { OnInit, ViewChild } from '@angular/core';
-import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanService } from 'src/app/services/commons/bean.service';
+import { OnInit, ViewChild, Input } from '@angular/core';
+import { NzMessageService, NzModalService, NzTreeNodeOptions } from 'ng-zorro-antd';
+import { EntityService } from 'src/app/services/commons/entity.service';
 import { BaseComponent } from './base.component';
 import { Button } from './button/button';
 import { EditComponent } from './edit/edit.component';
@@ -9,9 +9,7 @@ import { Field } from './form-item/field';
 import { ListComponent } from './list/list.component';
 import { Page } from './list/page';
 
-export abstract class BeanComponent<S extends BeanService> extends BaseComponent implements OnInit {
-
-    filterable = false;
+export abstract class EntityComponent<S extends EntityService> extends BaseComponent implements OnInit {
 
     filterForm: any = {};
 
@@ -33,6 +31,10 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
 
     listActionButtons: Array<Button> = [];
 
+    @Input() allowLoadNavData = true;
+
+    navData: Array<NzTreeNodeOptions>;
+
     errors = {};
 
     @ViewChild('listComponent', { static: true }) listComponent: ListComponent;
@@ -40,7 +42,7 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
     @ViewChild('editComponent', { static: true }) editComponent: EditComponent;
 
     constructor(
-        protected bean: S,
+        protected entity: S,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
@@ -49,11 +51,7 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
 
     ngOnInit(): void {
         this.initFields();
-        this.fields.filter(field => field.children).forEach(field => field.children.forEach(subfield => {
-            subfield.parentCode = field.code;
-            subfield.list.parentCode = field.code;
-            subfield.edit.parentCode = field.code;
-        }));
+        this.fields.filter(field => field.children).forEach(field => field.children.forEach(subfield => subfield.parentCode = field.code));
         this.intEditToolbarButtons();
         this.initListToolbarButtons();
         this.initListActionButtons();
@@ -76,9 +74,7 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
         ];
         if (this.fields.some(field => field.filter)
             || this.fields.filter(field => field.children).some(field => field.children.some(subfield => subfield.filter))) {
-            this.listToolbarButtons.splice(0, 0, {
-                name: '搜索', type: 'link', action: () => this.filter()
-            });
+            this.listToolbarButtons.splice(0, 0, { name: '搜索', type: 'link', action: () => this.filter() });
         }
     }
 
@@ -97,7 +93,7 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
         this.beforeEditFormFilled();
         const id = row ? row.id : null;
         this.editComponent.show();
-        this.bean.findOne(id, {
+        this.entity.findOne(id, {
             before: () => this.editComponent.loading = true,
             success: (res: any) => {
                 this.editForm = res;
@@ -126,11 +122,11 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
                 delete form[key];
             }
         }
-        this.bean.save(form, {
+        this.entity.save(form, {
             errors: this.errors,
             before: () => this.editComponent.loading = true,
             success: (res: any) => {
-                this.editForm = res;
+                // this.editForm = res;
                 this.message.info('保存成功');
                 this.editComponent.hide();
                 this.list();
@@ -164,7 +160,7 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
     }
 
     list(): void {
-        this.bean.findPage(this.filterForm, this.pageData, {
+        this.entity.findPage(this.filterForm, this.pageData, {
             before: () => this.listComponent.loading = true,
             success: (res: any) => {
                 this.listComponent.allChecked = false;
@@ -177,12 +173,12 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
     }
 
     delete(row?: any): void {
-        const ids = row ? [row.id] : this.listData.filter(bean => bean.checked).map(bean => bean.id);
+        const ids = row ? [row.id] : this.listData.filter(entity => entity.checked).map(entity => entity.id);
         if (ids.length > 0) {
             this.modal.confirm({
                 nzTitle: '确定要删除这些数据吗？',
                 nzOnOk: () => new Promise(resolve => {
-                    this.bean.delete(ids, {
+                    this.entity.delete(ids, {
                         success: () => {
                             this.afterListDataDeleted(ids.map(id => this.listData.find(value => value.id === id)));
                             this.listComponent.allChecked = false;
@@ -202,8 +198,8 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
 
     getAuthority(action: string): string {
         if (action.indexOf('::') === -1) {
-            const moduleCode = this.bean.modulePath.replace(/\//g, '_').replace(/-/g, '_');
-            const entityCode = this.bean.entityPath.replace(/\//g, '_').replace(/-/g, '_');
+            const moduleCode = this.entity.modulePath.replace(/\//g, '_').replace(/-/g, '_');
+            const entityCode = this.entity.entityPath.replace(/\//g, '_').replace(/-/g, '_');
             let actionCode = '';
             const length = action.length;
             for (let index = 0; index < length; index++) {
@@ -224,7 +220,7 @@ export abstract class BeanComponent<S extends BeanService> extends BaseComponent
         const sortInfo = {};
         this.listData.filter(d => d.dirty).forEach(data => sortInfo[data.id] = data.sequence);
         if (Object.keys(sortInfo).length > 0) {
-            this.bean.sort(sortInfo, {
+            this.entity.sort(sortInfo, {
                 before: () => this.loading = true,
                 success: () => {
                     this.message.info('排序成功');

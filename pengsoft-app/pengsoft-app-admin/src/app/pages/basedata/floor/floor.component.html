@@ -1,0 +1,5 @@
+<app-list #listComponent [title]="(title ? title : '') + '楼层列表'" [fields]="fields" [listData]="listData" [navData]="navData" (nav)="nav($event)"
+    [toolbarButtons]="listToolbarButtons" [actionButtons]="listActionButtons" [pageData]="pageData" (pageChange)="list()"></app-list>
+<app-edit #editComponent [title]="(title ? title : '') + '楼层编辑'" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons"
+    [errors]="errors"></app-edit>
+<app-edit-one-to-many #housesComponent></app-edit-one-to-many>

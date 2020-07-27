@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { Field } from 'src/app/components/commons/form-item/field';
 import { InputComponent } from 'src/app/components/commons/input/input.component';
 import { MessageService } from 'src/app/services/message.service';
@@ -12,15 +12,15 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './message.component.html',
     styleUrls: ['./message.component.scss']
 })
-export class MessageComponent extends BeanComponent<MessageService> {
+export class MessageComponent extends EntityComponent<MessageService> {
 
     constructor(
         protected user: UserService,
-        protected bean: MessageService,
+        protected entity: MessageService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {

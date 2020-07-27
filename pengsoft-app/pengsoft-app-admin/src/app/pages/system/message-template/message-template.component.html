@@ -1,3 +1,4 @@
-<app-list #listComponent title="消息模版列表" [fields]="fields" [listData]="listData" [page]="pageData" [toolbarButtons]="listToolbarButtons"
+<app-list #listComponent title="消息模版列表" [fields]="fields" [listData]="listData" [pageData]="pageData" [toolbarButtons]="listToolbarButtons"
     [actionButtons]="listActionButtons" (pageChange)="list()"></app-list>
-<app-edit #editComponent title="消息模版编辑" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons" [errors]="errors"></app-edit>
+<app-edit #editComponent title="消息模版编辑" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons" [errors]="errors" [labelSpan]="5">
+</app-edit>

@@ -1,12 +1,12 @@
 import { OnInit } from '@angular/core';
 import { NzFormatEmitEvent } from 'ng-zorro-antd';
-import { TreeBeanService } from 'src/app/services/commons/tree-bean.service';
+import { TreeEntityService } from 'src/app/services/commons/tree-entity.service';
 import { EntityUtils } from 'src/app/utils/entity-utils';
 import { FieldUtils } from 'src/app/utils/field-utils';
-import { BeanComponent } from './bean.component';
+import { EntityComponent } from './entity.component';
 import { InputComponent } from './input/input.component';
 
-export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanComponent<S> implements OnInit {
+export abstract class TreeEntityComponent<S extends TreeEntityService> extends EntityComponent<S> implements OnInit {
 
     abstract get lazy(): boolean;
 
@@ -24,7 +24,7 @@ export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanC
                             const self = this.editForm;
                             if (this.lazy) {
                                 const parent = event ? event.node.origin.value : null;
-                                this.bean.findAllExcludeSelfAndItsChildrenByParent(parent, self, this.parentParams, {
+                                this.entity.findAllExcludeSelfAndItsChildrenByParent(parent, self, this.parentParams, {
                                     before: () => component.loading = true,
                                     success: (res: any) => {
                                         if (event) {
@@ -36,7 +36,7 @@ export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanC
                                     after: () => component.loading = false
                                 });
                             } else {
-                                this.bean.findAllExcludeSelfAndItsChildren(self, this.parentParams, {
+                                this.entity.findAllExcludeSelfAndItsChildren(self, this.parentParams, {
                                     before: () => component.loading = true,
                                     success: (res: any) =>
                                         component.edit.input.options = EntityUtils.convertListToTree(res),
@@ -52,7 +52,7 @@ export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanC
 
     list(): void {
         if (this.lazy) {
-            this.bean.findAllByParent(null, this.filterForm, {
+            this.entity.findAllByParent(null, this.filterForm, {
                 before: () => this.listComponent.loading = true,
                 success: (res: any) => {
                     const tree = EntityUtils.convertListToTree(res);
@@ -68,7 +68,7 @@ export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanC
                 after: () => this.listComponent.loading = false
             });
         } else {
-            this.bean.findAll(this.filterForm, {
+            this.entity.findAll(this.filterForm, {
                 before: () => this.listComponent.loading = true,
                 success: (res: any) => {
                     const tree = EntityUtils.convertListToTree(res);
@@ -92,22 +92,28 @@ export abstract class TreeBeanComponent<S extends TreeBeanService> extends BeanC
         deletedRows.forEach(row => {
             const i = this.listData.indexOf(row);
             this.listData.splice(i, 1);
-            const parent = this.listData.find(value => row.parent && value.id === row.parent.id);
-            if (parent) {
-                parent.leaf = !this.listData.some(value => value.parentIds === row.parentIds);
+            const parentIds = row.parentIds ? row.parentIds + '::' + row.id : row.id;
+            while (true) {
+                const index = this.listData.findIndex(value => value.parentIds === parentIds);
+                if (index < 0) {
+                    break;
+                } else {
+                    this.listData.splice(index, 1);
+                }
             }
-            let j: number;
-            do {
-                j = this.listData.findIndex(value => value.parentIds.endsWith(row.id));
-                this.listData.splice(j, 1);
-            } while (j > -1);
+            if (row.parent) {
+                const parent = this.listData.find(value => value.id = row.parent.id);
+                if (parent) {
+                    parent.leaf = this.listData.filter(value => value.parentIds = row.parentIds).length > 0;
+                }
+            }
         });
     }
 
     loadChildren(row: any): void {
         if (!row.loaded) {
             let index = this.listData.findIndex(value => value.id === row.id);
-            this.bean.findAllByParent(row, this.filterForm, {
+            this.entity.findAllByParent(row, this.filterForm, {
                 success: (res: any) => {
                     row.loaded = true;
                     row.expand = true;

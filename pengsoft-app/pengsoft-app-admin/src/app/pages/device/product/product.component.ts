@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { InputComponent } from 'src/app/components/commons/input/input.component';
 import { ProductService } from 'src/app/services/device/product.service';
 import { DictionaryItemService } from 'src/app/services/system/dictionary-item.service';
@@ -14,17 +14,17 @@ import { ProductConfigComponent } from '../product-config/product-config.compone
     templateUrl: './product.component.html',
     styleUrls: ['./product.component.scss']
 })
-export class ProductComponent extends BeanComponent<ProductService> {
+export class ProductComponent extends EntityComponent<ProductService> {
 
     @ViewChild('configsComponent', { static: true }) configsComponent: EditOneToManyComponent;
 
     constructor(
         private dictionaryItem: DictionaryItemService,
-        protected bean: ProductService,
+        protected entity: ProductService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {

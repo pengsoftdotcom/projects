@@ -51,6 +51,7 @@ import { DateComponent } from './commons/input/date/date.component';
 import { SwitchOrganizationComponent } from './modal/switch-organization/switch-organization.component';
 import { JsonComponent } from './commons/input/json/json.component';
 import { NgJsonEditorModule } from 'ang-jsoneditor';
+import { SwitchCommunityComponent } from './modal/switch-community/switch-community.component';
 
 @NgModule({
     declarations: [
@@ -77,7 +78,8 @@ import { NgJsonEditorModule } from 'ang-jsoneditor';
         CascaderComponent,
         DateComponent,
         SwitchOrganizationComponent,
-        JsonComponent
+        JsonComponent,
+        SwitchCommunityComponent
     ],
     imports: [
         CommonModule,

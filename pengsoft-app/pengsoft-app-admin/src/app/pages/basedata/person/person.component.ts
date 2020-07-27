@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { Field } from 'src/app/components/commons/form-item/field';
 import { InputComponent } from 'src/app/components/commons/input/input.component';
 import { ResetPasswordComponent } from 'src/app/components/modal/reset-password/reset-password.component';
@@ -14,15 +14,15 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './person.component.html',
     styleUrls: ['./person.component.scss']
 })
-export class PersonComponent extends BeanComponent<PersonService> {
+export class PersonComponent extends EntityComponent<PersonService> {
 
     constructor(
         public dictionaryItem: DictionaryItemService,
-        protected bean: PersonService,
+        protected entity: PersonService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {

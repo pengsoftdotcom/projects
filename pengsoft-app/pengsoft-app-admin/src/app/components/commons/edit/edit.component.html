@@ -4,7 +4,8 @@
             <form nz-form [style.height]="formHeight + 'px'">
                 <div nz-row [nzGutter]="24">
                     <div nz-col [nzSpan]="span" *ngFor="let field of fields">
-                        <app-form-item [form]="form" [field]="field" [errors]="errors"></app-form-item>
+                        <app-form-item [form]="form" [field]="field" [errors]="errors" [labelSpan]="labelSpan" [inputSpan]="inputSpan">
+                        </app-form-item>
                     </div>
                 </div>
             </form>

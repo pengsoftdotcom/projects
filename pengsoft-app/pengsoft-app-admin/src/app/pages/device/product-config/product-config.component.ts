@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { Field } from 'src/app/components/commons/form-item/field';
 import { ProductConfigService } from 'src/app/services/device/product-config.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
@@ -10,16 +10,16 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './product-config.component.html',
     styleUrls: ['./product-config.component.scss']
 })
-export class ProductConfigComponent extends BeanComponent<ProductConfigService> implements OnInit {
+export class ProductConfigComponent extends EntityComponent<ProductConfigService> implements OnInit {
 
     @Input() product: any;
 
     constructor(
-        protected bean: ProductConfigService,
+        protected entity: ProductConfigService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {
@@ -60,7 +60,7 @@ export class ProductConfigComponent extends BeanComponent<ProductConfigService> 
     }
 
     list(): void {
-        this.bean.findAll(this.filterForm, {
+        this.entity.findAll(this.filterForm, {
             before: () => this.listComponent.loading = true,
             success: (res: any) => {
                 this.listComponent.allChecked = false;

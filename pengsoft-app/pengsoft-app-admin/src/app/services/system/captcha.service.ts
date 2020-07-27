@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../commons/http.service';
-import { BeanService } from '../commons/bean.service';
+import { EntityService } from '../commons/entity.service';
 
 @Injectable({
     providedIn: 'root'
 })
-export class CaptchaService extends BeanService {
+export class CaptchaService extends EntityService {
 
     constructor(protected http: HttpService) { super(http); }
 

@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { EditOneToManyComponent } from 'src/app/components/commons/edit-one-to-many/edit-one-to-many.component';
 import { DictionaryTypeService } from 'src/app/services/system/dictionary-type.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
@@ -11,16 +11,16 @@ import { DictionaryItemComponent } from '../dictionary-item/dictionary-item.comp
     templateUrl: './dictionary-type.component.html',
     styleUrls: ['./dictionary-type.component.scss']
 })
-export class DictionaryTypeComponent extends BeanComponent<DictionaryTypeService>  {
+export class DictionaryTypeComponent extends EntityComponent<DictionaryTypeService>  {
 
     @ViewChild('itemsComponent', { static: true }) itemsComponent: EditOneToManyComponent;
 
     constructor(
-        protected bean: DictionaryTypeService,
+        protected entity: DictionaryTypeService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {

@@ -52,8 +52,8 @@ public class EntityApi<F extends EntityFacade<?, T, ID>, T extends Entity<ID>, I
     private SortService sortService;
 
     @PostMapping("save")
-    public T save(@RequestBody final T entity) {
-        return facade.save(entity);
+    public void save(@RequestBody final T entity) {
+        facade.save(entity);
     }
 
     @DeleteMapping("delete")

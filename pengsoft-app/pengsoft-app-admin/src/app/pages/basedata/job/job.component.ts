@@ -3,7 +3,7 @@ import { NzFormatEmitEvent, NzMessageService, NzModalService, NzTreeNodeOptions 
 import { Button } from 'src/app/components/commons/button/button';
 import { EditManyToManyComponent } from 'src/app/components/commons/edit-many-to-many/edit-many-to-many.component';
 import { InputComponent } from 'src/app/components/commons/input/input.component';
-import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
+import { TreeEntityComponent } from 'src/app/components/commons/tree-entity.component';
 import { DepartmentService } from 'src/app/services/basedata/department.service';
 import { JobService } from 'src/app/services/basedata/job.service';
 import { PostService } from 'src/app/services/basedata/post.service';
@@ -19,11 +19,13 @@ import { Location } from '@angular/common';
     templateUrl: './job.component.html',
     styleUrls: ['./job.component.scss']
 })
-export class JobComponent extends TreeBeanComponent<JobService> implements OnInit {
+export class JobComponent extends TreeEntityComponent<JobService> implements OnInit {
+
+    showSwitcher = true;
 
     organization: any;
 
-    department: any;
+    @Input() department: any;
 
     buttons: Array<Button> = [
         {
@@ -32,7 +34,7 @@ export class JobComponent extends TreeBeanComponent<JobService> implements OnIni
             action: () => {
                 const user = this.editForm;
                 const roles = this.jobRolesComponent.items.filter(item => item.direction === 'right').map(item => item.value);
-                this.bean.grantRoles(user, roles, {
+                this.entity.grantRoles(user, roles, {
                     before: () => this.jobRolesComponent.loading = true,
                     success: () => this.message.info('保存成功'),
                     after: () => this.jobRolesComponent.loading = false
@@ -43,21 +45,17 @@ export class JobComponent extends TreeBeanComponent<JobService> implements OnIni
 
     @ViewChild('jobRolesComponent', { static: true }) jobRolesComponent: EditManyToManyComponent;
 
-    @Input() allowLoadNavData = true;
-
-    navData: Array<NzTreeNodeOptions>;
-
     constructor(
         private location: Location,
         private security: SecurityService,
         private role: RoleService,
         private post: PostService,
         private departmentService: DepartmentService,
-        protected bean: JobService,
+        protected entity: JobService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
         this.organization = this.security.userDetails.organization;
     }
 
@@ -68,7 +66,14 @@ export class JobComponent extends TreeBeanComponent<JobService> implements OnIni
     get parentParams(): any {
         if (this.department) {
             return { 'department.organization.id': this.department.organization.id };
+        } else {
+            return null;
         }
+    }
+
+    ngOnInit(): void {
+        this.showSwitcher = !this.organization && !this.department;
+        super.ngOnInit();
     }
 
     initFields(): void {
@@ -97,27 +102,22 @@ export class JobComponent extends TreeBeanComponent<JobService> implements OnIni
 
     initListToolbarButtons(): void {
         super.initListToolbarButtons();
-        if (!this.security.userDetails.organization) {
-            this.listToolbarButtons.splice(1, 0, {
-                name: '切换机构',
-                type: 'link',
-                authority: 'basedata::organization::find_all',
-                action: () => this.switchOrganization()
-            });
+        if (this.showSwitcher) {
+            this.listToolbarButtons.splice(1, 0,
+                { name: '切换机构', type: 'link', authority: 'basedata::organization::find_all', action: () => this.switchOrganization() }
+            );
         }
         this.listToolbarButtons.find(button => button.name === '新增').disabled = () => !this.department;
     }
 
     initListActionButtons(): void {
         super.initListActionButtons();
-        this.listActionButtons.splice(0, 0, {
-            name: '分配角色',
-            type: 'link',
-            divider: true,
-            width: 75,
-            authority: this.getAuthority('findAllJobRolesByJob'),
-            action: (row: any) => this.editGrantedRoles(row)
-        });
+        this.listActionButtons.splice(0, 0,
+            {
+                name: '分配角色', type: 'link', divider: true, width: 75, authority: this.getAuthority('findAllJobRolesByJob'),
+                action: (row: any) => this.editGrantedRoles(row)
+            }
+        );
     }
 
     afterInit(): void {
@@ -156,11 +156,11 @@ export class JobComponent extends TreeBeanComponent<JobService> implements OnIni
             before: () => this.jobRolesComponent.loading = true,
             success: (roles: any) => {
                 this.jobRolesComponent.items = roles.map(role => Object.assign({ title: role.name, key: role.id, value: role }));
-                this.bean.findAllUserRolesByUser(row, {
+                this.entity.findAllUserRolesByUser(row, {
                     success: (userRoles: any) => {
                         this.jobRolesComponent.targetKeys = userRoles.map(userRole => userRole.role.id);
-                        this.jobRolesComponent.treeData = EntityUtils.convertListToTree(roles, bean => {
-                            const node = EntityUtils.convertTreeBeanToTreeNode(bean);
+                        this.jobRolesComponent.treeData = EntityUtils.convertListToTree(roles, entity => {
+                            const node = EntityUtils.convertTreeEntityToTreeNode(entity);
                             node.expanded = true;
                             node.disabled = userRoles.some(userRole => userRole.role.id === node.key);
                             node.checked = node.disabled;
@@ -213,15 +213,13 @@ export class JobComponent extends TreeBeanComponent<JobService> implements OnIni
             this.departmentService.findAll({ 'organization.id': this.organization.id }, {
                 success: (res: any) => {
                     this.navData = EntityUtils.convertListToTree(res);
-                    if (this.organization) {
-                        this.navData = [{
-                            key: this.organization.id,
-                            title: this.organization.name,
-                            value: this.organization,
-                            isLeaf: !this.navData || this.navData.length === 0,
-                            children: this.navData
-                        }];
-                    }
+                    this.navData = [{
+                        key: this.organization.id,
+                        title: this.organization.name,
+                        value: this.organization,
+                        isLeaf: !this.navData || this.navData.length === 0,
+                        children: this.navData
+                    }];
                 }
             });
         }
@@ -230,22 +228,11 @@ export class JobComponent extends TreeBeanComponent<JobService> implements OnIni
     nav(event: NzFormatEmitEvent): void {
         if (this.organization && this.organization.id === event.node.key) {
             this.filterForm['department.organization.id'] = this.organization.id;
-            delete this.filterForm['department.id'];
             this.department = null;
+            delete this.filterForm['department.id'];
         } else {
-            const queue = [];
-            this.navData.forEach(node => queue.push(node));
-            while (queue.length > 0) {
-                const parent = queue.pop();
-                if (parent.key === event.node.key) {
-                    this.department = parent.value;
-                    break;
-                }
-                if (parent.children) {
-                    parent.children.forEach(child => queue.push(child));
-                }
-            }
-            this.filterForm['department.id'] = this.department.id;
+            this.department = event.node.origin.value;
+            this.initForm();
             delete this.filterForm['department.organization.id'];
         }
         this.list();

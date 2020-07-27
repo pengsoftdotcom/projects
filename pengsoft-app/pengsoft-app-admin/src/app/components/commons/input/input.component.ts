@@ -10,8 +10,6 @@ export class InputComponent extends BaseComponent implements OnInit {
 
     @Input() edit: Edit;
 
-    @Input() filterable = false;
-
     disabled = false;
 
     placeholder = '';
@@ -20,18 +18,13 @@ export class InputComponent extends BaseComponent implements OnInit {
     ngOnInit(): void {
         this.initDisabled();
         this.initPlaceholder();
-        if (this.edit.input.load) {
-            this.edit.input.load(this);
-        }
     }
 
     initDisabled(): void {
-        if (!this.filterable) {
-            if (typeof this.edit.disabled === 'function') {
-                this.disabled = this.edit.disabled(this.form, this.edit);
-            } else {
-                this.disabled = this.edit.disabled === true;
-            }
+        if (typeof this.edit.disabled === 'function') {
+            this.disabled = this.edit.disabled(this.form, this.edit);
+        } else {
+            this.disabled = this.edit.disabled === true;
         }
     }
 
@@ -41,8 +34,6 @@ export class InputComponent extends BaseComponent implements OnInit {
         }
     }
 
-    modelChange(event: any): void {
-
-    }
+    modelChange(event: any): void { }
 
 }

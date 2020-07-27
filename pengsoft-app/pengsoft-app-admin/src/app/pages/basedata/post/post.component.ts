@@ -1,7 +1,7 @@
 import { Location } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
+import { TreeEntityComponent } from 'src/app/components/commons/tree-entity.component';
 import { SwitchOrganizationComponent } from 'src/app/components/modal/switch-organization/switch-organization.component';
 import { PostService } from 'src/app/services/basedata/post.service';
 import { SecurityService } from 'src/app/services/commons/security.service';
@@ -12,18 +12,20 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './post.component.html',
     styleUrls: ['./post.component.scss']
 })
-export class PostComponent extends TreeBeanComponent<PostService> implements OnInit {
+export class PostComponent extends TreeEntityComponent<PostService> implements OnInit {
 
-    organization: any;
+    showSwitcher = true;
+
+    @Input() organization: any;
 
     constructor(
         private location: Location,
         private security: SecurityService,
-        protected bean: PostService,
+        protected entity: PostService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
         this.organization = this.security.userDetails.organization;
     }
 
@@ -34,14 +36,21 @@ export class PostComponent extends TreeBeanComponent<PostService> implements OnI
     get parentParams(): any {
         if (this.organization) {
             return { 'organization.id': this.organization.id };
+        } else {
+            return null;
         }
+    }
+
+    ngOnInit(): void {
+        this.showSwitcher = !this.organization;
+        super.ngOnInit();
     }
 
     initForm(): void {
         if (this.organization) {
             this.filterForm = { 'organization.id': this.organization.id };
+            this.editForm = { organization: this.organization };
         }
-        this.editForm = { organization: this.organization };
     }
 
     initFields(): void {
@@ -54,13 +63,10 @@ export class PostComponent extends TreeBeanComponent<PostService> implements OnI
 
     initListToolbarButtons(): void {
         super.initListToolbarButtons();
-        if (!this.security.userDetails.organization) {
-            this.listToolbarButtons.splice(1, 0, {
-                name: '切换机构',
-                type: 'link',
-                authority: 'basedata::organization::find_all',
-                action: () => this.switchOrganization()
-            });
+        if (this.showSwitcher) {
+            this.listToolbarButtons.splice(1, 0,
+                { name: '切换机构', type: 'link', authority: 'basedata::organization::find_all', action: () => this.switchOrganization() }
+            );
         }
     }
 

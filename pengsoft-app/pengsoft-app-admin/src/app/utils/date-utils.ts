@@ -14,12 +14,20 @@ export class DateUtils {
         return format(dateTime, 'yyyy-MM-dd HH:mm:ss');
     }
 
-    static parse(dateTime: string): Date {
-        return parse(dateTime, 'yyyy-MM-dd', new Date());
+    static parseDate(date: string): Date {
+        return parse(date, 'yyyy-MM-dd', new Date());
+    }
+
+    static parseTime(time: string): Date {
+        return parse(time, 'HH:mm:ss', new Date());
+    }
+
+    static parseDatetime(dateTime: string): Date {
+        return parse(dateTime, 'yyyy-MM-dd HH:mm:ss', new Date());
     }
 
     static isAfter(dateTime: string): boolean {
-        return isAfter(this.parse(dateTime), new Date());
+        return isAfter(this.parseDatetime(dateTime), new Date());
     }
 
 }

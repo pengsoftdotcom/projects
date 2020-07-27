@@ -1,8 +1,8 @@
-import { BeanService } from './bean.service';
+import { EntityService } from './entity.service';
 import { HttpService } from './http.service';
 import { HttpOptions } from './http-options';
 
-export abstract class TreeBeanService extends BeanService {
+export abstract class TreeEntityService extends EntityService {
 
     constructor(protected http: HttpService) { super(http); }
 

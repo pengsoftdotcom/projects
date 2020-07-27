@@ -14,7 +14,7 @@
                 <nz-tab nzTitle="管理员信息">
                     <form nz-form [style.height]="(formHeight - 45) + 'px'">
                         <div nz-row [nzGutter]="24">
-                            <div nz-col [nzSpan]="span" *ngFor="let field of personFields">
+                            <div nz-col [nzSpan]="span" *ngFor="let field of adminFields">
                                 <app-form-item [form]="form.admin" [field]="field" [errors]="errors"></app-form-item>
                             </div>
                         </div>

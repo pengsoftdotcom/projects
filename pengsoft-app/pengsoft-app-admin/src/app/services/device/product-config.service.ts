@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
-import { BeanService } from '../commons/bean.service';
+import { EntityService } from '../commons/entity.service';
 import { HttpService } from '../commons/http.service';
 
 @Injectable({
     providedIn: 'root'
 })
-export class ProductConfigService extends BeanService {
+export class ProductConfigService extends EntityService {
 
     constructor(protected http: HttpService) { super(http); }
 

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
+import { TreeEntityComponent } from 'src/app/components/commons/tree-entity.component';
 import { BannerService } from 'src/app/services/portal/banner.service';
 import { NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { FieldUtils } from 'src/app/utils/field-utils';
@@ -9,14 +9,14 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './banner.component.html',
     styleUrls: ['./banner.component.scss']
 })
-export class BannerComponent extends TreeBeanComponent<BannerService> {
+export class BannerComponent extends TreeEntityComponent<BannerService> {
 
     constructor(
-        protected bean: BannerService,
+        protected entity: BannerService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     get lazy(): boolean {

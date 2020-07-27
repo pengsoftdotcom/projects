@@ -5,8 +5,6 @@ export interface List {
 
     code?: string;
 
-    parentCode?: string;
-
     sortable?: boolean;
 
     sortPriority?: number;

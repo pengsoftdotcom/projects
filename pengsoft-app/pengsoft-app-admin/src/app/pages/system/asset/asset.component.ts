@@ -1,6 +1,6 @@
 import { Component, TemplateRef, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { AssetService } from 'src/app/services/system/asset.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
 
@@ -9,15 +9,15 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './asset.component.html',
     styleUrls: ['./asset.component.scss']
 })
-export class AssetComponent extends BeanComponent<AssetService> {
+export class AssetComponent extends EntityComponent<AssetService> {
 
     @ViewChild('content', { static: true }) content: TemplateRef<any>;
 
     constructor(
-        protected bean: AssetService,
+        protected entity: AssetService,
         protected modal: NzModalService,
         protected message: NzMessageService) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {

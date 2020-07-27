@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { EditManyToManyComponent } from 'src/app/components/commons/edit-many-to-many/edit-many-to-many.component';
-import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
+import { TreeEntityComponent } from 'src/app/components/commons/tree-entity.component';
 import { AuthorityService } from 'src/app/services/security/authority.service';
 import { RoleService } from 'src/app/services/security/role.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
@@ -12,7 +12,7 @@ import { Button } from 'src/app/components/commons/button/button';
     templateUrl: './role.component.html',
     styleUrls: ['./role.component.scss']
 })
-export class RoleComponent extends TreeBeanComponent<RoleService> {
+export class RoleComponent extends TreeEntityComponent<RoleService> {
 
     buttons: Array<Button> = [
         {
@@ -23,7 +23,7 @@ export class RoleComponent extends TreeBeanComponent<RoleService> {
                 const authorities = this.editManyToManyComponent.items
                     .filter(item => item.direction === 'right')
                     .map(item => item.value);
-                this.bean.grantAuthorities(role, authorities, {
+                this.entity.grantAuthorities(role, authorities, {
                     before: () => this.editManyToManyComponent.loading = true,
                     success: () => {
                         this.message.info('保存成功');
@@ -39,11 +39,11 @@ export class RoleComponent extends TreeBeanComponent<RoleService> {
 
     constructor(
         private authority: AuthorityService,
-        protected bean: RoleService,
+        protected entity: RoleService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     get lazy(): boolean {
@@ -83,7 +83,7 @@ export class RoleComponent extends TreeBeanComponent<RoleService> {
             success: (authorities: any) => {
                 this.editManyToManyComponent.items =
                     authorities.map(authority => Object.assign({ title: authority.name, key: authority.id, value: authority }));
-                this.bean.findAllRoleAuthoritiesByRole(row, {
+                this.entity.findAllRoleAuthoritiesByRole(row, {
                     success: (roleAuthorities: any) =>
                         this.editManyToManyComponent.targetKeys = roleAuthorities.map(roleAuthority => roleAuthority.authority.id)
                 });

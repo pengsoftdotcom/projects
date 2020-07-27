@@ -8,6 +8,4 @@ export interface Label {
 
     colonVisible?: boolean;
 
-    span?: number;
-
 }

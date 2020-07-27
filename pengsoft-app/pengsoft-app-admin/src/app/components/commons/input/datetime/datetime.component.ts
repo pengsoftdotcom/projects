@@ -13,7 +13,7 @@ export class DatetimeComponent extends InputComponent implements OnChanges {
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.form) {
             if (this.form[this.edit.code]) {
-                this.rawValue = DateUtils.parse(this.form[this.edit.code]);
+                this.rawValue = DateUtils.parseDatetime(this.form[this.edit.code]);
             }
         }
     }

@@ -1,4 +1,4 @@
-<app-list #listComponent [title]="(title ? title : '购买批次') + '详情列表'" [fields]="fields" [listData]="listData" [page]="pageData"
+<app-list #listComponent [title]="(title ? title : '购买批次') + '详情列表'" [fields]="fields" [listData]="listData" [pageData]="pageData"
     [toolbarButtons]="listToolbarButtons" [actionButtons]="listActionButtons" (pageChange)="list()"></app-list>
 <app-edit #editComponent [title]="(title ? title : '购买批次') + '详情编辑'" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons"
     [errors]="errors"></app-edit>

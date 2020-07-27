@@ -1,7 +1,18 @@
 package com.pengsoft.system.starter.autoconfigure;
 
-import java.util.List;
-
+import com.aliyuncs.DefaultAcsClient;
+import com.aliyuncs.profile.DefaultProfile;
+import com.pengsoft.support.commons.json.ObjectMapper;
+import com.pengsoft.support.commons.util.DateUtils;
+import com.pengsoft.support.commons.util.StringUtils;
+import com.pengsoft.support.starter.autoconfigure.properties.MessageQueueAutoConfigureProperties;
+import com.pengsoft.system.biz.facade.MessageFacade;
+import com.pengsoft.system.biz.messaging.MessageBody;
+import com.pengsoft.system.biz.messaging.builder.MessageBuilder;
+import com.pengsoft.system.biz.messaging.sender.MessageSender;
+import com.pengsoft.system.biz.messaging.sender.SmsMessageSender;
+import com.pengsoft.system.starter.autoconfigure.properties.MessagingAutoConfigureProperties;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.acl.common.AclClientRPCHook;
 import org.apache.rocketmq.acl.common.SessionCredentials;
 import org.apache.rocketmq.client.AccessChannel;
@@ -20,20 +31,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.util.SerializationUtils;
 
-import com.aliyuncs.DefaultAcsClient;
-import com.aliyuncs.profile.DefaultProfile;
-import com.pengsoft.support.commons.json.ObjectMapper;
-import com.pengsoft.support.commons.util.DateUtils;
-import com.pengsoft.support.commons.util.StringUtils;
-import com.pengsoft.support.starter.autoconfigure.properties.MessageQueueAutoConfigureProperties;
-import com.pengsoft.system.biz.facade.MessageFacade;
-import com.pengsoft.system.biz.messaging.MessageBody;
-import com.pengsoft.system.biz.messaging.builder.MessageBuilder;
-import com.pengsoft.system.biz.messaging.sender.MessageSender;
-import com.pengsoft.system.biz.messaging.sender.SmsMessageSender;
-import com.pengsoft.system.starter.autoconfigure.properties.MessagingAutoConfigureProperties;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.List;
 
 /**
  * Messaging auto configure
@@ -50,8 +48,8 @@ public class MessagingAutoConfigure {
     @Bean
     @ConditionalOnProperty(name = "pengsoft.mq.enabled", havingValue = "true")
     public MQConsumer messagingConsumer(final MessageQueueAutoConfigureProperties mqProperties,
-            final MessagingAutoConfigureProperties messagingProperties, final ApplicationContext applicationContext,
-            final List<MessageSender> messageSenders, final MessageFacade messageFacade) throws MQClientException {
+                                        final MessagingAutoConfigureProperties messagingProperties, final ApplicationContext applicationContext,
+                                        final List<MessageSender> messageSenders, final MessageFacade messageFacade) throws MQClientException {
         final var rpcHook = getRpcHook(mqProperties);
         final DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(mqProperties.getGroupId(), rpcHook, new AllocateMessageQueueAveragely());
         if (rpcHook != null) {
@@ -72,8 +70,7 @@ public class MessagingAutoConfigure {
         }
     }
 
-    public MessageListenerConcurrently messagingMessageListener(final ApplicationContext applicationContext, final List<MessageSender> messageSenders,
-            final MessageFacade messageFacade) {
+    public MessageListenerConcurrently messagingMessageListener(final ApplicationContext applicationContext, final List<MessageSender> messageSenders, final MessageFacade messageFacade) {
         return (messages, context) -> {
             log.debug("messaging message received!");
             try {
@@ -81,6 +78,7 @@ public class MessagingAutoConfigure {
                     final var messageBody = (MessageBody) SerializationUtils.deserialize(messageExt.getBody());
                     final var messaging = messageBody.getMessaging();
                     final var messageBuilder = applicationContext.getBean(messaging.value(), MessageBuilder.class);
+                    messageBuilder.init();
                     final var message = messageBuilder.build(messageBody);
                     messageFacade.save(message);
 

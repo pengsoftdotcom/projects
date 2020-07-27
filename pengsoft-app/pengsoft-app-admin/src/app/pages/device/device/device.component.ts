@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { Edit } from 'src/app/components/commons/form-item/edit';
 import { DeviceService } from 'src/app/services/device/device.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
@@ -13,16 +13,16 @@ import { DeviceConfigService } from 'src/app/services/device/device-config.servi
     templateUrl: './device.component.html',
     styleUrls: ['./device.component.scss']
 })
-export class DeviceComponent extends BeanComponent<DeviceService> {
+export class DeviceComponent extends EntityComponent<DeviceService> {
 
     @ViewChild('configsComponent', { static: true }) configsComponent: EditOneToManyComponent;
 
     constructor(
-        protected bean: DeviceService,
+        protected entity: DeviceService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {
@@ -56,7 +56,7 @@ export class DeviceComponent extends BeanComponent<DeviceService> {
     }
 
     pushConfigs(row: any): void {
-        this.bean.pushConfig(row, {
+        this.entity.pushConfig(row, {
             before: () => this.loading = true,
             success: (res: any) => this.message.info('推送配置成功'),
             after: () => this.loading = false
@@ -64,7 +64,7 @@ export class DeviceComponent extends BeanComponent<DeviceService> {
     }
 
     pushTime(row: any): void {
-        this.bean.pushTime(row, {
+        this.entity.pushTime(row, {
             before: () => this.loading = true,
             success: (res: any) => this.message.info('推送系统时间成功'),
             after: () => this.loading = false

@@ -3,7 +3,7 @@ import { BaseService } from './base.service';
 import { HttpOptions } from './http-options';
 import { HttpService } from './http.service';
 
-export abstract class BeanService extends BaseService {
+export abstract class EntityService extends BaseService {
 
     constructor(protected http: HttpService) { super(); }
 
@@ -54,16 +54,37 @@ export abstract class BeanService extends BaseService {
 
     findPage(params: any, page: Page, options: HttpOptions): void {
         const url = this.getApiPath('find-page');
-        params = Object.assign({}, params);
-        Object.assign(params, { page: page.page - 1, size: page.size, sort: page.sort.map(s => s.code + ',' + s.direction) });
-        options.params = params;
+        const result = this.handleParams(params);
+        result.page = page.page - 1;
+        result.size = page.size;
+        result.sort = page.sort.map(s => s.code + ',' + s.direction);
+        options.params = result;
         this.http.request('GET', url, options);
     }
 
     findAll(params: any, options: HttpOptions): void {
         const url = this.getApiPath('find-all');
-        options.params = params;
+        options.params = this.handleParams(params);
         this.http.request('GET', url, options);
+    }
+
+    handleParams(params: any): any {
+        if (params) {
+            const result = {};
+            for (const key in params) {
+                if (Object.prototype.hasOwnProperty.call(params, key)) {
+                    const element = params[key];
+                    if (typeof element === 'object' && element) {
+                        result[key + '.id'] = element.id;
+                    } else {
+                        result[key] = element;
+                    }
+                }
+            }
+            return result;
+        } else {
+            return {};
+        }
     }
 
 }

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { NzMessageService } from 'ng-zorro-antd';
-import { BeanService } from '../commons/bean.service';
+import { EntityService } from '../commons/entity.service';
 import { HttpOptions } from '../commons/http-options';
 import { HttpService } from '../commons/http.service';
 
 @Injectable({
     providedIn: 'root'
 })
-export class UserService extends BeanService {
+export class UserService extends EntityService {
 
     constructor(protected http: HttpService) { super(http); }
 

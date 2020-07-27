@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpService } from '../commons/http.service';
-import { TreeBeanService } from '../commons/tree-bean.service';
+import { TreeEntityService } from '../commons/tree-entity.service';
 
 @Injectable({
     providedIn: 'root'
 })
-export class RegionService extends TreeBeanService {
+export class RegionService extends TreeEntityService {
 
     constructor(protected http: HttpService) { super(http); }
 

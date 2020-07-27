@@ -2,7 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { EditOneToManyComponent } from 'src/app/components/commons/edit-one-to-many/edit-one-to-many.component';
 import { InputComponent } from 'src/app/components/commons/input/input.component';
-import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
+import { TreeEntityComponent } from 'src/app/components/commons/tree-entity.component';
 import { OrganizationService } from 'src/app/services/basedata/organization.service';
 import { DictionaryItemService } from 'src/app/services/system/dictionary-item.service';
 import { EntityUtils } from 'src/app/utils/entity-utils';
@@ -16,7 +16,7 @@ import { PersonComponent } from '../person/person.component';
     templateUrl: './organization.component.html',
     styleUrls: ['./organization.component.scss']
 })
-export class OrganizationComponent extends TreeBeanComponent<OrganizationService> implements OnInit {
+export class OrganizationComponent extends TreeEntityComponent<OrganizationService> implements OnInit {
 
     @ViewChild('postsComponent', { static: true }) postsComponent: EditOneToManyComponent;
 
@@ -24,11 +24,11 @@ export class OrganizationComponent extends TreeBeanComponent<OrganizationService
 
     constructor(
         private dictionaryItem: DictionaryItemService,
-        protected bean: OrganizationService,
+        protected entity: OrganizationService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     get lazy(): boolean {
@@ -80,10 +80,10 @@ export class OrganizationComponent extends TreeBeanComponent<OrganizationService
     initListActionButtons(): void {
         super.initListActionButtons();
         this.listActionButtons.splice(0, 0, {
-            name: '部门', type: 'link', divider: true, width: 47,
+            name: '部门', type: 'link', divider: true, width: 47, authority: 'basedata::department::find_all',
             action: (row: any) => this.editDepartments(row)
         }, {
-            name: '职务', type: 'link', divider: true, width: 47,
+            name: '职务', type: 'link', divider: true, width: 47, authority: 'basedata::post::find_all',
             action: (row: any) => this.editPosts(row)
         });
     }
@@ -93,15 +93,15 @@ export class OrganizationComponent extends TreeBeanComponent<OrganizationService
         this.editForm.admin = {};
     }
 
-    editDepartments(row: any): void {
+    editDepartments(organization: any): void {
         this.departmentsComponent.component = DepartmentComponent;
-        this.departmentsComponent.params = { title: row.name, organization: row };
+        this.departmentsComponent.params = { title: organization.name, organization };
         this.departmentsComponent.show();
     }
 
-    editPosts(row: any): void {
+    editPosts(organization: any): void {
         this.postsComponent.component = PostComponent;
-        this.postsComponent.params = { title: row.name, organization: row };
+        this.postsComponent.params = { title: organization.name, organization };
         this.postsComponent.show();
     }
 

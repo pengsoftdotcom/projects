@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { EditOneToManyComponent } from 'src/app/components/commons/edit-one-to-many/edit-one-to-many.component';
 import { ProductService } from 'src/app/services/device/product.service';
 import { PurchaseBatchService } from 'src/app/services/device/purchase-batch.service';
@@ -13,17 +13,17 @@ import { PurchaseBatchItemComponent } from '../purchase-batch-item/purchase-batc
     templateUrl: './purchase-batch.component.html',
     styleUrls: ['./purchase-batch.component.scss']
 })
-export class PurchaseBatchComponent extends BeanComponent<PurchaseBatchService> {
+export class PurchaseBatchComponent extends EntityComponent<PurchaseBatchService> {
 
     @ViewChild('itemsComponent', { static: true }) itemsComponent: EditOneToManyComponent;
 
     constructor(
         private product: ProductService,
-        protected bean: PurchaseBatchService,
+        protected entity: PurchaseBatchService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {

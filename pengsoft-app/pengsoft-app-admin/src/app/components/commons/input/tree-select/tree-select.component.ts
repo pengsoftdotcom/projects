@@ -1,4 +1,4 @@
-import { Component, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, OnChanges, OnInit, SimpleChanges } from '@angular/core';
 import { NzTreeNodeOptions } from 'ng-zorro-antd';
 import { EntityUtils } from 'src/app/utils/entity-utils';
 import { InputComponent } from '../input.component';
@@ -8,7 +8,14 @@ import { InputComponent } from '../input.component';
     templateUrl: './tree-select.component.html',
     styleUrls: ['./tree-select.component.scss']
 })
-export class TreeSelectComponent extends InputComponent implements OnChanges {
+export class TreeSelectComponent extends InputComponent implements OnInit, OnChanges {
+
+    ngOnInit(): void {
+        super.ngOnInit();
+        if (this.edit.input.load) {
+            this.edit.input.load(this);
+        }
+    }
 
     ngOnChanges(changes: SimpleChanges): void {
         if (changes.form && this.edit) {

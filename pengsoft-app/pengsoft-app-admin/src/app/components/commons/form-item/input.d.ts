@@ -10,8 +10,6 @@ export interface Input {
 
     placeholder?: string,
 
-    span?: number;
-
     type?: InputType,
 
     prefixIcon?: string,
@@ -19,6 +17,8 @@ export interface Input {
     suffixIcon?: string,
 
     modelChange?: (component: InputComponent) => void;
+
+    changeOnSelect?: boolean,
 
     options?: Array<Option | NzTreeNodeOptions>;
 

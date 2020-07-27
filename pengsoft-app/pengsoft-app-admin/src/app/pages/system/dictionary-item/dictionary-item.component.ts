@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
+import { TreeEntityComponent } from 'src/app/components/commons/tree-entity.component';
 import { SecurityService } from 'src/app/services/commons/security.service';
 import { DictionaryItemService } from 'src/app/services/system/dictionary-item.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
@@ -10,7 +10,7 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './dictionary-item.component.html',
     styleUrls: ['./dictionary-item.component.scss']
 })
-export class DictionaryItemComponent extends TreeBeanComponent<DictionaryItemService> implements OnInit {
+export class DictionaryItemComponent extends TreeEntityComponent<DictionaryItemService> implements OnInit {
 
     @Input() type: any;
 
@@ -18,11 +18,11 @@ export class DictionaryItemComponent extends TreeBeanComponent<DictionaryItemSer
 
     constructor(
         private security: SecurityService,
-        protected bean: DictionaryItemService,
+        protected entity: DictionaryItemService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     get lazy(): boolean {

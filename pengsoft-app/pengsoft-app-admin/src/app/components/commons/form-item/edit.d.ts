@@ -1,4 +1,3 @@
-import { Field } from "./field";
 import { Input } from "./input";
 import { Label } from "./label";
 
@@ -6,8 +5,6 @@ import { Label } from "./label";
 export interface Edit {
 
     code?: string;
-
-    parentCode?: string;
 
     required?: boolean;
 

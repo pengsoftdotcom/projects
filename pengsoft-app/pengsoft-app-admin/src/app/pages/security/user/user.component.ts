@@ -1,6 +1,6 @@
 import { Component, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { EditManyToManyComponent } from 'src/app/components/commons/edit-many-to-many/edit-many-to-many.component';
 import { Field } from 'src/app/components/commons/form-item/field';
 import { ResetPasswordComponent } from 'src/app/components/modal/reset-password/reset-password.component';
@@ -15,7 +15,7 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './user.component.html',
     styleUrls: ['./user.component.scss']
 })
-export class UserComponent extends BeanComponent<UserService> {
+export class UserComponent extends EntityComponent<UserService> {
 
     buttons = [
         {
@@ -29,7 +29,7 @@ export class UserComponent extends BeanComponent<UserService> {
             action: () => {
                 const user = this.editForm;
                 const roles = this.userRolesComponent.items.filter(item => item.direction === 'right').map(item => item.value);
-                this.bean.grantRoles(user, roles, {
+                this.entity.grantRoles(user, roles, {
                     before: () => this.userRolesComponent.loading = true,
                     success: () => this.message.info('保存成功'),
                     after: () => this.userRolesComponent.loading = false
@@ -42,11 +42,11 @@ export class UserComponent extends BeanComponent<UserService> {
 
     constructor(
         private role: RoleService,
-        protected bean: UserService,
+        protected entity: UserService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {
@@ -81,14 +81,11 @@ export class UserComponent extends BeanComponent<UserService> {
                 edit: { input: { options: [{ label: '简体', value: 'zh_CN' }, { label: 'English', value: 'en_US' }] } },
                 filter: {}
             }),
-            FieldUtils.buildDatetime({ code: 'signedInAt', name: '登录时间', edit: { disabled: true } }),
+            FieldUtils.buildDatetime({ code: 'signedInAt', name: '登录时间', edit: { disabled: true, input: { placeholder: '尚未登录' } } }),
             FieldUtils.buildNumber({ code: 'signInFailureCount', name: '今日登录失败次数', list: { width: 150 } }),
             FieldUtils.buildDatetimeForExpiredAt(),
             FieldUtils.buildBooleanForEnabled()
-        ].map(field => {
-            field.edit.label.span = 6;
-            return field;
-        });
+        ];
     }
 
     initListActionButtons(): void {
@@ -140,11 +137,11 @@ export class UserComponent extends BeanComponent<UserService> {
             before: () => this.userRolesComponent.loading = true,
             success: (roles: any) => {
                 this.userRolesComponent.items = roles.map(role => Object.assign({ title: role.name, key: role.id, value: role }));
-                this.bean.findAllUserRolesByUser(row, {
+                this.entity.findAllUserRolesByUser(row, {
                     success: (userRoles: any) => {
                         this.userRolesComponent.targetKeys = userRoles.map(userRole => userRole.role.id);
-                        this.userRolesComponent.treeData = EntityUtils.convertListToTree(roles, bean => {
-                            const node = EntityUtils.convertTreeBeanToTreeNode(bean);
+                        this.userRolesComponent.treeData = EntityUtils.convertListToTree(roles, entity => {
+                            const node = EntityUtils.convertTreeEntityToTreeNode(entity);
                             node.expanded = true;
                             node.disabled = userRoles.some(userRole => userRole.role.id === node.key);
                             node.checked = node.disabled;
@@ -158,7 +155,7 @@ export class UserComponent extends BeanComponent<UserService> {
     }
 
     editPrimaryRole(): void {
-        this.bean.findAllUserRolesByUser(this.editForm, {
+        this.entity.findAllUserRolesByUser(this.editForm, {
             success: (res: any) => this.modal.create({
                 nzBodyStyle: { padding: '16px' },
                 nzTitle: '设置主要角色',

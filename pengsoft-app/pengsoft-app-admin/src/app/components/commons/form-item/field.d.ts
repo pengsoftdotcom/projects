@@ -3,7 +3,7 @@ import { List } from "./list";
 
 export interface Field {
 
-    code: string;
+    code?: string;
 
     parentCode?: string;
 

@@ -1,5 +1,4 @@
 <app-list #listComponent [title]="title + '列表'" [fields]="fields" [listData]="listData" [toolbarButtons]="listToolbarButtons"
-    [actionButtons]="listActionButtons" (expandChange)="loadChildren($event)" [sortable]="sortable" (sequenceChange)="sort()">
-</app-list>
+    [actionButtons]="listActionButtons" (expandChange)="loadChildren($event)" [sortable]="sortable" (sequenceChange)="sort()"></app-list>
 <app-edit #editComponent [title]="title + '编辑'" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons" [errors]="errors">
 </app-edit>

@@ -13,6 +13,11 @@ import { PostComponent } from './post/post.component';
 import { EditStaffComponent } from './staff/edit-staff.component';
 import { StaffComponent } from './staff/staff.component';
 import { EditOrganizationComponent } from './organization/edit-organization.component';
+import { CommunityComponent } from './community/community.component';
+import { BuildingComponent } from './building/building.component';
+import { FloorComponent } from './floor/floor.component';
+import { HouseComponent } from './house/house.component';
+import { EditHouseComponent } from './house/edit-house.component';
 
 
 
@@ -26,7 +31,12 @@ import { EditOrganizationComponent } from './organization/edit-organization.comp
     JobComponent,
     StaffComponent,
     EditStaffComponent,
-    EditOrganizationComponent
+    EditOrganizationComponent,
+    CommunityComponent,
+    BuildingComponent,
+    FloorComponent,
+    HouseComponent,
+    EditHouseComponent
   ],
   imports: [
     CommonModule,

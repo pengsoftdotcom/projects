@@ -9,7 +9,7 @@ import { PurchaseBatchComponent } from './purchase-batch/purchase-batch.componen
 const routes: Routes = [
     {
         path: 'device',
-        data: { name: '设备管理', icon: 'book' },
+        data: { name: '设备管理', icon: 'mobile' },
         children: [
             { path: 'product', component: ProductComponent, data: { code: 'device::product::find_page', name: '产品' } },
             { path: 'purchase-batch', component: PurchaseBatchComponent, data: { code: 'device::purchase_batch::find_page', name: '批次' } },

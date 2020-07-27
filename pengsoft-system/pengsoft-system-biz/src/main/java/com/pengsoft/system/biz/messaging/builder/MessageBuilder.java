@@ -10,6 +10,12 @@ import com.pengsoft.system.domain.entity.Message;
 public interface MessageBuilder {
 
     /**
+     * Init builder.
+     */
+    default void init() {
+    }
+
+    /**
      * Returns a {@link Message} from a {@link MessageBody}
      */
     Message build(MessageBody body);

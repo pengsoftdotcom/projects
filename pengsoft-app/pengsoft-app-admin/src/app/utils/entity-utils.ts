@@ -4,20 +4,20 @@ export class EntityUtils {
 
     private static excludes = ['createdAt', 'updatedAt'];
 
-    static toJSON(bean: any): string {
-        if (bean) {
+    static toJSON(entity: any): string {
+        if (entity) {
             this.excludes.forEach(name => {
-                delete bean[name];
+                delete entity[name];
             });
-            for (const name in bean) {
-                if (bean.hasOwnProperty(name)) {
-                    if (bean[name] === null || bean[name] === undefined || bean[name] === '') {
-                        delete bean[name];
+            for (const name in entity) {
+                if (entity.hasOwnProperty(name)) {
+                    if (entity[name] === null || entity[name] === undefined || entity[name] === '') {
+                        delete entity[name];
                     }
                 }
             }
         }
-        return encodeURIComponent(JSON.stringify(bean));
+        return encodeURIComponent(JSON.stringify(entity));
     }
 
     static fromJSON(json: string): any {
@@ -28,24 +28,24 @@ export class EntityUtils {
         }
     }
 
-    static convertTreeBeanToTreeNode(bean: any): NzTreeNodeOptions {
+    static convertTreeEntityToTreeNode(entity: any): NzTreeNodeOptions {
         return {
-            title: bean.name,
-            value: bean,
-            key: bean.id,
-            isLeaf: bean.leaf,
-            children: bean.children
+            title: entity.name,
+            value: entity,
+            key: entity.id,
+            isLeaf: entity.leaf,
+            children: entity.children
         };
     }
 
-    static convertTreeNodeToTreeBean(node: NzTreeNodeOptions): any {
+    static convertTreeNodeToTreeEntity(node: NzTreeNodeOptions): any {
         const value = node.value;
         value.children = node.children;
         return value;
     }
 
     static convertTreeToList(tree: Array<NzTreeNodeOptions>, convert?: (node: NzTreeNodeOptions) => any): Array<any> {
-        convert = convert ? convert : this.convertTreeNodeToTreeBean;
+        convert = convert ? convert : this.convertTreeNodeToTreeEntity;
         const list = [];
         const queue = [];
         if (tree) {
@@ -64,11 +64,11 @@ export class EntityUtils {
         return list;
     }
 
-    static convertListToTree(list: Array<any>, convert?: (bean: any) => NzTreeNodeOptions): Array<NzTreeNodeOptions> {
-        convert = convert ? convert : this.convertTreeBeanToTreeNode;
+    static convertListToTree(list: Array<any>, convert?: (entity: any) => NzTreeNodeOptions): Array<NzTreeNodeOptions> {
+        convert = convert ? convert : this.convertTreeEntityToTreeNode;
         const roots = [];
         const queue = [];
-        let nodes = list.map(bean => convert(bean));
+        let nodes = list.map(entity => convert(entity));
         nodes.filter(source => !source.value.parent || nodes.every(target => source.value.parent.id !== target.value.id))
             .forEach(node => {
                 queue.push(node);
@@ -142,45 +142,45 @@ export class EntityUtils {
         return matched;
     }
 
-    static getBeanId(bean: any): string {
-        if (typeof bean === 'object' && bean.hasOwnProperty('id')) {
-            return bean.id;
+    static getEntityId(entity: any): string {
+        if (typeof entity === 'object' && entity.hasOwnProperty('id')) {
+            return entity.id;
         }
-        if (typeof bean === 'string') {
-            return bean;
+        if (typeof entity === 'string') {
+            return entity;
         }
         return null;
     }
 
-    static getBeanIds(beans: any): Array<string> {
-        if (typeof beans === 'object' && beans.hasOwnProperty('id')) {
-            return [beans.id];
+    static getEntityIds(entities: any): Array<string> {
+        if (typeof entities === 'object' && entities.hasOwnProperty('id')) {
+            return [entities.id];
         }
-        if (typeof beans === 'string') {
-            return [beans];
+        if (typeof entities === 'string') {
+            return [entities];
         }
-        if (beans instanceof Array && beans.length > 0) {
-            if (typeof beans[0] === 'object' && beans.hasOwnProperty('id')) {
-                return beans.map(domain => domain.id);
+        if (entities instanceof Array && entities.length > 0) {
+            if (typeof entities[0] === 'object' && entities.hasOwnProperty('id')) {
+                return entities.map(domain => domain.id);
             }
-            if (typeof beans[0] === 'string') {
-                return beans;
+            if (typeof entities[0] === 'string') {
+                return entities;
             }
         }
         return [];
     }
 
-    static equals(bean1: any, bean2: any): boolean {
-        if (!bean1 && !bean2) {
+    static equals(entity1: any, entity2: any): boolean {
+        if (!entity1 && !entity2) {
             return true;
         }
 
-        if (bean1 === bean2) {
+        if (entity1 === entity2) {
             return true;
         }
 
-        if (bean1 && bean2 && bean1.id && bean2.id) {
-            return bean1.id === bean2.id;
+        if (entity1 && entity2 && entity1.id && entity2.id) {
+            return entity1.id === entity2.id;
         }
 
         return false;

@@ -6,6 +6,10 @@ import { Label } from '../components/commons/form-item/label';
 import { List } from '../components/commons/form-item/list';
 import { InputType } from '../enums/input-type.enum';
 import { DateUtils } from './date-utils';
+import { NzCascaderOption } from 'ng-zorro-antd';
+import { EntityUtils } from './entity-utils';
+import { RegionService } from '../services/system/region.service';
+import { fileURLToPath } from 'url';
 
 export class FieldUtils {
 
@@ -101,6 +105,40 @@ export class FieldUtils {
         return field;
     }
 
+    static buildCascaderForRegion(region: RegionService, field?: Field): Field {
+        field = this.getList(field, {
+            render: (f: Field, row: any) => {
+                const parents = [];
+                let parent = row.region;
+                while (parent) {
+                    parents.push(parent);
+                    parent = parent.parent;
+                }
+                return parents.reverse().map(p => p.name).join('');
+            }
+        });
+        field = this.getEdit(field, {
+            input: {
+                changeOnSelect: true,
+                lazy: true,
+                load: (node: NzCascaderOption, index: number) => new Promise(resolve => {
+                    let parent = null;
+                    if (index > -1) {
+                        parent = node.value;
+                    }
+                    region.findAllByParent(parent, null, {
+                        success: (res: any) => {
+                            node.children = EntityUtils.convertListToTree(res);
+                            resolve();
+                        }
+                    });
+                })
+            }
+        });
+        field = Object.assign({ code: 'region', name: '行政区划' }, field);
+        return this.buildCascader(field);
+    }
+
     static buildDatetimeForExpiredAt(): Field {
         return this.buildDatetime({
             code: 'expiredAt', name: '过期时间',
@@ -179,14 +217,18 @@ export class FieldUtils {
             visible: true,
             align: 'left'
         }, list);
+        if (!field) {
+            field = {};
+        }
         field.list = Object.assign(list, field.list);
-        field.list.code = field.code;
+        if (!field.list.code) {
+            field.list.code = field.code;
+        }
         return field;
     }
 
     static getEdit(field: Field, edit?: Edit): Field {
         field.edit = Object.assign({ visible: true }, field.edit);
-        field.edit.code = field.code;
         if (edit) {
             for (const key in edit) {
                 if (edit.hasOwnProperty(key) && key !== 'label' && key !== 'input' && field.edit[key] === undefined) {
@@ -207,8 +249,10 @@ export class FieldUtils {
             field = this.getLabel(field);
             field = this.getInput(field);
         }
+        if (!field.edit.code) {
+            field.edit.code = field.code;
+        }
         if (field.filter) {
-            field.filter.code = field.edit.code;
             const label = Object.assign({}, field.edit.label);
             const input = Object.assign({}, field.edit.input);
             field.filter.label = Object.assign(label, field.filter.label);

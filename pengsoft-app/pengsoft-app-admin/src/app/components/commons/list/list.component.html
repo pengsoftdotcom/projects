@@ -8,9 +8,10 @@
             (nzClick)="nav.emit($event)"></nz-tree>
         <div nz-col [nzSpan]="navData ? 20: 24">
             <nz-table #table nzBordered nzSize="middle" [nzLoading]="loading" [nzWidthConfig]="tableWidthConfig" [nzScroll]="{ y: tableBodyHeight }"
-                [nzData]="listData" [nzTitle]="buttonsTemplate" [nzFrontPagination]="false" [nzShowPagination]="pageable" [(nzPageIndex)]="page.page"
-                [(nzPageSize)]="page.size" [nzTotal]="page.total" [nzShowTotal]="rangeTemplate" nzShowQuickJumper
-                (nzPageIndexChange)="pageChange.emit()" nzShowSizeChanger [nzPageSizeOptions]="[20, 50, 100]" (nzPageSizeChange)="pageChange.emit()">
+                [nzData]="listData" [nzTitle]="buttonsTemplate" [nzFrontPagination]="false" [nzShowPagination]="pageable"
+                [(nzPageIndex)]="pageData.page" [(nzPageSize)]="pageData.size" [nzTotal]="pageData.total" [nzShowTotal]="rangeTemplate"
+                nzShowQuickJumper (nzPageIndexChange)="pageChange.emit()" nzShowSizeChanger [nzPageSizeOptions]="[20, 50, 100]"
+                (nzPageSizeChange)="pageChange.emit()">
                 <thead>
                     <tr>
                         <th [attr.rowspan]="getRowspan()" colspan="1" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"

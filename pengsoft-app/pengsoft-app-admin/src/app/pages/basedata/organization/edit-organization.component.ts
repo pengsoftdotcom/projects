@@ -10,13 +10,13 @@ export class EditOrganizationComponent extends EditComponent implements OnInit {
 
     organizationFields = [];
 
-    personFields = [];
+    adminFields = [];
 
     ngOnInit(): void {
         super.ngOnInit();
         const length = this.fields.length;
         this.organizationFields = this.fields.slice(0, length - 1);
-        this.personFields = this.fields[length - 1].children;
+        this.adminFields = this.fields[length - 1].children;
     }
 
 }

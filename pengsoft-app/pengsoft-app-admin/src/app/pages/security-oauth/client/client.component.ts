@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { Field } from 'src/app/components/commons/form-item/field';
 import { ClientService } from 'src/app/services/security-oauth/client.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
@@ -10,13 +10,13 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './client.component.html',
     styleUrls: ['./client.component.scss']
 })
-export class ClientComponent extends BeanComponent<ClientService> {
+export class ClientComponent extends EntityComponent<ClientService> {
 
     constructor(
-        protected bean: ClientService,
+        protected entity: ClientService,
         protected modal: NzModalService,
         protected message: NzMessageService) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {
@@ -32,7 +32,7 @@ export class ClientComponent extends BeanComponent<ClientService> {
     edit(row?: any): void {
         this.errors = {};
         const id = row ? row.id : null;
-        this.bean.findOne(id, {
+        this.entity.findOne(id, {
             success: (res: any) => {
                 this.editForm = res;
                 this.editForm.secret = null;

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { InputComponent } from 'src/app/components/commons/input/input.component';
 import { ProductService } from 'src/app/services/device/product.service';
 import { PurchaseBatchItemService } from 'src/app/services/device/purchase-batch-item.service';
@@ -11,17 +11,17 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './purchase-batch-item.component.html',
     styleUrls: ['./purchase-batch-item.component.scss']
 })
-export class PurchaseBatchItemComponent extends BeanComponent<PurchaseBatchItemService> implements OnInit {
+export class PurchaseBatchItemComponent extends EntityComponent<PurchaseBatchItemService> implements OnInit {
 
     @Input() purchaseBatch: any;
 
     constructor(
         private product: ProductService,
-        protected bean: PurchaseBatchItemService,
+        protected entity: PurchaseBatchItemService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {

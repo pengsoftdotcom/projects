@@ -2,7 +2,7 @@ import { Location } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NzMessageService, NzModalService, NzTreeNodeOptions, NzFormatEmitEvent } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { Field } from 'src/app/components/commons/form-item/field';
 import { InputComponent } from 'src/app/components/commons/input/input.component';
 import { ResetPasswordComponent } from 'src/app/components/modal/reset-password/reset-password.component';
@@ -22,7 +22,7 @@ import { DepartmentService } from 'src/app/services/basedata/department.service'
     templateUrl: './staff.component.html',
     styleUrls: ['./staff.component.scss']
 })
-export class StaffComponent extends BeanComponent<StaffService> implements OnInit {
+export class StaffComponent extends EntityComponent<StaffService> implements OnInit {
 
     organization: any;
 
@@ -36,11 +36,11 @@ export class StaffComponent extends BeanComponent<StaffService> implements OnIni
         private job: JobService,
         private departmentService: DepartmentService,
         private security: SecurityService,
-        protected bean: StaffService,
+        protected entity: StaffService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
         this.organization = this.security.userDetails.organization;
     }
 
@@ -88,7 +88,6 @@ export class StaffComponent extends BeanComponent<StaffService> implements OnIni
             });
         }
     }
-
 
     initListActionButtons(): void {
         super.initListActionButtons();
@@ -164,15 +163,13 @@ export class StaffComponent extends BeanComponent<StaffService> implements OnIni
         this.departmentService.findAll({ 'organization.id': this.organization.id }, {
             success: (res: any) => {
                 this.navData = EntityUtils.convertListToTree(res);
-                if (this.organization) {
-                    this.navData = [{
-                        key: this.organization.id,
-                        title: this.organization.name,
-                        value: this.organization,
-                        isLeaf: !this.navData || this.navData.length === 0,
-                        children: this.navData
-                    }];
-                }
+                this.navData = [{
+                    key: this.organization.id,
+                    title: this.organization.name,
+                    value: this.organization,
+                    isLeaf: !this.navData || this.navData.length === 0,
+                    children: this.navData
+                }];
             }
         });
     }
@@ -183,18 +180,7 @@ export class StaffComponent extends BeanComponent<StaffService> implements OnIni
             delete this.filterForm['department.id'];
             this.department = null;
         } else {
-            const queue = [];
-            this.navData.forEach(node => queue.push(node));
-            while (queue.length > 0) {
-                const parent = queue.pop();
-                if (parent.key === event.node.key) {
-                    this.department = parent.value;
-                    break;
-                }
-                if (parent.children) {
-                    parent.children.forEach(child => queue.push(child));
-                }
-            }
+            this.department = event.node.origin.value;
             this.filterForm['department.id'] = this.department.id;
             delete this.filterForm['organization.id'];
         }

@@ -30,16 +30,16 @@ public class ConsoleClientFactory {
     private List<ResponseHandler> handlers;
 
     public ConsoleClientFactory(final DeviceRepository deviceRepository, final ObjectMapper objectMapper) {
-        deviceRepository.findAll().forEach(device -> {
-            final var client = new ConsoleClient();
-            client.setDevice(device);
-            client.setHost(device.getHost());
-            client.setPort(device.getPort());
-            client.setHandlers(handlers);
-            client.setObjectMapper(objectMapper);
-            client.start();
-            clients.put(device.getCode(), client);
-        });
+//        deviceRepository.findAll().forEach(device -> {
+//            final var client = new ConsoleClient();
+//            client.setDevice(device);
+//            client.setHost(device.getHost());
+//            client.setPort(device.getPort());
+//            client.setHandlers(handlers);
+//            client.setObjectMapper(objectMapper);
+//            client.start();
+//            clients.put(device.getCode(), client);
+//        });
     }
 
     public void pushConfig(final List<DeviceConfig> deviceConfigs) {

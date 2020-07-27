@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { Field } from 'src/app/components/commons/form-item/field';
 import { MessageTemplateService } from 'src/app/services/message-template.service';
 import { UserService } from 'src/app/services/security/user.service';
@@ -12,15 +12,15 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './message-template.component.html',
     styleUrls: ['./message-template.component.scss']
 })
-export class MessageTemplateComponent extends BeanComponent<MessageTemplateService> {
+export class MessageTemplateComponent extends EntityComponent<MessageTemplateService> {
 
     constructor(
         private user: UserService,
-        protected bean: MessageTemplateService,
+        protected entity: MessageTemplateService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {
@@ -61,10 +61,7 @@ export class MessageTemplateComponent extends BeanComponent<MessageTemplateServi
                 }
             }),
             FieldUtils.buildText({ code: 'smsSignature', name: '短信模版签名', list: { width: 140 } })
-        ].map(field => {
-            field.edit.label.span = 6;
-            return field;
-        });
+        ];
     }
 
 }

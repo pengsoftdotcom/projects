@@ -23,7 +23,7 @@ export class ListComponent extends BaseComponent implements OnInit {
 
     @Input() listData = [];
 
-    @Input() page: Page;
+    @Input() pageData: Page;
 
     @Input() toolbarButtons: Array<Button> = [];
 
@@ -94,9 +94,9 @@ export class ListComponent extends BaseComponent implements OnInit {
     }
 
     private initPageable() {
-        if (this.page === undefined) {
+        if (this.pageData === undefined) {
             this.pageable = false;
-            this.page = { page: 1, size: 20 };
+            this.pageData = { page: 1, size: 20 };
         }
     }
 
@@ -206,8 +206,8 @@ export class ListComponent extends BaseComponent implements OnInit {
     render(field: Field, row: any): any {
         const list = field.list;
         let value: any;
-        if (list.parentCode) {
-            value = row[list.parentCode];
+        if (field.parentCode) {
+            value = row[field.parentCode];
         } else {
             value = row;
         }
@@ -236,14 +236,14 @@ export class ListComponent extends BaseComponent implements OnInit {
                 sort.direction = null;
                 break;
         }
-        const index = this.page.sort.findIndex(value => value.code === field.code);
+        const index = this.pageData.sort.findIndex(value => value.code === field.code);
         if (index > -1) {
-            this.page.sort.splice(index, 1);
+            this.pageData.sort.splice(index, 1);
         }
         if (sort.direction) {
-            this.page.sort.push(sort);
+            this.pageData.sort.push(sort);
         }
-        this.page.sort.sort((a, b) => {
+        this.pageData.sort.sort((a, b) => {
             if (a.priority < b.priority) {
                 return -1;
             } else if (a.priority === b.priority) {

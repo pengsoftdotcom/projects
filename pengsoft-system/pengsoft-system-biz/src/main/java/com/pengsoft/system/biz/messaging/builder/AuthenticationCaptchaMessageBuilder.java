@@ -25,27 +25,28 @@ import java.util.Map;
 @Named
 public class AuthenticationCaptchaMessageBuilder implements MessageBuilder {
 
-    public static final String TEMPLATE_CODE = "authentication_captcha";
+    @Inject
+    private UserFacade userFacade;
+
+    @Inject
+    private MessageTemplateFacade messageTemplateFacade;
+
+    @Inject
+    private MessageFacade messageFacade;
+
+    private static final String TEMPLATE_CODE = "authentication_captcha";
 
     private MessageTemplate template;
 
     private User sender;
 
-    @Inject
-    private MessageFacade facade;
-
-    public AuthenticationCaptchaMessageBuilder(final UserFacade userFacade, final MessageTemplateFacade messageTemplateFacade) {
-        final var optionalUser = userFacade.findOneByUsername("admin");
-        if (optionalUser.isPresent()) {
-            sender = optionalUser.get();
-        } else {
-            log.error("init AuthenticationCaptchaMessageBuilder error", new MissingConfigurationException("no user(admin) configured."));
+    @Override
+    public void init() {
+        if (sender == null) {
+            sender = userFacade.findOneByUsername("admin").orElseThrow(() -> new MissingConfigurationException("no user(admin) configured."));
         }
-        final var optionalTemplate = messageTemplateFacade.findOneByCode(TEMPLATE_CODE);
-        if (optionalTemplate.isPresent()) {
-            template = optionalTemplate.get();
-        } else {
-            log.error("init AuthenticationCaptchaMessageBuilder error", new MissingConfigurationException("no message template(" + TEMPLATE_CODE + ") configured."));
+        if (template == null) {
+            template = messageTemplateFacade.findOneByCode(TEMPLATE_CODE).orElseThrow(() -> new MissingConfigurationException("no message template(" + TEMPLATE_CODE + ") configured."));
         }
     }
 
@@ -60,7 +61,7 @@ public class AuthenticationCaptchaMessageBuilder implements MessageBuilder {
         message.setSubject(template.getSubject());
         message.setContent(template.getContent().replace("${code}", captcha.getCode()));
         message.setTypes(template.getTypes());
-        return facade.save(message);
+        return messageFacade.save(message);
     }
 
 }

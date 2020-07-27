@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { DeviceConfigService } from 'src/app/services/device/device-config.service';
 import { NzModalService, NzMessageService } from 'ng-zorro-antd';
 import { FieldUtils } from 'src/app/utils/field-utils';
@@ -10,16 +10,16 @@ import { Field } from 'src/app/components/commons/form-item/field';
     templateUrl: './device-config.component.html',
     styleUrls: ['./device-config.component.scss']
 })
-export class DeviceConfigComponent extends BeanComponent<DeviceConfigService> implements OnInit {
+export class DeviceConfigComponent extends EntityComponent<DeviceConfigService> implements OnInit {
 
     @Input() device: any;
 
     constructor(
-        protected bean: DeviceConfigService,
+        protected entity: DeviceConfigService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {
@@ -60,7 +60,7 @@ export class DeviceConfigComponent extends BeanComponent<DeviceConfigService> im
     }
 
     list(): void {
-        this.bean.findAll(this.filterForm, {
+        this.entity.findAll(this.filterForm, {
             before: () => this.listComponent.loading = true,
             success: (res: any) => {
                 this.listComponent.allChecked = false;

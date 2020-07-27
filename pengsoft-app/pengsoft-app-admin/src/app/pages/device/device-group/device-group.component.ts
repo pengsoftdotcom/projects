@@ -1,7 +1,7 @@
 import { Component, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { EditOneToManyComponent } from 'src/app/components/commons/edit-one-to-many/edit-one-to-many.component';
-import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
+import { TreeEntityComponent } from 'src/app/components/commons/tree-entity.component';
 import { DeviceGroupService } from 'src/app/services/device/device-group.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
 import { DeviceComponent } from '../device/device.component';
@@ -11,17 +11,17 @@ import { DeviceComponent } from '../device/device.component';
     templateUrl: './device-group.component.html',
     styleUrls: ['./device-group.component.scss']
 })
-export class DeviceGroupComponent extends TreeBeanComponent<DeviceGroupService> {
+export class DeviceGroupComponent extends TreeEntityComponent<DeviceGroupService> {
 
 
     @ViewChild('devicesComponent', { static: true }) devicesComponent: EditOneToManyComponent;
 
     constructor(
-        protected bean: DeviceGroupService,
+        protected entity: DeviceGroupService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
 

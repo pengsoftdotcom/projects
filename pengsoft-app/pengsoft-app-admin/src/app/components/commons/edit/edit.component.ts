@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, TemplateRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef, ViewChild, OnChanges, SimpleChanges } from '@angular/core';
 import { NzDrawerRef, NzDrawerService } from 'ng-zorro-antd';
 import { BaseComponent } from '../base.component';
 import { Button } from '../button/button';
@@ -23,6 +23,10 @@ export class EditComponent extends BaseComponent implements OnInit {
 
     @Input() errors: any = {};
 
+    @Input() labelSpan: number;
+
+    @Input() inputSpan: number;
+
     @ViewChild('content', { static: true }) content: TemplateRef<any>;
 
     formHeight = 0;
@@ -36,10 +40,20 @@ export class EditComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit(): void {
+        if (this.labelSpan) {
+            this.inputSpan = 24 - this.labelSpan;
+        } else {
+            this.labelSpan = 4;
+        }
+        if (this.inputSpan) {
+            this.labelSpan = 24 - this.inputSpan;
+        } else {
+            this.inputSpan = 20;
+        }
         this.initFormHeight();
     }
 
-    private initFormHeight() {
+    initFormHeight() {
         const totalHeight = window.innerHeight;
         const titleHeight = 55;
         const toolbarHeight = 65;

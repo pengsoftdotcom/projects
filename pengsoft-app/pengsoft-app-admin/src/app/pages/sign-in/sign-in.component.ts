@@ -25,14 +25,14 @@ export class SignInComponent extends BaseComponent implements OnInit {
             code: 'username',
             edit: {
                 label: { visible: false },
-                input: { placeholder: '账号/手机/邮件/身份证', prefixIcon: 'user', span: 24 }
+                input: { placeholder: '账号/手机/邮件/身份证', prefixIcon: 'user' }
             }
         }),
         FieldUtils.buildPassword({
             code: 'password',
             edit: {
                 label: { visible: false },
-                input: { placeholder: '请录入登录密码', prefixIcon: 'lock', span: 24 }
+                input: { placeholder: '请录入登录密码', prefixIcon: 'lock' }
             }
         }),
     ];

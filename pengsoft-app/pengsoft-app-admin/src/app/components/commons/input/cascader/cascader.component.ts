@@ -1,6 +1,4 @@
 import { Component, OnChanges, SimpleChanges } from '@angular/core';
-import { NzTreeNodeOptions } from 'ng-zorro-antd';
-import { EntityUtils } from 'src/app/utils/entity-utils';
 import { InputComponent } from '../input.component';
 
 @Component({
@@ -26,8 +24,7 @@ export class CascaderComponent extends InputComponent implements OnChanges {
 
     modelChange(event: any): void {
         if (this.rawValue && this.rawValue.length > 0) {
-            const nodes = EntityUtils.findTreeNodes((this.edit.input.options as Array<NzTreeNodeOptions>), this.rawValue);
-            this.form[this.edit.code] = nodes[this.rawValue.length - 1].value;
+            this.form[this.edit.code] = { id: this.rawValue[this.rawValue.length - 1] };
         } else {
             this.form[this.edit.code] = null;
         }

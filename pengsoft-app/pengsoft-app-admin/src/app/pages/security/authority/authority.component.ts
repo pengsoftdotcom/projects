@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { BeanComponent } from 'src/app/components/commons/bean.component';
+import { EntityComponent } from 'src/app/components/commons/entity.component';
 import { AuthorityService } from 'src/app/services/security/authority.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
 
@@ -9,14 +9,14 @@ import { FieldUtils } from 'src/app/utils/field-utils';
     templateUrl: './authority.component.html',
     styleUrls: ['./authority.component.scss']
 })
-export class AuthorityComponent extends BeanComponent<AuthorityService> {
+export class AuthorityComponent extends EntityComponent<AuthorityService> {
 
     constructor(
-        protected bean: AuthorityService,
+        protected entity: AuthorityService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
     }
 
     initFields(): void {

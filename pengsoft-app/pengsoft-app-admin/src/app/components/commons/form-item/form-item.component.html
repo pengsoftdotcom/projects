@@ -1,25 +1,25 @@
 <nz-form-item *ngIf="visible">
-    <nz-form-label nz-col *ngIf="labelVisible" [nzSpan]="edit.label.span" [nzRequired]="required">
+    <nz-form-label nz-col *ngIf="labelVisible" [nzSpan]="labelSpan" [nzRequired]="required">
         {{label}}
         <span *ngIf="edit.label.tooltip" nz-tooltip [nzTooltipTitle]="edit.label.tooltip" style="margin-left: 2px;">
             <i nz-tooltip nz-icon nzType="question-circle-o"></i>
         </span>
     </nz-form-label>
-    <nz-form-control nz-col *ngIf="inputVisible" [nzSpan]="labelVisible ? edit.input.span : 24" [ngSwitch]="edit.input.type"
-        [nzValidateStatus]="status" [nzErrorTip]="error">
-        <app-input-password *ngSwitchCase="InputType.PASSWORD" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-password>
-        <app-input-number *ngSwitchCase="InputType.NUMBER" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-number>
-        <app-input-boolean *ngSwitchCase="InputType.BOOLEAN" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-boolean>
-        <app-input-datetime *ngSwitchCase="InputType.DATETIME" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-datetime>
-        <app-input-date *ngSwitchCase="InputType.DATE" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-date>
-        <app-input-select *ngSwitchCase="InputType.SELECT" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-select>
-        <app-input-tree-select *ngSwitchCase="InputType.TREE_SELECT" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-tree-select>
-        <app-input-cascader *ngSwitchCase="InputType.CASCADER" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-cascader>
-        <app-input-textarea *ngSwitchCase="InputType.TEXTAREA" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-textarea>
-        <app-input-upload *ngSwitchCase="InputType.UPLOAD" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-upload>
-        <app-input-avatar *ngSwitchCase="InputType.AVATAR" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-avatar>
-        <app-input-json *ngSwitchCase="InputType.JSON" [form]="form" [edit]="edit" [filterable]="filterable"></app-input-json>
-        <app-input-text *ngSwitchDefault [form]="form" [edit]="edit" [filterable]="filterable"></app-input-text>
+    <nz-form-control nz-col *ngIf="inputVisible" [nzSpan]="labelVisible ? inputSpan : 24" [ngSwitch]="edit.input.type" [nzValidateStatus]="status"
+        [nzErrorTip]="error">
+        <app-input-password *ngSwitchCase="InputType.PASSWORD" [form]="form" [edit]="edit"></app-input-password>
+        <app-input-number *ngSwitchCase="InputType.NUMBER" [form]="form" [edit]="edit"></app-input-number>
+        <app-input-boolean *ngSwitchCase="InputType.BOOLEAN" [form]="form" [edit]="edit"></app-input-boolean>
+        <app-input-datetime *ngSwitchCase="InputType.DATETIME" [form]="form" [edit]="edit"></app-input-datetime>
+        <app-input-date *ngSwitchCase="InputType.DATE" [form]="form" [edit]="edit"></app-input-date>
+        <app-input-select *ngSwitchCase="InputType.SELECT" [form]="form" [edit]="edit"></app-input-select>
+        <app-input-tree-select *ngSwitchCase="InputType.TREE_SELECT" [form]="form" [edit]="edit"></app-input-tree-select>
+        <app-input-cascader *ngSwitchCase="InputType.CASCADER" [form]="form" [edit]="edit"></app-input-cascader>
+        <app-input-textarea *ngSwitchCase="InputType.TEXTAREA" [form]="form" [edit]="edit"></app-input-textarea>
+        <app-input-upload *ngSwitchCase="InputType.UPLOAD" [form]="form" [edit]="edit"></app-input-upload>
+        <app-input-avatar *ngSwitchCase="InputType.AVATAR" [form]="form" [edit]="edit"></app-input-avatar>
+        <app-input-json *ngSwitchCase="InputType.JSON" [form]="form" [edit]="edit"></app-input-json>
+        <app-input-text *ngSwitchDefault [form]="form" [edit]="edit"></app-input-text>
     </nz-form-control>
 </nz-form-item>
 <ng-template #error let-control>

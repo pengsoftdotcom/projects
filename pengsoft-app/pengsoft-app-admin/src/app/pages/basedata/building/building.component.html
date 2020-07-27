@@ -1,0 +1,5 @@
+<app-list #listComponent [title]="(title ? title : '') + '楼栋列表'" [fields]="fields" [listData]="listData" [toolbarButtons]="listToolbarButtons"
+    [actionButtons]="listActionButtons"></app-list>
+<app-edit #editComponent [title]="(title ? title : '') + '楼栋编辑'" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons"
+    [errors]="errors"></app-edit>
+<app-edit-one-to-many #floorsComponent></app-edit-one-to-many>

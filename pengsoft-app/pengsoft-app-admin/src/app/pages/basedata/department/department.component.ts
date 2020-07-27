@@ -1,8 +1,8 @@
 import { Location } from '@angular/common';
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, OnInit, ViewChild, Input } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { EditOneToManyComponent } from 'src/app/components/commons/edit-one-to-many/edit-one-to-many.component';
-import { TreeBeanComponent } from 'src/app/components/commons/tree-bean.component';
+import { TreeEntityComponent } from 'src/app/components/commons/tree-entity.component';
 import { SwitchOrganizationComponent } from 'src/app/components/modal/switch-organization/switch-organization.component';
 import { DepartmentService } from 'src/app/services/basedata/department.service';
 import { SecurityService } from 'src/app/services/commons/security.service';
@@ -15,20 +15,22 @@ import { JobComponent } from '../job/job.component';
     templateUrl: './department.component.html',
     styleUrls: ['./department.component.scss']
 })
-export class DepartmentComponent extends TreeBeanComponent<DepartmentService> implements OnInit {
+export class DepartmentComponent extends TreeEntityComponent<DepartmentService> implements OnInit {
 
-    organization: any;
+    showSwitcher = true;
+
+    @Input() organization: any;
 
     @ViewChild('jobsComponent', { static: true }) jobsComponent: EditOneToManyComponent;
 
     constructor(
         private location: Location,
         private security: SecurityService,
-        protected bean: DepartmentService,
+        protected entity: DepartmentService,
         protected modal: NzModalService,
         protected message: NzMessageService
     ) {
-        super(bean, modal, message);
+        super(entity, modal, message);
         this.organization = this.security.userDetails.organization;
     }
 
@@ -39,7 +41,14 @@ export class DepartmentComponent extends TreeBeanComponent<DepartmentService> im
     get parentParams(): any {
         if (this.organization) {
             return { 'organization.id': this.organization.id };
+        } else {
+            return null;
         }
+    }
+
+    ngOnInit(): void {
+        this.showSwitcher = !this.organization;
+        super.ngOnInit();
     }
 
     initFields(): void {
@@ -53,20 +62,17 @@ export class DepartmentComponent extends TreeBeanComponent<DepartmentService> im
 
     initListToolbarButtons(): void {
         super.initListToolbarButtons();
-        if (!this.security.userDetails.organization) {
-            this.listToolbarButtons.splice(1, 0, {
-                name: '切换机构',
-                type: 'link',
-                authority: 'basedata::organization::find_all',
-                action: () => this.switchOrganization()
-            });
+        if (this.showSwitcher) {
+            this.listToolbarButtons.splice(1, 0,
+                { name: '切换机构', type: 'link', authority: 'basedata::organization::find_all', action: () => this.switchOrganization() }
+            );
         }
     }
 
     initListActionButtons(): void {
         super.initListActionButtons();
         this.listActionButtons.splice(0, 0, {
-            name: '职位', type: 'link', divider: true, width: 47,
+            name: '职位', type: 'link', divider: true, width: 47, authority: 'basedata::job::find_all',
             action: (row: any) => this.editJobs(row)
         });
     }
@@ -74,8 +80,8 @@ export class DepartmentComponent extends TreeBeanComponent<DepartmentService> im
     initForm(): void {
         if (this.organization) {
             this.filterForm = { 'organization.id': this.organization.id };
+            this.editForm = { organization: this.organization };
         }
-        this.editForm = { organization: this.organization };
     }
 
     afterInit(): void {
@@ -87,10 +93,10 @@ export class DepartmentComponent extends TreeBeanComponent<DepartmentService> im
         }
     }
 
-    editJobs(row: any): void {
+    editJobs(department: any): void {
         this.jobsComponent.component = JobComponent;
         this.jobsComponent.width = '70%';
-        this.jobsComponent.params = { title: row.name, department: row, allowLoadNavData: false };
+        this.jobsComponent.params = { title: department.name, department, allowLoadNavData: false };
         this.jobsComponent.show();
     }
 
