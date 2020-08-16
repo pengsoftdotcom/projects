@@ -10,12 +10,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * The object storage service interface.
+ * The storage service interface.
  *
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public interface ObjectStorageService {
+public interface StorageService {
 
     /**
      * Upload a file.

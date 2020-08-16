@@ -17,7 +17,7 @@ import java.util.UUID;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-public class ObjectStorageServiceImpl implements ObjectStorageService {
+public class StorageServiceImpl implements StorageService {
 
     private static final String EC_ASSET_UPLOAD_FAILED = "asset.upload.failed";
 
@@ -35,8 +35,8 @@ public class ObjectStorageServiceImpl implements ObjectStorageService {
 
     private final String accessKeySecret;
 
-    public ObjectStorageServiceImpl(final String publicAccessPathPrefix, final String lockedAccessPathPrefix, final String publicBucket,
-                                    final String lockedBucket, final String endpoint, final String accessKeyId, final String accessKeySecret) {
+    public StorageServiceImpl(final String publicAccessPathPrefix, final String lockedAccessPathPrefix, final String publicBucket,
+                              final String lockedBucket, final String endpoint, final String accessKeyId, final String accessKeySecret) {
         this.publicAccessPathPrefix = publicAccessPathPrefix;
         this.lockedAccessPathPrefix = lockedAccessPathPrefix;
         this.publicBucket = publicBucket;

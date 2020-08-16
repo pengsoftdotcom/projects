@@ -12,8 +12,8 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  */
 @Getter
 @Setter
-@ConfigurationProperties("pengsoft.oss")
-public class ObjectStorageServiceAutoConfigureProperties {
+@ConfigurationProperties("pengsoft.storage")
+public class StorageServiceAutoConfigureProperties {
 
     private boolean enabled;
 
