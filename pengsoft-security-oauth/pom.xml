@@ -14,7 +14,6 @@
 
     <properties>
         <spring-security-oauth2.version>2.3.8.RELEASE</spring-security-oauth2.version>
-        <spring-security-oauth2-autoconfigure.version>2.2.6.RELEASE</spring-security-oauth2-autoconfigure.version>
     </properties>
 
     <modules>
@@ -38,11 +37,6 @@
                 <groupId>org.springframework.security.oauth</groupId>
                 <artifactId>spring-security-oauth2</artifactId>
                 <version>${spring-security-oauth2.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.security.oauth.boot</groupId>
-                <artifactId>spring-security-oauth2-autoconfigure</artifactId>
-                <version>${spring-security-oauth2-autoconfigure.version}</version>
             </dependency>
 
             <dependency>

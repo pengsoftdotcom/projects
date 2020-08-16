@@ -30,5 +30,4 @@ public interface PersonService extends EntityService<Person, String> {
      */
     Optional<Person> findOneByUser(@NotNull User user);
 
-
 }

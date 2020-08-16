@@ -9,7 +9,6 @@ import com.pengsoft.system.biz.messaging.MessageBody;
 import com.pengsoft.system.domain.entity.Message;
 import com.pengsoft.system.domain.entity.MessageTemplate;
 import com.pengsoft.system.domain.json.CaptchaWrapper;
-import lombok.extern.slf4j.Slf4j;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -21,7 +20,6 @@ import java.util.Map;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
-@Slf4j
 @Named
 public class AuthenticationCaptchaMessageBuilder implements MessageBuilder {
 

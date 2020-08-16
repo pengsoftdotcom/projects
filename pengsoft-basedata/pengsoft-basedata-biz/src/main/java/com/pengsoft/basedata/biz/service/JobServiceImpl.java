@@ -2,7 +2,6 @@ package com.pengsoft.basedata.biz.service;
 
 import com.pengsoft.basedata.biz.repository.JobRepository;
 import com.pengsoft.basedata.biz.repository.JobRoleRepository;
-import com.pengsoft.basedata.domain.entity.Department;
 import com.pengsoft.basedata.domain.entity.Job;
 import com.pengsoft.basedata.domain.entity.JobRole;
 import com.pengsoft.security.domain.entity.Role;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -31,7 +29,7 @@ public class JobServiceImpl extends TreeEntityServiceImpl<JobRepository, Job, St
 
     @Override
     public Job save(final Job post) {
-        findOneByDepartmentAndParentAndName(post.getDepartment(), post.getParent(), post.getName()).ifPresent(source -> {
+        getRepository().findOneByDepartmentAndParentAndName(post.getDepartment(), post.getParent(), post.getName()).ifPresent(source -> {
             if (EntityUtils.ne(source, post)) {
                 throw getExceptions().constraintViolated("name", "Exists", post.getName());
             }
@@ -54,11 +52,6 @@ public class JobServiceImpl extends TreeEntityServiceImpl<JobRepository, Job, St
         jobRoleRepository.saveAll(created);
         source.addAll(created);
         super.save(job);
-    }
-
-    @Override
-    public Optional<Job> findOneByDepartmentAndParentAndName(final Department department, final Job parent, final String name) {
-        return getRepository().findOneByDepartmentAndParentAndName(department, parent, name);
     }
 
 }

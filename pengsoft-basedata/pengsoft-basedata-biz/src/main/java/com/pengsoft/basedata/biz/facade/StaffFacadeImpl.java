@@ -1,14 +1,5 @@
 package com.pengsoft.basedata.biz.facade;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-
-import javax.inject.Inject;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-
 import com.pengsoft.basedata.biz.service.PersonService;
 import com.pengsoft.basedata.biz.service.StaffService;
 import com.pengsoft.basedata.domain.entity.Job;
@@ -18,12 +9,19 @@ import com.pengsoft.security.biz.service.UserService;
 import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.support.biz.facade.EntityFacadeImpl;
 import com.pengsoft.support.commons.util.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * The implementer of {@link StaffFacade}
  *
  * @author dang.peng@pengsoft.com
- * @since  1.0.0
+ * @since 1.0.0
  */
 @Service
 public class StaffFacadeImpl extends EntityFacadeImpl<StaffService, Staff, String> implements StaffFacade {
@@ -53,11 +51,6 @@ public class StaffFacadeImpl extends EntityFacadeImpl<StaffService, Staff, Strin
     @Override
     public void setPrimaryJob(final Person person, final Job job) {
         getService().setPrimaryJob(person, job);
-    }
-
-    @Override
-    public Optional<Staff> findOneByPersonAndJob(final Person person, final Job job) {
-        return getService().findOneByPersonAndJob(person, job);
     }
 
     @Override

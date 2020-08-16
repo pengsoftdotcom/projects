@@ -2,7 +2,6 @@ package com.pengsoft.basedata.biz.facade;
 
 import com.pengsoft.basedata.biz.service.HouseService;
 import com.pengsoft.basedata.biz.service.PersonService;
-import com.pengsoft.basedata.domain.entity.Floor;
 import com.pengsoft.basedata.domain.entity.House;
 import com.pengsoft.security.biz.service.RoleService;
 import com.pengsoft.security.biz.service.UserService;
@@ -14,7 +13,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -59,11 +57,6 @@ public class HouseFacadeImpl extends EntityFacadeImpl<HouseService, House, Strin
             }
         }
         return super.save(house);
-    }
-
-    @Override
-    public Optional<House> findOneByFloorAndCode(final Floor floor, final String code) {
-        return getService().findOneByFloorAndCode(floor, code);
     }
 
 }

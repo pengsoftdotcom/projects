@@ -110,8 +110,7 @@ public class AdvancedApiMethodArgumentsHandler<T extends Entity<ID>, ID extends 
     @SuppressWarnings("unchecked")
     @Override
     public boolean check(final Owned entity) {
-        final ID id = ((T) entity).getId();
-        final var userId = SecurityUtils.getUserId();
+        final var id = ((T) entity).getId();
         if (id == null) {
             return true;
         } else {

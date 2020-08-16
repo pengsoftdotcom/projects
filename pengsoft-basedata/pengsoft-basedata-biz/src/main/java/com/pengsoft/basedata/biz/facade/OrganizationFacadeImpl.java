@@ -15,7 +15,6 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -61,16 +60,6 @@ public class OrganizationFacadeImpl extends TreeEntityFacadeImpl<OrganizationSer
             }
         }
         return super.save(organization);
-    }
-
-    @Override
-    public Optional<Organization> findOneByCode(final String code) {
-        return getService().findOneByCode(code);
-    }
-
-    @Override
-    public Optional<Organization> findOneByName(final String name) {
-        return getService().findOneByName(name);
     }
 
     @Override

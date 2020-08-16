@@ -57,6 +57,10 @@ public class TreeEntityServiceImpl<R extends TreeEntityRepository<?, T, ID>, T e
         }
         super.save(entity);
 
+        if (entity.getParentIds().contains(entity.getId().toString())) {
+            throw getExceptions().constraintViolated("parent", "SelfAndItsChildrenNotAllowed");
+        }
+
         if (parentChanged) {
             updateTheParentIdsAndDepthOfChildNodes(entity);
         }

@@ -34,7 +34,7 @@ import java.util.List;
 @Table(name = "t_community", indexes = {
         @Index(name = "i_community_region_id", columnList = "region_id, name", unique = true)
 })
-public class Community extends OwnedExtEntity {
+public class Community extends OwnedExtTreeEntity<Community> {
 
     private static final long serialVersionUID = 7110857036766882988L;
 
@@ -47,7 +47,6 @@ public class Community extends OwnedExtEntity {
     @NotFound(action = NotFoundAction.IGNORE)
     private Region region;
 
-    @NotBlank
     @Size(max = 255)
     private String address;
 

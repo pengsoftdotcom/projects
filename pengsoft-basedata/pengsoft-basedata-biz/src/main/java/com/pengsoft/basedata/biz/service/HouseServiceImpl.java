@@ -2,7 +2,6 @@ package com.pengsoft.basedata.biz.service;
 
 import com.pengsoft.basedata.biz.repository.FloorRepository;
 import com.pengsoft.basedata.biz.repository.HouseRepository;
-import com.pengsoft.basedata.domain.entity.Floor;
 import com.pengsoft.basedata.domain.entity.House;
 import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
@@ -11,7 +10,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import java.util.Optional;
 
 /**
  * The implementer of {@link HouseService} based on JPA.
@@ -30,7 +28,7 @@ public class HouseServiceImpl extends EntityServiceImpl<HouseRepository, House, 
     public House save(final House house) {
         final var floorId = house.getFloor().getId();
         final var floor = floorRepository.findById(floorId).orElseThrow(() -> getExceptions().entityNotFound(floorId));
-        findOneByFloorAndCode(floor, house.getCode()).ifPresent(source -> {
+        getRepository().findOneByFloorAndCode(floor, house.getCode()).ifPresent(source -> {
             if (EntityUtils.ne(source, house)) {
                 throw getExceptions().constraintViolated("code", "Exists", house.getName());
             }
@@ -42,11 +40,6 @@ public class HouseServiceImpl extends EntityServiceImpl<HouseRepository, House, 
         house.setBuilding(floor.getBuilding());
         house.setCommunity(floor.getBuilding().getCommunity());
         return super.save(house);
-    }
-
-    @Override
-    public Optional<House> findOneByFloorAndCode(final Floor floor, final String code) {
-        return getRepository().findOneByFloorAndCode(floor, code);
     }
 
 }

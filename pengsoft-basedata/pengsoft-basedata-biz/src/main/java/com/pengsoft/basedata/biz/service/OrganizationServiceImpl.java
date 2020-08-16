@@ -9,9 +9,7 @@ import com.pengsoft.support.domain.util.EntityUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotBlank;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * The implementer of {@link OrganizationService} based on JPA.
@@ -25,12 +23,12 @@ public class OrganizationServiceImpl extends TreeEntityServiceImpl<OrganizationR
 
     @Override
     public Organization save(final Organization organization) {
-        findOneByCode(organization.getCode()).ifPresent(source -> {
+        getRepository().findOneByCode(organization.getCode()).ifPresent(source -> {
             if (EntityUtils.ne(source, organization)) {
                 throw getExceptions().constraintViolated("code", "Exists", organization.getCode());
             }
         });
-        findOneByName(organization.getName()).ifPresent(source -> {
+        getRepository().findOneByName(organization.getName()).ifPresent(source -> {
             if (EntityUtils.ne(source, organization)) {
                 throw getExceptions().constraintViolated("name", "Exists", organization.getCode());
             }
@@ -43,16 +41,6 @@ public class OrganizationServiceImpl extends TreeEntityServiceImpl<OrganizationR
             getRepository().updateBelongsTo(organization.getId());
         }
         return organization;
-    }
-
-    @Override
-    public Optional<Organization> findOneByCode(final String code) {
-        return getRepository().findOneByCode(code);
-    }
-
-    @Override
-    public Optional<Organization> findOneByName(@NotBlank final String name) {
-        return getRepository().findOneByName(name);
     }
 
     @Override

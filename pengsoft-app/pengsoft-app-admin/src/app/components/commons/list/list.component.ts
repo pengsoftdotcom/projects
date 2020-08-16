@@ -107,13 +107,11 @@ export class ListComponent extends BaseComponent implements OnInit {
         const listTitleHeight = 41;
         const toolbarButtonsHeight = 57;
         const tableHeaderHeight = this.groupable ? 47 * 2 : 47;
-        const paginationHeight = 41;
 
         this.tableBodyHeight = totalHeight;
         this.tableBodyHeight -= listTitleHeight;
         this.tableBodyHeight -= toolbarButtonsHeight;
         this.tableBodyHeight -= tableHeaderHeight;
-        this.tableBodyHeight -= paginationHeight;
         this.tableBodyHeight += 'px';
     }
 

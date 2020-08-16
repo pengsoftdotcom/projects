@@ -18,6 +18,8 @@ import { HouseComponent } from '../house/house.component';
 })
 export class FloorComponent extends EntityComponent<FloorService> {
 
+    showSwitcher = true;
+
     community: any;
 
     @Input() building: any;
@@ -43,9 +45,11 @@ export class FloorComponent extends EntityComponent<FloorService> {
 
     initListToolbarButtons(): void {
         super.initListToolbarButtons();
-        this.listToolbarButtons.splice(1, 0,
-            { name: '切换小区', type: 'link', authority: 'basedata::community::find_all', action: () => this.switchCommunity() }
-        );
+        if (this.showSwitcher) {
+            this.listToolbarButtons.splice(1, 0,
+                { name: '切换社区', type: 'link', authority: 'basedata::community::find_all', action: () => this.switchCommunity() }
+            );
+        }
     }
 
     initListActionButtons(): void {
@@ -59,7 +63,7 @@ export class FloorComponent extends EntityComponent<FloorService> {
     editHouses(floor: any): void {
         this.housesComponent.component = HouseComponent;
         this.housesComponent.width = '60%';
-        this.housesComponent.params = { title: floor.name, floor };
+        this.housesComponent.params = { title: floor.name, floor, showSwitcher: false };
         this.housesComponent.show();
     }
 
@@ -97,7 +101,7 @@ export class FloorComponent extends EntityComponent<FloorService> {
 
     switchCommunity(): void {
         this.modal.create({
-            nzTitle: '切换小区',
+            nzTitle: '切换社区',
             nzContent: SwitchCommunityComponent,
             nzOnOk: component => {
                 this.community = component.form.community;
@@ -108,7 +112,7 @@ export class FloorComponent extends EntityComponent<FloorService> {
                 if (!this.community) {
                     this.modal.confirm({
                         nzTitle: '确认',
-                        nzContent: '如不选择小区，将退回到最近一次打开页面',
+                        nzContent: '如不选择社区，将退回到最近一次打开页面',
                         nzOnOk: () => this.location.back()
                     });
                     return false;

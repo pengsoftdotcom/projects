@@ -3,6 +3,7 @@ import { CommunityService } from 'src/app/services/basedata/community.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
 import { BaseComponent } from '../../commons/base.component';
 import { InputComponent } from '../../commons/input/input.component';
+import { EntityUtils } from 'src/app/utils/entity-utils';
 
 @Component({
     selector: 'app-switch-community',
@@ -11,7 +12,7 @@ import { InputComponent } from '../../commons/input/input.component';
 })
 export class SwitchCommunityComponent extends BaseComponent {
 
-    field = FieldUtils.buildSelect({
+    field = FieldUtils.buildTreeSelect({
         code: 'community',
         edit: {
             label: { visible: false },
@@ -23,8 +24,7 @@ export class SwitchCommunityComponent extends BaseComponent {
                     }
                     this.community.findAll(params, {
                         before: () => this.loading = true,
-                        success: (res: any) => component.edit.input.options
-                            = res.map((value: any) => Object.assign({ label: value.name, value })),
+                        success: (res: any) => component.edit.input.options = EntityUtils.convertListToTree(res),
                         after: () => this.loading = false
                     });
                 }

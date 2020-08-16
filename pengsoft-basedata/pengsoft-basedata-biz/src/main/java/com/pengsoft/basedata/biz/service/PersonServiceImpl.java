@@ -23,7 +23,7 @@ public class PersonServiceImpl extends EntityServiceImpl<PersonRepository, Perso
 
     @Override
     public Person save(final Person person) {
-        findOneByMobile(person.getMobile()).ifPresent(source -> {
+        getRepository().findOneByMobile(person.getMobile()).ifPresent(source -> {
             if (EntityUtils.ne(source, person)) {
                 throw getExceptions().constraintViolated("mobile", "Exists", person.getMobile());
             }

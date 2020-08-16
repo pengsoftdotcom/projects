@@ -27,14 +27,6 @@ public interface StaffService extends EntityService<Staff, String> {
     void setPrimaryJob(@NotNull Person person, @NotNull Job job);
 
     /**
-     * Returns an {@link Optional} of a {@link Staff} with given person and job.
-     *
-     * @param person {@link Staff}'s person
-     * @param job    {@link Staff}'s job
-     */
-    Optional<Staff> findOneByPersonAndJob(@NotNull Person person, @NotNull Job job);
-
-    /**
      * Returns an {@link Optional} of a {@link Staff} with given person and primary true.
      *
      * @param person {@link Staff}'s person

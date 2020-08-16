@@ -2,13 +2,10 @@ package com.pengsoft.basedata.biz.service;
 
 import com.pengsoft.basedata.biz.repository.CommunityRepository;
 import com.pengsoft.basedata.domain.entity.Community;
-import com.pengsoft.support.biz.service.EntityServiceImpl;
+import com.pengsoft.support.biz.service.TreeEntityServiceImpl;
 import com.pengsoft.support.domain.util.EntityUtils;
-import com.pengsoft.system.domain.entity.Region;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 /**
  * The implementer of {@link CommunityService} based on JPA.
@@ -18,21 +15,16 @@ import java.util.Optional;
  */
 @Primary
 @Service
-public class CommunityServiceImpl extends EntityServiceImpl<CommunityRepository, Community, String> implements CommunityService {
+public class CommunityServiceImpl extends TreeEntityServiceImpl<CommunityRepository, Community, String> implements CommunityService {
 
     @Override
     public Community save(final Community community) {
-        findOneByRegionAndName(community.getRegion(), community.getName()).ifPresent(source -> {
+        getRepository().findOneByParentAndRegionAndName(community.getParent(), community.getRegion(), community.getName()).ifPresent(source -> {
             if (EntityUtils.ne(source, community)) {
                 throw getExceptions().constraintViolated("name", "Exists", community.getName());
             }
         });
         return super.save(community);
-    }
-
-    @Override
-    public Optional<Community> findOneByRegionAndName(final Region region, final String name) {
-        return getRepository().findOneByRegionAndName(region, name);
     }
 
 }

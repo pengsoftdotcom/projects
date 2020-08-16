@@ -126,7 +126,7 @@ export class FieldUtils {
                     if (index > -1) {
                         parent = node.value;
                     }
-                    region.findAllByParent(parent, null, {
+                    region.findAllExcludeSelfAndItsChildrenByParent(parent, null, null, {
                         success: (res: any) => {
                             node.children = EntityUtils.convertListToTree(res);
                             resolve();

@@ -1,0 +1,84 @@
+/* components/nav-bar/nav-bar.wxss */
+.nav-bar {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background: #ba2e24;
+}
+
+.status-bar {
+    width: 100%;
+}
+
+.title-bar {
+    width: calc(100% - 18px);
+    padding: 0 8px;
+    display: flex;
+    height: 32px;
+    line-height: 32px;
+}
+
+.title-bar>.left-cell {
+    flex-grow: 0;
+    padding: 1px 0;
+}
+
+.title-bar>.left-cell>.city-row {
+    height: 16px;
+    line-height: 16px;
+    margin-bottom: 2px;
+}
+
+.title-bar>.left-cell>.city-row>.city {
+    display: inline-block;
+    min-width: 2em;
+    font-size: 16px;
+    font-weight: 300;
+}
+
+.title-bar>.left-cell>.city-row>.icon {
+    width: 10px;
+    height: 10px;
+    margin: 0 0 0 4px;
+}
+
+.title-bar>.left-cell>.weather-row {
+    height: 12px;
+    line-height: 12px;
+    font-size: 10px;
+    font-weight: 200;
+    color: #030303;
+}
+
+.title-bar>.left-cell>.weather-row>.weather {
+    margin-right: 4px;
+}
+
+.title-bar>.center-cell {
+    flex-grow: 1;
+    background: #fff;
+    border-radius: 15px;
+    margin: 0 8px;
+    position: relative;
+}
+
+.title-bar>.center-cell>.icon {
+    width: 20px;
+    height: 20px;
+    position: absolute;
+    left: 6px;
+    top: 6px;
+}
+
+.title-bar>.center-cell>.text {
+    height: 32px;
+    position: absolute;
+    font-size: 15px;
+    left: 28px;
+    top: 0;
+}
+
+.title-bar>.right-cell {
+    flex-grow: 0;
+    width: 86px;
+}

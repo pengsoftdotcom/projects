@@ -15,6 +15,8 @@ import { FloorComponent } from '../floor/floor.component';
 })
 export class BuildingComponent extends TreeEntityComponent<BuildingService> {
 
+    showSwitcher = true;
+
     @Input() community: any;
 
     @ViewChild('floorsComponent', { static: true }) floorsComponent: EditOneToManyComponent;
@@ -43,16 +45,18 @@ export class BuildingComponent extends TreeEntityComponent<BuildingService> {
     initFields(): void {
         super.initFields();
         this.fields.splice(1, 0,
-            FieldUtils.buildSelect({ code: 'community', name: '小区', list: { visible: false }, edit: { visible: false } }),
+            FieldUtils.buildSelect({ code: 'community', name: '社区', list: { visible: false }, edit: { visible: false } }),
             FieldUtils.buildTextForName()
         );
     }
 
     initListToolbarButtons(): void {
         super.initListToolbarButtons();
-        this.listToolbarButtons.splice(1, 0,
-            { name: '切换小区', type: 'link', authority: 'basedata::community::find_all', action: () => this.switchCommunity() }
-        );
+        if (this.showSwitcher) {
+            this.listToolbarButtons.splice(1, 0,
+                { name: '切换社区', type: 'link', authority: 'basedata::community::find_all', action: () => this.switchCommunity() }
+            );
+        }
     }
 
     initListActionButtons(): void {
@@ -66,7 +70,7 @@ export class BuildingComponent extends TreeEntityComponent<BuildingService> {
     editFloors(building: any): void {
         this.floorsComponent.component = FloorComponent;
         this.floorsComponent.width = '70%';
-        this.floorsComponent.params = { title: building.name, building };
+        this.floorsComponent.params = { title: building.name, building, showSwitcher: false };
         this.floorsComponent.show();
     }
 
@@ -100,7 +104,7 @@ export class BuildingComponent extends TreeEntityComponent<BuildingService> {
 
     switchCommunity(): void {
         this.modal.create({
-            nzTitle: '切换小区',
+            nzTitle: '切换社区',
             nzContent: SwitchCommunityComponent,
             nzOnOk: component => {
                 this.community = component.form.community;
@@ -111,7 +115,7 @@ export class BuildingComponent extends TreeEntityComponent<BuildingService> {
                 if (!this.community) {
                     this.modal.confirm({
                         nzTitle: '确认',
-                        nzContent: '如不选择小区，将退回到最近一次打开页面',
+                        nzContent: '如不选择社区，将退回到最近一次打开页面',
                         nzOnOk: () => this.location.back()
                     });
                     return false;

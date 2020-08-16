@@ -102,9 +102,9 @@ export abstract class TreeEntityComponent<S extends TreeEntityService> extends E
                 }
             }
             if (row.parent) {
-                const parent = this.listData.find(value => value.id = row.parent.id);
+                const parent = this.listData.find(value => value.id === row.parent.id);
                 if (parent) {
-                    parent.leaf = this.listData.filter(value => value.parentIds = row.parentIds).length > 0;
+                    parent.leaf = this.listData.filter(value => value.parentIds === row.parentIds).length === 0;
                 }
             }
         });

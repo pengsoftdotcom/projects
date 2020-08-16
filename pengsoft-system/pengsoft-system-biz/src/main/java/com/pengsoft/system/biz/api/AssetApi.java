@@ -2,7 +2,7 @@ package com.pengsoft.system.biz.api;
 
 import com.pengsoft.support.biz.api.EntityApi;
 import com.pengsoft.system.biz.facade.AssetFacade;
-import com.pengsoft.system.biz.service.ObjectStorageService;
+import com.pengsoft.system.biz.service.StorageService;
 import com.pengsoft.system.domain.entity.Asset;
 import com.querydsl.core.types.Predicate;
 import org.springframework.data.domain.Sort;
@@ -26,19 +26,19 @@ import java.util.List;
 public class AssetApi extends EntityApi<AssetFacade, Asset, String> {
 
     @Inject
-    private ObjectStorageService objectStorageService;
+    private StorageService storageService;
 
     @PostMapping("upload")
     public List<Asset> upload(@RequestParam("file") final List<MultipartFile> files,
                               @RequestParam(name = "locked", defaultValue = "false") final boolean locked) {
-        return getFacade().save(objectStorageService.upload(files, locked));
+        return getFacade().save(storageService.upload(files, locked));
     }
 
     @Override
     public void delete(final Predicate predicate) {
         final var assets = getFacade().findAll(predicate, Sort.unsorted());
         getFacade().delete(assets);
-        objectStorageService.delete(assets);
+        storageService.delete(assets);
     }
 
 }

@@ -1,10 +1,10 @@
 import { Component, ViewChild } from '@angular/core';
 import { NzMessageService, NzModalService } from 'ng-zorro-antd';
-import { EntityComponent } from 'src/app/components/commons/entity.component';
+import { EditOneToManyComponent } from 'src/app/components/commons/edit-one-to-many/edit-one-to-many.component';
+import { TreeEntityComponent } from 'src/app/components/commons/tree-entity.component';
 import { CommunityService } from 'src/app/services/basedata/community.service';
 import { RegionService } from 'src/app/services/system/region.service';
 import { FieldUtils } from 'src/app/utils/field-utils';
-import { EditOneToManyComponent } from 'src/app/components/commons/edit-one-to-many/edit-one-to-many.component';
 import { BuildingComponent } from '../building/building.component';
 
 @Component({
@@ -12,8 +12,7 @@ import { BuildingComponent } from '../building/building.component';
     templateUrl: './community.component.html',
     styleUrls: ['./community.component.scss']
 })
-export class CommunityComponent extends EntityComponent<CommunityService> {
-
+export class CommunityComponent extends TreeEntityComponent<CommunityService> {
 
     @ViewChild('buildingsComponent', { static: true }) buildingsComponent: EditOneToManyComponent;
 
@@ -26,12 +25,21 @@ export class CommunityComponent extends EntityComponent<CommunityService> {
         super(entity, modal, message);
     }
 
+    get lazy(): boolean {
+        return false;
+    }
+    get parentParams(): any {
+        return null;
+    }
+
     initFields(): void {
-        this.fields = [
-            FieldUtils.buildTextForName({ list: { width: 150, align: 'center' } }),
+        super.initFields();
+
+        this.fields.splice(1, 0,
+            FieldUtils.buildTextForName({ list: { width: 200, align: 'center' } }),
             FieldUtils.buildCascaderForRegion(this.region, { edit: { required: true } }),
-            FieldUtils.buildTextarea({ code: 'address', name: '详细地址', list: { visible: true }, edit: { required: true } })
-        ];
+            FieldUtils.buildTextarea({ code: 'address', name: '详细地址', list: { visible: true } })
+        );
     }
 
     initListActionButtons(): void {
@@ -44,7 +52,7 @@ export class CommunityComponent extends EntityComponent<CommunityService> {
 
     editBuildings(community: any): void {
         this.buildingsComponent.component = BuildingComponent;
-        this.buildingsComponent.params = { title: community.name, community };
+        this.buildingsComponent.params = { title: community.name, community, showSwitcher: false };
         this.buildingsComponent.show();
     }
 

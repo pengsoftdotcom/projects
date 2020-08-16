@@ -2,7 +2,7 @@ pengsoft:
   security:
     uris-permitted:
       - /api/captcha/generate-for-authentication
-  oss:
+  storage:
     enabled: true
     access-key-id: ${OSS_ACCESS_KEY_ID}
     access-key-secret: ${OSS_ACCESS_KEY_SECRET}

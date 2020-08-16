@@ -1,4 +1,2 @@
-pengsoft:
-  messaging:
-    sms:
-      enabled: false
+server:
+  port: 9090

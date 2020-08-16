@@ -25,7 +25,7 @@ public class StaffServiceImpl extends EntityServiceImpl<StaffRepository, Staff, 
 
     @Override
     public Staff save(final Staff staff) {
-        findOneByPersonAndJob(staff.getPerson(), staff.getJob()).ifPresent(source -> {
+        getRepository().findOneByPersonAndJob(staff.getPerson(), staff.getJob()).ifPresent(source -> {
             if (EntityUtils.ne(source, staff)) {
                 throw new BusinessException("staff.save.unique", staff.getPerson().getName(), staff.getJob().getName());
             }
@@ -54,11 +54,6 @@ public class StaffServiceImpl extends EntityServiceImpl<StaffRepository, Staff, 
                 }
             }
         });
-    }
-
-    @Override
-    public Optional<Staff> findOneByPersonAndJob(final Person person, final Job job) {
-        return getRepository().findOneByPersonAndJob(person, job);
     }
 
     @Override

@@ -18,6 +18,8 @@ import { DictionaryItemService } from 'src/app/services/system/dictionary-item.s
 })
 export class HouseComponent extends EntityComponent<HouseService> {
 
+    showSwitcher = true;
+
     community: any;
 
     building: any;
@@ -60,9 +62,11 @@ export class HouseComponent extends EntityComponent<HouseService> {
 
     initListToolbarButtons(): void {
         super.initListToolbarButtons();
-        this.listToolbarButtons.splice(1, 0,
-            { name: '切换小区', type: 'link', authority: 'basedata::community::find_all', action: () => this.switchCommunity() }
-        );
+        if (this.showSwitcher) {
+            this.listToolbarButtons.splice(1, 0,
+                { name: '切换社区', type: 'link', authority: 'basedata::community::find_all', action: () => this.switchCommunity() }
+            );
+        }
     }
 
     initForm(): void {
@@ -102,7 +106,7 @@ export class HouseComponent extends EntityComponent<HouseService> {
 
     switchCommunity(): void {
         this.modal.create({
-            nzTitle: '切换小区',
+            nzTitle: '切换社区',
             nzContent: SwitchCommunityComponent,
             nzOnOk: component => {
                 this.community = component.form.community;
@@ -113,7 +117,7 @@ export class HouseComponent extends EntityComponent<HouseService> {
                 if (!this.community) {
                     this.modal.confirm({
                         nzTitle: '确认',
-                        nzContent: '如不选择小区，将退回到最近一次打开页面',
+                        nzContent: '如不选择社区，将退回到最近一次打开页面',
                         nzOnOk: () => this.location.back()
                     });
                     return false;
