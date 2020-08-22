@@ -22,10 +22,10 @@
         <lombok.version>1.18.12</lombok.version>
 
 
-        <spring-boot.version>2.3.2.RELEASE</spring-boot.version>
+        <spring-boot.version>2.3.3.RELEASE</spring-boot.version>
         <javax.el.version>3.0.0</javax.el.version>
         <javax.inject.version>1</javax.inject.version>
-        <redisson.version>3.13.2</redisson.version>
+        <redisson.version>3.13.3</redisson.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <rocketmq.version>4.7.1</rocketmq.version>
         <netty.version>4.1.51.Final</netty.version>
