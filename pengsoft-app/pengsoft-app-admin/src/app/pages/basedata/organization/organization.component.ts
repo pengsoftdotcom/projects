@@ -55,7 +55,7 @@ export class OrganizationComponent extends TreeEntityComponent<OrganizationServi
         this.fields.splice(1, 0,
             FieldUtils.buildTextForCode({ width: 300 }),
             FieldUtils.buildTextForName(),
-            FieldUtils.buildText({ code: 'simpleName', name: '简称' }),
+            FieldUtils.buildText({ code: 'shortName', name: '简称' }),
             FieldUtils.buildCascader({
                 code: 'category', name: '类别',
                 list: { width: 200, align: 'center' },

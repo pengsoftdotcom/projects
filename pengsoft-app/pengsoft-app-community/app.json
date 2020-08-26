@@ -1,6 +1,7 @@
 {
     "pages": [
-        "pages/index/index"
+        "pages/index/index",
+        "pages/city-picker/city-picker"
     ],
     "window": {
         "backgroundTextStyle": "light",
@@ -9,9 +10,5 @@
         "navigationBarTextStyle": "black"
     },
     "style": "v2",
-    "sitemapLocation": "sitemap.json",
-    "useExtendedLib": {
-        "kbone": true,
-        "weui": true
-    }
+    "sitemapLocation": "sitemap.json"
 }

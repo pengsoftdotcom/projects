@@ -2,7 +2,7 @@
 <view class="nav-bar" style="height: {{navBarHeight}}px">
 	<view class="status-bar" style="height: {{statusBarHeight}}px"></view>
 	<view class="title-bar" style="margin: {{titleBarMarginTop}}px 0 {{titleBarMarginBottom}}px;">
-		<view class="left-cell">
+		<view class="left-cell" bindtap="openLocationPicker">
 			<view class="city-row"> 
 				<text class="city">{{city}}</text>
 				<image wx:if="{{!!city}}" class="icon" src="/assets/down.png"></image>
@@ -14,7 +14,7 @@
 		</view>
 		<view class="center-cell">
 			<icon class="icon" size="20" type="search"></icon>
-			<input class="text" placeholder="输入社区或小区名" confirm-type="search" bindconfirm="search"></input>
+			<input class="text" placeholder="{{placeholder}}" confirm-type="search" bindconfirm="search"></input>
 		</view>
 		<view class="right-cell"></view>
 	</view>

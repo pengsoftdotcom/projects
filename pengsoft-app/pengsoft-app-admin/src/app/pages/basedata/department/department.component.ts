@@ -56,7 +56,7 @@ export class DepartmentComponent extends TreeEntityComponent<DepartmentService> 
         this.fields.splice(1, 0,
             FieldUtils.buildTreeSelect({ code: 'organization', name: '机构', list: { visible: false }, edit: { visible: false } }),
             FieldUtils.buildTextForName(),
-            FieldUtils.buildText({ code: 'simpleName', name: '简称' })
+            FieldUtils.buildText({ code: 'shortName', name: '简称' })
         );
     }
 

@@ -1,4 +1,4 @@
 <!--index.wxml-->
-<nav-bar></nav-bar>
+<nav-bar placeholder="输入社区或小区名"></nav-bar>
 <view>
 </view>

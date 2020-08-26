@@ -33,8 +33,8 @@ public class OrganizationServiceImpl extends TreeEntityServiceImpl<OrganizationR
                 throw getExceptions().constraintViolated("name", "Exists", organization.getCode());
             }
         });
-        if (StringUtils.isBlank(organization.getSimpleName())) {
-            organization.setSimpleName(organization.getName());
+        if (StringUtils.isBlank(organization.getShortName())) {
+            organization.setShortName(organization.getName());
         }
         super.save(organization);
         if (!StringUtils.equals(organization.getId(), organization.getBelongsTo())) {

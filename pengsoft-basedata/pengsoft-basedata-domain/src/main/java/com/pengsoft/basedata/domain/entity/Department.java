@@ -36,23 +36,22 @@ import java.util.List;
 public class Department extends OwnedExtTreeEntity<Department> {
 
     private static final long serialVersionUID = 4258074923618744007L;
+    @JsonIgnore
+    @OneToMany(mappedBy = "department", cascade = CascadeType.REMOVE)
+    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+    @NotFound(action = NotFoundAction.IGNORE)
+    private final List<Job> jobs = new ArrayList<>();
 
     @NotBlank
     @Size(max = 255)
     private String name;
 
     @Size(max = 255)
-    private String simpleName;
+    private String shortName;
 
     @NotNull
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private Organization organization;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "department", cascade = CascadeType.REMOVE)
-    @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
-    @NotFound(action = NotFoundAction.IGNORE)
-    private final List<Job> jobs = new ArrayList<>();
 
 }

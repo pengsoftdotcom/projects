@@ -25,8 +25,8 @@ public class DepartmentServiceImpl extends TreeEntityServiceImpl<DepartmentRepos
                 throw getExceptions().constraintViolated("name", "Exists", department.getName());
             }
         });
-        if (StringUtils.isBlank(department.getSimpleName())) {
-            department.setSimpleName(department.getName());
+        if (StringUtils.isBlank(department.getShortName())) {
+            department.setShortName(department.getName());
         }
         return super.save(department);
     }

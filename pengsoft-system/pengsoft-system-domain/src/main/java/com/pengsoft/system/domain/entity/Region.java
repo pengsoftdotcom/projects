@@ -39,6 +39,9 @@ public class Region extends TreeEntityImpl<Region> implements Codeable {
     private String name;
 
     @Size(max = 255)
+    private String shortName;
+
+    @Size(max = 255)
     private String remark;
 
 }

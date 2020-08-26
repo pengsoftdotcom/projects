@@ -13,7 +13,9 @@ Component({
      * 组件的属性列表
      */
     properties: {
-
+        placeholder: {
+            type: String
+        }
     },
 
     /**
@@ -28,7 +30,7 @@ Component({
         systemInfo,
         city: '',
         weather: '',
-        temperature: ''
+        temperature: '' 
     },
 
     lifetimes: {
@@ -76,7 +78,9 @@ Component({
      */
     methods: {
         openLocationPicker() {
-
+            wx.navigateTo({
+              url: '/pages/city-picker/city-picker',
+            })
         },
         search(event) {
             wx.request({

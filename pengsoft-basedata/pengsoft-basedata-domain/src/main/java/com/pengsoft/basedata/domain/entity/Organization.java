@@ -36,7 +36,7 @@ import java.util.List;
 @Table(name = "t_organization", indexes = {
         @Index(name = "i_organization_code", columnList = "code", unique = true),
         @Index(name = "i_organization_name", columnList = "name", unique = true),
-        @Index(name = "i_organization_simple_name", columnList = "simpleName")
+        @Index(name = "i_organization_short_name", columnList = "shortName")
 })
 public class Organization extends OwnedExtTreeEntity<Organization> implements Codeable {
 
@@ -51,7 +51,7 @@ public class Organization extends OwnedExtTreeEntity<Organization> implements Co
     private String name;
 
     @Size(max = 255)
-    private String simpleName;
+    private String shortName;
 
     @NotNull
     @ManyToOne
