@@ -24,7 +24,9 @@ import javax.validation.constraints.Size;
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_region", indexes = {
-        @Index(name = "i_region_code", columnList = "code", unique = true)
+        @Index(name = "i_region_code", columnList = "code", unique = true),
+        @Index(name = "i_region_name", columnList = "name"),
+        @Index(name = "i_region_index", columnList = "index")
 })
 public class Region extends TreeEntityImpl<Region> implements Codeable {
 
@@ -40,6 +42,9 @@ public class Region extends TreeEntityImpl<Region> implements Codeable {
 
     @Size(max = 255)
     private String shortName;
+
+    @Size(max = 255)
+    private String index;
 
     @Size(max = 255)
     private String remark;

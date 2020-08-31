@@ -1,5 +1,13 @@
 package com.pengsoft.support.commons.util;
 
+import lombok.extern.slf4j.Slf4j;
+import net.sourceforge.pinyin4j.PinyinHelper;
+import net.sourceforge.pinyin4j.format.HanyuPinyinCaseType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinOutputFormat;
+import net.sourceforge.pinyin4j.format.HanyuPinyinToneType;
+import net.sourceforge.pinyin4j.format.HanyuPinyinVCharType;
+
+import javax.persistence.Convert;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -9,6 +17,7 @@ import java.util.regex.Pattern;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Slf4j
 public class StringUtils extends org.apache.commons.lang3.StringUtils {
 
     public static final String GLOBAL_SEPARATOR = "::";

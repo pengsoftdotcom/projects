@@ -20,7 +20,7 @@ export class RegionComponent extends TreeEntityComponent<RegionService> {
     }
 
     get lazy(): boolean {
-        return false;
+        return true;
     }
 
     get parentParams(): any {
@@ -33,6 +33,8 @@ export class RegionComponent extends TreeEntityComponent<RegionService> {
             FieldUtils.buildCascaderForRegion(this.entity, { code: 'parent', name: '上级', list: { visible: false } }),
             FieldUtils.buildTextForCode(),
             FieldUtils.buildTextForName(),
+            FieldUtils.buildText({ code: 'shortName', name: '简称' }),
+            FieldUtils.buildText({ code: 'index', name: '索引' }),
             FieldUtils.buildTextareaForRemark()
         ];
     }

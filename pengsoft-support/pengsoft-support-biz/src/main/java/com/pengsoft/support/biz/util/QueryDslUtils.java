@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 
 import java.io.Serializable;
+import java.util.Optional;
 
 /**
  * Query DSL utility
@@ -241,30 +242,15 @@ public class QueryDslUtils {
      * @param targetPredicate target {@link Predicate}
      * @param conjunction     if true, use 'and'
      */
-    public static Predicate merge(Predicate sourcePredicate, Predicate targetPredicate, final boolean conjunction) {
-        if (sourcePredicate == null) {
-            sourcePredicate = new BooleanBuilder();
-        }
-        if (targetPredicate == null) {
-            targetPredicate = new BooleanBuilder();
-        }
-        if (sourcePredicate instanceof BooleanBuilder) {
-            if (conjunction) {
-                targetPredicate = ((BooleanBuilder) sourcePredicate).and(targetPredicate);
-            } else {
-                targetPredicate = ((BooleanBuilder) sourcePredicate).or(targetPredicate);
-            }
-            return targetPredicate;
-        } else if (targetPredicate instanceof BooleanBuilder) {
-            if (conjunction) {
-                sourcePredicate = ((BooleanBuilder) targetPredicate).and(sourcePredicate);
-            } else {
-                sourcePredicate = ((BooleanBuilder) targetPredicate).or(sourcePredicate);
-            }
-            return sourcePredicate;
+    public static Predicate merge(final Predicate sourcePredicate, final Predicate targetPredicate, final boolean conjunction) {
+        var source = Optional.ofNullable(sourcePredicate).map(BooleanBuilder::new).orElseGet(BooleanBuilder::new);
+        var target = Optional.ofNullable(targetPredicate).map(BooleanBuilder::new).orElseGet(BooleanBuilder::new);
+        if (conjunction) {
+            target = source.and(target);
         } else {
-            throw new IllegalArgumentException("source or target predicate is not an instance of BooleanExpression");
+            target = source.or(target);
         }
+        return target;
     }
 
 }

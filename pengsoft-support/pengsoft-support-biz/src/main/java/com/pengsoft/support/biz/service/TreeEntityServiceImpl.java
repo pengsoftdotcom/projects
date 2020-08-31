@@ -9,6 +9,7 @@ import com.querydsl.core.types.Predicate;
 import com.querydsl.core.types.dsl.StringPath;
 import org.springframework.data.domain.Sort;
 
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.ArrayDeque;
 import java.util.List;
@@ -38,11 +39,7 @@ public class TreeEntityServiceImpl<R extends TreeEntityRepository<?, T, ID>, T e
 
         if (entity.getParent() != null) {
             // set the current parent as a non-leaf node.
-            if (EntityUtils.isNotPersisted(entity.getParent())) {
-                entity.setParent(
-                        findOne(entity.getParent().getId()).orElseThrow(() -> getExceptions().entityNotFound(entity.getParent().getId().toString())));
-            }
-            entity.getParent().getChildren().add(entity);
+            entity.setParent(findOne(entity.getParent().getId()).orElseThrow(() -> getExceptions().entityNotFound(entity.getParent().getId().toString())));
             entity.getParent().setLeaf(false);
             super.save(entity.getParent());
 
@@ -96,6 +93,11 @@ public class TreeEntityServiceImpl<R extends TreeEntityRepository<?, T, ID>, T e
                 super.save(parent);
             }
         });
+    }
+
+    @Override
+    public void delete(List<T> entities) {
+        getRepository().deleteAll(entities);
     }
 
     @Override

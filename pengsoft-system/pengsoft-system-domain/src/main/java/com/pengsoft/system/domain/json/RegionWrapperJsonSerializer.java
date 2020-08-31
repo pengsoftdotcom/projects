@@ -3,7 +3,6 @@ package com.pengsoft.system.domain.json;
 import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.databind.JsonSerializer;
 import com.fasterxml.jackson.databind.SerializerProvider;
-import com.pengsoft.support.commons.util.StringUtils;
 
 import java.io.IOException;
 
@@ -16,9 +15,10 @@ import java.io.IOException;
 public class RegionWrapperJsonSerializer extends JsonSerializer<RegionWrapper> {
 
     @Override
-    public void serialize(RegionWrapper wrapper, JsonGenerator gen, SerializerProvider serializers) throws IOException {
+    public void serialize(final RegionWrapper wrapper, final JsonGenerator gen, final SerializerProvider serializers) throws IOException {
         gen.writeStartObject();
-        gen.writeStringField("name", StringUtils.substringBeforeLast(wrapper.getRegion().getName(), "市"));
+        gen.writeStringField("name", wrapper.getRegion().getName());
+        gen.writeStringField("index", wrapper.getRegion().getIndex());
         gen.writeEndObject();
     }
 

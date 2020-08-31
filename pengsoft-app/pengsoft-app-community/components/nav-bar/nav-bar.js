@@ -38,10 +38,10 @@ Component({
             global.amap.getRegeo({
                 success: res => {
                     let city = res[0].regeocodeData.addressComponent.city;
-                    // 直辖市
+                    // 直辖市 
                     if (city instanceof Array) {
                         city = res[0].regeocodeData.addressComponent.province;
-                    }
+                    } 
                     if (city.endsWith('特别行政区')) {
                         city = city.substring(0, city.length - 5);
                     } else if (city.endsWith('自治州')) {

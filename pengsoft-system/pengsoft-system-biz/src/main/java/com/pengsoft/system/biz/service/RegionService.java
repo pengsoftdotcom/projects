@@ -4,6 +4,7 @@ import com.pengsoft.support.biz.service.TreeEntityService;
 import com.pengsoft.system.domain.entity.Region;
 
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -20,5 +21,10 @@ public interface RegionService extends TreeEntityService<Region, String> {
      * @param code {@link Region}'code
      */
     Optional<Region> findOneByCode(@NotBlank String code);
+
+    /**
+     * Returns an {@link Optional} of a {@link Region} with property 'index' is not null.
+     */
+    List<Region> findAllIndexedCities();
 
 }

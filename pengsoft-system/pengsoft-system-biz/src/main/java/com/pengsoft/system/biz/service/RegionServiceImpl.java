@@ -1,13 +1,13 @@
 package com.pengsoft.system.biz.service;
 
 import com.pengsoft.support.biz.service.TreeEntityServiceImpl;
-import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.util.EntityUtils;
 import com.pengsoft.system.biz.repository.RegionRepository;
 import com.pengsoft.system.domain.entity.Region;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -24,18 +24,20 @@ public class RegionServiceImpl extends TreeEntityServiceImpl<RegionRepository, R
     public Region save(final Region region) {
         findOneByCode(region.getCode()).ifPresent(source -> {
             if (EntityUtils.ne(source, region)) {
-                throw getExceptions().constraintViolated("code", region.getCode());
+                throw getExceptions().constraintViolated("code", "Exists", region.getCode());
             }
         });
-        if (StringUtils.isBlank(region.getShortName())) {
-            region.setShortName(region.getName());
-        }
         return super.save(region);
     }
 
     @Override
     public Optional<Region> findOneByCode(final String code) {
         return getRepository().findOneByCode(code);
+    }
+
+    @Override
+    public List<Region> findAllIndexedCities() {
+        return getRepository().findAllByIndexIsNotNullOrderByIndexAscCodeAsc();
     }
 
 }

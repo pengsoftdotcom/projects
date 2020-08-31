@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
 import javax.validation.constraints.NotBlank;
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -25,6 +26,7 @@ public interface RegionRepository extends TreeEntityRepository<QRegion, Region, 
     default void customize(final QuerydslBindings bindings, final QRegion root) {
         TreeEntityRepository.super.customize(bindings, root);
         bindings.bind(root.code).first(StringPath::startsWith);
+        bindings.bind(root.name).first(StringPath::startsWith);
     }
 
     /**
@@ -34,5 +36,11 @@ public interface RegionRepository extends TreeEntityRepository<QRegion, Region, 
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
     Optional<Region> findOneByCode(@NotBlank String code);
+
+    /**
+     * Returns an {@link Optional} of a {@link Region} with property 'index' is not null.
+     */
+    @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
+    List<Region> findAllByIndexIsNotNullOrderByIndexAscCodeAsc();
 
 }

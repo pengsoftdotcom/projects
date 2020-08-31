@@ -1,4 +1,5 @@
 <app-list #listComponent title="社区列表" [fields]="fields" [listData]="listData" [pageData]="pageData" [toolbarButtons]="listToolbarButtons"
     [actionButtons]="listActionButtons" (pageChange)="list()"></app-list>
-<app-edit #editComponent title="社区编辑" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons" [errors]="errors"></app-edit>
+<app-edit #editComponent title="社区编辑" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons" [errors]="errors" width="40%">
+</app-edit>
 <app-edit-one-to-many #buildingsComponent></app-edit-one-to-many>
