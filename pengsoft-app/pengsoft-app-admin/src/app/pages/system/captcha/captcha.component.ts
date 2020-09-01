@@ -28,19 +28,17 @@ export class CaptchaComponent extends EntityComponent<CaptchaService> {
             FieldUtils.buildTextForCode({ width: 120, align: 'center', sortable: false }),
             FieldUtils.buildDatetimeForExpiredAt(),
             FieldUtils.buildText({
-                code: 'user', name: '用户', children: UserComponent.prototype.fields.map((field: Field) => {
-                    if (field.code === 'expiredAt') {
-                        delete field.filter;
-                    }
-                    return field;
-                })
+                code: 'user', name: '用户',
+                children: UserComponent.prototype.fields
+                    .filter(field => !['username', 'email', 'mpOpenId'].includes(field.code))
+                    .map((field: Field) => {
+                        if (field.code === 'expiredAt') {
+                            delete field.filter;
+                        }
+                        return field;
+                    })
             })
         ];
-    }
-
-    initListToolbarButtons(): void {
-        super.initListToolbarButtons();
-        this.listToolbarButtons.splice(1, 1);
     }
 
     initListActionButtons(): void {

@@ -29,7 +29,7 @@ public class CaptchaApi extends EntityApi<CaptchaFacade, Captcha, String> {
     @Inject
     private UserFacade userFacade;
 
-    @Messaging("authenticationCaptchaMessageBuilder")
+//    @Messaging("authenticationCaptchaMessageBuilder")
     @PostMapping("generate-for-authentication")
     @JsonIgnore
     public CaptchaWrapper generateForAuthentication(@NotBlank @Mobile final String mobile) {

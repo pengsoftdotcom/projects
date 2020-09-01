@@ -28,8 +28,8 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>com.pengsoft.security</groupId>
-                <artifactId>pengsoft-security</artifactId>
+                <groupId>com.pengsoft.security.oauth</groupId>
+                <artifactId>pengsoft-security-oauth</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>

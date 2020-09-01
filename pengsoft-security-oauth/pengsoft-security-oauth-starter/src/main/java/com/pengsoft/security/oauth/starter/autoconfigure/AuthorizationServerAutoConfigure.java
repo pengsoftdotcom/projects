@@ -1,9 +1,17 @@
 package com.pengsoft.security.oauth.starter.autoconfigure;
 
-import java.util.ArrayList;
-
-import javax.inject.Inject;
-
+import com.pengsoft.security.biz.facade.UserFacade;
+import com.pengsoft.security.domain.DefaultUserDetails;
+import com.pengsoft.security.oauth.biz.facade.ClientFacade;
+import com.pengsoft.security.oauth.biz.provider.token.AbstractCustomTokenGranter;
+import com.pengsoft.security.oauth.commons.json.OAuth2AccessTokenMixIn;
+import com.pengsoft.security.oauth.starter.autoconfigure.properties.OAuthAutoConfigureProperties;
+import com.pengsoft.security.starter.autoconfigure.properties.WebSecurityAutoConfigureProperties;
+import com.pengsoft.support.commons.json.ObjectMapper;
+import com.pengsoft.support.commons.util.StringUtils;
+import com.pengsoft.support.starter.autoconfigure.properties.MessageQueueAutoConfigureProperties;
+import com.querydsl.core.BooleanBuilder;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.acl.common.AclClientRPCHook;
 import org.apache.rocketmq.acl.common.SessionCredentials;
 import org.apache.rocketmq.client.AccessChannel;
@@ -17,7 +25,9 @@ import org.apache.rocketmq.common.protocol.heartbeat.MessageModel;
 import org.apache.rocketmq.remoting.RPCHook;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -38,6 +48,7 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.CompositeTokenGranter;
 import org.springframework.security.oauth2.provider.OAuth2Authentication;
+import org.springframework.security.oauth2.provider.OAuth2RequestFactory;
 import org.springframework.security.oauth2.provider.TokenGranter;
 import org.springframework.security.oauth2.provider.client.ClientCredentialsTokenGranter;
 import org.springframework.security.oauth2.provider.code.AuthorizationCodeTokenGranter;
@@ -49,18 +60,8 @@ import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 import org.springframework.util.SerializationUtils;
 
-import com.pengsoft.security.biz.facade.UserFacade;
-import com.pengsoft.security.domain.DefaultUserDetails;
-import com.pengsoft.security.oauth.biz.facade.ClientFacade;
-import com.pengsoft.security.oauth.commons.json.OAuth2AccessTokenMixIn;
-import com.pengsoft.security.oauth.starter.autoconfigure.properties.OAuthAutoConfigureProperties;
-import com.pengsoft.security.starter.autoconfigure.properties.WebSecurityAutoConfigureProperties;
-import com.pengsoft.support.commons.json.ObjectMapper;
-import com.pengsoft.support.commons.util.StringUtils;
-import com.pengsoft.support.starter.autoconfigure.properties.MessageQueueAutoConfigureProperties;
-import com.querydsl.core.BooleanBuilder;
-
-import lombok.extern.slf4j.Slf4j;
+import javax.inject.Inject;
+import java.util.ArrayList;
 
 /**
  * Authorization server auto configure.
@@ -69,6 +70,7 @@ import lombok.extern.slf4j.Slf4j;
  * @since 1.0.0
  */
 @Slf4j
+@ComponentScan({ "com.*.*.biz.provider.token", "com.*.*.*.biz.provider.token" })
 @ConditionalOnProperty(name = "pengsoft.security.oauth.authorization-server", havingValue = "enabled")
 @Configuration
 @EnableAuthorizationServer
@@ -86,6 +88,9 @@ public class AuthorizationServerAutoConfigure extends AuthorizationServerConfigu
 
     @Inject
     private TokenStore tokenStore;
+
+    @Inject
+    private ApplicationContext applicationContext;
 
     @Inject
     private UserFacade userFacade;
@@ -118,14 +123,19 @@ public class AuthorizationServerAutoConfigure extends AuthorizationServerConfigu
         final var tokenServices = endpoints.getTokenServices();
         final var authorizationCodeServices = endpoints.getAuthorizationCodeServices();
         final var requestFactory = new DefaultOAuth2RequestFactory(clientDetailsService);
-        final var tokenGranters = new ArrayList<TokenGranter>();
-        tokenGranters.add(new AuthorizationCodeTokenGranter(tokenServices, authorizationCodeServices, clientDetailsService, requestFactory));
-        tokenGranters.add(new RefreshTokenGranter(tokenServices, clientDetailsService, requestFactory));
-        tokenGranters.add(new ImplicitTokenGranter(tokenServices, clientDetailsService, requestFactory));
-        tokenGranters.add(new ClientCredentialsTokenGranter(tokenServices, clientDetailsService, requestFactory));
-        tokenGranters.add(new ResourceOwnerPasswordTokenGranter(authenticationManager, tokenServices, clientDetailsService, requestFactory));
-
-        return new CompositeTokenGranter(tokenGranters);
+        final var granters = new ArrayList<TokenGranter>();
+        granters.add(new AuthorizationCodeTokenGranter(tokenServices, authorizationCodeServices, clientDetailsService, requestFactory));
+        granters.add(new RefreshTokenGranter(tokenServices, clientDetailsService, requestFactory));
+        granters.add(new ImplicitTokenGranter(tokenServices, clientDetailsService, requestFactory));
+        granters.add(new ClientCredentialsTokenGranter(tokenServices, clientDetailsService, requestFactory));
+        granters.add(new ResourceOwnerPasswordTokenGranter(authenticationManager, tokenServices, clientDetailsService, requestFactory));
+        applicationContext.getBeansOfType(AbstractCustomTokenGranter.class).values().forEach(granter -> {
+            granter.setTokenServices(tokenServices);
+            granter.setClientDetailsService(clientDetailsService);
+            granter.setRequestFactory(requestFactory);
+            granters.add(granter);
+        });
+        return new CompositeTokenGranter(granters);
     }
 
     @Override
@@ -153,7 +163,7 @@ public class AuthorizationServerAutoConfigure extends AuthorizationServerConfigu
     @Bean
     @ConditionalOnProperty(name = "pengsoft.mq.enabled", havingValue = "true")
     public MQConsumer updatingAuthenticationConsumer(final MessageQueueAutoConfigureProperties mqProperties,
-            final WebSecurityAutoConfigureProperties messagingProperties) throws MQClientException {
+                                                     final WebSecurityAutoConfigureProperties messagingProperties) throws MQClientException {
         final var rpcHook = getRpcHook(mqProperties);
         final DefaultMQPushConsumer consumer = new DefaultMQPushConsumer(mqProperties.getGroupId(), rpcHook, new AllocateMessageQueueAveragely());
         if (rpcHook != null) {

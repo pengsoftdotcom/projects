@@ -31,7 +31,7 @@
                     <tr *ngIf="groupable">
                         <ng-container *ngFor="let field of fields">
                             <ng-container *ngFor="let subfield of field.children">
-                                <th *ngIf="subfield.list.visible" nzAlign="center" rowspan="1" colspan="1">
+                                <th *ngIf="subfield.list.visible" nzAlign="center">
                                     {{subfield.list.label ? subfield.list.label : subfield.name}}
                                 </th>
                             </ng-container>

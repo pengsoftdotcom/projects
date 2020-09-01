@@ -61,6 +61,9 @@ export class UserComponent extends EntityComponent<UserService> {
                 },
                 filter: { label: { tooltip: null } }
             }),
+            FieldUtils.buildText({ code: 'mobile', name: '手机' }),
+            FieldUtils.buildText({ code: 'email', name: '邮件' }),
+            FieldUtils.buildText({ code: 'mpOpenId', name: '微信Open ID' }),
             FieldUtils.buildPassword({
                 code: 'password', name: '密码',
                 edit: {

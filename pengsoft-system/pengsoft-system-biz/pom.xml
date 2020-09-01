@@ -20,6 +20,10 @@
             <artifactId>pengsoft-security-biz</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.pengsoft.security.oauth</groupId>
+            <artifactId>pengsoft-security-oauth-biz</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.aliyun.oss</groupId>
             <artifactId>aliyun-sdk-oss</artifactId>
             <exclusions>

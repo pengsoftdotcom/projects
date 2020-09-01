@@ -120,7 +120,7 @@ export class ListComponent extends BaseComponent implements OnInit {
         const sortWidth = 82;
         let actionWidth = 17;
         this.actionButtons = this.actionButtons.filter(button => !button.authority || this.security.hasAnyAuthority(button.authority));
-        if (this.actionButtons.length === 1) {
+        if (this.actionButtons.length === 1 && this.actionButtons[0].divider) {
             this.actionButtons[0].divider = false;
             this.actionButtons[0].width = this.actionButtons[0].width - 17;
         }
@@ -138,7 +138,7 @@ export class ListComponent extends BaseComponent implements OnInit {
             this.tableWidthConfig.push(sortWidth);
         }
         this.tableWidthConfig.push(actionWidth);
-        this.tableWidthConfig = this.tableWidthConfig.map(width => width + 'px');
+        this.tableWidthConfig = this.tableWidthConfig.map(width => width ? width + 'px' : null);
     }
 
     private fillWidthConfig(field: Field) {
