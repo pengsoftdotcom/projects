@@ -70,7 +70,9 @@ public class StorageServiceImpl implements StorageService {
         asset.setPresentName(UUID.randomUUID().toString() + StringUtils.PACKAGE_SEPARATOR + extension);
 
         final var accessPathPrefix = new StringBuilder(locked ? getLockedAccessPathPrefix() : getPublicAccessPathPrefix());
-        accessPathPrefix.append(StringUtils.FILE_SEPARATOR);
+        if (!accessPathPrefix.toString().endsWith(StringUtils.FILE_SEPARATOR)) {
+            accessPathPrefix.append(StringUtils.FILE_SEPARATOR);
+        }
 
         // 用于OSS的KEY
         final var accessPathSuffix = new StringBuilder();

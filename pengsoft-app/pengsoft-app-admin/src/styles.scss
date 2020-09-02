@@ -4,10 +4,20 @@
 .ant-transfer {
     height: 100%;
 }
+
 .ant-transfer-list {
     height: 100% !important;
     width: calc(50% - 20px) !important;
 }
+
+.ant-table-header {
+    border-right: 1px solid #f0f0f0;
+
+    table thead th:last-of-type {
+        border-right: none;
+    }
+}
+
 
 .edit {
     nz-tabs-nav {

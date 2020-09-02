@@ -20,7 +20,7 @@ public class StorageServiceAutoConfigure {
 
     @ConditionalOnProperty(value = "pengsoft.storage.enabled", havingValue = "true")
     @Bean
-    public StorageService objectStorageService(final StorageServiceAutoConfigureProperties properties) {
+    public StorageService storageService(final StorageServiceAutoConfigureProperties properties) {
         return new StorageServiceImpl(properties.getPublicAccessPathPrefix(), properties.getLockedAccessPathPrefix(),
                 properties.getPublicBucket(), properties.getLockedBucket(), properties.getEndpoint(),
                 properties.getAccessKeyId(), properties.getAccessKeySecret());

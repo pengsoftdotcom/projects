@@ -61,12 +61,15 @@ export class ListComponent extends BaseComponent implements OnInit {
 
     firstVisibleFieldIndex = -1;
 
+    isWindows = false;
+
     constructor(private security: SecurityService, public sanitizer: DomSanitizer) {
         super();
         this.title = '列表';
     }
 
     ngOnInit(): void {
+        this.isWindows = window.navigator.userAgent.indexOf('Windows') > -1;
         this.initVisibleFields();
         this.initGroupable();
         this.initTreeable();

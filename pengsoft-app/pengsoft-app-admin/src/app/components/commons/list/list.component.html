@@ -26,7 +26,11 @@
                         <th *ngIf="sortable" nzAlign="center" [attr.rowspan]="getRowspan()" colspan="1" nzAlign="center">
                             <a (click)="sequenceChange.emit()">排序</a>
                         </th>
-                        <th nzAlign="center" [attr.rowspan]="getRowspan()" colspan="1">操作</th>
+                        <th nzAlign="center" [attr.rowspan]="getRowspan()" colspan="1">
+                            <span style="position: relative;" [style.left]="isWindows ? '10px' : 0">
+                                操作
+                            </span>
+                        </th>
                     </tr>
                     <tr *ngIf="groupable">
                         <ng-container *ngFor="let field of fields">
