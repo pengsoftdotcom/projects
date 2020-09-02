@@ -10,10 +10,14 @@
     width: calc(50% - 20px) !important;
 }
 
-.ant-table-header {
+.ant-table-content {
     border-right: 1px solid #f0f0f0;
 
-    table thead th:last-of-type {
+    .ant-table-header table thead th:last-of-type {
+        border-right: none;
+    }
+
+    .ant-table-body table tbody td:last-of-type {
         border-right: none;
     }
 }
