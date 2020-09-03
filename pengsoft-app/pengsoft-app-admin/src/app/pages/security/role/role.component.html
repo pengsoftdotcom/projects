@@ -1,4 +1,4 @@
 <app-list #listComponent title="角色列表" [fields]="fields" [listData]="listData" [toolbarButtons]="listToolbarButtons"
-    [actionButtons]="listActionButtons" (expandChange)="loadChildren($event)"></app-list>
+    [actionButtons]="listActionButtons" (expandChange)="loadChildren($event)" [footerToolbar]="true"></app-list>
 <app-edit #editComponent title="角色编辑" [fields]="fields" [form]="editForm" [toolbarButtons]="editToolbarButtons" [errors]="errors"></app-edit>
 <app-edit-many-to-many #editManyToManyComponent title="分配权限" [toolbarButtons]="buttons"></app-edit-many-to-many>

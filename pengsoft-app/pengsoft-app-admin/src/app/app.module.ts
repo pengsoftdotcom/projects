@@ -17,6 +17,7 @@ import {
     NzModalModule,
     NzSpinModule,
     NzRadioModule,
+    NzTabsModule,
     NZ_I18N,
     zh_CN
 } from 'ng-zorro-antd';
@@ -60,6 +61,7 @@ registerLocaleData(zh);
         NzDropDownModule,
         NzSpinModule,
         NzRadioModule,
+        NzTabsModule,
         IconsProviderModule,
         ComponentsModule,
         DirectivesModule,

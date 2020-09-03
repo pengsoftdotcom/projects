@@ -7,11 +7,12 @@
         <nz-tree *ngIf="navData" nz-col nzSpan="4" [nzData]="navData" nzBlockNode nzExpandAll [nzVirtualHeight]="tableNavHeight + 'px'"
             (nzClick)="nav.emit($event)"></nz-tree>
         <div nz-col [nzSpan]="navData ? 20: 24">
-            <nz-table #table nzBordered nzSize="middle" [nzLoading]="loading" [nzWidthConfig]="tableWidthConfig" [nzScroll]="{ y: tableBodyHeight }"
-                [nzData]="listData" [nzTitle]="buttonsTemplate" [nzFrontPagination]="false" [nzShowPagination]="pageable"
-                [(nzPageIndex)]="pageData.page" [(nzPageSize)]="pageData.size" [nzTotal]="pageData.total" [nzShowTotal]="rangeTemplate"
-                nzShowQuickJumper (nzPageIndexChange)="pageChange.emit()" nzShowSizeChanger [nzPageSizeOptions]="[20, 50, 100]"
-                (nzPageSizeChange)="pageChange.emit()">
+            <!-- [nzScroll]="{ y: tableBodyHeight }" -->
+            <nz-table #table nzBordered nzSize="middle" [nzLoading]="loading" [nzWidthConfig]="tableWidthConfig" [nzData]="listData"
+                [nzTitle]="toolbarTemplate" [nzFooter]="footerToolbar ? toolbarTemplate : null" [nzFrontPagination]="false"
+                [nzShowPagination]="pageable" [(nzPageIndex)]="pageData.page" [(nzPageSize)]="pageData.size" [nzTotal]="pageData.total"
+                [nzShowTotal]="rangeTemplate" nzShowQuickJumper (nzPageIndexChange)="pageChange.emit()" nzShowSizeChanger
+                [nzPageSizeOptions]="[20, 50, 100]" (nzPageSizeChange)="pageChange.emit()">
                 <thead>
                     <tr>
                         <th [attr.rowspan]="getRowspan()" colspan="1" nzShowCheckbox [(nzChecked)]="allChecked" [nzIndeterminate]="indeterminate"
@@ -27,9 +28,9 @@
                             <a (click)="sequenceChange.emit()">排序</a>
                         </th>
                         <th nzAlign="center" [attr.rowspan]="getRowspan()" colspan="1">
-                            <span style="position: relative;" [style.left]="isWindows ? '10px' : 0">
-                                操作
-                            </span>
+                            <!-- <span style="position: relative;" [style.left]="isWindows ? '10px' : 0"> -->
+                            操作
+                            <!-- </span> -->
                         </th>
                     </tr>
                     <tr *ngIf="groupable">
@@ -81,13 +82,15 @@
     </div>
 </div>
 
-<ng-template #buttonsTemplate>
+<ng-template #toolbarTemplate>
     <nz-space>
-        <nz-space-item *ngFor="let button of toolbarButtons">
-            <app-button [hasAnyAuthority]="button.authority" [name]="button.name" [type]="button.type" [danger]="button.danger"
-                [divider]="button.divider" [size]="button.size" [disabled]="isButtonDisabled(button)" (action)="button.action()">
-            </app-button>
-        </nz-space-item>
+        <ng-container *ngFor="let button of toolbarButtons">
+            <nz-space-item [class.right-button]="button.alignRight">
+                <app-button [hasAnyAuthority]="button.authority" [name]="button.name" [type]="button.type" [danger]="button.danger"
+                    [divider]="button.divider" [size]="button.size" [disabled]="isButtonDisabled(button)" (action)="button.action()">
+                </app-button>
+            </nz-space-item>
+        </ng-container>
     </nz-space>
 </ng-template>
 

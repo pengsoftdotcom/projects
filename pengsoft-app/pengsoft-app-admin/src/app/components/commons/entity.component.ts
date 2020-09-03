@@ -68,13 +68,13 @@ export abstract class EntityComponent<S extends EntityService> extends BaseCompo
 
     initListToolbarButtons(): void {
         this.listToolbarButtons = [
-            { name: '刷新', type: 'default', action: () => this.list() },
             { name: '新增', type: 'primary', action: () => this.edit(), authority: this.getAuthority('findOne') },
-            { name: '批量删除', type: 'primary', danger: true, action: () => this.delete(), authority: this.getAuthority('delete') }
+            { name: '批量删除', type: 'primary', danger: true, action: () => this.delete(), authority: this.getAuthority('delete') },
+            { name: '刷新', type: 'default', action: () => this.list() }
         ];
         if (this.fields.some(field => field.filter)
             || this.fields.filter(field => field.children).some(field => field.children.some(subfield => subfield.filter))) {
-            this.listToolbarButtons.splice(0, 0, { name: '搜索', type: 'link', action: () => this.filter() });
+            this.listToolbarButtons.splice(0, 0, { name: '搜索', type: 'link', alignRight: true, action: () => this.filter() });
         }
     }
 

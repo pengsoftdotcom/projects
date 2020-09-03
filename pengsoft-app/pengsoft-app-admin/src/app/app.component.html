@@ -10,7 +10,7 @@
             <ng-container *ngFor="let menu of menus">
                 <ng-container *ngIf="!menu.children; else elseBlock">
                     <li nz-menu-item [hasAnyAuthority]="getMenuAuthority(menu)" [nzMatchRouter]="true" [routerLink]="menu.path">
-                        <i nz-icon [nzType]="menu.data.icon"></i>{{menu.data.name}}
+                        <i nz-icon [nzType]="menu.data.icon"></i><span>{{menu.data.name}}</span>
                     </li>
                 </ng-container>
                 <ng-template #elseBlock>

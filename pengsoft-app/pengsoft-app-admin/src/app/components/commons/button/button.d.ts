@@ -6,6 +6,8 @@ export interface Button {
 
     type?: 'primary' | 'default' | 'link';
 
+    alignRight?: boolean;
+
     danger?: boolean;
 
     divider?: boolean;

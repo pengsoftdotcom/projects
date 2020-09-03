@@ -35,6 +35,8 @@ export class ListComponent extends BaseComponent implements OnInit {
 
     @Input() sortable = false;
 
+    @Input() footerToolbar = false;
+
     @Output() sequenceChange = new EventEmitter<any>();
 
     @Output() nav = new EventEmitter<any>();
@@ -61,7 +63,7 @@ export class ListComponent extends BaseComponent implements OnInit {
 
     firstVisibleFieldIndex = -1;
 
-    isWindows = false;
+    // isWindows = false;
 
     constructor(private security: SecurityService, public sanitizer: DomSanitizer) {
         super();
@@ -69,7 +71,7 @@ export class ListComponent extends BaseComponent implements OnInit {
     }
 
     ngOnInit(): void {
-        this.isWindows = window.navigator.userAgent.indexOf('Windows') > -1;
+        // this.isWindows = window.navigator.userAgent.indexOf('Windows') > -1;
         this.initVisibleFields();
         this.initGroupable();
         this.initTreeable();

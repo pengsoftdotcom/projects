@@ -1,7 +1,6 @@
-import { Location } from '@angular/common';
 import { Component, OnInit, TemplateRef, ViewChild } from '@angular/core';
 import { Router } from '@angular/router';
-import { NzMessageService, NzModalRef, NzModalService } from 'ng-zorro-antd';
+import { NzMessageService, NzModalService } from 'ng-zorro-antd';
 import { BaseComponent } from 'src/app/components/commons/base.component';
 import { Field } from 'src/app/components/commons/form-item/field';
 import { SecurityService } from 'src/app/services/commons/security.service';
