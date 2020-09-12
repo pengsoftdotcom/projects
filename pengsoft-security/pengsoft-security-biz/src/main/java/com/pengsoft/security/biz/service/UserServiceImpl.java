@@ -9,11 +9,16 @@ import com.pengsoft.support.biz.service.EntityServiceImpl;
 import com.pengsoft.support.commons.util.DateUtils;
 import com.pengsoft.support.commons.util.StringUtils;
 import com.pengsoft.support.domain.util.EntityUtils;
+import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+import javax.validation.ConstraintViolationException;
+import javax.validation.Valid;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -34,21 +39,29 @@ public class UserServiceImpl extends EntityServiceImpl<UserRepository, User, Str
     @Inject
     private UserRoleRepository userRoleRepository;
 
+    @Inject
+    private Validator validator;
+
     @Override
-    public User save(final User user) {
-        findOneByUsername(user.getUsername()).ifPresent(source -> usernameAlreadyExists(user, source));
-        findOneByMobile(user.getUsername()).ifPresent(source -> usernameAlreadyExists(user, source));
-        findOneByEmail(user.getUsername()).ifPresent(source -> usernameAlreadyExists(user, source));
-        findOneByMpOpenId(user.getUsername()).ifPresent(source -> usernameAlreadyExists(user, source));
-        if (StringUtils.isNotBlank(user.getPassword())) {
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
+    public User save(final User target) {
+        if (StringUtils.isBlank(target.getId())) {
+            var constraintViolations = validator.validate(target, User.Create.class);
+            if (CollectionUtils.isNotEmpty(constraintViolations)) {
+                throw new ConstraintViolationException(constraintViolations);
+            }
+            findOneByUsername(target.getUsername()).ifPresent(source -> usernameAlreadyExists(source, target));
+            findOneByMobile(target.getUsername()).ifPresent(source -> usernameAlreadyExists(source, target));
+            findOneByEmail(target.getUsername()).ifPresent(source -> usernameAlreadyExists(source, target));
+            findOneByMpOpenId(target.getUsername()).ifPresent(source -> usernameAlreadyExists(source, target));
+            target.setPassword(passwordEncoder.encode(target.getPassword()));
         }
-        return super.save(user);
+        return super.save(target);
     }
 
-    private void usernameAlreadyExists(final User user, final User source) {
-        if (EntityUtils.ne(source, user)) {
-            throw getExceptions().constraintViolated("username", "Exists", user.getUsername());
+
+    private void usernameAlreadyExists(final User source, final User target) {
+        if (EntityUtils.ne(source, target)) {
+            throw getExceptions().constraintViolated("username", "Exists", target.getUsername());
         }
     }
 

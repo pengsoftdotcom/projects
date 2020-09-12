@@ -1,5 +1,6 @@
 package com.pengsoft.support.commons.exception;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.ResponseEntity;
@@ -29,10 +30,11 @@ public class DefaultExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Object> handleUnexpectedException(final Exception e) {
+        final var cause = ExceptionUtils.getRootCause(e);
         return converters.stream()
-                .filter(converter -> converter.support(e))
+                .filter(converter -> converter.support(cause))
                 .findFirst()
-                .map(converter -> converter.convert(e))
+                .map(converter -> converter.convert(cause))
                 .orElseThrow(() -> new MissingConfigurationException("Not possible!"));
     }
 

@@ -11,5 +11,6 @@ export enum InputType {
     BOOLEAN,
     UPLOAD,
     AVATAR,
-    JSON
+    JSON,
+    CAPTCHA
 }

@@ -3,7 +3,6 @@ package com.pengsoft.security.biz.service;
 import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.security.domain.entity.User;
 import com.pengsoft.security.domain.validation.Password;
-import com.pengsoft.security.domain.validation.Username;
 import com.pengsoft.support.biz.service.EntityService;
 
 import javax.validation.constraints.NotBlank;
@@ -72,7 +71,7 @@ public interface UserService extends EntityService<User, String> {
      *
      * @param username {@link User}' username.
      */
-    Optional<User> findOneByUsername(@Username String username);
+    Optional<User> findOneByUsername(@NotBlank String username);
 
     /**
      * Returns an {@link Optional} of a {@link User} with given mobile.

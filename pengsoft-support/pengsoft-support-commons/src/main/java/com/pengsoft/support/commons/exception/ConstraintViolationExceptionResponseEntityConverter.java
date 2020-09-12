@@ -24,13 +24,13 @@ public class ConstraintViolationExceptionResponseEntityConverter implements Exce
     private static final String PACKAGE_DELIMITER = ".";
 
     @Override
-    public boolean support(final Exception e) {
-        return e instanceof ConstraintViolationException;
+    public boolean support(final Throwable cause) {
+        return cause instanceof ConstraintViolationException;
     }
 
     @Override
-    public ResponseEntity<Object> convert(final Exception exception) {
-        final var e = (ConstraintViolationException) exception;
+    public ResponseEntity<Object> convert(final Throwable cause) {
+        final var e = (ConstraintViolationException) cause;
         final var body = e.getConstraintViolations().stream().collect(Collectors.toMap(
                 cv -> {
                     var propertyPath = cv.getPropertyPath().toString();

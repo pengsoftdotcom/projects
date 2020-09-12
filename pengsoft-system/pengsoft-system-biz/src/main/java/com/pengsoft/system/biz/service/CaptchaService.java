@@ -15,11 +15,10 @@ public interface CaptchaService extends EntityService<Captcha, String> {
     /**
      * Generate a captcha.
      *
-     * @param user       The {@link User} request a captcha.
-     * @param expiration The seconds between captcha expiration time and generation time
+     * @param user The {@link User} request a captcha.
      * @return The generated captcha.
      */
-    Captcha generate(User user, int expiration);
+    Captcha generate(User user);
 
     /**
      * If the captcha is valid, remove this captcha.
@@ -29,5 +28,6 @@ public interface CaptchaService extends EntityService<Captcha, String> {
      * @return If true, the captcha is valid.
      */
     boolean isValid(User user, String code);
+
 
 }

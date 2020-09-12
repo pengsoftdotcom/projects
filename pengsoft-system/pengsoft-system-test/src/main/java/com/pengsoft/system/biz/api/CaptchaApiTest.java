@@ -18,12 +18,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 public class CaptchaApiTest extends BaseApiTest {
 
     @Test
-    public void generateForAuthentication() throws Exception {
-        final var content = "username=admin";
+    public void generate() throws Exception {
+        final var content = "mobile=18508101366&type=authentication";
         getMockMvc().perform(MockMvcRequestBuilders
-                .post("/api/captcha/generate-for-authentication")
+                .post("/api/captcha/generate")
                 .contentType(MediaType.APPLICATION_FORM_URLENCODED)
-                .header("Accept-Language", "en-US")
                 .content(content)
         ).andExpect(MockMvcResultMatchers.status().isOk());
     }

@@ -52,6 +52,7 @@ import { SwitchOrganizationComponent } from './modal/switch-organization/switch-
 import { JsonComponent } from './commons/input/json/json.component';
 import { NgJsonEditorModule } from 'ang-jsoneditor';
 import { SwitchCommunityComponent } from './modal/switch-community/switch-community.component';
+import { CaptchaComponent } from './commons/input/captcha/captcha.component';
 
 @NgModule({
     declarations: [
@@ -79,7 +80,8 @@ import { SwitchCommunityComponent } from './modal/switch-community/switch-commun
         DateComponent,
         SwitchOrganizationComponent,
         JsonComponent,
-        SwitchCommunityComponent
+        SwitchCommunityComponent,
+        CaptchaComponent
     ],
     imports: [
         CommonModule,

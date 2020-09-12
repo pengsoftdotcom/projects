@@ -15,6 +15,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.util.Assert;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -35,6 +36,7 @@ import java.util.stream.Collectors;
  * @author dang.peng@pengsoft.com
  * @since 1.0.0
  */
+@Validated
 public class EntityApi<F extends EntityFacade<?, T, ID>, T extends Entity<ID>, ID extends Serializable> {
 
     @Getter

@@ -6,14 +6,15 @@ export class InputComponent extends BaseComponent implements OnInit {
 
     rawValue: any;
 
-    @Input() form = {};
+    @Input() form: any = {};
 
     @Input() edit: Edit;
+
+    @Input() errors: any = {};
 
     disabled = false;
 
     placeholder = '';
-
 
     ngOnInit(): void {
         this.initDisabled();

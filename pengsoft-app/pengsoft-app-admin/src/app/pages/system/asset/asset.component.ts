@@ -38,7 +38,7 @@ export class AssetComponent extends EntityComponent<AssetService> {
             FieldUtils.buildText({ code: 'contentType', name: 'MIME类型', edit: { disabled: true } }),
             FieldUtils.buildNumber({
                 code: 'contentLength', name: '大小(B)', edit: { disabled: true },
-                filter: { disabled: false, input: { placeholder: '小于输入的值' } }
+                filter: { disabled: false, input: { placeholder: '小于录入的值' } }
             }),
             FieldUtils.buildBooleanForLocked(),
         ];

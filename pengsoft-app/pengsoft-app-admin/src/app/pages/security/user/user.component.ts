@@ -55,20 +55,21 @@ export class UserComponent extends EntityComponent<UserService> {
                 code: 'username', name: '账号',
                 edit: {
                     required: true,
+                    disabled: (form: any) => !!form.id,
                     label: {
                         tooltip: '4到20位字符，支持数字, 小写字母, 大写字母和分隔符("- _ @ .")的组合'
                     }
                 },
                 filter: { label: { tooltip: null } }
             }),
-            FieldUtils.buildText({ code: 'mobile', name: '手机' }),
+            FieldUtils.buildText({ code: 'mobile', name: '手机号码' }),
             FieldUtils.buildText({ code: 'email', name: '邮件' }),
             FieldUtils.buildText({ code: 'mpOpenId', name: '微信Open ID' }),
             FieldUtils.buildPassword({
                 code: 'password', name: '密码',
                 edit: {
                     required: true,
-                    visible: (form: any) => !form || !form.id,
+                    visible: (form: any) => !form.id,
                     label: {
                         tooltip: '6-20位字符，支持数字, 小写字母, 大写字母和标点符号的组合，至少含有其中2种'
                     }

@@ -16,8 +16,8 @@ import org.springframework.stereotype.Service;
 public class CaptchaFacadeImpl extends EntityFacadeImpl<CaptchaService, Captcha, String> implements CaptchaFacade {
 
     @Override
-    public Captcha generate(final User user, final int expiration) {
-        return getService().generate(user, expiration);
+    public Captcha generate(final User user) {
+        return getService().generate(user);
     }
 
     @Override

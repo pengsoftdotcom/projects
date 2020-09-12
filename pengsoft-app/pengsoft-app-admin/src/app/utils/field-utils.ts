@@ -1,17 +1,25 @@
 import { DomSanitizer } from '@angular/platform-browser';
+import { NzCascaderOption } from 'ng-zorro-antd';
 import { Edit } from '../components/commons/form-item/edit';
 import { Field } from '../components/commons/form-item/field';
 import { Input } from '../components/commons/form-item/input';
 import { Label } from '../components/commons/form-item/label';
 import { List } from '../components/commons/form-item/list';
 import { InputType } from '../enums/input-type.enum';
-import { DateUtils } from './date-utils';
-import { NzCascaderOption } from 'ng-zorro-antd';
-import { EntityUtils } from './entity-utils';
 import { RegionService } from '../services/system/region.service';
-import { fileURLToPath } from 'url';
+import { DateUtils } from './date-utils';
+import { EntityUtils } from './entity-utils';
 
 export class FieldUtils {
+
+    static buildCaptcha(field?: Field): Field {
+        field = Object.assign({ code: 'captcha' }, field);
+        field = this.getEdit(field, {
+            label: { visible: false },
+            input: { type: InputType.CAPTCHA, prefixIcon: 'lock', placeholder: '录入验证码' }
+        });
+        return field;
+    }
 
     static buildJson(field?: Field): Field {
         field = this.getList(field, { visible: false });
@@ -155,7 +163,7 @@ export class FieldUtils {
                     return null;
                 }
             },
-            filter: { input: { placeholder: '早于输入的时间' } }
+            filter: { input: { placeholder: '早于录入的时间' } }
         });
     }
 

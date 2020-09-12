@@ -12,8 +12,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.pengsoft.security</groupId>
-            <artifactId>pengsoft-security-commons</artifactId>
+            <groupId>com.pengsoft.security.oauth</groupId>
+            <artifactId>pengsoft-security-oauth-commons</artifactId>
         </dependency>
     </dependencies>
 </project>

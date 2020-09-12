@@ -1,11 +1,11 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { AssetComponent } from './asset/asset.component';
-import { RegionComponent } from './region/region.component';
-import { DictionaryTypeComponent } from './dictionary-type/dictionary-type.component';
 import { CaptchaComponent } from './captcha/captcha.component';
-import { MessageComponent } from './message/message.component';
+import { DictionaryTypeComponent } from './dictionary-type/dictionary-type.component';
 import { MessageTemplateComponent } from './message-template/message-template.component';
+import { MessageComponent } from './message/message.component';
+import { RegionComponent } from './region/region.component';
 
 
 const routes: Routes = [

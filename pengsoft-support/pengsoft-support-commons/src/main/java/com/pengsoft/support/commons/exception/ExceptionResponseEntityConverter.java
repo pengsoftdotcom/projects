@@ -10,8 +10,8 @@ import org.springframework.http.ResponseEntity;
  */
 public interface ExceptionResponseEntityConverter {
 
-    boolean support(final Exception e);
+    boolean support(final Throwable cause);
 
-    ResponseEntity<Object> convert(Exception e);
+    ResponseEntity<Object> convert(Throwable cause);
 
 }

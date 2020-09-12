@@ -1,22 +1,24 @@
 <ng-template #content>
-    <nz-tabset>
-        <nz-tab nzTitle="验证码登录">
+    <form nz-form (ngSubmit)="signIn()">
+        <nz-spin [nzSpinning]="loading">
+            <nz-tabset id="sign-in-tabs" (nzSelectChange)="change($event)">
+                <nz-tab nzTitle="密码登录">
+                    <app-form-item *ngFor="let field of fields1" [form]="form" [field]="field" [errors]="errors"></app-form-item>
+                </nz-tab>
+                <nz-tab nzTitle="验证码登录">
+                    <app-form-item *ngFor="let field of fields2" [form]="form" [field]="field" [errors]="errors"></app-form-item>
 
-        </nz-tab>
-        <nz-tab nzTitle="密码登录">
-            <form nz-form (ngSubmit)="signIn()">
-                <nz-spin [nzSpinning]="loading">
-                    <app-form-item *ngFor="let field of fields" [form]="form" [field]="field"></app-form-item>
-                    <nz-form-item style="margin: 24px 0 0;">
-                        <nz-form-control>
-                            <button nz-button nzType="primary">登录</button>
-                            <a (click)="forgotPassword()">忘记密码</a>
-                            或
-                            <a (click)="signUp()">立即注册</a>
-                        </nz-form-control>
-                    </nz-form-item>
-                </nz-spin>
-            </form>
-        </nz-tab>
-    </nz-tabset>
+                </nz-tab>
+            </nz-tabset>
+            <nz-form-item style="margin-bottom: 0;">
+                <nz-form-control>
+                    <button nz-button nzType="primary">登录</button>
+                    <a (click)="forgotPassword()">忘记密码</a>
+                    或
+                    <a (click)="signUp()">立即注册</a>
+                </nz-form-control>
+            </nz-form-item>
+        </nz-spin>
+    </form>
 </ng-template>
+<div style="width: 100%; height: 100%; background: #ffffff; position: absolute; left: 0; top: 0; z-index: 99;"></div>

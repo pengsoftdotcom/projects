@@ -11,17 +11,16 @@ export class OAuthService extends BaseService {
 
     constructor(private http: HttpService, private security: SecurityService) { super(); }
 
-    requestTokenByPassword(username: string, password: string, options: HttpOptions): void {
+    requestToken(form: any, options: HttpOptions): void {
         const url = this.getBasePath() + '/oauth/token';
-
         options.headers = this.security.getBasicAuthorizationHeaders();
-
         const body = new FormData();
-        body.append('grant_type', 'password');
-        body.append('username', username);
-        body.append('password', password);
+        for (const key in form) {
+            if (Object.prototype.hasOwnProperty.call(form, key)) {
+                body.append(key, form[key]);
+            }
+        }
         options.body = body;
-
         this.http.request('POST', url, options);
     }
 

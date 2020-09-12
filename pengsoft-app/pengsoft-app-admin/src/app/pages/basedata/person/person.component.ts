@@ -48,7 +48,7 @@ export class PersonComponent extends EntityComponent<PersonService> {
                 filter: {}
             }),
             FieldUtils.buildText({
-                code: 'mobile', name: '手机',
+                code: 'mobile', name: '手机号码',
                 list: {
                     width: 140, align: 'center',
                     render: (field: Field, row: any, sanitizer: DomSanitizer) => {

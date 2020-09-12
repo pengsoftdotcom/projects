@@ -3,8 +3,6 @@ package com.pengsoft.security.domain.entity;
 import com.pengsoft.support.domain.entity.EntityImpl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -26,7 +24,6 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor()
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_user_role", indexes = {
@@ -36,12 +33,10 @@ public class UserRole extends EntityImpl {
 
     private static final long serialVersionUID = 1105413409437052244L;
 
-    @NonNull
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private User user;
 
-    @NonNull
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private Role role;
@@ -51,5 +46,10 @@ public class UserRole extends EntityImpl {
      */
     @Column(name = "`primary`")
     private boolean primary;
+
+    public UserRole(User user, Role role) {
+        this.user = user;
+        this.role = role;
+    }
 
 }

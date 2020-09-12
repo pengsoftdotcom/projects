@@ -1,8 +1,8 @@
 package com.pengsoft.system.domain.entity;
 
 import com.pengsoft.security.domain.entity.User;
-import com.pengsoft.support.domain.entity.EntityImpl;
 import com.pengsoft.support.domain.entity.Codeable;
+import com.pengsoft.support.domain.entity.EntityImpl;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;

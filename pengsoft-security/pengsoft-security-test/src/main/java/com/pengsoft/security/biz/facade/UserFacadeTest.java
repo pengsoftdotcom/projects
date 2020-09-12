@@ -6,6 +6,9 @@ import com.pengsoft.security.starter.SecurityApplication;
 import com.pengsoft.support.test.BaseFacadeTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.MessageSource;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.inject.Inject;
@@ -47,6 +50,17 @@ public class UserFacadeTest extends BaseFacadeTest<UserFacade> {
         } else {
             return optional.get();
         }
+    }
+
+    @Inject
+    private MessageSource messageSource;
+
+    @Test
+    public void save() {
+        final var user = new User();
+        user.setUsername("test");
+        getFacade().save(user);
+        getFacade().delete(user);
     }
 
 }

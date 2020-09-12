@@ -1,6 +1,31 @@
 /* You can add global styles to this file, and also import other style files */
 @import "~jsoneditor/dist/jsoneditor.min.css";
 
+#sign-in-tabs {
+    .ant-tabs-bar {
+        margin-bottom: 24px;
+        .ant-tabs-nav {
+            width: 100%;
+
+            .ant-tabs-tab {
+                width: 50%;
+                margin: 0;
+                text-align: center;
+            }
+        }
+    }
+    .ant-tabs-content {
+        nz-input-group {
+            border: none;
+            border-bottom: 1px solid #f0f0f0;
+        }
+    }
+    .ant-input-affix-wrapper-focused,
+    .ant-input-affix-wrapper:focus {
+        box-shadow: none;
+    }
+}
+
 .ant-transfer {
     height: 100%;
 }
@@ -25,7 +50,6 @@
         border-right: none;
     }
 }
-
 
 .edit {
     nz-tabs-nav {

@@ -34,6 +34,8 @@ import { SystemModule } from './pages/system/system.module';
 import { BasedataModule } from './pages/basedata/basedata.module';
 import { DeviceModule } from './pages/device/device.module';
 import { PortalModule } from './pages/portal/portal.module';
+import { ForgetPasswordComponent } from './pages/forget-password/forget-password.component';
+import { SignUpComponent } from './pages/sign-up/sign-up.component';
 
 registerLocaleData(zh);
 
@@ -41,7 +43,9 @@ registerLocaleData(zh);
     declarations: [
         AppComponent,
         DashboardComponent,
-        SignInComponent
+        SignInComponent,
+        ForgetPasswordComponent,
+        SignUpComponent
     ],
     imports: [
         BrowserModule,

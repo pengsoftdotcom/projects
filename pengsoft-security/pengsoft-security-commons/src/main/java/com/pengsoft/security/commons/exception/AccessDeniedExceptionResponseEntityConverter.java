@@ -17,13 +17,13 @@ import javax.inject.Named;
 public class AccessDeniedExceptionResponseEntityConverter implements ExceptionResponseEntityConverter {
 
     @Override
-    public boolean support(final Exception e) {
-        return e instanceof AccessDeniedException;
+    public boolean support(final Throwable cause) {
+        return cause instanceof AccessDeniedException;
     }
 
     @Override
-    public ResponseEntity<Object> convert(final Exception e) {
-        return new ResponseEntity<>(e.getMessage(), HttpStatus.FORBIDDEN);
+    public ResponseEntity<Object> convert(final Throwable cause) {
+        return new ResponseEntity<>(cause.getMessage(), HttpStatus.FORBIDDEN);
     }
 
 }

@@ -39,11 +39,11 @@ export class MessageComponent extends EntityComponent<MessageService> {
             }),
             FieldUtils.buildDatetime({
                 code: 'sentAt', name: '发送时间',
-                filter: { input: { placeholder: '早于输入的时间' } }
+                filter: { input: { placeholder: '早于录入的时间' } }
             }),
             FieldUtils.buildDatetime({
                 code: 'readAt', name: '阅读时间',
-                filter: { input: { placeholder: '早于输入的时间' } }
+                filter: { input: { placeholder: '早于录入的时间' } }
             }),
             FieldUtils.buildSelect({
                 code: 'types', name: '类型', list: {

@@ -4,8 +4,6 @@ import com.pengsoft.security.domain.entity.Role;
 import com.pengsoft.support.domain.entity.EntityImpl;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
@@ -26,7 +24,6 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor()
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 @Entity
 @Table(name = "t_job_role", indexes = {
@@ -36,14 +33,17 @@ public class JobRole extends EntityImpl {
 
     private static final long serialVersionUID = -2605345847395420443L;
 
-    @NonNull
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private Job job;
 
-    @NonNull
     @ManyToOne
     @NotFound(action = NotFoundAction.IGNORE)
     private Role role;
+
+    public JobRole(final Job job, final Role role) {
+        this.job = job;
+        this.role = role;
+    }
 
 }

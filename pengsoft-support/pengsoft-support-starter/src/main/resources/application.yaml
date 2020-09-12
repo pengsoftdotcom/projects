@@ -9,7 +9,7 @@ pengsoft:
     enabled: true
 spring:
   messages:
-    basename: META-INF/messages
+    basename: META-INF/messages, org/hibernate/validator/ValidationMessages
   datasource:
     url: ${JDBC_URL}
     username: ${JDBC_USERNAME}
@@ -19,7 +19,7 @@ spring:
     hibernate:
       ddl-auto: update
     properties:
-      javax.persistence.validation.mode: none
+#      javax.persistence.validation.mode: none
       hibernate.dialect: org.hibernate.dialect.PostgreSQL10Dialect
       hibernate.format_sql: true
       hibernate.jdbc.fetch_size: 25

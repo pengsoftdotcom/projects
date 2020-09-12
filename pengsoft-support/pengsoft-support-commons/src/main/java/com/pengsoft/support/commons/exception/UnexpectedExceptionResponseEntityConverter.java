@@ -20,13 +20,13 @@ import javax.inject.Named;
 public class UnexpectedExceptionResponseEntityConverter implements ExceptionResponseEntityConverter {
 
     @Override
-    public boolean support(final Exception e) {
+    public boolean support(final Throwable cause) {
         return true;
     }
 
     @Override
-    public ResponseEntity<Object> convert(final Exception e) {
-        log.error("An unexpected exception occurred.", e);
+    public ResponseEntity<Object> convert(final Throwable cause) {
+        log.error("An unexpected exception occurred.", cause);
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 

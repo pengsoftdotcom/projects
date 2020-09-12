@@ -7,7 +7,9 @@ import com.pengsoft.support.commons.util.DateUtils;
 import com.pengsoft.system.biz.repository.CaptchaRepository;
 import com.pengsoft.system.domain.entity.Captcha;
 import com.pengsoft.system.domain.entity.QCaptcha;
+import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -36,25 +38,31 @@ public class CaptchaServiceImpl extends EntityServiceImpl<CaptchaRepository, Cap
 
     private static final int CAPTCHA_GENERATION_MAX_COUNT = 5;
 
+    private static final int CAPTCHA_EXPIRATION = 300;
+
     @Override
-    public Captcha generate(final User user, final int expiration) {
-        final var root = QCaptcha.captcha;
-        if (count(root.user.eq(user).and(root.createdAt.after(DateUtils.currentDate().atStartOfDay()))) >= CAPTCHA_GENERATION_MAX_COUNT) {
+    public Captcha generate(final User user) {
+        final var captchas = getRepository().findAllByUserAndCreatedAtAfterOrderByCreatedAtDesc(user, DateUtils.currentDate().atStartOfDay());
+        if (captchas.size() >= CAPTCHA_GENERATION_MAX_COUNT) {
             throw new BusinessException(EC_CAPTCHA_GENERATE_EXCEEDED, CAPTCHA_GENERATION_MAX_COUNT);
         }
-        final var optional = findUserLatest(user);
+
         final var currentDateTime = DateUtils.currentDateTime();
-        if (optional.isPresent()) {
-            final var captcha = optional.get();
+        if (CollectionUtils.isNotEmpty(captchas)) {
+            final var captcha = captchas.get(0);
             final var allowAt = captcha.getCreatedAt().plus(CAPTCHA_GENERATION_INTERVAL, ChronoUnit.SECONDS);
             if (allowAt.isAfter(currentDateTime)) {
                 throw new BusinessException(EC_CAPTCHA_GENERATE_FORBIDDEN, Duration.between(currentDateTime, allowAt).toSeconds());
+            }
+            if (captcha.getExpiredAt().isAfter(currentDateTime)) {
+                captcha.setExpiredAt(DateUtils.currentDateTime().plus(CAPTCHA_EXPIRATION, ChronoUnit.SECONDS));
+                return save(captcha);
             }
         }
         final var captcha = new Captcha();
         captcha.setUser(user);
         captcha.setCode(RandomStringUtils.randomNumeric(6));
-        captcha.setExpiredAt(DateUtils.currentDateTime().plus(expiration, ChronoUnit.SECONDS));
+        captcha.setExpiredAt(DateUtils.currentDateTime().plus(CAPTCHA_EXPIRATION, ChronoUnit.SECONDS));
         return save(captcha);
     }
 
@@ -69,13 +77,15 @@ public class CaptchaServiceImpl extends EntityServiceImpl<CaptchaRepository, Cap
 
     @Override
     public boolean isValid(final User user, final String code) {
-        final var optional = findUserLatest(user).filter(captcha -> captcha.getCode().equals(code));
-        if (optional.isPresent()) {
-            delete(optional.get());
-            return true;
-        } else {
-            return false;
+        final var captchas = getRepository().findAllByUserAndCreatedAtAfterOrderByCreatedAtDesc(user, DateUtils.currentDate().atStartOfDay());
+        if (CollectionUtils.isNotEmpty(captchas)) {
+            final var captcha = captchas.get(0);
+            if (captcha.getExpiredAt().isAfter(DateUtils.currentDateTime()) && StringUtils.equals(captcha.getCode(), code)) {
+                delete(captchas);
+                return true;
+            };
         }
+        return false;
     }
 
     @Override

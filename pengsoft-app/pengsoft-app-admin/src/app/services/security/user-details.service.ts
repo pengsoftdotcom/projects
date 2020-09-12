@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { NzMessageService } from 'ng-zorro-antd';
+import { NzMessageService, NzTabBodyComponent } from 'ng-zorro-antd';
 import { BaseService } from '../commons/base.service';
 import { HttpOptions } from '../commons/http-options';
 import { HttpService } from '../commons/http.service';
@@ -63,6 +63,15 @@ export class UserDetailsService extends BaseService {
     setOrganization(organization: any, options: HttpOptions): void {
         options.params = { id: organization.id };
         const url = this.getApiPath('set-organization');
+        this.http.request('POST', url, options);
+    }
+
+    resetPassword(username: string, password: string, captcha: string, options: HttpOptions): void {
+        options.body = new FormData();
+        options.body.set('username', username);
+        options.body.set('password', password);
+        options.body.set('captcha', captcha);
+        const url = this.getApiPath('reset-password');
         this.http.request('POST', url, options);
     }
 

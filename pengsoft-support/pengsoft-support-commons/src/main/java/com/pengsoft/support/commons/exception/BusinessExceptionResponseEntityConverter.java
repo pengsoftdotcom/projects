@@ -22,13 +22,13 @@ public class BusinessExceptionResponseEntityConverter implements ExceptionRespon
     private MessageSource messageSource;
 
     @Override
-    public boolean support(final Exception e) {
-        return e instanceof BusinessException;
+    public boolean support(final Throwable cause) {
+        return cause instanceof BusinessException;
     }
 
     @Override
-    public ResponseEntity<Object> convert(final Exception exception) {
-        final var e = (BusinessException) exception;
+    public ResponseEntity<Object> convert(final Throwable cause) {
+        final var e = (BusinessException) cause;
         final var code = e.getCode();
         final var args = e.getArgs();
         final var text = messageSource.getMessage(code, args, LocaleContextHolder.getLocale());
