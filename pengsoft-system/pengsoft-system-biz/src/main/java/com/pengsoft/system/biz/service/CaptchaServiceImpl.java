@@ -42,7 +42,7 @@ public class CaptchaServiceImpl extends EntityServiceImpl<CaptchaRepository, Cap
 
     @Override
     public Captcha generate(final User user) {
-        final var captchas = getRepository().findAllByUserAndCreatedAtAfterOrderByCreatedAtDesc(user, DateUtils.currentDate().atStartOfDay());
+        final var captchas = getRepository().findAllByUserIdAndCreatedAtAfterOrderByCreatedAtDesc(user.getId(), DateUtils.currentDate().atStartOfDay());
         if (captchas.size() >= CAPTCHA_GENERATION_MAX_COUNT) {
             throw new BusinessException(EC_CAPTCHA_GENERATE_EXCEEDED, CAPTCHA_GENERATION_MAX_COUNT);
         }
@@ -77,7 +77,7 @@ public class CaptchaServiceImpl extends EntityServiceImpl<CaptchaRepository, Cap
 
     @Override
     public boolean isValid(final User user, final String code) {
-        final var captchas = getRepository().findAllByUserAndCreatedAtAfterOrderByCreatedAtDesc(user, DateUtils.currentDate().atStartOfDay());
+        final var captchas = getRepository().findAllByUserIdAndCreatedAtAfterOrderByCreatedAtDesc(user.getId(), DateUtils.currentDate().atStartOfDay());
         if (CollectionUtils.isNotEmpty(captchas)) {
             final var captcha = captchas.get(0);
             if (captcha.getExpiredAt().isAfter(DateUtils.currentDateTime()) && StringUtils.equals(captcha.getCode(), code)) {

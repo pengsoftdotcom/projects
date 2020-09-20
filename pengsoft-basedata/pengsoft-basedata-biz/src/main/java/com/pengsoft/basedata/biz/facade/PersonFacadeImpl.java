@@ -11,8 +11,6 @@ import com.pengsoft.support.commons.exception.MissingConfigurationException;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -42,12 +40,12 @@ public class PersonFacadeImpl extends EntityFacadeImpl<PersonService, Person, St
     }
 
     @Override
-    public Optional<Person> findOneByMobile(@NotBlank final String mobile) {
+    public Optional<Person> findOneByMobile(final String mobile) {
         return getService().findOneByMobile(mobile);
     }
 
     @Override
-    public Optional<Person> findOneByUser(@NotNull final User user) {
+    public Optional<Person> findOneByUser(final User user) {
         return getService().findOneByUser(user);
     }
 

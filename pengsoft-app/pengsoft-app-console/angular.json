@@ -3,7 +3,7 @@
     "version": 1,
     "newProjectRoot": "projects",
     "projects": {
-        "pengsoft-app-admin": {
+        "pengsoft-app-console": {
             "projectType": "application",
             "schematics": {
                 "@schematics/angular:component": {
@@ -17,7 +17,7 @@
                 "build": {
                     "builder": "@angular-devkit/build-angular:browser",
                     "options": {
-                        "outputPath": "dist/pengsoft-app-admin",
+                        "outputPath": "dist/pengsoft-app-console",
                         "index": "src/index.html",
                         "main": "src/main.ts",
                         "polyfills": "src/polyfills.ts",
@@ -67,18 +67,18 @@
                 "serve": {
                     "builder": "@angular-devkit/build-angular:dev-server",
                     "options": {
-                        "browserTarget": "pengsoft-app-admin:build"
+                        "browserTarget": "pengsoft-app-console:build"
                     },
                     "configurations": {
                         "production": {
-                            "browserTarget": "pengsoft-app-admin:build:production"
+                            "browserTarget": "pengsoft-app-console:build:production"
                         }
                     }
                 },
                 "extract-i18n": {
                     "builder": "@angular-devkit/build-angular:extract-i18n",
                     "options": {
-                        "browserTarget": "pengsoft-app-admin:build"
+                        "browserTarget": "pengsoft-app-console:build"
                     }
                 },
                 "test": {
@@ -116,18 +116,18 @@
                     "builder": "@angular-devkit/build-angular:protractor",
                     "options": {
                         "protractorConfig": "e2e/protractor.conf.js",
-                        "devServerTarget": "pengsoft-app-admin:serve"
+                        "devServerTarget": "pengsoft-app-console:serve"
                     },
                     "configurations": {
                         "production": {
-                            "devServerTarget": "pengsoft-app-admin:serve:production"
+                            "devServerTarget": "pengsoft-app-console:serve:production"
                         }
                     }
                 }
             }
         }
     },
-    "defaultProject": "pengsoft-app-admin",
+    "defaultProject": "pengsoft-app-console",
     "cli": {
         "analytics": "9a9e137b-0ba6-477b-9c51-9834910bd809"
     }

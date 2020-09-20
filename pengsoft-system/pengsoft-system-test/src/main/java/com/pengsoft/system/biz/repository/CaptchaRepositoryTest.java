@@ -22,7 +22,7 @@ public class CaptchaRepositoryTest extends BaseRepositoryTest<CaptchaRepository>
     @Test
     @WithUserDetails("18508101366")
     public void findAllByUserAndTypeAndCreatedAtAfterOrderByCreatedAtDesc() {
-        getRepository().findAllByUserAndCreatedAtAfterOrderByCreatedAtDesc(SecurityUtils.getUser(), DateUtils.currentDate().atStartOfDay())
+        getRepository().findAllByUserIdAndCreatedAtAfterOrderByCreatedAtDesc(SecurityUtils.getUser().getId(), DateUtils.currentDate().atStartOfDay())
                 .forEach(captcha -> System.out.println(captcha.getCode()));
 
     }

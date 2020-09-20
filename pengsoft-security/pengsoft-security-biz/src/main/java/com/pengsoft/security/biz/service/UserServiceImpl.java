@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import javax.validation.ConstraintViolationException;
-import javax.validation.Valid;
-import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.List;
 import java.util.Optional;
@@ -45,7 +43,7 @@ public class UserServiceImpl extends EntityServiceImpl<UserRepository, User, Str
     @Override
     public User save(final User target) {
         if (StringUtils.isBlank(target.getId())) {
-            var constraintViolations = validator.validate(target, User.Create.class);
+            final var constraintViolations = validator.validate(target, User.Create.class);
             if (CollectionUtils.isNotEmpty(constraintViolations)) {
                 throw new ConstraintViolationException(constraintViolations);
             }

@@ -41,7 +41,7 @@ public class PersonServiceImpl extends EntityServiceImpl<PersonRepository, Perso
 
     @Override
     public Optional<Person> findOneByUser(final User user) {
-        return getRepository().findOneByUser(user);
+        return getRepository().findOneByUserId(user.getId());
     }
 
 }

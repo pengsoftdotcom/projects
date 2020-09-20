@@ -32,7 +32,7 @@ spring:
       hibernate.implicit_naming_strategy: org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy
       hibernate.cache.use_second_level_cache: true
       hibernate.cache.use_query_cache: true
-      hibernate.cache.use_minimal_puts: true
+      hibernate.cache.redisson.fallback: true
       hibernate.cache.redisson.config: META-INF/redisson.yaml
       hibernate.cache.region.factory_class: org.redisson.hibernate.RedissonRegionFactory
 logging:

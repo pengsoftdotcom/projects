@@ -4,6 +4,7 @@ import com.pengsoft.basedata.domain.entity.Person;
 import com.pengsoft.basedata.starter.BasedataApplication;
 import com.pengsoft.security.biz.facade.AuthorityFacade;
 import com.pengsoft.security.biz.facade.RoleFacade;
+import com.pengsoft.security.biz.facade.UserFacade;
 import com.pengsoft.support.test.BaseFacadeTest;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -20,6 +21,9 @@ import javax.inject.Inject;
 @SpringBootTest(classes = BasedataApplication.class)
 @ActiveProfiles({ "security", "system", "basedata" })
 public class PersonFacadeTest extends BaseFacadeTest<PersonFacade> {
+
+    @Inject
+    private UserFacade userFacade;
 
     @Inject
     private RoleFacade roleFacade;

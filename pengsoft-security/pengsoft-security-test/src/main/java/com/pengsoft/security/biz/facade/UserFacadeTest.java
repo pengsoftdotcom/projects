@@ -52,15 +52,4 @@ public class UserFacadeTest extends BaseFacadeTest<UserFacade> {
         }
     }
 
-    @Inject
-    private MessageSource messageSource;
-
-    @Test
-    public void save() {
-        final var user = new User();
-        user.setUsername("test");
-        getFacade().save(user);
-        getFacade().delete(user);
-    }
-
 }

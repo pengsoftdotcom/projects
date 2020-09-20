@@ -40,7 +40,7 @@ public class DictionaryItemServiceImpl extends TreeEntityServiceImpl<DictionaryI
 
     @Override
     public Optional<DictionaryItem> findOneByTypeAndParentAndCode(final DictionaryType type, final DictionaryItem parent, final String code) {
-        return getRepository().findOneByTypeAndParentAndCode(type, parent, code);
+        return getRepository().findOneByTypeIdAndParentAndCode(type.getId(), parent, code);
     }
 
 }

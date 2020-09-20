@@ -42,11 +42,11 @@ public interface DictionaryItemRepository extends TreeEntityRepository<QDictiona
     /**
      * Returns an {@link Optional} of a {@link DictionaryItem} with given {@linkplain DictionaryType type}, {@linkplain DictionaryItem parent} and code.
      *
-     * @param type   {@link DictionaryType}
-     * @param parent The parent {@link DictionaryItem}
+     * @param typeId {@link DictionaryType} The type id.
+     * @param parent The parent {@link DictionaryItem} The parent type item.
      * @param code   {@link DictionaryType}'s code
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<DictionaryItem> findOneByTypeAndParentAndCode(@NotNull DictionaryType type, DictionaryItem parent, @NotBlank String code);
+    Optional<DictionaryItem> findOneByTypeIdAndParentAndCode(@NotNull String typeId, DictionaryItem parent, @NotBlank String code);
 
 }

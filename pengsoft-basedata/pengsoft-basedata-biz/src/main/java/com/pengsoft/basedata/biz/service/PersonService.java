@@ -26,7 +26,7 @@ public interface PersonService extends EntityService<Person, String> {
     /**
      * Returns an {@link Optional} of a {@link Person} with given user.
      *
-     * @param user {@link Person}'s user
+     * @param user {@link Person}'s user.
      */
     Optional<Person> findOneByUser(@NotNull User user);
 
