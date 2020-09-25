@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { BannerService } from './banner.service';
+import { ColumnService } from './column.service';
 
-describe('BannerService', () => {
-    let service: BannerService;
+describe('ColumnService', () => {
+    let service: ColumnService;
 
     beforeEach(() => {
         TestBed.configureTestingModule({});
-        service = TestBed.inject(BannerService);
+        service = TestBed.inject(ColumnService);
     });
 
     it('should be created', () => {

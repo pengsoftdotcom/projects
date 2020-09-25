@@ -5,7 +5,7 @@ import { HttpService } from '../commons/http.service';
 @Injectable({
     providedIn: 'root'
 })
-export class BannerService extends TreeEntityService {
+export class ColumnService extends TreeEntityService {
 
     constructor(protected http: HttpService) { super(http); }
 
@@ -14,7 +14,7 @@ export class BannerService extends TreeEntityService {
     }
 
     get entityPath(): string {
-        return 'banner';
+        return 'column';
     }
 
 }

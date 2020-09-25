@@ -21,7 +21,7 @@ public class DeviceConnectionLogServiceImpl extends EntityServiceImpl<DeviceConn
 
     @Override
     public Page<DeviceConnectionLog> findPageByDevice(final Device device, final Pageable pageable) {
-        return getRepository().findPageByDeviceOrderByCreatedAtDesc(device, pageable);
+        return getRepository().findPageByDeviceIdOrderByCreatedAtDesc(device.getId(), pageable);
     }
 
 }

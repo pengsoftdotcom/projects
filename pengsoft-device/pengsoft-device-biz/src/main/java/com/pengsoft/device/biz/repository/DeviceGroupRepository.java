@@ -29,12 +29,12 @@ public interface DeviceGroupRepository extends TreeEntityRepository<QDeviceGroup
     }
 
     /**
-     * Returns an {@link Optional} of a {@link DeviceGroup} with given parent and name.
+     * Returns an {@link Optional} of a {@link DeviceGroup} with given parent id and name.
      *
-     * @param parent {@link DeviceGroup}'s parent
-     * @param name   {@link DeviceGroup}'s name
+     * @param parentId The id of {@link DeviceGroup}'s parent
+     * @param name     {@link DeviceGroup}'s name
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<DeviceGroup> findOneByParentAndName(DeviceGroup parent, @NotBlank String name);
+    Optional<DeviceGroup> findOneByParentIdAndName(String parentId, @NotBlank String name);
 
 }

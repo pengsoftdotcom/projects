@@ -7,7 +7,6 @@ import com.pengsoft.support.domain.util.EntityUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-import javax.validation.constraints.NotBlank;
 import java.util.Optional;
 
 /**
@@ -31,8 +30,9 @@ public class DeviceGroupServiceImpl extends TreeEntityServiceImpl<DeviceGroupRep
     }
 
     @Override
-    public Optional<DeviceGroup> findOneByParentAndName(final DeviceGroup parent, @NotBlank final String name) {
-        return getRepository().findOneByParentAndName(parent, name);
+    public Optional<DeviceGroup> findOneByParentAndName(final DeviceGroup parent, final String name) {
+        final var parentId = Optional.ofNullable(parent).map(DeviceGroup::getId).orElse(null);
+        return getRepository().findOneByParentIdAndName(parentId, name);
     }
 
 }

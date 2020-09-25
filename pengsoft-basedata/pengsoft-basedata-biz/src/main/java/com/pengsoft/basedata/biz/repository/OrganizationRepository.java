@@ -1,7 +1,6 @@
 package com.pengsoft.basedata.biz.repository;
 
 import com.pengsoft.basedata.domain.entity.Organization;
-import com.pengsoft.basedata.domain.entity.Person;
 import com.pengsoft.basedata.domain.entity.QOrganization;
 import com.pengsoft.support.biz.repository.TreeEntityRepository;
 import com.querydsl.core.types.dsl.StringPath;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Optional;
 
@@ -62,11 +60,11 @@ public interface OrganizationRepository extends TreeEntityRepository<QOrganizati
     Optional<Organization> findOneByName(@NotBlank String name);
 
     /**
-     * Returns all organizations with given admin.
+     * Returns all organizations with given admin id.
      *
-     * @param admin {@link Organization}'s admin
+     * @param adminId The id of {@link Organization}'s admin
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    List<Organization> findAllByAdmin(@NotNull Person admin);
+    List<Organization> findAllByAdminId(@NotBlank String adminId);
 
 }

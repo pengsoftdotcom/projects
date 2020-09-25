@@ -134,7 +134,7 @@ public class AdvancedApiMethodArgumentsHandler<T extends Entity<ID>, ID extends 
     }
 
     @Override
-    public boolean check(final Class<T> entityClass, final Collection<String> ids) {
+    public boolean check(final Class<T> entityClass, final Collection<ID> ids) {
         if (SecurityUtilsExt.hasAnyRole(Role.ADMIN, getModuleAdminRoleCode(entityClass), getEntityAdminRoleCode(entityClass))) {
             return true;
         } else {
@@ -143,12 +143,13 @@ public class AdvancedApiMethodArgumentsHandler<T extends Entity<ID>, ID extends 
                         .orElseThrow(() -> new MissingConfigurationException("no repository for class: " + entityClass.getName()));
                 final var job = SecurityUtilsExt.getCurrentJob();
                 boolean matched = false;
+                final var stringIds = ids.stream().map(id -> (String) id).collect(Collectors.toList());
                 if (job.isOrganizationChief()) {
-                    matched = repository.countByIdInAndBelongsTo(ids, SecurityUtilsExt.getOrganizationId()) == ids.size();
+                    matched = repository.countByIdInAndBelongsTo(stringIds, SecurityUtilsExt.getOrganizationId()) == ids.size();
                 }
 
                 if (job.isDepartmentChief()) {
-                    matched = repository.countByIdInAndControlledBy(ids, SecurityUtilsExt.getDepartmentId()) == ids.size();
+                    matched = repository.countByIdInAndControlledBy(stringIds, SecurityUtilsExt.getDepartmentId()) == ids.size();
                 }
 
                 if (matched) {

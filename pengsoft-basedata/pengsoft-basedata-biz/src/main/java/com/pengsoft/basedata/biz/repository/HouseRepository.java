@@ -1,6 +1,5 @@
 package com.pengsoft.basedata.biz.repository;
 
-import com.pengsoft.basedata.domain.entity.Floor;
 import com.pengsoft.basedata.domain.entity.House;
 import com.pengsoft.basedata.domain.entity.QHouse;
 import com.pengsoft.support.biz.repository.EntityRepository;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 /**
@@ -30,12 +28,12 @@ public interface HouseRepository extends EntityRepository<QHouse, House, String>
     }
 
     /**
-     * Returns an {@link Optional} of a {@link House} with given floor and code.
+     * Returns an {@link Optional} of a {@link House} with given floor id and code.
      *
-     * @param floor {@link House}'s floor
-     * @param code  {@link House}'s code
+     * @param floorId The id of {@link House}'s floor
+     * @param code    {@link House}'s code
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<House> findOneByFloorAndCode(@NotNull Floor floor, @NotBlank String code);
+    Optional<House> findOneByFloorIdAndCode(@NotBlank String floorId, @NotBlank String code);
 
 }

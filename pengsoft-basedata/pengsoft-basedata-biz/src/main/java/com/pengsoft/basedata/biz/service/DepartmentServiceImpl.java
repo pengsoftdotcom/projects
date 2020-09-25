@@ -8,6 +8,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * The implementer of {@link DepartmentService} based on JPA.
  *
@@ -20,7 +22,9 @@ public class DepartmentServiceImpl extends TreeEntityServiceImpl<DepartmentRepos
 
     @Override
     public Department save(final Department department) {
-        getRepository().findOneByOrganizationAndParentAndName(department.getOrganization(), department.getParent(), department.getName()).ifPresent(source -> {
+        final var organizationId = department.getOrganization().getId();
+        final var parentId = Optional.ofNullable(department.getParent()).map(Department::getId).orElse(null);
+        getRepository().findOneByOrganizationIdAndParentIdAndName(organizationId, parentId, department.getName()).ifPresent(source -> {
             if (EntityUtils.ne(source, department)) {
                 throw getExceptions().constraintViolated("name", "Exists", department.getName());
             }

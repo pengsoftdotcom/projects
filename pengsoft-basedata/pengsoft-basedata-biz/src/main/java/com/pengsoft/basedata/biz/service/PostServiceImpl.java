@@ -7,6 +7,8 @@ import com.pengsoft.support.domain.util.EntityUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * The implementer of {@link PostService} based on JPA.
  *
@@ -19,7 +21,8 @@ public class PostServiceImpl extends TreeEntityServiceImpl<PostRepository, Post,
 
     @Override
     public Post save(final Post post) {
-        getRepository().findOneByOrganizationAndParentAndName(post.getOrganization(), post.getParent(), post.getName()).ifPresent(source -> {
+        final var parentId = Optional.ofNullable(post.getParent()).map(Post::getId).orElse(null);
+        getRepository().findOneByOrganizationIdAndParentIdAndName(post.getOrganization().getId(), parentId, post.getName()).ifPresent(source -> {
             if (EntityUtils.ne(source, post)) {
                 throw getExceptions().constraintViolated("name", "Exists", post.getName());
             }

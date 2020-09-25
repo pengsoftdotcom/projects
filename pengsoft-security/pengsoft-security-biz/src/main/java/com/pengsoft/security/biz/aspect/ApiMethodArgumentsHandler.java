@@ -29,6 +29,6 @@ public interface ApiMethodArgumentsHandler<T extends Entity<ID>, ID extends Seri
         return true;
     }
 
-    boolean check(Class<T> entityClass, Collection<String> ids);
+    boolean check(Class<T> entityClass, Collection<ID> ids);
 
 }

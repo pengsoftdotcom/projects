@@ -88,12 +88,12 @@ public class DeviceServiceImpl extends EntityServiceImpl<DeviceRepository, Devic
 
     @Override
     public Optional<Device> findFirstByActivatedFalseAndProductAndCodeStartsWith(final Product product, final String code) {
-        return getRepository().findFirstByActivatedFalseAndProductAndCodeStartsWith(product, code);
+        return getRepository().findFirstByActivatedFalseAndProductIdAndCodeStartsWith(product.getId(), code);
     }
 
     @Override
     public long countByPurchaseBatchItemAndActivatedTrue(final PurchaseBatchItem purchaseBatchItem) {
-        return getRepository().countByPurchaseBatchItemAndActivatedTrue(purchaseBatchItem);
+        return getRepository().countByPurchaseBatchItemIdAndActivatedTrue(purchaseBatchItem.getId());
     }
 
 }

@@ -1,26 +1,22 @@
 package com.pengsoft.basedata.biz.repository;
 
-import java.util.Optional;
-
-import javax.persistence.QueryHint;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.data.jpa.repository.QueryHints;
-import org.springframework.data.querydsl.binding.QuerydslBindings;
-import org.springframework.stereotype.Repository;
-
-import com.pengsoft.basedata.domain.entity.Department;
 import com.pengsoft.basedata.domain.entity.Job;
 import com.pengsoft.basedata.domain.entity.QJob;
 import com.pengsoft.support.biz.repository.TreeEntityRepository;
 import com.querydsl.core.types.dsl.StringPath;
+import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.querydsl.binding.QuerydslBindings;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.QueryHint;
+import javax.validation.constraints.NotBlank;
+import java.util.Optional;
 
 /**
  * The repository interface of {@link Job} based on JPA
  *
  * @author dang.peng@pengsoft.com
- * @since  1.0.0
+ * @since 1.0.0
  */
 @Repository
 public interface JobRepository extends TreeEntityRepository<QJob, Job, String>, OwnedExtRepository {
@@ -32,13 +28,13 @@ public interface JobRepository extends TreeEntityRepository<QJob, Job, String>, 
     }
 
     /**
-     * Returns an {@link Optional} of a {@link Job} with given department, parent and name.
+     * Returns an {@link Optional} of a {@link Job} with given department id, parent id and name.
      *
-     * @param department {@link Job}'s department
-     * @param parent     {@link Job}'s parent
-     * @param name       {@link Job}'s name
+     * @param departmentId The id of {@link Job}'s department
+     * @param parentId     The id of {@link Job}'s parent
+     * @param name         {@link Job}'s name
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<Job> findOneByDepartmentAndParentAndName(@NotNull Department department, Job parent, @NotBlank String name);
+    Optional<Job> findOneByDepartmentIdAndParentIdAndName(@NotBlank String departmentId, String parentId, @NotBlank String name);
 
 }

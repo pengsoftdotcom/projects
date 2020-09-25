@@ -7,6 +7,8 @@ import com.pengsoft.support.domain.util.EntityUtils;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 /**
  * The implementer of {@link BuildingService} based on JPA.
  *
@@ -19,7 +21,9 @@ public class BuildingServiceImpl extends TreeEntityServiceImpl<BuildingRepositor
 
     @Override
     public Building save(final Building building) {
-        getRepository().findOneByCommunityAndParentAndName(building.getCommunity(), building.getParent(), building.getName()).ifPresent(source -> {
+        final var communityId = building.getCommunity().getId();
+        final var parentId = Optional.ofNullable(building.getParent()).map(Building::getId).orElse(null);
+        getRepository().findOneByCommunityIdAndParentIdAndName(communityId, parentId, building.getName()).ifPresent(source -> {
             if (EntityUtils.ne(source, building)) {
                 throw getExceptions().constraintViolated("name", "Exists", building.getName());
             }

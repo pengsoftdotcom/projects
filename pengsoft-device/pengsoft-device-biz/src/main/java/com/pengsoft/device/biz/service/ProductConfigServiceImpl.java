@@ -37,12 +37,12 @@ public class ProductConfigServiceImpl extends EntityServiceImpl<ProductConfigRep
 
     @Override
     public Optional<ProductConfig> findOneByProductAndCode(final Product product, final String code) {
-        return getRepository().findOneByProductAndCode(product, code);
+        return getRepository().findOneByProductIdAndCode(product.getId(), code);
     }
 
     @Override
     public Optional<ProductConfig> findOneByProductAndName(final Product product, final String name) {
-        return getRepository().findOneByProductAndName(product, name);
+        return getRepository().findOneByProductIdAndName(product.getId(), name);
     }
 
 }

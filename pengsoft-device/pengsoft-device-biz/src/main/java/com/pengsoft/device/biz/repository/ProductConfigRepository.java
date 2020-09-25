@@ -11,7 +11,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 /**
@@ -31,21 +30,21 @@ public interface ProductConfigRepository extends EntityRepository<QProductConfig
     }
 
     /**
-     * Returns an {@link Optional} of a {@link ProductConfig} with given product and code.
+     * Returns an {@link Optional} of a {@link ProductConfig} with given product id and code.
      *
-     * @param product {@link ProductConfig}'s product
-     * @param code    {@link ProductConfig}'s code
+     * @param productId The id of {@link ProductConfig}'s product
+     * @param code      {@link ProductConfig}'s code
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<ProductConfig> findOneByProductAndCode(@NotNull Product product, @NotBlank String code);
+    Optional<ProductConfig> findOneByProductIdAndCode(@NotBlank String productId, @NotBlank String code);
 
     /**
-     * Returns an {@link Optional} of a {@link ProductConfig} with given product and name.
+     * Returns an {@link Optional} of a {@link ProductConfig} with given product id and name.
      *
-     * @param product {@link ProductConfig}'s product
-     * @param name    {@link ProductConfig}'s name
+     * @param productId The id of {@link ProductConfig}'s product
+     * @param name      {@link ProductConfig}'s name
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<ProductConfig> findOneByProductAndName(@NotNull Product product, @NotBlank String name);
+    Optional<ProductConfig> findOneByProductIdAndName(@NotBlank String productId, @NotBlank String name);
 
 }

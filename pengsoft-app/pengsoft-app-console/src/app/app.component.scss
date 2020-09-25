@@ -6,7 +6,7 @@
 }
 
 .app-layout {
-    height: 100vh;
+    min-height: 100vh;
 }
 
 .menu-sidebar {
@@ -114,4 +114,9 @@ nz-content {
 [nz-radio] {
     display: block;
     line-height: 30px;
+}
+
+nz-footer {
+    text-align: center;
+    padding-top: 0;
 }

@@ -45,7 +45,7 @@ public class OrganizationServiceImpl extends TreeEntityServiceImpl<OrganizationR
 
     @Override
     public List<Organization> findAllByAdmin(final Person admin) {
-        return getRepository().findAllByAdmin(admin);
+        return getRepository().findAllByAdminId(admin.getId());
     }
 
 }

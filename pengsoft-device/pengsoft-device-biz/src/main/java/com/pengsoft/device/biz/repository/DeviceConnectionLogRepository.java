@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.QueryHints;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 /**
  * The repository interface of {@link Device} based on JPA
@@ -22,11 +22,11 @@ import javax.validation.constraints.NotNull;
 public interface DeviceConnectionLogRepository extends EntityRepository<QDeviceConnectionLog, DeviceConnectionLog, String> {
 
     /**
-     * Returns a {@link Page} of devices with given device.
+     * Returns a {@link Page} of devices with given device id.
      *
-     * @param device {@link DeviceConnectionLog}'s device
+     * @param deviceId The id of {@link DeviceConnectionLog}'s device
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Page<DeviceConnectionLog> findPageByDeviceOrderByCreatedAtDesc(@NotNull Device device, Pageable pageable);
+    Page<DeviceConnectionLog> findPageByDeviceIdOrderByCreatedAtDesc(@NotBlank String deviceId, Pageable pageable);
 
 }

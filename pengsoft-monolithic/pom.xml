@@ -22,5 +22,10 @@
             <artifactId>pengsoft-device-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.pengsoft.portal</groupId>
+            <artifactId>pengsoft-portal-starter</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

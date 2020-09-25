@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { BannerComponent } from './banner/banner.component';
+import { ColumnComponent } from './column/column.component';
 
 
 const routes: Routes = [
@@ -8,7 +8,7 @@ const routes: Routes = [
         path: 'portal',
         data: { name: '门户管理', icon: 'global' },
         children: [
-            { path: 'banner', component: BannerComponent, data: { code: 'portal::banner::find_all', name: '栏目' } },
+            { path: 'column', component: ColumnComponent, data: { code: 'portal::column::find_all', name: '栏目' } },
         ]
     }
 ];

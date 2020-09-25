@@ -13,7 +13,7 @@
     <packaging>pom</packaging>
 
     <properties>
-        <aliyun-sdk-oss.version>3.10.2</aliyun-sdk-oss.version>
+        <aliyun-sdk-oss.version>3.11.1</aliyun-sdk-oss.version>
         <aliyun-java-sdk-core.version>4.5.2</aliyun-java-sdk-core.version>
     </properties>
 

@@ -1,6 +1,5 @@
 package com.pengsoft.device.biz.repository;
 
-import com.pengsoft.device.domain.entity.Device;
 import com.pengsoft.device.domain.entity.DeviceConfig;
 import com.pengsoft.device.domain.entity.QDeviceConfig;
 import com.pengsoft.support.biz.repository.EntityRepository;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 /**
@@ -31,21 +29,21 @@ public interface DeviceConfigRepository extends EntityRepository<QDeviceConfig, 
     }
 
     /**
-     * Returns an {@link Optional} of a {@link DeviceConfig} with given device and code.
+     * Returns an {@link Optional} of a {@link DeviceConfig} with given device id and code.
      *
-     * @param device {@link DeviceConfig}'s device
-     * @param code   {@link DeviceConfig}'s code
+     * @param deviceId The id of {@link DeviceConfig}'s device
+     * @param code     {@link DeviceConfig}'s code
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<DeviceConfig> findOneByDeviceAndCode(@NotNull Device device, @NotBlank String code);
+    Optional<DeviceConfig> findOneByDeviceIdAndCode(@NotBlank String deviceId, @NotBlank String code);
 
     /**
-     * Returns an {@link Optional} of a {@link DeviceConfig} with given device and name.
+     * Returns an {@link Optional} of a {@link DeviceConfig} with given device id and name.
      *
-     * @param device {@link DeviceConfig}'s device
-     * @param name   {@link DeviceConfig}'s name
+     * @param deviceId The id of {@link DeviceConfig}'s device
+     * @param name     {@link DeviceConfig}'s name
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<DeviceConfig> findOneByDeviceAndName(@NotNull Device device, @NotBlank String name);
+    Optional<DeviceConfig> findOneByDeviceIdAndName(@NotBlank String deviceId, @NotBlank String name);
 
 }

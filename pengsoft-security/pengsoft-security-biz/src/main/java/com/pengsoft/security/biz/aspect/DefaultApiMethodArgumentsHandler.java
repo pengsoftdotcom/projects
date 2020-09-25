@@ -17,6 +17,7 @@ import org.springframework.data.repository.support.Repositories;
 import javax.inject.Named;
 import java.io.Serializable;
 import java.util.Collection;
+import java.util.stream.Collectors;
 
 /**
  * Default implementer of {@link ApiMethodArgumentsHandler}
@@ -61,13 +62,13 @@ public class DefaultApiMethodArgumentsHandler<T extends Entity<ID>, ID extends S
     }
 
     @Override
-    public boolean check(final Class<T> entityClass, final Collection<String> ids) {
+    public boolean check(final Class<T> entityClass, final Collection<ID> ids) {
         if (SecurityUtils.hasAnyRole(Role.ADMIN, getModuleAdminRoleCode(entityClass), getEntityAdminRoleCode(entityClass))) {
             return true;
         } else {
             return repositories.getRepositoryFor(entityClass)
                     .map(repository -> (OwnedRepository) repository)
-                    .map(repository -> repository.countByIdInAndCreatedBy(ids, SecurityUtils.getUserId()) == ids.size())
+                    .map(repository -> repository.countByIdInAndCreatedBy(ids.stream().map(id -> (String) id).collect(Collectors.toList()), SecurityUtils.getUserId()) == ids.size())
                     .orElseThrow(() -> new MissingConfigurationException("no repository for class: " + entityClass.getName()));
         }
     }

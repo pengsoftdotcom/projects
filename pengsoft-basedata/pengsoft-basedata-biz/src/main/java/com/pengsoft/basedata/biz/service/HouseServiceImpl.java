@@ -27,8 +27,9 @@ public class HouseServiceImpl extends EntityServiceImpl<HouseRepository, House, 
     @Override
     public House save(final House house) {
         final var floorId = house.getFloor().getId();
+        // load related entities.
         final var floor = floorRepository.findById(floorId).orElseThrow(() -> getExceptions().entityNotFound(floorId));
-        getRepository().findOneByFloorAndCode(floor, house.getCode()).ifPresent(source -> {
+        getRepository().findOneByFloorIdAndCode(floorId, house.getCode()).ifPresent(source -> {
             if (EntityUtils.ne(source, house)) {
                 throw getExceptions().constraintViolated("code", "Exists", house.getName());
             }

@@ -1,6 +1,5 @@
 package com.pengsoft.basedata.biz.repository;
 
-import com.pengsoft.basedata.domain.entity.Building;
 import com.pengsoft.basedata.domain.entity.Floor;
 import com.pengsoft.basedata.domain.entity.QFloor;
 import com.pengsoft.support.biz.repository.EntityRepository;
@@ -11,7 +10,6 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.QueryHint;
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 import java.util.Optional;
 
 /**
@@ -32,10 +30,10 @@ public interface FloorRepository extends EntityRepository<QFloor, Floor, String>
     /**
      * Returns an {@link Optional} of a {@link Floor} with given building and name.
      *
-     * @param building {@link Floor}'s building
-     * @param name     {@link Floor}'s name
+     * @param buildingId The id of {@link Floor}'s building
+     * @param name       {@link Floor}'s name
      */
     @QueryHints(value = @QueryHint(name = "org.hibernate.cacheable", value = "true"), forCounting = false)
-    Optional<Floor> findOneByBuildingAndName(@NotNull Building building, @NotBlank String name);
+    Optional<Floor> findOneByBuildingIdAndName(@NotBlank String buildingId, @NotBlank String name);
 
 }

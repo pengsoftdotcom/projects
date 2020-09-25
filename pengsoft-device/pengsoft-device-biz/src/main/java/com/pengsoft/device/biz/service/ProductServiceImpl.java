@@ -42,7 +42,7 @@ public class ProductServiceImpl extends EntityServiceImpl<ProductRepository, Pro
 
     @Override
     public Optional<Product> findOneByCategoryAndName(final DictionaryItem category, final String name) {
-        return getRepository().findOneByCategoryAndName(category, name);
+        return getRepository().findOneByCategoryIdAndName(category.getId(), name);
     }
 
 }

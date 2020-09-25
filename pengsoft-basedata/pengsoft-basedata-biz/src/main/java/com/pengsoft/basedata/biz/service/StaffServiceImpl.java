@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * The implementer of {@link StaffService} based on JPA.
@@ -58,17 +59,17 @@ public class StaffServiceImpl extends EntityServiceImpl<StaffRepository, Staff, 
 
     @Override
     public Optional<Staff> findOneByPersonAndPrimaryTrue(final Person person) {
-        return getRepository().findOneByPersonAndPrimaryTrue(person);
+        return getRepository().findOneByPersonIdAndPrimaryTrue(person.getId());
     }
 
     @Override
     public List<Staff> findAllByPerson(final Person person) {
-        return getRepository().findAllByPerson(person);
+        return getRepository().findAllByPersonId(person.getId());
     }
 
     @Override
     public List<Staff> findAllByJobIn(final List<Job> jobs) {
-        return getRepository().findAllByJobIn(jobs);
+        return getRepository().findAllByJobIdIn(jobs.stream().map(Job::getId).collect(Collectors.toList()));
     }
 
 }

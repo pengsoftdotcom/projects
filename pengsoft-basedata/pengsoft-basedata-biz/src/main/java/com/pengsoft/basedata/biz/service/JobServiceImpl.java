@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 /**
@@ -28,13 +29,15 @@ public class JobServiceImpl extends TreeEntityServiceImpl<JobRepository, Job, St
     private JobRoleRepository jobRoleRepository;
 
     @Override
-    public Job save(final Job post) {
-        getRepository().findOneByDepartmentAndParentAndName(post.getDepartment(), post.getParent(), post.getName()).ifPresent(source -> {
-            if (EntityUtils.ne(source, post)) {
-                throw getExceptions().constraintViolated("name", "Exists", post.getName());
+    public Job save(final Job job) {
+        final var departmentId = job.getDepartment().getId();
+        final var parentId = Optional.ofNullable(job.getParent()).map(Job::getId).orElse(null);
+        getRepository().findOneByDepartmentIdAndParentIdAndName(departmentId, parentId, job.getName()).ifPresent(source -> {
+            if (EntityUtils.ne(source, job)) {
+                throw getExceptions().constraintViolated("name", "Exists", job.getName());
             }
         });
-        return super.save(post);
+        return super.save(job);
     }
 
     @Override

@@ -20,7 +20,7 @@ public class FloorServiceImpl extends EntityServiceImpl<FloorRepository, Floor, 
 
     @Override
     public Floor save(final Floor floor) {
-        getRepository().findOneByBuildingAndName(floor.getBuilding(), floor.getName()).ifPresent(source -> {
+        getRepository().findOneByBuildingIdAndName(floor.getBuilding().getId(), floor.getName()).ifPresent(source -> {
             if (EntityUtils.ne(source, floor)) {
                 throw getExceptions().constraintViolated("name", "Exists", floor.getName());
             }

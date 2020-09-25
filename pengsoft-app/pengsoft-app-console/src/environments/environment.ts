@@ -4,7 +4,7 @@
 
 export const environment: any = {
     production: false,
-    title: '管理后台',
+    title: '控制台',
     gateway: {
         path: 'http://localhost:8080'
     }
