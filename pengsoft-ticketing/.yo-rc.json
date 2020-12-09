@@ -1,0 +1,43 @@
+{
+  "generator-jhipster": {
+    "promptValues": {
+      "packageName": "com.pengsoft.ticketing",
+      "nativeLanguage": "en"
+    },
+    "jhipsterVersion": "6.10.5",
+    "applicationType": "monolith",
+    "baseName": "ticketing",
+    "packageName": "com.pengsoft.ticketing",
+    "packageFolder": "com/pengsoft/ticketing",
+    "serverPort": "8080",
+    "authenticationType": "jwt",
+    "cacheProvider": "redis",
+    "enableHibernateCache": true,
+    "websocket": false,
+    "databaseType": "sql",
+    "devDatabaseType": "mysql",
+    "prodDatabaseType": "mysql",
+    "searchEngine": false,
+    "messageBroker": false,
+    "serviceDiscoveryType": false,
+    "buildTool": "maven",
+    "enableSwaggerCodegen": false,
+    "jwtSecretKey": "YzdkNmY2ZjQyY2YxMjc3M2E0ZTUzNjdmNmE2NDU5Mzk2MTkxM2ZjYzgzMTQ4MDQ4YjNjMWYxZTdlOTYzOTkzMTMyOTkyMTgxNWYxMjcwYzY4NDA2ZjQ2NDU3NjVlNTQ5YzI4NDAzZjQwZDU3MGFjOTcwNzI4ZjBiYWYxY2VlY2Q=",
+    "embeddableLaunchScript": false,
+    "useSass": true,
+    "clientPackageManager": "npm",
+    "clientFramework": "angularX",
+    "clientTheme": "none",
+    "clientThemeVariant": "",
+    "creationTimestamp": 1607496735188,
+    "testFrameworks": [],
+    "jhiPrefix": "jhi",
+    "entitySuffix": "",
+    "dtoSuffix": "DTO",
+    "otherModules": [],
+    "enableTranslation": true,
+    "nativeLanguage": "en",
+    "languages": ["en", "zh-cn", "zh-tw", "fr"],
+    "blueprints": []
+  }
+}
