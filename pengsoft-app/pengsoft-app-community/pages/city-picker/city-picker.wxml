@@ -1,3 +1,0 @@
-<!--pages/city-picker/city-picker.wxml-->
-<index-list class="city__list" list="{{list}}" bindchoose="onChoose">
-</index-list>

@@ -1,6 +1,0 @@
-{
-    "navigationBarTitleText": "选择城市",
-    "usingComponents": {
-        "index-list": "@miniprogram-component-plus/index-list"
-    }
-}
