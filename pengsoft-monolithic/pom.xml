@@ -18,13 +18,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.pengsoft.device</groupId>
-            <artifactId>pengsoft-device-starter</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.pengsoft.portal</groupId>
-            <artifactId>pengsoft-portal-starter</artifactId>
+            <groupId>com.pengsoft.basedata</groupId>
+            <artifactId>pengsoft-basedata-starter</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
