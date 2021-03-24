@@ -22,10 +22,10 @@
         "ang-jsoneditor": "^1.10.1",
         "jsoneditor": "^9.1.0",
         "ng-zorro-antd": "^9.3.0",
+        "node-forge": ">=0.10.0",
         "rxjs": "~6.5.4",
         "tslib": "^1.13.0",
-        "zone.js": "~0.10.2",
-        "node-forge": ">=0.10.0"
+        "zone.js": "~0.10.2"
     },
     "devDependencies": {
         "@angular-devkit/build-angular": "^0.901.12",
