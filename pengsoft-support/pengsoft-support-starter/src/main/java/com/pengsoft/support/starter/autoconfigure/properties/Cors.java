@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 public class Cors {
 
-    private boolean allowCredentials = true;
+    private boolean allowCredentials = false;
 
     private String allowedOrigin = "*";
 

@@ -25,6 +25,6 @@ public class MessageQueueAutoConfigureProperties {
 
     private String secretKey;
 
-    private String namesrvAddr = "rocketmq-server:9876";
+    private String namesrvAddr = "localhost:9876";
 
 }

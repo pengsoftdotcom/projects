@@ -1,2 +1,2 @@
 singleServerConfig:
-  address: "redis://redis:6379"
+  address: "${REDIS_URL}"
