@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration= \
+com.pengsoft.system.starter.autoconfigure.StorageServiceAutoConfigure, \
+com.pengsoft.system.starter.autoconfigure.MessagingAutoConfigure, \
+com.pengsoft.system.starter.autoconfigure.CaptchaVerificationFilterAutoConfigure

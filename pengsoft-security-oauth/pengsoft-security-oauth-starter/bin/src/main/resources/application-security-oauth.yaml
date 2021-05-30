@@ -1,0 +1,5 @@
+pengsoft:
+  security:
+    oauth:
+      authorization-server: enabled
+      resource-server: enabled

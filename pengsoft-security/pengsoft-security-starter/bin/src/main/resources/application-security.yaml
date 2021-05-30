@@ -1,0 +1,9 @@
+pengsoft:
+  security:
+    updating-authentication-mq-topic: pengsoft-updating-authentication
+spring:
+  messages:
+    basename: META-INF/messages-security, META-INF/messages, org/hibernate/validator/ValidationMessages
+logging:
+  level:
+    org.springframework.security: debug
