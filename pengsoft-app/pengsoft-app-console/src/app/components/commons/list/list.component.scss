@@ -11,13 +11,13 @@
         }
 
         :nth-child(2) {
-            color: rgb(0, 0, 0, 0.85);
+            color: rgb(0, 0, 0);
             font-weight: 500;
             font-size: 16px;
         }
     }
 
-    .table>nz-tree {
+    .table > nz-tree {
         border: 1px solid #f0f0f0;
         padding: 12px 0;
     }

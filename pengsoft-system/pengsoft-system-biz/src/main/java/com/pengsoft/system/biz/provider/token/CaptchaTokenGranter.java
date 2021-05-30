@@ -49,8 +49,8 @@ public class CaptchaTokenGranter extends AbstractCustomTokenGranter {
     @Override
     protected OAuth2AccessToken getAccessToken(ClientDetails clientDetails, TokenRequest tokenRequest) {
         final var oauth2Request = getRequestFactory().createOAuth2Request(clientDetails, tokenRequest);
-        final var username = oauth2Request.getRequestParameters().get(PARAM_USERNAME);
-        final var code = oauth2Request.getRequestParameters().get(PARAM_CAPTCHA);
+        final var username = oauth2Request.getRequestParameters().get(PARAM_USERNAME).trim();
+        final var code = oauth2Request.getRequestParameters().get(PARAM_CAPTCHA).trim();
         final var userDetails = (DefaultUserDetails) userDetailsService.loadUserByUsername(username);
         if (!captchaService.isValid(userDetails.getUser(), code)) {
             throw new InvalidCaptchaException(messageSource.getMessage(EC_CAPTCHA_INVALID, null, LocaleContextHolder.getLocale()));
