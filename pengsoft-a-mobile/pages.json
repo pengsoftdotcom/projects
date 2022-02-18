@@ -3,8 +3,22 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "uni-app"
+				"navigationBarTitleText": "工作大厅"
 			}
+		}, {
+			"path": "pages/qrcode/qrcode",
+			"style": {
+				"navigationBarTitleText": "扫码巡查",
+				"enablePullDownRefresh": false
+			}
+
+		}, {
+			"path": "pages/ucenter/ucenter",
+			"style": {
+				"navigationBarTitleText": "个人中心",
+				"enablePullDownRefresh": false
+			}
+
 		}
 	],
 	"globalStyle": {
@@ -12,5 +26,28 @@
 		"navigationBarTitleText": "uni-app",
 		"navigationBarBackgroundColor": "#F8F8F8",
 		"backgroundColor": "#F8F8F8"
+	},
+	"tabBar": {
+		"color": "#7A7E83",
+		"selectedColor": "#007AFF",
+		"borderStyle": "black",
+		"backgroundColor": "#FFFFFF",
+		"list": [{
+			"pagePath": "pages/index/index",
+			"iconPath": "static/tabbar/list.png",
+			"selectedIconPath": "static/tabbar/list_active.png",
+			"text": "办事大厅"
+		}, {
+			"pagePath": "pages/qrcode/qrcode",
+			"iconPath": "static/tabbar/grid.png",
+			"selectedIconPath": "static/tabbar/grid_active.png",
+			"text": "扫码巡查"
+		}
+		, {
+			"pagePath": "pages/ucenter/ucenter",
+			"iconPath": "static/tabbar/me.png",
+			"selectedIconPath": "static/tabbar/me_active.png",
+			"text": "个人中心"
+		}]
 	}
 }
