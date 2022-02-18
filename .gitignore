@@ -1,7 +1,9 @@
 # Compiled class file
+target
 *.class
 
 # Log file
+logs
 *.log
 
 # BlueJ files
@@ -21,3 +23,16 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+# node
+
+node_modules
+
+# vscode
+.vscode
+
+# eclipse
+.settings
+.project
+.classpath
+.factorypath
