@@ -1,0 +1,206 @@
+﻿<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>我的合同——详情——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    <style>
+        .thing-deal-wrap {
+            padding-top: 0;
+        }
+
+        .thing-detail-wrap .aui-list-view-cell {
+            line-height: 22px;
+        }
+
+        .unupload {
+            background-color: #e74c3c;
+        }
+
+        .unconfirm {
+            background-color: #f1c40f;
+        }
+
+        .confirmed {
+            background-color: #2ecc71;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading" v-cloak>
+        <div class="spinner"></div>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="aui-content thing-detail-wrap">
+        <ul class="aui-list-view">
+            <li class="aui-list-view-cell selectable">
+                <p class="aui-col-xs-3 aui-text-custom">工地名称</p>
+                <p class="aui-col-xs-8 aui-text-333" v-cloak>{{item.siteName}}</p>
+            </li>
+            <li class="aui-list-view-cell">
+                <p class="aui-col-xs-3 aui-text-custom">合同类型</p>
+                <p class="aui-col-xs-9 aui-text-333" v-cloak>{{item.contractType}}</p>
+            </li>
+            <li class="aui-list-view-cell m-b-10">
+                <p class="aui-col-xs-3 aui-text-custom">合同状态</p>
+                <p class="aui-col-xs-9 aui-text-333">
+                    <span class="custom-label aui-pull-left" v-bind:class="statusObj[item.status].statusClass" v-cloak>
+                        {{statusObj[item.status].statusName}}
+                    </span>
+                </p>
+            </li>
+            <li class="aui-list-view-cell m-b-10" v-if="item.status !== '1'">
+                <p class="aui-text-custom">合同</p>
+                <div class="addthing-photo-container m-b-10">
+                    <div class="addthing-imgwrap">
+                        <template v-for="img in imageList">
+                            <div class="img-item" v-on:click="openBigImage($index);"
+                                style="text-align: center;height:100px;">
+                                <div class="img-div" style="background-image:url('{{img.url}}');"></div>
+                                <span v-text="img.name" style="height:0.5rem;"></span>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+
+            </li>
+        </ul>
+        <div class="f-pd70"></div>
+    </div>
+    <div class="thing-edit-btnwrap" v-if="item.status==='2'" v-on:click="complete" v-effect="">
+        <div class="thing-edit-btn" tapmode>确认</div>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+
+                statusObj: {
+                    '1': { statusName: '未上传', statusClass: 'unupload' },
+                    '2': { statusName: '未确认', statusClass: 'unconfirm' },
+                    '3': { statusName: '已确认', statusClass: 'confirmed' },
+                },
+
+                item: {},
+                imageList: [
+                    { url: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Fpingdingshan.hngp.gov.cn%2Fwebfile%2Fpingdingshan%2Frootfiles%2F2020%2F04%2F30%2Fe27aadd29b3c41ad8cecf064be889be0.jpg&refer=http%3A%2F%2Fpingdingshan.hngp.gov.cn&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1648227638&t=0b0098576a6b46633d6a0d15fdadb776' },
+                    { url: 'https://gimg2.baidu.com/image_search/src=http%3A%2F%2Ffile2.renrendoc.com%2Ffileroot_temp3%2F2021-5%2F2%2F50b3bbd0-eec8-418e-a917-cebaf8928087%2F50b3bbd0-eec8-418e-a917-cebaf89280871.gif&refer=http%3A%2F%2Ffile2.renrendoc.com&app=2002&size=f9999,10000&q=a80&n=0&g=0n&fmt=jpeg?sec=1648227686&t=a519e633624870b85f1bdab29045d54d' },
+                ],
+                //详情相关参数
+                id: "",  //id
+                checkpointCheckpointGroupName: "",  //工地名称
+                checkpointName: "",  //巡查点位名称
+                code: "",  //点位编号
+                content: "",  //公告内容
+                eventCatalogIcon: "", //状态背景色
+                eventCatalogName: "",  //状态名称
+
+                eventVersion: 0,  //提交的版本
+                eventCanFinish: false,  //是否显示完成按钮
+                eventDateCreated: "",   //事件时间
+
+                isFlow: "",
+
+                lists: []  //巡查点位数组
+            },
+            methods: {
+                openBigImage: function (index) {  //处理过程打开报事详情大图
+                    var vm_p = this;
+                    var array = vm_p.imageList.map(i=> i.url)
+                    openBigImage(array, index);
+                },
+                complete: function () {  //完成
+                    var vm_p = this;
+                    openWin("patrol_list/patrol_complete_win", {
+                        id: api.pageParam.id,
+                        checkpointCheckpointGroupName: vm_p.checkpointCheckpointGroupName,
+                        checkpointName: vm_p.checkpointName,
+                        code: vm_p.code,
+                        eventDateCreated: vm_p.eventDateCreated,
+                        eventVersion: vm_p.eventVersion,
+                        isFlow: vm.isFlow,
+                    });
+                },
+                call: function (number) {
+                    api.call({
+                        type: "tel_prompt",
+                        number: number
+                    });
+                    //              	alert(number);
+                },
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            setTimeout(function () {
+
+                vm.$nextTick(function () {
+
+                    vm.item = api.pageParam.item;
+                    vm.loading = false;
+                });
+
+            }, 300);
+
+        };
+
+        //查看大图
+        function openBigImage(urls, index) {
+            console.log(urls)
+            var imageBrowser = api.require("imageBrowser");
+            imageBrowser.openImages({
+                imageUrls: urls,
+                activeIndex: index
+            });
+
+        };
+
+
+        //格式化时间
+        function formatDatetime(datetime) {
+
+            var time = new Date(datetime);
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+            var hour = p(time.getHours());
+            var min = p(time.getMinutes());
+            var sec = p(time.getSeconds());
+
+            return year + "/" + month + "/" + day + " " + hour + ":" + min + ":" + sec;
+
+            function p(s) {
+                return s < 10 ? "0"
+                    + s : s;
+            };
+
+        };
+    </script>
+</body>
+
+</html>

@@ -1170,8 +1170,8 @@ body{
 }
 .addthing-imgwrap .img-item .add-more,
 .addthing-imgwrap .img-item .img-div{
-    width: 0.92rem;
-    height: 0.92rem;
+    width: 90%;
+    height: 90%;
     vertical-align: middle;
     position: relative;
     overflow: hidden;

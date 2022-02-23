@@ -1,0 +1,226 @@
+﻿<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>工地列表——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    <style type="text/css">
+        .patrol-list-item {
+            position: relative;
+        }
+
+        .state-back {
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            color: #ffffff;
+            text-align: center;
+            padding: 3px;
+            height: 26px;
+            line-height: 16px;
+        }
+
+        .unupload {
+            background-color: #e74c3c;
+        }
+
+        .unconfirm {
+            background-color: #f1c40f;
+        }
+
+        .confirmed {
+            background-color: #2ecc71;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading">
+        <div class="spinner"></div>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="noData">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="timeOut">
+        <p class="fail-info">请求超时</p>
+    </div>
+    <div class="aui-searchbar-wrap demo">
+        <div class="aui-searchbar aui-border-radius" tapmode @click="doSearch">
+            <i class="aui-iconfont aui-icon-search"></i>
+            <div class="aui-searchbar-text">请输入搜索内容</div>
+            <div class="aui-searchbar-input">
+                <input type="text" placeholder="请输入搜索内容" v-model="searchInfo">
+            </div>
+            <i class="aui-iconfont aui-icon-roundclosefill" tapmode @click="clearInput"></i>
+        </div>
+        <div class="aui-searchbar-cancel aui-text-info" tapmode @click="cancelSearch">取消</div>
+    </div>
+    <div class="aui-padded-5"></div>
+    <div class="patrol-list-wrap">
+        <template v-for="list in lists">
+            <div class="patrol-list-item" v-on:click="openSiteList(list)" v-effect="">
+                <div class="aui-text-333" style="padding-right: 80px;" v-text="list.siteName"></div>
+                <button class="state-back" :class="statusObj[list.status].statusClass" v-text="statusObj[list.status].statusName"></button>
+                <div class="f-fs14 aui-text-999">
+                    {{list.contractType}}
+                </div>
+            </div>
+        </template>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: false,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+                timeOut: false,  //是否显示：全局加载超时
+
+                searchInfo: "",
+
+                code: "",   //过滤条件
+                lists: [],    //工地列表数组
+                searchCode: "",
+
+                statusObj: {
+                    '1': { statusName: '未上传', statusClass: 'unupload' },
+                    '2': { statusName: '未确认', statusClass: 'unconfirm' },
+                    '3': { statusName: '已确认', statusClass: 'confirmed' },
+                }
+            },
+            methods: {
+                openSiteList: function (item) {  //打开工地详情
+                    openWin("contract/contract_detail_win", { item: item });
+                },
+                doSearch: function () {
+                    $api.addCls($api.dom(".aui-searchbar-wrap"), "focus");
+                    $api.dom('.aui-searchbar-input input').focus();
+                },
+                cancelSearch: function () {
+                    $api.removeCls($api.dom(".aui-searchbar-wrap.focus"), "focus");
+                    $api.dom('.aui-searchbar-input input').blur();
+                    this.searchInfo = "";
+                },
+                clearInput: function () {
+                    this.searchInfo = "";
+                }
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            timeOut300(function () {
+
+                vm.$nextTick(function () {
+
+                    vm.code = api.pageParam.code ? api.pageParam.code : "";
+                    vm.searchCode = api.pageParam.searchCode ? api.pageParam.searchCode : "";
+
+                    getConstructionList();
+
+                });
+
+            });
+
+        };
+
+
+        //获取工地列表
+        function getConstructionList() {
+
+            vm.lists.splice(0, vm.lists.length);
+
+            //临时数据
+            vm.lists = [
+                {
+                    id: '1',
+                    siteName: '江南金属制品加工基地建设项目',
+                    contractType: '劳务分包合同',
+                    status: '1' // 1未上传(红色) 2 3
+                },
+                {
+                    id: '2',
+                    siteName: '重庆西部农产品物流中心项目(一期)',
+                    contractType: '劳务合同',
+                    status: '2' // 1 2 3
+                },
+                {
+                    id: '3',
+                    siteName: '重庆西部农产品物流中心项目(一期)',
+                    contractType: '劳务分包合同',
+                    status: '3' // 1 2 3
+                },
+            ];
+            vm.loading = false;
+            return;
+
+            var url = $api.getStorage("interface_url") + 'todo';
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    name: "",
+                    code: vm.code,
+                    searchCode: vm.searchCode,
+                },
+                beforeSend: function () {
+                    vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+                    if (data.success) {
+
+                        //如果一条数据都没有，将在界面显示“暂无数据”
+                        if (data.list.length == 0) {
+                            vm.noData = true;
+                            return false;
+                        }
+
+                        for (var i = 0; i < data.list.length; i++) {
+                            vm.lists.push({
+                                id: data.list[i].id,
+                                name: data.list[i].name,
+                                address: data.list[i].addressDetail,
+                                statusCode: data.list[i].statusCode,
+                                statusName: data.list[i].statusName,
+                                index: i
+                            });
+                        }
+
+                    } else {
+                        vm.loadingFail = true;  //加载失败
+                    }
+
+                }
+            });
+
+        };
+    </script>
+</body>
+
+</html>
