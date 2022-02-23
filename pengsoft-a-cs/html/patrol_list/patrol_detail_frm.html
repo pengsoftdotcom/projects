@@ -1,0 +1,442 @@
+﻿<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"
+    />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>巡查记录——详情——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    <style>
+    	.thing-deal-wrap{
+    		padding-top: 0;
+    	}
+    	.thing-detail-wrap .aui-list-view-cell {
+		    line-height: 22px;
+		}
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+        
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading" v-cloak>
+        <div class="spinner"></div>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="aui-content thing-detail-wrap">
+        <ul class="aui-list-view">
+            <li class="aui-list-view-cell selectable">
+                <p class="aui-col-xs-3 aui-text-custom">工地名称</p>
+                <p class="aui-col-xs-8 aui-text-333" v-cloak>{{checkpointCheckpointGroupName}}</p>
+            </li>
+            <li class="aui-list-view-cell">
+                <p class="aui-col-xs-3 aui-text-custom">巡查部位</p>
+                <p class="aui-col-xs-9 aui-text-333" v-cloak>{{code}} {{checkpointName}}</p>
+            </li>
+            <li class="aui-list-view-cell m-b-10">
+                <p class="aui-col-xs-3 aui-text-custom">巡查状态</p>
+                <p class="aui-col-xs-9 aui-text-333">
+                	<span class="custom-label aui-pull-left bg-custom" v-bind:class="eventCatalogIcon" v-cloak>{{eventCatalogName}}</span>
+                </p>
+            </li>
+            <li>
+                <ul class="aui-list-view">
+                    <template v-for="list in lists">
+                        <li class="aui-list-view-cell f-fs14" :class="{'bg-deal': list.isFinish}">
+                        	<div :class="{'thing-deal-wrap':list.isFinish}">
+	                            <div class="m-b-10 f-oh">
+	                                <p class="aui-col-xs-3 aui-text-custom" v-text="list.patrolTime">巡查时间</p>
+	                                <p class="aui-col-xs-9 aui-text-333">
+	                                    {{list.dateProcessed}}
+	                                    <span class="custom-label aui-pull-right bg-custom" v-bind:class="list.eventCatalogIcon">{{list.nodeNodeTypeName}}</span>
+	                                </p>
+	                            </div>
+	                            <div class="m-b-10 f-oh">
+	                                <p class="aui-col-xs-3 aui-text-custom">{{list.post}}</p>
+	                                <p class="aui-col-xs-9 aui-text-333" @click="call(list.processedByMobile);">
+	                                    {{list.processedByName}}
+	                                </p>
+	                            </div>
+	                            <div class="addthing-photo-container m-b-10">
+	                                <div class="addthing-imgwrap">
+	                                    <template v-for="img in  list.imageList">
+	                                        <div class="img-item" v-on:click="openBigImage(list.id,$index);" style="text-align: center;height:1.5rem;">
+	                                            <div class="img-div" style="background-image:url('{{img.url}}');"></div>
+	                                            <span v-text="img.name" style="height:0.5rem;"></span>
+	                                        </div>
+	                                    </template>
+	                                </div>
+	                            </div>
+	                            <div class="m-b-10" :class="list.textcolor">{{list.textarea}}</div>
+	                            <div class="voice-div m-b-10" v-if="list.audio" @click="openAudio(list.audio)"></div>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </li>
+        </ul>
+        <div class="f-pd70"></div>
+    </div>
+    <div class="thing-edit-btnwrap" v-if="eventCanFinish" v-on:click="complete" v-effect="">
+        <div class="thing-edit-btn" tapmode>完成</div>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+
+                //详情相关参数
+                id: "",  //id
+                checkpointCheckpointGroupName: "",  //工地名称
+                checkpointName: "",  //巡查点位名称
+                code: "",  //点位编号
+                content: "",  //公告内容
+                eventCatalogIcon: "", //状态背景色
+                eventCatalogName: "",  //状态名称
+
+                eventVersion: 0,  //提交的版本
+                eventCanFinish: false,  //是否显示完成按钮
+                eventDateCreated: "",   //事件时间
+                
+                isFlow: "",
+
+                lists: []  //巡查点位数组
+            },
+            methods: {
+                openBigImage: function (id,index) {  //处理过程打开报事详情大图
+
+                    var vm_p = this;
+                    for (var i = 0; i < vm_p.lists.length; i++) {
+
+                        if (vm_p.lists[i].id == id) {
+
+                            var array = new Array();
+                            for (var j = 0; j < vm_p.lists[i].imageList.length; j++) {
+                                array.push(vm_p.lists[i].imageList[j].url);
+                            }
+                            openBigImage(array.join(","),index);
+                            break;
+                        }
+
+                    }
+
+                },
+                openAudio: function(url){
+
+                	api.download({
+			            url: url,
+			            savePath: "fs://res/voice/" + Date.now() + ".amr",
+			            report: true,
+			            cache: false,
+			            allowResume: true
+			        }, function (ret, err) {
+			        
+			            if (ret.state == 0) {  //下载中
+			            } else if (ret.state == 1) {
+			                api.stopPlay();
+			                api.startPlay({ path: ret.savePath }, function (ret, err) {});
+			            } else if (ret.state == 2) {
+			                api.alert({ title: "错误", msg: "录音文件下载失败！", buttons: ["确定"] });
+			            }
+			
+			        });
+                },
+                complete: function () {  //完成
+                    var vm_p = this;
+                    openWin("patrol_list/patrol_complete_win", {
+                        id: api.pageParam.id, 
+                        checkpointCheckpointGroupName: vm_p.checkpointCheckpointGroupName,
+                        checkpointName: vm_p.checkpointName,
+                        code: vm_p.code,
+                        eventDateCreated: vm_p.eventDateCreated,
+                        eventVersion: vm_p.eventVersion,
+                        isFlow: vm.isFlow, 
+                    });
+                },
+                call: function(number){
+                	api.call({
+                		type:"tel_prompt",
+                		number: number
+                	});
+//              	alert(number);
+                },
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            setTimeout(function () {
+
+                vm.$nextTick(function () {
+
+                    vm.id = api.pageParam.id;
+                    vm.isFlow = api.pageParam.isFlow;
+                    if(vm.isFlow){
+                    	getFloorPD();
+                    }else{
+                    	getPatrolDetail();
+                    }
+
+                });
+
+            }, 300);
+
+        };
+
+
+        //页面初始化
+        function getPatrolDetail() {
+
+            //拼接接口地址：查询单个巡查点详情
+            var url = $api.getStorage("interface_url") + api_url.getPatrolDetail;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    id: vm.id
+                },
+                beforeSend: function () { },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+                    if (data.success) {
+                        vm.checkpointCheckpointGroupName = data.data.checkpointCheckpointGroupName;
+                        vm.checkpointName = data.data.checkpointName;
+                        vm.code = data.data.checkpointCode;
+                        vm.eventCanFinish = data.data.eventCanFinish;
+                        vm.eventVersion = data.data.eventVersion;
+                        vm.eventDateCreated = formatDatetime(data.data.eventDateCreated);
+                        vm.eventCatalogName = data.data.eventCatalogName;
+                        
+                        if(data.data.eventCatalogName == "一般隐患/完成" || data.data.eventCatalogName == "重大隐患/完成" || data.data.eventCatalogName == "文明施工/完成"){
+                        	vm.eventCatalogIcon = "bg-green";
+                        }
+						else {
+							vm.eventCatalogIcon = data.data.eventCatalogIcon;
+						}
+                        for (var i = 0; i < data.data.logs.length; i++) {
+
+                            var item = new Object();
+                            item.id = i;
+                            item.dateProcessed = formatDatetime(data.data.logs[i].dateProcessed);
+                            item.nodeNodeTypeName = data.data.logs[i].nodeNodeTypeName;
+                            item.processedByName = data.data.logs[i].processedByName;
+                            item.imageList = [];
+                            item.textarea = "";
+                            item.post = data.data.logs[i].post;
+                            item.audio = "";
+                            item.processedByMobile = data.data.logs[i].processedByMobile;
+                            if(data.data.logs[i].nodeNodeTypeCode == "FINISH"){
+	                            item.isFinish = true;
+	                            item.patrolTime = "处理时间";
+                            }else{
+                            	item.textcolor = data.data.textcolor;
+                            	item.isFinish = false;
+	                            item.patrolTime = "巡查时间";
+                            }
+
+                            //获取文件
+                            for (var j = 0; j < data.data.logs[i].result.length; j++) {
+
+                                //图片
+                                if (data.data.logs[i].result[j].type == "imageList") {
+
+                                    var image_array = new Array();
+                                    for (var k = 0; k < data.data.logs[i].result[j].value.length; k++) {
+                                        image_array.push({
+	                                        url: data.data.logs[i].result[j].value[k].url,
+	                                        name: data.data.logs[i].result[j].value[k].name == "补充<br>照片" ? "补充照片" : data.data.logs[i].result[j].value[k].name
+                                    	});
+                                    }
+                                    item.imageList = image_array;
+
+                                }
+
+                                //文字
+                                if (data.data.logs[i].result[j].type == "textarea") {
+                                    item.textarea = data.data.logs[i].result[j].value;
+                                }
+
+                                //语音
+                                if (data.data.logs[i].result[j].type == "audio") {
+                                    item.audio = data.data.logs[i].result[j].value.url;
+                                }
+
+                            }
+//                          if(item.isFinish){
+//                          	vm.lists[i-1].isEnd = false;
+//                          }
+                            vm.lists.push(item);
+                            
+
+                        }
+
+
+                    } else {
+
+                        vm.loadingFail = true;
+                    }
+
+                }
+            });
+
+        };
+        
+        //页面初始化
+        function getFloorPD() {
+
+            //拼接接口地址：查询单个巡查点详情
+            var url = $api.getStorage("interface_url") + api_url.getFloorPD;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    id: vm.id
+                },
+                beforeSend: function () { },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+                    if (data.success) {
+                        vm.checkpointCheckpointGroupName = data.data.checkstepCheckpointCheckpointGroupName;
+                        vm.checkpointName = data.data.checkstepCheckpointName + "-" + data.data.checkstepPartname;
+                        vm.code = data.data.checkpointCode;
+                        vm.eventCanFinish = data.data.eventCanFinish;
+                        vm.eventVersion = data.data.eventVersion;
+                        vm.eventDateCreated = formatDatetime(data.data.eventDateCreated);
+                        vm.eventCatalogName = data.data.eventCatalogName;
+                        
+                        if(data.data.eventCatalogName == "一般隐患/完成" || data.data.eventCatalogName == "重大隐患/完成" || data.data.eventCatalogName == "文明施工/完成"){
+                        	vm.eventCatalogIcon = "bg-green";
+                        }
+						else {
+							vm.eventCatalogIcon = data.data.eventCatalogIcon;
+						}
+                        for (var i = 0; i < data.data.logs.length; i++) {
+
+                            var item = new Object();
+                            item.id = i;
+                            item.dateProcessed = formatDatetime(data.data.logs[i].dateProcessed);
+                            item.nodeNodeTypeName = data.data.logs[i].nodeNodeTypeName;
+                            item.processedByName = data.data.logs[i].processedByName;
+                            item.imageList = [];
+                            item.textarea = "";
+                            item.post = data.data.logs[i].post;
+                            item.audio = "";
+                            item.processedByMobile = data.data.logs[i].processedByMobile;
+                            if(data.data.logs[i].nodeNodeTypeCode == "FINISH"){
+	                            item.isFinish = true;
+	                            item.patrolTime = "处理时间";
+                            }else{
+                            	item.textcolor = data.data.textcolor;
+                            	item.isFinish = false;
+	                            item.patrolTime = "巡查时间";
+                            }
+
+                            //获取文件
+                            for (var j = 0; j < data.data.logs[i].result.length; j++) {
+
+                                //图片
+                                if (data.data.logs[i].result[j].type == "imageList") {
+
+                                    var image_array = new Array();
+                                    for (var k = 0; k < data.data.logs[i].result[j].value.length; k++) {
+                                        image_array.push({
+                                        	url: data.data.logs[i].result[j].value[k].url,
+                                        	name: data.data.logs[i].result[j].value[k].name == "补充<br>照片" ? "补充照片" : data.data.logs[i].result[j].value[k].name
+                                    	});
+                                    }
+                                    item.imageList = image_array;
+
+                                }
+
+                                //文字
+                                if (data.data.logs[i].result[j].type == "textarea") {
+                                    item.textarea = data.data.logs[i].result[j].value;
+                                }
+
+                                //语音
+                                if (data.data.logs[i].result[j].type == "audio") {
+                                    item.audio = data.data.logs[i].result[j].value.url;
+                                }
+
+                            }
+//                          if(item.isFinish){
+//                          	vm.lists[i-1].isEnd = false;
+//                          }
+                            vm.lists.push(item);
+                            
+
+                        }
+
+
+                    } else {
+                        vm.loadingFail = true;
+                    }
+
+                }
+            });
+
+        };
+        
+
+        //查看大图
+        function openBigImage(url,index) {
+
+            var imageBrowser = api.require("imageBrowser");
+            imageBrowser.openImages({
+                imageUrls: url.split(","),
+                activeIndex: index
+            });
+
+        };
+
+
+        //格式化时间
+        function formatDatetime(datetime) {
+
+            var time = new Date(datetime);
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+            var hour = p(time.getHours());
+            var min = p(time.getMinutes());
+            var sec = p(time.getSeconds());
+
+            return year + "/" + month + "/" + day + " " + hour + ":" + min + ":" + sec;
+
+            function p(s) {
+                return s < 10 ? "0"
+                + s : s;
+            };
+
+        };
+    </script>
+</body>
+
+</html>

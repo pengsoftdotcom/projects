@@ -1,0 +1,67 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>天气预报——win</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/custom.css" />
+</head>
+<body class="bg-new">
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <header id="header" class="aui-bar aui-bar-nav" style="background-color:rgb(1,40,80);">
+        <a class="aui-pull-left" onclick="closeWin();">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title" v-cloak>{{city}}天气</div>
+    </header>
+    <script src="../script/api.js"></script>
+    <script src="../script/vue.js"></script>
+    <script src="../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                city: "",  //城市名称
+            },
+            methods: {
+            }
+        });
+
+
+        apiready = function () {
+            api.parseTapmode();
+            setStatusBarStyle("light");
+
+            if(api.pageParam.city){
+            	vm.city = api.pageParam.city;
+            }else if($api.getStorage("city")){
+            	vm.city = $api.getStorage("city");
+            }
+
+            api.openFrame({
+                name: "weather_frm",
+                url: "widget://html/weather_frm.html",
+                bounces: false,
+                bgColor: "transparent",
+                rect: {
+                    x: 0,
+                    y: $api.offset($api.byId("header")).h,
+                    w: api.winWidth,
+                    h: api.winHeight - $api.offset($api.byId("header")).h
+                },
+                pageParam: {
+                	temperature: api.pageParam.temperature,
+					weatherIcon: api.pageParam.weatherIcon,
+					weatherText: api.pageParam.weatherText,
+					city: api.pageParam.city,
+                }
+            });
+        };
+    </script>
+</body>
+</html>

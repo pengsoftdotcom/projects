@@ -1,0 +1,108 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>统计信息——win</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    <style>
+    	.changeTab{
+    		width: 50%;
+    	}
+    	.changeTab-p{
+    		margin: auto;
+		    width: 80px;
+		    text-align: center;
+		    line-height: 45px;
+		    color:#9ca1b2;
+    	}
+    	.changeTab-active{
+    		color: #0facfb;
+    		border-bottom: 2px solid #0facfb;
+    	}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <header id="header" class="aui-bar aui-bar-nav header-custom">
+        <a class="aui-pull-left" onclick="closeWin();">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">
+            统计信息
+        </div>
+    </header>
+    <ul id="footer" style="display: -webkit-box;background: #fff;">
+    	<li class="changeTab">
+    		<p class="changeTab-p" :class="{'changeTab-active':mapShow}" @click="changeTab(0)">地图展示</p>
+    	</li>
+    	<li class="changeTab">
+    		<p class="changeTab-p" :class="{'changeTab-active':dataShow}" @click="changeTab(1)">数据统计</p>
+    	</li>
+    </ul>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+		var vm = new Vue({
+			el: "body",
+			data: {
+				mapShow:true,
+				dataShow:false
+			},
+			methods: {
+				changeTab: function(index){
+					if(index==0){
+						api.closeFrame({name:"map/map_frm"});
+						this.mapShow=true;
+						this.dataShow=false;
+						setFrm("map_frm");
+					}else{
+						api.closeFrame({name:"map/map_frm"});
+						this.mapShow=false;
+						this.dataShow=true;
+						setFrm("map_data_frm");
+					}
+				}
+			}
+		});
+        apiready = function () {
+
+            api.parseTapmode();
+
+            setStatusBarStyle("light");
+
+            api.openFrame({
+                name: "map/map_frm",
+                url: "widget://html/map/map_frm.html",
+                bounces: false,
+                rect: {
+                    x: 0,
+                    y: $api.offset($api.byId("header")).h + $api.offset($api.byId("footer")).h,
+                    w: api.winWidth,
+                    h: api.winHeight - $api.offset($api.byId("header")).h - $api.offset($api.byId("footer")).h
+                }
+            });
+
+        };
+        function setFrm(frm){
+        	api.openFrame({
+                name: "map/"+frm,
+                url: "widget://html/map/"+frm+".html",
+                bounces: false,
+                rect: {
+                    x: 0,
+                    y: $api.offset($api.byId("header")).h + $api.offset($api.byId("footer")).h,
+                    w: api.winWidth,
+                    h: api.winHeight - $api.offset($api.byId("header")).h - $api.offset($api.byId("footer")).h
+                }
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,125 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>进度——详情——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/custom.css" />
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="noData">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="timeOut">
+        <p class="fail-info">请求超时</p>
+    </div>
+    <div class="aui-padded-5"></div>
+    <div class="patrol-list-wrap">
+    	<template v-for="list in lists">
+    	<div class="patrol-list-item" v-effect="">
+    		<div class="aui-col-xs-6" style="font-weight: bold;"><span v-text="list.code"></span> <span v-text="list.name"></span></div>
+    		<div class="aui-col-xs-6 aui-pull-right" style="text-align: right;">
+	    			<template v-if="!list.isActive">
+	    			<div class="aui-col-xs-8">
+	    				<span>巡查时间：</span>
+	    			</div>
+	    			<span class="aui-text-custom" v-text="list.inspectedDays+'天'"></span>
+	    			</template>
+	    			<span class="aui-text-custom" v-else>作业层</span>
+    				<i class="aui-iconfont aui-icon-right aui-text-999"></i>
+    		</div>
+        </div>
+        </template>
+    </div>
+    <script src="../../../script/api.js"></script>
+    <script src="../../../script/vue.js"></script>
+    <script src="../../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+                timeOut: false,  //是否显示：全局加载超时
+
+                code: "",   //过滤条件
+                lists: []    //工地列表数组
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+            
+            getFloorInfo();
+
+        };
+
+
+        //获取工地列表
+        function getFloorInfo() {
+
+            vm.lists.splice(0, vm.lists.length);
+
+            var url = $api.getStorage("interface_url") + api_url.getFloorInfo;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    checkpointgroupId: api.pageParam.id,
+                    builderNum: api.pageParam.builderNum
+                },
+                beforeSend: function () {
+                    vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+
+                    if (data.success) {
+
+                        //如果一条数据都没有，将在界面显示“暂无数据”
+                        if (data.list.length == 0) {
+                            vm.noData = true;
+                            return false;
+                        }
+						var list = data.list;
+                        for (var i = 0; i < list.length; i++) {
+                            vm.lists.push({
+                                id: list[i].id,
+                                code: list[i].code,
+                                name: list[i].name,
+                                inspectedDays: list[i].inspectedDays,
+                                isActive: list[i].statusCode == "ACTIVED" ? true : false
+                            });
+                        }
+
+                    } else {
+                        vm.loadingFail = true;  //加载失败
+                    }
+
+                }
+            });
+
+        };
+    </script>
+</body>
+</html>

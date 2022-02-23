@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>工程——概况_frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    <style>
+    	body{
+    		
+    	}
+    </style>
+</head>
+<body style="background:none">
+	<script type="text/javascript">
+		var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+		ele.style.fontSize = size + "px";
+	</script>
+	<div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+        <p class="fail-info">暂无信息</p>
+    </div>
+	<div class="swiper-container img-browser-container">
+        <div class="swiper-wrapper">
+            <template v-for="image in blueprintimages">
+            <div class="swiper-slide text-all-center">
+            	<div class="img-browser-item">
+        			<img :src="image.url" alt="" />
+        			<template v-for="point in image.points">
+        			<i class="aui-iconfont aui-icon-locationfill aui-text-danger f-fs18" :style="{top:point.pointY+'%',left:point.pointX+'%'}"></i>
+        			</template>
+            	</div>
+            </div>
+            </template>
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+	<script src="../../script/api.js"></script>
+	<script src="../../script/swiper.min.js"></script>
+	<script src="../../script/vue.js"></script>
+	<script src="../../script/common.js"></script>
+	<script type="text/javascript">
+	
+		var vm = new Vue({
+	        el: "body",
+	        data: {
+	        	loadingFail: false,
+	        	blueprintimages: [],
+	        },
+	        methods: {
+//			        var imageBrowser = api.require("imageBrowser");
+//			        imageBrowser.openImages({
+//			            imageUrls: this.blueprintimages
+//			        });
+	        }
+	    });
+	
+		apiready = function(){
+		
+			api.parseTapmode();
+			
+			if(api.pageParam.blueprintimages){
+				
+				vm.blueprintimages = api.pageParam.blueprintimages;
+				
+				setTimeout(function () {
+					var mySwiper = new Swiper(".swiper-container", {
+				        loop: true,
+				        autoplay: 5000,
+				        autoplayDisableOnInteraction: true,
+				        pagination: ".swiper-pagination",
+				    });
+				},300);
+			}else {
+				vm.loadingFail = true;
+			}
+		};
+	</script>
+</body>
+</html>

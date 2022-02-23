@@ -1,0 +1,226 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>工地列表——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="noData">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="timeOut">
+        <p class="fail-info">请求超时</p>
+    </div>
+    <div class="aui-padded-5"></div>
+    <div class="patrol-list-wrap">
+        <template v-for="list in lists">
+            <div class="patrol-list-item" v-on:click="openPeopleList($index)" v-effect="">
+                <div class="aui-text-333">{{list.name}}</div>
+                <div class="f-fs14 aui-text-999">
+                    <i class="aui-iconfont aui-icon-location aui-text-custom"></i>
+                    {{list.address}}
+                </div>
+                <div class="f-fs14 aui-text-999">
+                	<img src="../../image/noPatrol.png" style="width:1em;"/>
+                    未巡查总人数： {{list.count}}人
+                </div>
+            </div>
+        </template>
+    </div>
+    <p class="aui-text-center aui-padded-5" v-text="loadTips"></p>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+                noMore: false,
+                
+                date: getYesterday(),
+                
+                pullDownRefresh: false,  //是否是下拉刷新
+                loadTips: "",
+                pageCount: 0,
+                
+                isResult: true,
+
+                lists: []    //工地列表数组
+            },
+            methods: {
+                openPeopleList: function (index) {  //打开工地详情
+                    openWin("summary/no_patrol_people_win", { id: this.lists[index].id, date: this.date, siteName:this.lists[index].name});
+                } 
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+            
+            Vue.config.async = false;
+            
+        	if(api.pageParam.date){
+        		vm.date = api.pageParam.date;
+        	}
+
+            getNoPatrolSite();
+
+            timeOut300(function () {
+				
+                vm.$nextTick(function () {
+                
+                     //下拉刷新
+                    api.setRefreshHeaderInfo({
+                        bgColor: "#efefef",
+                        textColor: "#333",
+                        textDown: "下拉刷新",
+                        textUp: "释放立即刷新",
+                    }, function (ret, err) {
+
+                        vm.pullDownRefresh = true;
+                        vm.noMore = false;
+                        vm.pageCount = 0;
+                        getNoPatrolSite();
+
+                    });
+
+                    //上拉加载
+                    api.addEventListener({
+                        name: "scrolltobottom",
+                        extra: {
+                            threshold: 0
+                        }
+                    }, function (ret, err) {
+
+                        if (!vm.noMore) {
+
+                            vm.loadTips = "正在加载中...";
+                            getNoPatrolSite(true);
+
+                        }
+
+                    });
+
+
+                });
+
+            });
+
+        };
+
+
+        //获取工地列表
+        function getNoPatrolSite(noLoading) {
+			
+			if(vm.isResult && !vm.noMore){
+				var url = $api.getStorage("interface_url") + api_url.noPatrolSite;
+
+	            Ajax({
+	                type: "get",
+	                url: url,
+	                data: {
+	                    access_token: $api.getStorage("access_token"),
+	                    date: vm.date,
+	                    page: vm.pageCount,
+	                    size: 10,
+	                },
+	                beforeSend: function () {
+	                	vm.isResult = false;
+	                	if(noLoading){
+	                		vm.loading = false;
+	                	}else {
+	                		vm.loading = true;
+	                	}
+	                },
+	                complete: function () {
+	                	vm.isResult = true;
+	                    vm.loading = false;
+	                    vm.loadingFail = false;
+	                    vm.noData = false;
+	                    api.refreshHeaderLoadDone();
+	                },
+	                success: function (data) {
+	                    if (data.success) {
+							
+							if(vm.pullDownRefresh){
+	                        	vm.lists.splice(0, vm.lists.length);
+	                        	vm.pullDownRefresh = false;
+	                        }
+	                        
+	                        //如果一条数据都没有，将在界面显示“暂无数据”
+	                        if (data.page.content.length == 0) {
+	                            vm.noData = true;
+	                            return false;
+	                        }
+	
+	                        for (var i = 0; i < data.page.content.length; i++) {
+	                            vm.lists.push({
+	                                id: data.page.content[i].groupId,
+	                                name: data.page.content[i].groupName,
+	                                address: data.page.content[i].detail,
+	                                count: data.page.content[i].noInspectedMemCount
+	                            });
+	                        }
+	                         
+	                        //判断是否还有未加载到界面的数据
+	                        if (data.page.last) {
+	                            vm.loadTips = "没有更多数据了";
+	                            vm.noMore = true;
+	                        } else {
+	                            vm.loadTips = "上拉加载更多";
+	                            vm.noMore = false;
+	                        }
+	                        vm.pageCount += 1;
+	
+	                    } else {
+	                        vm.loadingFail = true;  //加载失败
+	                    }
+	                    
+	                    vm.pullDownRefresh = false;
+	
+	                }
+	            });
+			}
+        };
+        
+        
+        //格式化时间
+        function getYesterday() {
+
+            var date = new Date();
+        	var dateTemp = date.setDate(date.getDate()-1);
+            var time = new Date(dateTemp);
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+			
+            return year + "/" + month + "/" + day;
+
+            function p(s) {
+                return s < 10 ? "0"
+                + s : s;
+            };
+        };
+    </script>
+</body>
+</html>

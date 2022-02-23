@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    <style>
+			.aui-content {
+				margin-top: 10px;
+				margin-left: 5px;
+				margin-right: 5px;
+				height: 80px;
+				background-color: #FFFFFF;
+			}
+			
+			
+			.point-detail {
+				float: right;
+				width: 110px;
+				height: 30px;
+				background-color: #FFFFFF;
+				margin-top: 4px;
+				margin-right: 10px;
+			}
+			.point-detail-2 {
+				color: #FFFFFF;
+				float: right;
+				width: 110px;
+				height: 30px;
+				font-size:14px;
+				padding-top:8px;
+				text-align: center;
+				border:0;
+				/*background-color: #0facfb;*/
+							}
+			
+			.text {
+				font-size: 16px;
+				margin:0px;
+				padding-top: 4px;
+				padding-left: 8px;
+			}
+			.bottom {
+				z-index: 1000;
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+				min-height: 45px;
+				line-height: 45px;
+				font-size: 18px;
+				color: #ffffff;
+				margin: 0;
+				left: 0;
+				text-align: center;
+				white-space: nowrap;
+				background-color: #0facfb;
+			}
+			.list{
+				margin-bottom: 50px;
+			}
+  </style>
+</head>
+<body>
+	<script type="text/javascript">
+			var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+			ele.style.fontSize = size + "px";
+	</script>
+	<div class="list">
+	<template v-for="content in contents">
+	<div class="aui-content" style="max-height: 2rem;">
+	
+		<div class="point-detail">
+			<div><span class="point-detail-2" v-bind:class="content.eventCatalogIcon">{{content.eventCatalogName}}</span></div>
+		</div>
+			<p class="text" v-text="content.eventDateCreated"></p>
+			<p class="text">{{checkpointCode}}-{{content.checkstepCheckpointName}}</p>
+			<p class="text">{{content.post}}：{{content.eventCreatedByName}}</p>
+	</div>
+	</template>
+	</div>
+	
+	<div id="bottom" class="bottom" v-text="days"></div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/common.js"></script>
+<script type="text/javascript">
+	var vm = new Vue({
+		el : "body",
+		data : {
+			//界面相关参数
+			loading : true, //是否显示：全局加载
+			loadingFail : false, //是否显示：全局加载失败
+			noData : false, //是否显示：全局暂无数据
+			noMore: false,
+			loadTips: "",  //1.没有更多数据了  2.正在加载中...  3.上拉加载更多
+			timeOut : false, //是否显示：全局加载超时
+			
+			pullDownRefresh: false,  //是否是下拉刷新
+            loadTips: "",
+            pageCount: 0,
+			
+			days:"",
+			
+			
+			//各部位id
+			allid:"",
+			inspectedid:"",
+			activeid:"",
+			noinspectedid:"",
+			activecode:"",
+			inspectedcode:"",
+			allcode:"",
+			
+			checkpointCode:"",
+			contents:[],
+			
+		},
+		methods: {
+                
+        },
+        
+	});
+	
+	apiready = function(){
+		api.parseTapmode();
+		if(api.systemType == "ios"){
+	        	Vue.config.async = false;
+	        }
+
+		vm.activeid = api.pageParam.activeid;
+		vm.checkpointCode = api.pageParam.activecode;
+		vm.inspectedid = api.pageParam.inspectedid;
+		vm.checkpointCode = api.pageParam.inspectedcode;
+		vm.allid = api.pageParam.allid;
+		vm.checkpointCode = api.pageParam.allcode;
+		getInspectDays();
+		
+		timeOut300(function () {
+				getConts();
+                vm.$nextTick(function () {
+                	
+                	
+                     //下拉刷新
+                    api.setRefreshHeaderInfo({
+                        bgColor: "#efefef",
+                        textColor: "#333",
+                        textDown: "下拉刷新",
+                        textUp: "释放立即刷新",
+                    }, function (ret, err) {
+
+                        vm.pullDownRefresh = true;
+                        vm.noMore = false;
+                        vm.pageCount = 0;
+                        getConts();
+						
+                    });
+
+					 //上拉加载
+                    api.addEventListener({
+                        name: "scrolltobottom",
+                        extra: {
+                            threshold: 0
+                        }
+                    }, function (ret, err) {
+                        if (!vm.noMore) {
+
+                            vm.loadTips = "正在加载中...";
+                            getConts();
+
+                        }
+
+                    });
+
+                });
+
+            });
+	};
+	
+	//分页查询报事列表
+	function getConts() {
+		var url = $api.getStorage("interface_url") + api_url.getConts;
+		Ajax({
+			type : "get",
+			url : url,
+			data : {
+				access_token : $api.getStorage("access_token"),
+				checkpointId : vm.allid,
+				page:vm.pageCount,
+				size:20,
+			},
+			beforeSend : function() {
+				vm.loading = true;
+			},
+			complete : function() {
+				vm.loading = false;
+			},
+			success : function(data) {
+				if (data.success) {
+					//如果是下拉刷新，则需要清空列表
+					if (vm.pullDownRefresh) {
+						vm.contents.splice(0, vm.contents.length);
+					}
+					//如果一条数据都没有，将在界面显示“暂无数据”
+					if (data.page.content.length == 0 && vm.contents.length == 0) {
+						vm.noData = true;
+						return false;
+					}
+					for (var i = 0; i < data.page.content.length; i++) {
+						var iconColor = data.page.content[i].eventCatalogIcon;
+                            if(data.page.content[i].eventCatalogName == "一般隐患/完成" || data.page.content[i].eventCatalogName == "重大隐患/完成" || data.page.content[i].eventCatalogName == "文明施工/完成"){
+                                iconColor = "bg-green";
+                            }
+						vm.contents.push({
+							checkstepCheckpointName : data.page.content[i].checkstepCheckpointName,
+							eventDateCreated : data.page.content[i].eventDateCreated,
+							checkstepPartname : data.page.content[i].checkstepPartname,
+							post : data.page.content[i].post,
+							eventCreatedByName : data.page.content[i].eventCreatedByName,
+							eventCatalogName : data.page.content[i].eventCatalogName,
+							eventCatalogIcon : iconColor,
+						});
+						
+					}
+					//判断是否还有未加载到界面的数据
+	                if (data.page.last) {
+	                    vm.loadTips = "没有更多数据了";
+	                    vm.noMore = true;
+	                } else {
+	                    vm.loadTips = "上拉加载更多";
+	                    vm.noMore = false;
+	                }
+	                api.refreshHeaderLoadDone();
+	                vm.pageCount += 1;
+				}else {
+					vm.loadingFail = true;
+						//加载失败
+				}
+				vm.pullDownRefresh = false;
+			}
+		});
+	}
+	
+	//累计巡查天数
+	function getInspectDays() {
+		var url = $api.getStorage("interface_url") + api_url.getInspectDays;
+		Ajax({
+			type : "get",
+			url : url,
+			data : {
+				access_token : $api.getStorage("access_token"),
+				checkpointId : vm.allid,
+				
+			},
+			beforeSend : function() {
+				vm.loading = true;
+			},
+			complete : function() {
+				vm.loading = false;
+			},
+			success : function(data) {
+				if (data.success) {
+					vm.days ="部位累计巡查："+ data.data+"天";
+				}else {
+					vm.loadingFail = true;
+						//加载失败
+				}
+			}
+		});
+	}
+	</script>
+</html>

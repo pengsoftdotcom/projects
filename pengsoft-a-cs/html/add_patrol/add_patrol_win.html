@@ -1,0 +1,177 @@
+﻿<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>新建巡查——win</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <header id="header" class="aui-bar aui-bar-nav header-custom">
+        <a class="aui-pull-left" v-on:click="back">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">
+            新建巡查
+        </div>
+       <!-- <a class="aui-pull-right" v-on:click="complete" v-if="flow">
+            完成巡查
+        </a>-->
+    </header>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                index: 0,
+                
+                //页面参数
+                pointID: "",
+                pointName: "",
+                siteID: "",
+                siteName: "",
+                code: "",
+//              flow: false,
+            },
+            methods: {
+                back: function () {
+
+                    var index = this.index;
+                    if (index > 0) {
+                        index -= 1;
+                        changeFrm(index);
+                    } else {
+                        closeWin();
+                    }
+
+                },
+                openScanner: function () {  //打开二维码扫描
+                    openScanner();
+                },
+                complete: function(){
+                	api.execScript({
+                        name: "add_patrol/add_patrol_win",
+                        frameName: "add_patrol/add_patrol_floor_new_frm",
+                        script: "completePatrol();"
+                    });
+                }
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            setStatusBarStyle("light");
+            
+            init();
+
+        };
+        
+        
+        //初始化函数
+        function init(){
+            if(api.pageParam.pointID && api.pageParam.pointName && api.pageParam.siteID && api.pageParam.siteName && api.pageParam.code){
+            	vm.pointID = api.pageParam.pointID;
+	            vm.pointName = api.pageParam.pointName;
+	            vm.siteID = api.pageParam.siteID;
+	            vm.siteName = api.pageParam.siteName;
+	            vm.code = api.pageParam.code;
+            }
+            
+            var frames = new Array();
+            if (api.pageParam.notScan || (vm.pointID && vm.pointName && vm.siteID && vm.siteName && vm.code)) {
+            	
+        		name = "add_patrol/add_patrol_floor_new_frm";
+        		url = "widget://html/add_patrol/add_patrol_floor_new_frm.html";
+            
+            	api.openFrame({
+                    name: name,
+                    url: url,
+                    bgColor: "transparent",
+                    bounces: false,
+                    rect: {
+	                    x: 0,
+	                    y: $api.offset($api.byId("header")).h,
+	                    w: api.winWidth,
+	                    h: api.winHeight - $api.offset($api.byId("header")).h
+	                },
+                    pageParam: {
+                        pointID: vm.pointID,
+                        pointName: vm.pointName,
+                        siteID: vm.siteID,
+                        siteName: vm.siteName,
+                        code: vm.code,
+                        notScan: api.pageParam.notScan,
+                        pageName: api.pageParam.pageName
+                    }
+                });
+            } else {
+
+                frames.push({
+                    name: "add_patrol/add_patrol1_frm",
+                    url: "widget://html/add_patrol/add_patrol1_frm.html",
+                    bounces: false
+                });
+                frames.push({
+                    name: "add_patrol/add_patrol2_frm",
+                    url: "widget://html/add_patrol/add_patrol2_frm.html",
+                    bounces: false
+                });
+                frames.push({
+                    name: "add_patrol/add_patrol3_frm",
+                    url: "widget://html/add_patrol/add_patrol3_frm.html",
+                    bounces: false
+                });
+
+	            api.openFrameGroup({
+	                name: "add_patrol",
+	                scrollEnabled: false,
+	                rect: {
+	                    x: 0,
+	                    y: $api.offset($api.byId("header")).h,
+	                    w: api.winWidth,
+	                    h: api.winHeight - $api.offset($api.byId("header")).h
+	                },
+	                index: vm.index,
+	                preload: 2,
+	                frames: frames
+	            }, function (ret, err) {
+	                if (ret) { vm.index = ret.index; }
+	            });
+            
+            }
+            
+
+            api.addEventListener({ name: "keyback" }, function (ret, err) {
+                vm.back();
+            });
+        };
+
+
+        //改变frm
+        function changeFrm(index) {
+        
+            api.setFrameGroupIndex({
+                name: "add_patrol",
+                index: index,
+                scroll: true,
+                reload: true,
+            });
+            
+        };
+    </script>
+</body>
+
+</html>

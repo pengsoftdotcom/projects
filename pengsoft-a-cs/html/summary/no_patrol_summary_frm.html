@@ -1,0 +1,403 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>公告——列表——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    
+    <style>
+    	.calendar_select {
+    		width: 90%;
+    		margin: 0 5% 0.4rem;
+    		height: 0.5rem;
+    		border: 2px solid #cccccc;
+    		box-sizing: content-box;
+    	}
+	    	.calendar_select .calendar-icon-wrap {
+	    		width:20%;
+	    		height:100%;
+	    		background-color:#eeeeee;
+	    		float: left;
+	    		box-sizing: border-box;
+	    		text-align: center;
+	    	}
+	    		.calendar_select .calendar-icon-wrap .calendar-icon {
+	    			font-size:0.22rem;
+	    			line-height: 0.5rem;
+	    		}
+    		.calendar_select .calendar-text {
+    			height:100%;
+    			width:80%;
+    			text-align: center;
+    			font-size:18px;
+    			line-height: 0.5rem;
+    			float: right;
+    		}
+    		
+		.wui-card {
+			box-sizing:border-box;
+			border: 1px solid #cccccc;
+			border-radius:2px;
+			background:#fff;
+			overflow:hidden;
+		}
+		.wui-card .wui-card-title {
+			color:#333;
+			height:0.6rem;
+			line-height:0.6rem;
+			text-align: center;
+			font-size: 0.22rem;
+			background-color: #0facfb;
+			border-bottom:1px solid #f4f4f4;
+		}
+		.wui-card .wui-card-body {
+			color:#ff0000;
+			border-bottom:1px solid #f4f4f4;
+			font-size:2.5em;
+			font-weight: bold;
+			height:0.75rem;
+			line-height:0.75rem;
+			text-align: center;
+			overflow:hidden;
+		}
+		
+		.no-patrol-site {
+			position:relative;
+			width:90%; 
+			left:5%; 
+			margin-bottom: 0.3rem;
+		}
+		
+		.no-patrol-people {
+			position:relative;
+			width:90%; 
+			left:5%; 
+		}
+    </style>
+</head>
+<body style="background-color: white;">
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail">
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="noData">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    
+    <div class="aui-padded-5"></div>
+    <div class="calendar_select" @click="openClendar">
+    	<div class="calendar-icon-wrap">
+    		<i class="aui-iconfont aui-icon-calendar calendar-icon"></i>
+    	</div>
+    	<div class="calendar-text">
+    		<span v-text="checkedDate"></span>
+    	</div>
+    </div>
+    
+    <div class="no-patrol-site" @click="openSiteList">
+	    <div class="wui-card">
+	    	<div class="wui-card-title" v-cloak>
+	    		{{showTime}}未巡查工地总数
+	    	</div>
+	    	<div class="wui-card-body" v-text="siteCount"></div>
+	    </div>
+    </div>
+    
+    <div class="no-patrol-site" @click="openPeopleList">
+	    <div class="wui-card">
+	    	<div class="wui-card-title" v-cloak>
+	    		{{showTime}}未巡查人员总数
+	    	</div>
+	    	<div class="wui-card-body" v-text="peopleCount"></div>
+	    </div>
+    </div>
+    
+    <div class="no-patrol-site" @click="openRCList">
+	    <div class="wui-card">
+	    	<div class="wui-card-title" v-cloak>
+	    		{{showMonth}}实际控制人未巡查统计
+	    	</div>
+	    	<div class="wui-card-body" v-text="realCount"></div>
+	    </div>
+    </div>
+    
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+                
+                checkedDate: getYesterday(false,false),
+                showTime: getYesterday(true,false),
+                showMonth: getYesterday(true,true),
+                RCMonth: getLastMonth(),
+                siteCount: 0,
+                peopleCount: 0,
+                realCount: 0,
+                
+                isResult: true,
+
+            },
+            methods: {
+            
+            	openSiteList: function(){
+            		if(this.siteCount != 0 && this.isResult){
+            			openWin("summary/no_patrol_siteList_win",{date: vm.checkedDate});
+            		}
+            	},
+            	
+            	openPeopleList: function(){
+            		if(this.peopleCount != 0 && this.isResult){
+            			openWin("summary/no_patrol_people_win",{date: vm.checkedDate});
+            		}
+            	},
+            	
+            	openRCList: function(){
+            		if(this.peopleCount != 0 && this.isResult){
+            			openWin("summary/no_patrol_people_win",{date: vm.RCMonth, isReal:true});
+            		}
+            	},
+            	
+            	openClendar: function(){
+
+            		if(this.isResult){
+            			var user = $api.getStorage("user");
+			    		var isToday = true;
+			            for(var i = 0; i < user.roleList.length; i++){
+			            	if(user.roleList[i].code == "ROL_SECURITY_SUPERVISE" || user.roleList[i].code == "ROL_SECURITY_NOSCAN"){
+			            		isToday = false;
+			            		break;
+			            	}
+			            }
+            			api.openPicker({
+				            type: "date",
+				            date: isToday ? "" : getYesterday(false,false,"-"),
+				            title: "请选择日期"
+				        }, function (ret, err) {
+				            var year = ret.year;
+				            var month = ret.month;
+				            var day = ret.day;
+
+				            var date1 = "";
+				            if(isToday){
+				            	date1 = new Date(year, month - 1, day).getTime();
+				            }else {
+				            	date1 = new Date(year, month - 1, day + 1).getTime();
+				            }
+				
+				            var now = new Date();
+				            var date2 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+				            
+				            if (date1 > date2) {
+				                api.toast({ msg: "请选择正确的日期！", duration: 3000 });
+				                return false;
+				            }
+							if(month%12 == (new Date().getMonth()+1)%12){
+								vm.showMonth = p(month-1 == 0 ? 12 : month-1) + "月";
+								vm.RCMonth = year + "/" + p(month-1 == 0 ? 12 : month-1) + "/" + p(1);
+							}else {
+								vm.showMonth = p(month) + "月";
+								vm.RCMonth = year + "/" + p(month) + "/" + p(day);
+							}
+							vm.checkedDate = year + "/" + p(month) + "/" + p(day);
+							vm.showTime = p(month) + "月" + p(day) + "日";
+							
+							realcontrolNum();
+				
+				        });
+            		}
+			        function p(s) {
+			            return s < 10 ? "0" + s : s;
+			        };
+            		
+            	},
+            	
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+            
+//          getNPPeple();
+            
+//          getNPSite();
+			
+			realcontrolNum();
+            
+        };
+
+		
+		
+		//获取未巡查人员统计信息
+		function getNPPeple(){
+			var url = $api.getStorage("interface_url") + api_url.noPatrolPeopleSummary;
+			Ajax({
+                type: "get",
+                url: url,
+                returnAll: true,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    date: vm.checkedDate
+                },
+                beforeSend: function () {
+                	vm.isResult = false;
+                	api.showProgress({ title: "正在加载！", animationType: "zoom" });
+                },
+                complete: function () {
+                	vm.isResult = true;
+                	api.hideProgress();
+                },
+                success: function (data) {
+
+					if(data.success){
+						vm.peopleCount = data.data;
+					}
+                }
+            });
+
+		};
+		
+		
+		//获取未巡查人员统计信息
+		function getNPSite(){
+			var url = $api.getStorage("interface_url") + api_url.noPatrolSiteSummary;
+			Ajax({
+                type: "get",
+                url: url,
+                returnAll: true,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    date: vm.checkedDate
+                },
+                beforeSend: function () {
+                	vm.loading = true;
+                	vm.isResult = false;
+                },
+                complete: function () {
+                	vm.isResult = true;
+                	vm.loading = false;
+                	getNPPeple();
+                },
+                success: function (data) {
+                
+					if(data.success){
+						vm.siteCount = data.data;
+					}
+                }
+            });
+
+		};
+		
+		
+		//获取实控人未巡查统计信息
+		function realcontrolNum(){
+			var url = $api.getStorage("interface_url") + api_url.realcontrolNum;
+			Ajax({
+                type: "get",
+                url: url,
+                returnAll: true,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    date: vm.RCMonth
+                },
+                beforeSend: function () {
+                	vm.loading = true;
+                	vm.isResult = false;
+                },
+                complete: function () {
+                	vm.isResult = true;
+                	vm.loading = false;
+                	getNPSite();
+                },
+                success: function (data) {
+                
+					if(data.success){
+						vm.realCount = data.data;
+					}
+                }
+            });
+
+		};
+        //格式化时间
+        function getYesterday(isShow,onlyMonth,seperate) {
+			
+			var user = $api.getStorage("user");
+    		var isToday = true;
+            for(var i = 0; i < user.roleList.length; i++){
+            	if(user.roleList[i].code == "ROL_SECURITY_SUPERVISE" || user.roleList[i].code == "ROL_SECURITY_NOSCAN"){
+            		isToday = false;
+            		break;
+            	}
+            }
+            
+            var date = new Date();
+        	var dateTemp = new Date().setDate(date.getDate()-1);
+        	var time = "";
+        	
+        	if(isToday){
+        		time = new Date();
+        	}else{
+        		time = new Date(dateTemp);
+        	}
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var realMonth = p(date.getMonth());
+            var day = p(time.getDate());
+            
+            if(isShow){
+            	if(onlyMonth){
+					return (realMonth == 0 ? 12 : realMonth) + "月";
+				}else {
+					return month + "月" + day + "日";
+				}
+            }else{
+            	if(seperate){
+	            	return year + seperate + month + seperate + day;
+	            }else {
+	            	return year + "/" + month + "/" + day;
+	            }
+            }
+
+            function p(s) {
+                return s < 10 ? "0"
+                + s : s;
+            };
+        };
+        
+        //格式化时间
+        function getLastMonth() {
+			
+			var user = $api.getStorage("user");
+            
+            var date = new Date();
+        	
+            var year = date.getFullYear();
+            var month = date.getMonth() == 0 ? 12 : date.getMonth();
+            var day = 1;
+            
+        	return year + "/" + p(month) + "/" + p(day);
+
+            function p(s) {
+                return s < 10 ? "0"
+                + s : s;
+            };
+        };
+        
+    </script>
+</body>
+</html>

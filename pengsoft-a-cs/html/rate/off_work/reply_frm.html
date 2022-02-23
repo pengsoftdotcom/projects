@@ -1,0 +1,523 @@
+﻿<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>回复申请——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/custom.css" />
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading">
+        <div class="spinner"></div>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="aui-content thing-detail-wrap">
+        <ul class="aui-list-view">
+            <li class="thing-edit-wrap">
+                <ul class="aui-list-view">
+                    <li class="aui-list-view-cell">
+                        <div class="addthing-photo-container">
+                            <div class="addthing-imgwrap">
+                                <template v-for="list in thingImageList">
+                                <div class="img-item">
+                                    <div class="img-div" style="background-image:url('{{list.thumbPath}}');">
+                                        <span class="del-btn" v-on:click="delPic($index)"><i class="aui-iconfont aui-icon-close"></i></span>
+                                    </div>
+                                </div>
+                                </template>
+                                <div class="img-item" v-show="addPic_btn" v-on:click="addPic">
+                                    <div class="add-more text-all-center">添加<br>照片</div>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="aui-list-view-cell">
+                        <p class="aui-col-xs-12">
+                            <input v-model="content" type="text" class="thing-edit-input" placeholder="请输入您的批复意见(非必填)" />
+                        </p>
+                    </li>
+                    <li class="aui-list-view-cell">
+                        <div class="voice-div aui-col-xs-6" v-bind:class="{'aui-invisible':!voice_url_div}" v-on:click="playVoice" v-cloak>
+                            {{voice_time}}
+                            <i class="aui-iconfont aui-icon-close" v-on:click.stop="delVoice"></i>
+                        </div>
+                        <div class="voice-edit aui-col-xs-6" v-on:click="startOrStopVoice">请录入语音</div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <div class="f-pd70"></div>
+    </div>
+    <div class="voice-animation-wrap" v-bind:class="{'aui-hidden':!recording}" v-on:click="startOrStopVoice">
+        <div class="voice-animation-container">
+            <div class="voice-animation-content">
+                <div class="voice-animation-item voice-animation-item6"></div>
+                <div class="voice-animation-item voice-animation-item5"></div>
+                <div class="voice-animation-item voice-animation-item4"></div>
+                <div class="voice-animation-item voice-animation-item3"></div>
+                <div class="voice-animation-item voice-animation-item2"></div>
+                <div class="voice-animation-item voice-animation-item1"></div>
+            </div>
+            <div class="voice-animation-msg">正在录音，点击保存录音</div>
+        </div>
+    </div>
+    <div class="thing-edit-btnwrap">
+        <template v-for="list in lists">
+            <div class="thing-edit-btn" tapmode v-effect="light" v-on:click="submit($index)">{{list.name}}</div>
+        </template>
+    </div>
+    <script src="../../../script/api.js"></script>
+    <script src="../../../script/vue.js"></script>
+    <script src="../../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+
+                id: "",
+                flag: "",
+                nodeId: "",
+
+                addPic_btn: true,  //是否显示添加图片按钮
+                thingImageList: [],  //报事图片
+                content: "",          //报事内容
+
+                voice_url_div: false,   //是否显示录音结果
+                voice_time: "",     //录音时长
+                recording: false,       //是否在录音中
+                voice_url: "",  //报事录音
+
+                items: [{ "label": "照片", "name": "image", "type": "imageList", "value": "", "url": "" },
+                       { "label": "文字", "name": "content", "type": "textarea", "value": "", "url": "" },
+                       { "label": "语音", "name": "audio", "type": "audio", "value": "", "url": "" }]
+            },
+            methods: {
+                addPic: function () {  //添加图片
+                    addPic();
+                },
+                delPic: function (i) {  //删除图片
+
+                    this.thingImageList.splice(i, 1);
+                    if (this.thingImageList.length < 6) {
+                        this.addPic_btn = true;
+                    }
+
+                },
+                startOrStopVoice: function () {    //开始或停止录音
+                    startOrStopVoice();
+                },
+                playVoice: function () {  //播放录音
+                    playVoice();
+                },
+                delVoice: function () {  //删除录音
+                    delVoice();
+                }
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            timeOut300(function () {
+
+                vm.$nextTick(function () {
+                    vm.id = api.pageParam.id;
+                    vm.flag = api.pageParam.flag;
+                    vm.nodeId = api.pageParam.nodeId;
+                    vm.loading = false;
+                });
+
+            });
+
+        };
+
+
+
+        //添加图片
+        function addPic() {
+
+            //选择图片
+            api.getPicture({
+                sourceType: "camera",
+                encodingType: "jpg",
+                allowEdit: true,
+                targetWidth: 800,
+                quality: 50
+            }, function (ret, err) {
+
+                if (ret && ret.data != "") {
+
+                    vm.thingImageList.push({
+                        path: ret.data,
+                        thumbPath: ret.data
+                    });
+
+                    if (vm.thingImageList.length == 6) {
+                        vm.addPic_btn = false;
+                    }
+
+                }
+
+            });
+
+        };
+
+        //开始或停止录音
+        function startOrStopVoice() {
+
+            if (vm.recording == false) {
+
+                //判断是否已经录音过了
+                if (vm.voice_url) {
+
+                    api.confirm({
+                        title: "提示",
+                        msg: "再次录音将会清除上次录音",
+                        buttons: ["确定", "取消"]
+                    }, function (ret, err) {
+
+                        if (ret.buttonIndex == 1) {
+
+                            vm.voice_url = "";
+                            vm.voice_url_div = false;
+                            vm.voice_time = "";
+                            vm.recording = true;
+                            api.startRecord({ path: "fs://res/voice/" + Date.now() + ".amr" });
+                        }
+
+                    });
+
+                } else {
+                    vm.recording = true;
+                    api.startRecord({ path: "fs://res/voice/" + Date.now() + ".amr" });
+                }
+
+            } else {
+
+                //停止录音
+                api.stopRecord(function (ret, err) {
+
+                    vm.recording = false;
+
+                    if (ret && ret.path != "" && ret.duration >= 2) {
+
+                        vm.voice_url = ret.path;
+                        vm.voice_url_div = true;
+                        vm.voice_time = formatVoiceTime(ret.duration);
+
+                    } else {
+                        api.toast({ msg: "录音时间必须大于2秒！", duration: 3000 });
+                    }
+
+                });
+
+            }
+
+        };
+
+
+        //播放录音
+        function playVoice() {
+
+            if (vm.voice_url != "") {
+                api.startPlay({ path: vm.voice_url }, function () { });
+            } else {
+                api.toast({ msg: "录音文件不存在！", duration: 3000 });
+            }
+
+        };
+
+
+
+        //删除录音
+        function delVoice() {
+
+            vm.voice_url = "";
+            vm.voice_url_div = false;
+            vm.voice_time = "";
+
+        };
+
+
+        //格式化录音时间
+        function formatVoiceTime(time) {
+
+            var minute = parseInt(time / 60);
+            var second = (p(time % 60));
+
+            return minute + ":" + second + "S";
+
+            function p(s) {
+                return s >= 10 ? s : "0" + s;
+            };
+
+        };
+
+
+        //提交完成
+        function submit() {
+
+            api.showProgress({ title: "收集信息", animationType: "zoom" });
+
+            //获取对应的值
+            var access_token = $api.getStorage("access_token");
+
+            //验证
+            if (!isLogin()) {
+                api.hideProgress();
+                api.alert({ title: "错误", msg: "用户信息为空，请重新登录！", buttons: ["确定"] });
+                return false;
+            }
+
+            //添加图片
+            var image_array = new Array();
+            if (vm.thingImageList.length > 0 && vm.thingImageList.length <= 6) {
+                for (var i = 0; i < vm.thingImageList.length ; i++) {
+                    image_array.push(vm.thingImageList[i].path);
+                }
+            }
+
+            //上次文件错误执行次数
+            var uploadTime = 0;
+
+            //判断是否上传文件
+            var audioId = "";
+            var audioUrl = "";  //录音文件的网络地址
+            var imageIdArray = new Array();
+            if (vm.voice_url) {
+                addVoice();
+            } else if (image_array.length > 0) {
+                addPicture();
+            } else {
+                addEvent();
+            }
+
+            //1.上传录音
+            function addVoice() {
+
+                if (uploadTime == 0) {
+                    api.showProgress({ title: "上传录音", text: "进度：0%" });
+                } else {
+                    api.showProgress({ title: "上传录音", text: "进度：100%" });
+                }
+
+                //拼接接口地址：上传文件
+                var fileUpload_url = $api.getStorage("interface_url") + api_url.fileUpload + "?access_token=" + access_token;
+
+                //上传语音
+                api.ajax({
+                    url: fileUpload_url,
+                    method: "post",
+                    timeout: 30000,
+                    report: true,
+                    data: {
+                        files: {
+                            file: vm.voice_url
+                        }
+                    }
+                }, function (ret, err) {
+
+                    if (ret.status == 0) {  //上传中
+                        api.showProgress({ title: "上传录音", text: "进度：" + ret.progress + "%" });
+                    } else if (ret.status == 1 && ret.body.success) {  //上传完成
+
+                        //重置上次文件错误执行次数
+                        uploadTime = 0;
+
+                        audioId = ret.body.data.id;
+                        audioUrl = ret.body.data.accessAddress;
+                        if (image_array.length > 0) {  //上传图片
+                            addPicture();
+                        } else {  //新增投诉
+                            addEvent();
+                        }
+
+                    } else {  //上传失败
+
+                        if (uploadTime < 4) {  //5次上次失败机会
+
+                            //上次文件错误执行次数+1
+                            uploadTime += 1;
+                            addVoice();  //递归上传
+
+                        } else {
+
+                            api.hideProgress();
+
+                            if (ret.statusCode == 500) {
+                                api.alert({ title: "错误", msg: "上传录音失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                            } else {
+                                api.alert({ title: "错误", msg: "上传录音失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                            }
+
+                        }
+
+                    }
+
+                });
+
+            };
+
+            //2.上传图片
+            function addPicture() {
+
+                if (uploadTime == 0) {
+                    api.showProgress({ title: "上传图片", text: "进度：0%" });
+                } else {
+                    api.showProgress({ title: "上传图片", text: "进度：100%" });
+                }
+
+                //拼接接口地址：上传文件
+                var fileUpload_url = $api.getStorage("interface_url") + api_url.fileUpload + "?access_token=" + access_token;
+
+                //上传图片
+                api.ajax({
+                    url: fileUpload_url,
+                    method: "post",
+                    timeout: 30000,
+                    report: true,
+                    data: {
+                        files: {
+                            file: image_array
+                        }
+                    }
+                }, function (ret, err) {
+
+                    if (ret.status == 0) {  //上传中
+                        api.showProgress({ title: "上传图片", text: "进度：" + ret.progress + "%" });
+                    } else if (ret.status == 1 && ret.body.success) {  //上传完成
+
+                        //重置上次文件错误执行次数
+                        uploadTime = 0;
+
+                        if (image_array.length == 1) {
+                            imageIdArray.push({ id: ret.body.data.id, url: ret.body.data.accessAddress });
+                        } else {
+                            for (var i = 0; i < ret.body.list.length; i++) {
+                                imageIdArray.push({ id: ret.body.list[i].id, url: ret.body.list[i].accessAddress });
+                            }
+                        }
+                        addEvent();  //新增投诉
+
+                    } else {  //上传失败
+
+                        if (uploadTime < 4) {  //5次上次失败机会
+
+                            //上次文件错误执行次数+1
+                            uploadTime += 1;
+                            addPicture();  //递归上传
+
+                        } else {
+
+                            api.hideProgress();
+
+                            if (ret.statusCode == 500) {
+                                api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                            } else {
+                                api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                            }
+
+                        }
+
+                    }
+
+                });
+
+            };
+
+            //3.提交报事
+            function addEvent() {
+
+                //拼接接口地址：新增报事
+                var url = $api.getStorage("interface_url") + api_url.submitReply;
+                
+                //拼接报事的附加字段
+                for (var i = 0; i < vm.items.length; i++) {
+
+                    //图片
+                    if (vm.items[i].type == "imageList") {
+                        vm.items[i].value = imageIdArray;
+                    }
+
+                    //文本
+                    if (vm.items[i].type == "textarea") {
+                        vm.items[i].value = vm.content;
+                    }
+
+                    //录音
+                    if (vm.items[i].type == "audio") {
+                        vm.items[i].value = { id: audioId, url: audioUrl };
+                    }
+
+                }
+                
+                //新增投诉
+                Ajax({
+                    type: "post",
+                    url: url,
+                    data: {
+                        access_token: access_token,
+                        id: vm.id,
+                        flag: vm.flag,
+                        nodeId: vm.nodeId,
+                        extra: JSON.stringify(vm.items)
+                    },
+                    beforeSend: function () {
+                        api.showProgress({ title: "提交信息" });
+                    },
+                    complete: function () {
+                        api.hideProgress();
+                    },
+                    success: function (data) {
+
+                        if (data.success) {
+
+                            api.alert({
+                                title: "提示",
+                                msg: "提交成功！",
+                                buttons: ["确定"]
+                            }, function (ret, err) {
+                            
+                            	//刷新数据
+                                api.execScript({
+                                    name: "rate/off_work/approval_list_win",
+                                    frameName: "rate/off_work/approval_list_frm",
+                                    script: "vm.lists.splice(0);getAllApply();api.closeToWin({name: 'rate/off_work/approval_list_win'});"
+                                });
+                                api.execScript({
+					                name: "menu_win",
+					                script: "vm.num --;"
+					            });
+                            	
+                            });
+
+                        } else {
+                            api.alert({ title: "错误", msg: "系统异常：" + data.error.message, buttons: ["确定"] });
+                        }
+
+                    }
+                });
+
+            };
+
+        };
+    </script>
+</body>
+
+</html>

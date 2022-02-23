@@ -1,0 +1,441 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>点位激活——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/custom.css" />
+    <style type="text/css">
+    	.production{
+    		width: 40%;
+    		float: left;
+    		font-size: 16px;
+    		font-weight: bold;
+    		letter-spacing: 1.5;
+    		padding-left: 0.15rem;
+    	}
+    	.production-img{
+    		float: right;
+    		width: 50%;
+    		height: 1.45rem;
+    		background-image: url('../../../image/production.png');
+    		background-repeat: no-repeat;
+    		background-size: cover;
+    	}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <!--<div class="loading-wrap bg-gray" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>-->
+    <div class="aui-content thing-detail-wrap">
+        <ul class="aui-list-view">
+            <li class="aui-list-view-cell" v-effect="">
+                <p class="aui-col-xs-3 aui-text-custom">工地名称</p>
+                <p class="aui-col-xs-8 aui-text-333"  v-text="siteName"></p>
+            </li>
+            <li class="aui-list-view-cell" v-effect="">
+                <p class="aui-col-xs-3 aui-text-custom">巡查部位</p>
+                <p class="aui-col-xs-8 aui-text-333" v-text="code+' '+pointName"></p>
+            </li>
+            <li class="aui-list-view-cell" v-effect="">
+                <p class="aui-text-default production">请拍摄出部位二维码照片及安装人员照片用于激活二维码。（如右图所示）</p>
+                <p class="aui-col-xs-7 aui-text-333"><div class="production-img"></div></p>
+            </li>
+            <li class="aui-list-view-cell" v-effect="">
+                <p class="aui-text-custom">部位拍照激活</p>
+            </li>
+            <li class="thing-edit-wrap">
+                <ul class="aui-list-view">
+                    <li class="aui-list-view-cell">
+                        <div class="addthing-photo-container">
+                            <div class="addthing-imgwrap">
+                                <div class="img-item" v-show="addPic_btn" v-on:click="addPic">
+                                    <div class="add-more text-all-center aui-text-custom">拍照<br>激活</div>
+                                </div>
+                                <template v-for="list in thingImageList">
+                                    <div class="img-item">
+                                        <div class="img-div" :style="{backgroundImage:'url('+list.thumbPath+')'}">
+                                            <span class="del-btn" v-on:click="delPic($index)"><i class="aui-iconfont aui-icon-close"></i></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+        <div class="f-pd70"></div>
+    </div>
+    <script src="../../../script/api.js"></script>
+    <script src="../../../script/vue.js"></script>
+    <script src="../../../script/common.js"></script>
+    <script>
+    	var FNScanner = null;
+        var vm = new Vue({
+            el: "body",
+            data: {
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+
+                siteID: "",  //工地id
+                siteName: "",  //工地名称
+
+                pointId: "",  //点位id
+                pointName: "",  //点位名称
+                code: "",  //点位编号
+
+                addPic_btn: true,  //是否显示添加图片按钮
+                thingImageList: [],  //报事图片
+
+                items: [{ "label": "照片", "name": "image", "type": "imageList", "value": "", "url": "" }],
+            },
+            methods: {
+
+                addPic: function () {  //添加图片
+                    addPic();
+                },
+                delPic: function (i) {  //删除图片
+
+                    this.thingImageList.splice(i, 1);
+                    if (this.thingImageList.length < 6) {
+                        this.addPic_btn = true;
+                    }
+
+                },
+                submit: function (i) {  //提交
+
+
+                }
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+            
+            vm.pointId = api.pageParam.pointId;
+            vm.pointName = api.pageParam.pointName;
+            vm.siteID = api.pageParam.siteID;
+            vm.code = api.pageParam.code;
+            vm.siteName = api.pageParam.siteName;
+            
+        };
+
+
+
+
+        //添加图片
+        function addPic() {
+
+            //选择图片
+            api.getPicture({
+                sourceType: "camera",
+                encodingType: "jpg",
+                allowEdit: true,
+                targetWidth: 800,
+                quality: 50
+            }, function (ret, err) {
+
+                if (ret && ret.data != "") {
+
+                    vm.thingImageList.push({
+                        path: ret.data,
+                        thumbPath: ret.data
+                    });
+
+                    if (vm.thingImageList.length == 6) {
+                        vm.addPic_btn = false;
+                    }
+
+                }
+
+            });
+
+        };
+
+        //提交报事
+        function submit() {
+
+            if (vm) {
+            
+                api.showProgress({ title: "收集信息", animationType: "zoom" });
+
+                //获取对应的值
+                var access_token = $api.getStorage("access_token");
+
+                //验证
+                if (!isLogin()) {
+                    api.hideProgress();
+                    api.alert({ title: "错误", msg: "用户信息为空，请重新登录！", buttons: ["确定"] });
+                    return false;
+                } else if (vm.thingImageList.length == 0) {
+                    api.hideProgress();
+                    api.toast({ msg: "必须要上传激活照片！", duration: 3000 });
+                    return false;
+                }
+                
+                //添加图片
+                var image_array = new Array();
+                if (vm.thingImageList.length > 0 && vm.thingImageList.length <= 6) {
+                    for (var i = 0; i < vm.thingImageList.length ; i++) {
+                        image_array.push(vm.thingImageList[i].path);
+                    }
+                }
+                
+                if (api.connectionType == "none") {
+
+                    addDrafts();
+                    api.hideProgress();
+                    return false;
+
+                }
+
+                
+                //上次文件错误执行次数
+                var uploadTime = 0;
+
+                //判断是否上传文件
+                var imageIdArray = new Array();
+                
+                if (image_array.length > 0) {
+                    addPicture();
+                } else {
+                    addEvent();
+                }
+
+                //2.上传图片
+                function addPicture() {
+
+                    if (uploadTime == 0) {
+                        api.showProgress({ title: "上传图片", text: "进度：0%" });
+                    } else {
+                        api.showProgress({ title: "上传图片", text: "进度：100%" });
+                    }
+
+                    //拼接接口地址：上传文件
+                    var fileUpload_url = $api.getStorage("interface_url") + api_url.fileUpload + "?access_token=" + access_token;
+
+                    //上传图片
+                    api.ajax({
+                        url: fileUpload_url,
+                        method: "post",
+                        timeout: 30000,
+                        report: true,
+                        data: {
+                            files: {
+                                file: image_array
+                            }
+                        }
+                    }, function (ret, err) {
+
+                        if (ret.status == 0) {  //上传中
+                            api.showProgress({ title: "上传图片", text: "进度：" + ret.progress + "%" });
+                        } else if (ret.status == 1 && ret.body.success) {  //上传完成
+
+                            //重置上次文件错误执行次数
+                            uploadTime = 0;
+
+                            if (image_array.length == 1) {
+                                imageIdArray.push({ id: ret.body.data.id, url: ret.body.data.accessAddress });
+                            } else {
+                                for (var i = 0; i < ret.body.list.length; i++) {
+                                    imageIdArray.push({ id: ret.body.list[i].id, url: ret.body.list[i].accessAddress });
+                                }
+                            }
+                            addEvent();  //新增投诉
+
+                        } else {  //上传失败
+
+                            if (uploadTime < 4) {  //5次上次失败机会
+
+                                //上次文件错误执行次数+1
+                                uploadTime += 1;
+                                addPicture();  //递归上传
+
+                            } else {
+
+                                api.hideProgress();
+
+                                if (ret.statusCode == 500) {
+                                    api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                                } else {
+                                    api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                                }
+
+                            }
+
+                        }
+
+                    });
+
+                };
+
+                //3.提交报事
+                function addEvent() {
+
+                    //拼接接口地址：新增报事
+                    var url = $api.getStorage("interface_url") + api_url.activePoint;
+
+                    vm.items[0].value = imageIdArray;
+
+                    //新增投诉
+                    Ajax({
+                        type: "post",
+                        url: url,
+                        data: {
+                            access_token: access_token,
+                            checkpointId: vm.pointId,
+                            extraJson: JSON.stringify(vm.items)
+                        },
+                        beforeSend: function () {
+                            api.showProgress({ title: "提交信息" });
+                        },
+                        complete: function () {
+                            api.hideProgress();
+                        },
+                        success: function (data) {
+
+                            if (data.success) {
+                            	var pointList = $api.getStorage("PointList");
+					    		if(pointList != "undefined" && typeof(pointList) != "undefined" && pointList.length > 0){
+					    			for(var i = 0; i < pointList.length; i++){
+						    			//存的点位信息中是否有当前点位的信息
+						    			if(pointList[i].id == vm.pointId){
+						    				pointList[i].checkpointStatusCode = "ACTIVED";
+						    				$api.setStorage("PointList",pointList);
+						    				break;
+						    			}
+					    			}
+					    			storeActivedInfos();
+					    		}else{
+					    			//没有本地缓存点位信息  1、点位信息过多，一直同步失败  2、不是同步点位信息角色  3、首次登陆，信息还没同步好
+					    			storeActivedInfos();
+					    		}
+					    		
+                            	api.alert({ title: "提示", msg: "激活部位成功！", buttons: ["确定"] },function(ret,data){
+                            		openWin("add_patrol/add_patrol_win", {
+						                pointID: vm.pointId,
+						                code: vm.code,
+						                pointName: vm.pointName,
+						                siteID: vm.siteID,
+						                siteName: vm.siteName,
+						                pageName: "rate/progress/active_win"
+						            });
+                            	});
+
+                            } else {
+                                api.alert({ title: "错误", msg: "系统异常：" + data.error.message, buttons: ["确定"] });
+                            }
+
+                        }
+                    });
+
+                };
+                
+                
+                //添加到草稿箱
+                function addDrafts() {
+
+                    api.confirm({
+                        title: "提示",
+                        msg: "激活部位成功！",
+                        buttons: ["确定", "取消"]
+                    }, function (ret, err) {
+
+                        if (ret.buttonIndex == 1) {
+                            //拼接报事的附加字段（图片和录音）
+                            
+                            vm.items[0].value = image_array;
+
+                            var activeInfo = $api.getStorage("ActiveInfo");
+                            
+                            if(activeInfo == "undefined" || typeof(activeInfo) == "undefined"){
+                            	activeInfo = new Array();
+                            }
+                            var index = 0;
+                            for(var i = 0; i < activeInfo.length; i++){
+                            	if(activeInfo[i] && activeInfo[i].userId == $api.getStorage("user").id){
+                            		index = i;
+                            		break;
+                            	}else {
+                            		index = activeInfo.length;
+                            	}
+                            }
+                            if(!activeInfo[index]){
+                            	activeInfo[index] = new Object();
+                            	activeInfo[index].list = new Array();
+                            }
+                            activeInfo[index].userId = $api.getStorage("user").id;
+                            activeInfo[index].list.push({
+                                access_token: access_token,
+                                pointId: vm.pointId,
+                                extraJson: vm.items,
+                            });
+                            $api.setStorage("ActiveInfo", activeInfo);
+
+                            api.alert({
+                                title: "提示",
+                                msg: "添加成功！",
+                                buttons: ["确定"]
+                            }, function (ret, err) {
+                            	openWin("add_patrol/add_patrol_win", {
+					                pointID: vm.pointId,
+					                code: vm.code,
+					                pointName: vm.pointName,
+					                siteID: vm.siteID,
+					                siteName: vm.siteName,
+					                pageName: "rate/progress/active_win"
+					            });
+								
+                            });
+
+                        }else {
+                        	return false;
+                        }
+
+                    });
+
+                };
+            }
+        };
+        
+        
+        //已激活数据。。。防止同步失败等情况
+        function storeActivedInfos(){
+        	var activedInfo = $api.getStorage("ActivedInfos");
+                            
+            if(activedInfo == "undefined" || typeof(activedInfo) == "undefined"){
+            	activedInfo = new Array();
+            }
+            var index = 0;
+            for(var i = 0; i < activedInfo.length; i++){
+            	if(activedInfo[i] && activedInfo[i].userId == $api.getStorage("user").id){
+            		index = i;
+            		break;
+            	}else {
+            		index = activedInfo.length;
+            	}
+            }
+            if(!activedInfo[index]){
+            	activedInfo[index] = new Object();
+            	activedInfo[index].list = new Array();
+            }
+            activedInfo[index].userId = $api.getStorage("user").id;
+            activedInfo[index].list.push(vm.pointId);
+            $api.setStorage("ActivedInfos", activedInfo);
+        };
+    </script>
+</body>
+</html>

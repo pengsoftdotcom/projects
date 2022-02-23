@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>停复工申请——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/custom.css" />
+    <style>
+    	body{
+    		background-color: #eaedf3;
+    	}
+    	.aui-timeline {
+		    position: relative;
+		    padding: 0;
+		    list-style: none;
+		}
+		.aui-timeline:before {
+		    content: '';
+		    position: absolute;
+		    top: 0px;
+		    bottom: 0;
+		    width: 2px;
+		    background: #ddd;
+		    left: 0.32rem;
+		    margin: 0;
+		    border-radius: 2px;
+		}
+		.aui-timeline > li {
+		    position: relative;
+		    margin-bottom: 0.15rem;
+		}
+		.aui-timeline > li:before,
+		.aui-timeline > li:after {
+		    content: " ";
+		    display: table;
+		}
+		.aui-timeline > li:after {
+		    clear: both;
+		}
+		.aui-timeline > li > .aui-timeline-item {
+		    margin-top: 0px;
+		    background: #fff;
+		    color: #444;
+		    margin-left: 0.6rem;
+		    padding: 0;
+		    position: relative;
+		    width: 2.5rem;
+		}
+		.aui-timeline > li > .aui-timeline-item:after {
+		    border-radius: 6px;
+		    border: 1px solid #c8c7cc;
+		    display: block;
+		    content: '';
+		    position: absolute;
+		    top: 0;
+		    right: 0;
+		    bottom: 0;
+		    left: 0;
+		    -webkit-transform-origin: 0 0;
+		    -webkit-transform: scale(1);
+		    pointer-events: none;
+		}
+		
+		.aui-timeline > li > .aui-timeline-item > .aui-timeline-time {
+		    color: #999;
+		    float: right;
+		    padding: 10px;
+		    font-size: 0.12rem;
+		}
+		.aui-timeline > li > .aui-timeline-item > .aui-timeline-header {
+		    margin: 0;
+		    color: #333;
+		    font-weight: bold;
+		    padding: 10px;
+		    font-size: 0.14rem;
+		    position: relative;
+		}
+		.aui-timeline > li > .aui-timeline-item > .aui-timeline-header:after {
+		    border-bottom: 1px solid #ddd;
+		    display: block;
+		    content: '';
+		    position: absolute;
+		    top: 0;
+		    right: 0;
+		    bottom: 0;
+		    left: 0;
+		    -webkit-transform-origin: 0 0;
+		    -webkit-transform: scale(1);
+		    pointer-events: none;
+		}
+		.aui-timeline > li > .aui-timeline-item > .aui-timeline-body,
+		.aui-timeline > li > .aui-timeline-item > .aui-timeline-footer {
+		    padding: 10px;
+		    font-size: 0.12rem;
+		}
+		.aui-timeline > li > .aui-timeline-item > .aui-timeline-footer {
+		    background-color: #f4f4f4;
+		}
+		.aui-timeline > li.aui-time-label > span {
+		    padding: 5px;
+		    display: inline-block;
+		    background-color: #d2d6de;
+		    border-radius: 4px;
+		    color: #ffffff;
+		}
+		.aui-timeline > li > .aui-time-label {
+		    width: 0.5rem;
+		    height: 0.3rem;
+		    font-size: 0.3rem;
+		    line-height: 0.3rem;
+		    position: absolute;
+		    color: #ffffff;
+		    background: #d2d6de;
+		    text-align: center;
+		    left: 8px;
+		    top: 0;
+		    border-radius: 4px;
+		}
+		.aui-timeline > li > .aui-iconfont {
+		    width: 0.3rem;
+		    height: 0.3rem;
+		    font-size: 0.3rem;
+		    line-height: 0.3rem;
+		    position: absolute;
+		    color: #ffffff;
+		    background: none;
+		    border-radius: 0;
+		    text-align: center;
+		    left: 0.18rem;
+		    top: 0;
+		}
+		@media only screen and (-webkit-min-device-pixel-ratio: 1.5) {
+		    .aui-timeline > li > .aui-timeline-item:after,
+		    .aui-timeline > li > .aui-timeline-item > .aui-timeline-header:after {
+		        right: -100%;
+		        bottom: -100%;
+		        -webkit-transform: scale(0.5);
+		    }
+		}
+		
+		.aui-chat-left-triangle{
+		    height:0px;
+		    width:0px;
+		    border-width:0.09rem;
+		    border-style:solid;
+		    border-color:transparent #ffffff transparent transparent;
+		    position: absolute;
+		    left:-0.16rem;
+		    top:0.06rem;
+		    z-index: 100;
+		}
+		
+		.phone{
+			position: relative;
+			top: 0.1rem;
+			right: 0.3rem;
+			float:right;
+			width:0.2rem;
+			height:0.2rem;
+			background-image: url('../../../image/phone.png');
+			background-size: contain;
+			background-repeat: no-repeat;
+		}
+		.status{
+			float: right;
+			position: relative;
+			top: 0.06rem;
+			right: 0.1rem;
+		}
+		.time{
+			color: #999;
+			font-weight: normal;
+			font-size: 0.12rem;
+		}
+		.aui-btn-orange {
+			color: #ffffff;
+			background-color: #ff9352;
+			border: 1px solid #ff9352;
+		}
+		/*图片信息*/
+		.img-wrap{
+			overflow: hidden;
+			padding:0;
+			margin-left:-0.04rem;
+			margin-right:-0.04rem;
+		}
+		.img-item {
+		    width:33.33%;
+		    float: left;
+		    position: relative;
+		}
+		.img-item .add-more,
+		.img-item .img-div{
+		    width: 0.7rem;
+		    height: 0.7rem;
+		    vertical-align: middle;
+		    position: relative;
+		    overflow: hidden;
+		    background-size: cover;
+		    -webkit-background-size: cover;
+		    background-position: center;
+		    margin: 0 auto 0.08rem;
+		    background-color:#fff;
+		}
+		.img-item .add-more {
+		    border: 1px dashed rgba(0,0,0,0.3);
+		    font-size: 20px;
+		    color: rgba(0,0,0,0.54);
+		    text-align: center;
+		    line-height: 30px;
+		}
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="noData">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="aui-padded-10"></div>
+    <div class="aui-content">
+	    <ul class="aui-timeline">
+	        <li v-for="(lindex, list) in lists">
+	            <div class="aui-iconfont aui-icon-roundcheckfill" :class="list.roundStyle"></div>
+	            <div class="aui-timeline-item">
+	            	<div class="aui-chat-left-triangle"></div>
+	                <span class="aui-btn aui-pull-right status" :class="list.style" v-text="list.statusName"></span>
+	                <div class="aui-timeline-header" style="border-bottom: 0;">
+	                	<a href="tel:{{list.mobile}}">{{list.name}}({{list.jobName}})<span class="phone"></span></a>
+	                	<h3 class="time" v-text="list.dateProcessed"></h3>
+	                </div>
+	                <template v-if="list.showDetail">
+	                <template v-for="basic in basics">
+	                <div class="aui-timeline-body">
+	                	<span class="aui-text-333">申请工地：</span>
+	                	<span class="aui-text-999" v-text="basic.checkpointgroupName"></span>
+	                </div>
+	                <div class="aui-timeline-body">
+	                	<span class="aui-text-333">申请人：</span>
+	                	<span class="aui-text-999" v-text="basic.createdByName"></span>
+	                </div>
+	                <div class="aui-timeline-body">
+	                	<span class="aui-text-333">职位：</span>
+	                	<span class="aui-text-999" v-text="basic.jobName"></span>
+	                </div>
+	                <div class="aui-timeline-body">
+	                	<span class="aui-text-333">申请类型：</span>
+	                	<span class="aui-text-999" v-text="basic.applyTypeName"></span>
+	                </div>
+	                <div class="aui-timeline-body">
+	                	<span class="aui-text-333">开始时间：</span>
+	                	<span class="aui-text-999" v-text="basic.dateCreated"></span>
+	                </div>
+	                <div class="aui-timeline-body">
+	                	<span class="aui-text-333">申请事由：</span>
+	                	<span class="aui-text-999" v-text="basic.applyReasonTypeName"></span>
+	                </div>
+	                <div class="aui-timeline-body">
+	                	<span class="aui-text-333">详细事由：</span>
+	                	<span class="aui-text-999" v-text="basic.applyReasonDetail">2016-12-05</span>
+	                </div>
+	                </template>
+	                </template>
+	                
+	                <div class="aui-timeline-body" v-if="list.content">
+	                	<span class="aui-text-999" v-text="list.content"></span>
+	                </div>
+	                <template v-if="list.showPhoto">
+	                 <div class="aui-timeline-body">
+	                 	<div class="img-wrap">
+                            <template v-for="img in list.photos">
+                                <div class="img-item" @click="openBigImage(lindex,$index)" style="text-align: center;height:1rem;">
+                                    <div class="img-div text-all-center" :style="{backgroundImage:'url(' + img.url + ')'}"></div>
+                                </div>
+                            </template>
+                        </div>
+	                </div>
+	                </template>
+	                <div class="voice-div m-b-10" v-if="list.audio" @click="openAudio(list.audio)" v-if="list.audio"></div>
+	            </div>
+	        </li>
+	    </ul>
+	</div>
+    <script src="../../../script/api.js"></script>
+    <script src="../../../script/vue.js"></script>
+    <script src="../../../script/common.js"></script>
+    <script>
+    	var vm = new Vue({
+    		el: "body",
+    		data: {
+    			loading: true,
+    			loadingFail: false,
+    			noData: false,
+    			
+    			basics: [],
+    			lists: [],
+    			
+    			nodeId: "",
+    		},
+    		methods: {
+    			openBigImage: function (lindex,pindex) {  //打开报事详情大图
+                    var array = new Array();
+                    for (var i = 0; i < this.lists[lindex].photos.length; i++) {
+                        array.push(this.lists[lindex].photos[i].url);
+                    }
+                    openBigImage(array.join(","),pindex);
+
+                },
+                openAudio: function(url){
+
+                	api.download({
+			            url: url,
+			            savePath: "fs://res/voice/" + Date.now() + ".amr",
+			            report: true,
+			            cache: false,
+			            allowResume: true
+			        }, function (ret, err) {
+			        
+			            if (ret.state == 0) {  //下载中
+			            } else if (ret.state == 1) {
+			                api.stopPlay();
+			                api.startPlay({ path: ret.savePath }, function (ret, err) {});
+			            } else if (ret.state == 2) {
+			                api.alert({ title: "错误", msg: "录音文件下载失败！", buttons: ["确定"] });
+			            }
+			
+			        });
+                },
+    		}
+    	});
+    	
+    	apiready = function () {
+
+            api.parseTapmode();
+            
+            getApplyDetails();
+
+        };
+
+
+        //获取申请列表
+        function getApplyDetails() {
+			
+			var url = $api.getStorage("interface_url") + api_url.getApplyDetails;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    id: api.pageParam.id,
+                },
+                beforeSend: function () {
+            		vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+
+                    if (data.success) {
+                    	
+                    	//申请详情
+                    	if(data.data.basicInfo){
+                        	var basic = data.data.basicInfo[0];
+                        	if(basic.canHandle){
+                        		api.sendEvent({
+	                                name:'bnt_show'
+                                });
+//			                    api.execScript({
+//			                        name: "rate/off_work/apply_detail_win",
+//			                        script: "vm.showFooter = true;setFrame();"
+//			                    });
+                        	}
+                        	vm.basics.push({
+                        		createdByName: basic.createdByName,
+	                        	jobName: basic.jobName,
+	                        	checkpointgroupName: basic.checkpointgroupName,
+	                        	applyTypeName: basic.applyTypeName,
+	                        	dateCreated: basic.dateCreated,
+	                        	applyReasonTypeName: basic.applyReasonTypeName,
+	                        	applyReasonDetail: basic.applyReasonDetail,
+                        	});
+                        	vm.nodeId = basic.nodeId;
+                        }
+                        //日志结点
+                        if(data.data.logs && data.data.logs.length > 0){
+                        	var list = data.data.logs;
+                        	for(var i = 0; i < list.length; i++){
+                        		//结点样式
+                        		var style = "";
+                        		var roundStyle = "aui-text-666";
+	                        	if(!list[i].statusCode){
+	                        		style = "aui-btn-info";
+	                        		roundStyle = "aui-text-success";
+	                        	}else if(list[i].statusCode == "WAITING"){
+	                        		style = "aui-btn-orange";
+	                        	}else if(list[i].statusCode == "AGREE"){
+	                        		style = "aui-btn-success";
+	                        		roundStyle = "aui-text-success";
+	                        	}else if(list[i].statusCode == "REFUSE"){
+	                        		style = "aui-btn-danger";
+	                        		roundStyle = "aui-text-danger";
+	                        	}
+	                        	
+	                        	//图片语音
+	                        	var showPhoto = false;
+	                        	var photos = new Array();
+	                        	var audio = "";
+	                        	var content = "";
+	                        	if(list[i].result.length > 0){
+	                        		for(var j = 0; j < list[i].result.length; j++){
+	                        			if(list[i].result[j].type == "imageList"){
+	                        				showPhoto = true;
+	                        				photos = list[i].result[j].value;
+	                        			}else if(list[i].result[j].type == "audio"){
+	                        				audio = list[i].result[j].value.url;
+	                        			}else if(list[i].result[j].type == "textarea"){
+	                        				content = list[i].result[j].value;
+	                        			}
+	                        		}
+	                        	}
+                        		vm.lists.push({
+	                        		name: list[i].processedByName,
+	                        		jobName: list[i].jobName,
+	                        		statusName: list[i].statusName,
+	                        		mobile: list[i].processedByMobile,
+	                        		dateProcessed: list[i].dateProcessed,
+	                        		style: style,
+	                        		roundStyle: roundStyle,
+	                        		showDetail: list[i].nodeNodeTypeCode == "SUBMIT" ? true : false,
+	                        		showPhoto: showPhoto, 
+	                        		photos: photos,
+	                        		audio: audio,
+	                        		content: content,
+	                        	});
+                        	}
+                        }
+                        
+                    } else {
+                        vm.loadingFail = true;  //加载失败
+                    }
+
+                }
+            });
+        };
+        
+        //查看大图
+	    function openBigImage(images,index) {
+			
+	        var imageBrowser = api.require("imageBrowser");
+	        imageBrowser.openImages({
+	            imageUrls: images.split(","),
+	            activeIndex: index
+	        });
+	
+	    };
+	    
+	    //播放录音
+        function playVoice() {
+
+            if (vm.audio != "") {
+
+                api.startPlay({ path: vm.audio }, function () { });
+            } else {
+                api.toast({ msg: "录音文件不存在！", duration: 3000 });
+            }
+
+        };
+        
+        
+        //回复
+        function reply(flag){
+        	if(flag == "Y"){
+        		//拼接接口地址：新增报事
+                var url = $api.getStorage("interface_url") + api_url.submitReply;
+                
+                //新增投诉
+                Ajax({
+                    type: "post",
+                    url: url,
+                    data: {
+                        access_token: $api.getStorage("access_token"),
+                        id: api.pageParam.id,
+                        flag: flag,
+                        nodeId: vm.nodeId,
+                    },
+                    beforeSend: function () {
+                        api.showProgress({ title: "提交信息" });
+                    },
+                    complete: function () {
+                        api.hideProgress();
+                    },
+                    success: function (data) {
+
+                        if (data.success) {
+
+                            api.alert({
+                                title: "提示",
+                                msg: "提交成功！",
+                                buttons: ["确定"]
+                            }, function (ret, err) {
+                            	
+                            	//刷新数据
+                            	api.execScript({
+					                name: "menu_win",
+					                script: "vm.num --;"
+					            });
+                                api.execScript({
+                                    name: "rate/off_work/approval_list_win",
+                                    frameName: "rate/off_work/approval_list_frm",
+                                    script: "vm.lists.splice(0);getAllApply();closeWin('rate/off_work/apply_detail_win');"
+                                });
+                                
+                            });
+
+                        } else {
+                            api.alert({ title: "错误", msg: "系统异常：" + data.error.message, buttons: ["确定"] });
+                        }
+
+                    }
+                });
+        	}else {
+        		openWin("rate/off_work/reply_win",{
+	        		id: api.pageParam.id,
+	        		flag: flag,
+	        		nodeId: vm.nodeId,
+	        	});
+        	}
+        };
+    </script>
+</body>
+</html>

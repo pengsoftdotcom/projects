@@ -1,0 +1,70 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>筛选项_frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+<body style="background:transparent;">
+	<script type="text/javascript">
+		var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+	</script>
+	<!--筛选-->
+    <div class="custom-filter-optionsbg" onclick="closeFrm();"></div>
+    <div class="custom-filter-optionsbg2" onclick="closeFrm();"></div>
+    <div class="custom-filter-optionswrap">
+    	<template v-for="obj in list">
+	    	<div class="custom-filter-optionsitem" @click="submit($index)">
+				{{obj.name}}
+	    	</div>
+    	</template>
+    </div>
+    
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script type="text/javascript">
+    
+   		var vm = new Vue({
+            el: "body",
+            data: {
+            	list: [],
+            	type: ""
+            },
+            methods: {
+            	submit: function(index){
+            	
+            		var script = "";
+            		script += "vm.pullDownRefresh = true;"
+            		script += "vm.pageCount = 0;"
+            		script += "vm." + vm.type + "s=\"" + vm.list[index].name + "\";";
+            		script += "vm.picked_" + vm.type + "=\"" + vm.list[index].id + "\";";
+            		script += vm.type == "site" ? "getPointList(true);" : "";
+            		script += vm.type == "site" && vm.list[index].id == 0 ? "vm.points='全部部位';" : "";
+            		script += vm.type == "site" ? "" : "getPatrolList();";
+            		script += "closeFrm('patrol_list/patrol_list_filter_frm');";
+            		
+            		api.execScript({
+					    name: "patrol_list/patrol_list_win",
+					    frameName: "patrol_list/patrol_list_frm",
+					    script: script
+					});
+            	}
+            }
+        });
+        
+	    apiready = function () {
+	        api.parseTapmode();
+	        
+	        if(api.pageParam.list){
+	        	vm.list = api.pageParam.list;
+	        	vm.type = api.pageParam.type;
+	        }
+	    };
+	</script>
+	
+</body>
+</html>

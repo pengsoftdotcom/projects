@@ -1,0 +1,155 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>审批列表——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/custom.css" />
+    <style>
+    	.patrol-list-item{
+    		line-height: 0.3rem;
+    		font-size: 0.16rem;
+    		font-weight: bold;
+    	}
+    	.bold-14{
+    		font-size: 0.14rem;
+    		font-weight: bold;
+    	}
+    	.bigIcon{
+    		line-height: 0.25rem;
+    		font-size: 0.14rem;
+    		font-weight: bold;
+    	}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="noData">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="aui-padded-5"></div>
+    <div class="patrol-list-wrap">
+        <template v-for="list in lists">
+            <div class="patrol-list-item" @click="openDetail($index)">
+                <div class="aui-text-333">
+                	<div class="aui-col-xs-8" v-text="list.applyTypeName"></div>
+                	<div class="aui-text-right aui-col-xs-4" v-text="list.dateCreated"></div>
+            	</div>
+                <div class="aui-text-999 bold-14">
+                	<div class="aui-col-xs-8">
+	                    <i class="aui-iconfont aui-icon-peoplefill aui-text-custom bigIcon"></i>
+	                    <span v-text="list.name"></span>  
+                    </div>
+                    <div class="aui-col-xs-4 aui-text-right" v-text="list.statusName" :class="list.statusStyle"></div>
+                </div>
+                <div class="aui-text-999  aui-text-left bigIcon">
+                	<div class="aui-col-xs-12">
+                		<img src="../../../image/building.png" style="width:1em;"/> {{list.siteName}}
+                    </div>
+                </div>
+            </div>
+        </template>
+    </div>
+    <!--<p class="aui-text-center aui-padded-5" v-text="loadTips"></p>-->
+    <script src="../../../script/api.js"></script>
+    <script src="../../../script/vue.js"></script>
+    <script src="../../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                
+                noData: false,
+
+                lists: []    //工地列表数组
+            },
+            methods: {
+                openDetail: function (index) {  //打开工地详情
+                    openWin("rate/off_work/apply_detail_win", { id: this.lists[index].id});
+                } 
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+            
+            getAllApply();
+
+        };
+
+
+        //获取申请列表
+        function getAllApply() {
+			
+			var url = $api.getStorage("interface_url") + api_url.getAllApply;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                },
+                beforeSend: function () {
+            		vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+
+                    if (data.success) {
+                        
+                        //如果一条数据都没有，将在界面显示“暂无数据”
+                        var list = data.list;
+                        if (list.length == 0) {
+                            vm.noData = true;
+                            return false;
+                        }
+
+                        for (var i = 0; i < list.length; i++) {
+                        	var style = "";
+                        	if(list[i].statusCode == "WAITING"){
+                        		style = "aui-text-orange";
+                        	}else if(list[i].statusCode == "AGREE"){
+                        		style = "aui-text-success";
+                        	}else if(list[i].statusCode == "REFUSE"){
+                        		style = "aui-text-danger";
+                        	}
+                            vm.lists.push({
+                                id: list[i].id,
+                                name: list[i].createdByName,
+                                siteName: list[i].checkpointgroupName,
+                                dateCreated: list[i].dateCreated.split(" ")[0],
+                                statusName: list[i].statusName,
+                                applyTypeName: list[i].applyTypeName,
+                                statusStyle: style,
+                            });
+                        }
+                        
+                    } else {
+                        vm.loadingFail = true;  //加载失败
+                    }
+                    
+
+                }
+            });
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>地图</title>
+    <link rel="stylesheet" type="text/css" href="../css/api.css"/>
+    <style>
+    	body{
+
+    	}
+    </style>
+</head>
+<body>
+
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/vue.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/jquery-1.11.1.min.js"></script>
+<script type="text/javascript">
+	//网格的名称
+	var drawGrids = new Array();
+	//经纬度点位
+	var annotations = new Array();
+	var vm = new Vue({
+        el: "body",
+        data: {
+        },
+    });
+	apiready = function(){
+		init();
+	};
+	//初始化地图
+	function init() {
+		map = api.require("bMap");
+		map.getLocation({
+			accuracy : "10m"
+		}, function(ret, err) {
+			if (ret.status) {
+				lon = ret.lon;
+				lat = ret.lat;
+				map.open({
+					rect : {
+						x : 0,
+						y : 0,
+						w : api.frameWidth,
+						h : api.frameHeight
+					},
+					center : {
+						lon : lon,
+						lat : lat
+					},
+					zoomLevel : 16,
+					showUserLocation : true,
+					fixedOn : "map/map_frm",
+					fixed : false
+				}, function(ret) {
+					if (ret.status) {
+						getMapPoint();
+						getAlarm();
+
+					} else {
+						$("#loading").hide();
+						$("#loading-fail-msg").text("地图打开失败！");
+						$("#loading-fail-a").show();
+						$("#loading-fail").fadeIn("slow");
+					}
+				});
+			} else {
+				$("#loading").hide();
+				$("#loading-fail-msg").text("定位失败，请检查是否授予定位权限！");
+				$("#loading-fail").fadeIn("slow");
+			}
+		});
+	};
+
+
+	//获取报警信息
+	function getAlarm() {
+		var url = $api.getStorage("interface_url") + api_url.getAlarm;
+
+        Ajax({
+            type: "get",
+            url: url,
+            data: {
+                access_token: $api.getStorage("access_token"),
+            },
+            beforeSend: function () { },
+            complete: function () {
+                vm.loading = false;
+            },
+            success: function (data) {
+                if (data.success) {
+					api.openFrame({
+					    name: 'map/map_swiper_frm',
+					    url: './map_swiper_frm.html',
+					    rect: {
+					        x: 0,
+					        y: api.winHeight - 52,
+					        w: api.winWidth,
+					        h: 44
+					    },
+					    pageParam: {
+					        dataList: data.data
+					    },
+					    bounces: false,
+					    bgColor: 'transparent',
+					});
+
+                }
+
+            }
+        });
+	}
+
+    function getMapPoint() {
+
+        //拼接接口地址：查询单个巡查点详情
+        var url = $api.getStorage("interface_url") + api_url.getMapPoint;
+
+        Ajax({
+            type: "get",
+            url: url,
+            data: {
+                access_token: $api.getStorage("access_token"),
+            },
+            beforeSend: function () { },
+            complete: function () {
+                vm.loading = false;
+            },
+            success: function (data) {
+                if (data.success) {
+					//循环标注人员位置
+					var data_point = new Array();
+					var dataInfo = new Array();
+					for (var i = 0; i < data.data.length; i++) {
+						if (data.data[i].lng == 0 || data.data[i].lat == 0) {
+							continue;
+						}
+						data_point.push({
+							id : i,
+							lon : data.data[i].lng,
+							lat : data.data[i].lat
+						});
+						dataInfo.push({
+							id : i,
+							name : data.data[i].projectName,
+							address : data.data[i].projectAddr,
+						});
+						annotations.push(i);
+					}
+					//添加人员标注
+					map.addAnnotations({
+						annotations : data_point,
+						icon : "widget://image/gd-icon.png",
+						draggable : false
+					}, function(ret) {
+					});
+					//添加气泡
+					for (var i = 0; i < dataInfo.length; i++) {
+						//设置气泡属性
+						var options = new Object();
+						options.id = dataInfo[i].id;
+						options.styles = {
+							titleColor : "#000",
+							titleSize : 16,
+							subTitleColor : "#999",
+							subTitleSize : 14
+						};
+						options.content = {
+							title : dataInfo[i].name,
+							subTitle : dataInfo[i].address
+						};
+						//设置气泡
+						map.setBubble(options, function(ret) {
+							if (ret) {
+								openMapDetail();
+							}
+						});
+					}
+
+                } else {
+
+                    vm.loadingFail = true;
+                }
+
+            }
+        });
+
+    };
+	//打开地图详情
+	function openMapDetail() {
+        api.openFrame({
+            name: "map/map_detail_pop_frm",
+            url: "widget://html/map/map_detail_pop_frm.html",
+            bgColor: "transparent",
+            bounces: false,
+            rect: {
+                x: 0,
+                y: 70,
+                w: api.frameWidth,
+                h: api.frameHeight+45
+            },
+            pageParam:{
+            }
+        });
+    };
+</script>
+</html>

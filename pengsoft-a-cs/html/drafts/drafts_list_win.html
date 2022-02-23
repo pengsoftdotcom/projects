@@ -1,0 +1,131 @@
+﻿<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>草稿箱——列表——win</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <header id="header" class="aui-bar aui-bar-nav header-custom">
+        <a class="aui-pull-left" onclick="closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+        <div class="aui-title">
+            草稿箱
+        </div>
+    </header>
+    <footer id="footer" class="aui-nav footer-btn-wrap2 bg-default">
+    	<div class="aui-col-xs-4 aui-text-center" style="padding:16px 0;">
+    		<label style="height:34px;display: block;vertical-align:m">
+    			<input class="aui-checkbox" style="margin:4px 0;display: inline-block;float: none;vertical-align: middle;" type="checkbox" v-model="checked" @click="checkAll">
+    			<strong class="aui-text-custom" style="line-height:34px;display: inline-block;vertical-align: middle;">全选</strong>
+			</label>
+    	</div>
+        <div class="aui-col-xs-4 aui-padded-5">
+        	<a class="aui-btn aui-btn-block aui-btn-warning" v-effect="light" tapmode onclick="del();">删除</a>
+        </div>
+        <div class="aui-col-xs-4 aui-padded-5">
+        	<a class="aui-btn aui-btn-block aui-btn-custom" v-effect="light" tapmode onclick="submitEvent();">提交</a>
+        </div>
+    </footer>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+
+    	var vm = new Vue({
+			el: "body",
+			data: {
+//				checked: false,
+				count: 0,
+			},
+			methods: {
+				checkAll: function(){
+					if(this.count % 2 == 0){
+						checkAll();
+					}else{
+						cancelAll();
+					}
+
+					this.count ++;
+				}
+			}
+		});
+        apiready = function () {
+
+            api.parseTapmode();
+
+            setStatusBarStyle("light");
+
+            api.openFrame({
+                name: "drafts/drafts_list_frm",
+                url: "widget://html/drafts/drafts_list_frm.html",
+                bgColor: "#efefef",
+                bounces: true,
+                rect: {
+                    x: 0,
+                    y: $api.offset($api.byId("header")).h,
+                    w: api.winWidth,
+                    h: api.winHeight - $api.offset($api.byId("header")).h - $api.offset($api.byId("footer")).h
+                }
+            });
+
+        };
+
+
+        //删除
+        function del() {
+
+            api.execScript({
+                name: "drafts/drafts_list_win",
+                frameName: "drafts/drafts_list_frm",
+                script: "del();"
+            });
+
+        };
+
+
+        //提交
+        function submitEvent() {
+
+            api.execScript({
+                name: "drafts/drafts_list_win",
+                frameName: "drafts/drafts_list_frm",
+                script: "submitEvent();"
+            });
+
+        };
+
+
+         //全选
+        function checkAll() {
+
+            api.execScript({
+                name: "drafts/drafts_list_win",
+                frameName: "drafts/drafts_list_frm",
+                script: "checkAll();"
+            });
+
+        };
+
+
+         //全取消
+        function cancelAll() {
+
+            api.execScript({
+                name: "drafts/drafts_list_win",
+                frameName: "drafts/drafts_list_frm",
+                script: "cancelAll();"
+            });
+
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,357 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>通讯录——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    <style>
+    	.aui-ellipsis-1 {
+		    padding-right: 15px;
+	        overflow: auto;
+    		white-space: normal; 
+		}
+		.connection-left {
+			width: 80%;
+			float:left;
+		}
+		.connection-right {
+			width: 20%;
+			float:right;
+		}
+		.connection-img {
+			width:0.5rem;
+			height:0.5rem;
+		}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray fail-wrap-45" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray fail-wrap-45" v-show="noData" v-cloak>
+        <p class="fail-info">暂无数据</p>
+    </div>
+	
+    <div class="aui-content">
+	    <ul class="aui-user-view aui-in">
+	    	<template v-for="connection in connectionList">
+	        <li class="aui-user-view-cell aui-img" @click="call(connection.userMobile);">
+	        	<div class="connection-left">
+		            <img class="aui-img-object aui-pull-left" src="../../image/default_user_image.jpg">
+		            <div class="aui-img-body">
+		                <span>{{connection.userName}}  {{connection.jobName}}</span>
+		                <p class='aui-ellipsis-1' v-text="connection.jobOrgName"></p>
+		                <p class='aui-ellipsis-1' v-show="isSite" v-text="siteName"></p>
+		                <template v-if="!isSite" v-for="site in connection.groupList">
+		                <p class='aui-ellipsis-1' v-text="site.checkpointGroupName"></p>
+		                </template>
+		            </div>
+	            </div>
+				<div class="connection-right">
+					<img src="../../image/telephone.png" class="connection-img">
+				</div>
+	        </li>
+	        </template>
+	    </ul>
+	</div>
+	<p class="aui-text-center aui-padded-5" v-text="loadTips"></p>
+    
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+                noMore: false,  //是否显示：没有更多数据
+                loadTips: "",  //1.没有更多数据了  2.正在加载中...  3.上拉加载更多
+                pullDownRefresh: true,
+                isResult: true,
+                
+                
+                pageCount: 0,
+                connectionList: [],  //通讯录列表
+                siteName: "",
+                
+                isSite: false,
+            },
+            methods: {
+                call: function(number){
+                	api.call({
+                		type:"tel_prompt",
+                		number: number
+                	});
+                },
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+            
+            Vue.config.async = false;
+			
+			if(api.pageParam.isReal){
+				realControlNPList();
+			}else {
+				getNPPeopleList();
+			}
+			
+            timeOut300(function () {
+
+                vm.$nextTick(function () {
+                	
+                	if(!api.pageParam.id){
+                		 //下拉刷新
+	                    api.setRefreshHeaderInfo({
+	                        bgColor: "#efefef",
+	                        textColor: "#333",
+	                        textDown: "下拉刷新",
+	                        textUp: "释放立即刷新",
+	                    }, function (ret, err) {
+	
+	                        vm.pullDownRefresh = true;
+	                        vm.pageCount = 0;
+	                        vm.noMore = false;
+	                        if(api.pageParam.isReal){
+								realControlNPList();
+							}else {
+								getNPPeopleList();
+							}
+	
+	                    });
+	
+	                    //上拉加载
+	                    api.addEventListener({
+	                        name: "scrolltobottom",
+	                        extra: {
+	                            threshold: 0
+	                        }
+	                    }, function (ret, err) {
+	
+	                        if (!vm.noMore) {
+	
+	                            vm.loadTips = "正在加载中...";
+	                            if(api.pageParam.isReal){
+									realControlNPList();
+								}else {
+									getNPPeopleList();
+								}
+	
+	                        }
+	
+	                    });
+
+                	}
+                });
+
+            });
+
+        };
+		
+		//实控人未巡查
+		function realControlNPList(){
+			
+			if(vm.isResult && !vm.noMore){
+	 			
+ 				var url = $api.getStorage("interface_url") + api_url.realControlNPList;
+
+	            Ajax({
+	                type: "get",
+	                url: url,
+	                data: {
+	                    access_token: $api.getStorage("access_token"),
+	                    date: api.pageParam.date,
+	                    page: vm.pageCount,
+	                    size: 10,
+	                },
+	                beforeSend: function () {
+	                	vm.isResult = false;
+	                    vm.loadingFail = false;
+	                    vm.noData = false;
+	                	if(vm.pullDownRefresh){
+	                		vm.loading = true;
+	                	}else {
+	                		vm.loading = false;
+	                	}
+	                },
+	                complete: function () {
+	                	vm.isResult = true;
+	                	vm.loading = false;
+	                    api.refreshHeaderLoadDone();
+	                },
+	                success: function (data) {
+						
+	                    if (data.success) {
+	                    	//如果是下拉刷新，则需要清空列表
+	                        if (vm.pullDownRefresh) {
+	                            vm.connectionList.splice(0);
+	                            vm.pullDownRefresh = false;
+	                        }
+	
+	                        //如果一条数据都没有，将在界面显示“暂无数据”
+	                        if (data.page.content.length == 0 && vm.connectionList == 0) {
+	                            vm.noData = true;
+	                            return false;
+	                        }
+	
+	                        for (var i = 0; i < data.page.content.length; i++) {
+	                            vm.connectionList.push(data.page.content[i]);
+	                        }
+	                        
+	                    	//判断是否还有未加载到界面的数据
+	                        if (data.page.last) {
+	                            vm.loadTips = "没有更多数据了";
+	                            vm.noMore = true;
+	                        } else {
+	                            vm.loadTips = "上拉加载更多";
+	                            vm.noMore = false;
+	                        }
+	                        vm.pageCount += 1;
+	
+	                    } else {
+	                        vm.loadingFail = true;  //加载失败
+	                    }
+	                    
+	                    vm.pullDownRefresh = false;
+	
+	                }
+	            });
+ 			}
+		};
+		
+		//获取未巡查人员列表
+	 	function getNPPeopleList() {
+	 	
+	 		if(api.pageParam.id){
+	 			
+	 			vm.siteName = api.pageParam.siteName;
+	 			
+	 			//如果有工地，查询工地未巡查人员详情
+	 			var url = $api.getStorage("interface_url") + api_url.noPatrolSiteDetail;
+
+	            Ajax({
+	                type: "get",
+	                url: url,
+	                data: {
+	                    access_token: $api.getStorage("access_token"),
+	                    date: api.pageParam.date,
+	                    groupId: api.pageParam.id,
+	                },
+	                beforeSend: function () {
+	                	vm.loading = true;
+	                },
+	                complete: function () {
+	                	vm.loading = false;
+	                },
+	                success: function (data) {
+	                    if (data.success) {
+	
+	                        //如果一条数据都没有，将在界面显示“暂无数据”
+	                        if (data.list.length == 0 && vm.connectionList == 0) {
+	                            vm.noData = true;
+	                            return false;
+	                        }
+	
+	                        for (var i = 0; i < data.list.length; i++) {
+	                            vm.connectionList.push(data.list[i]);
+	                        }
+	                        
+	                        vm.noData = false;
+	
+	                    } else {
+	                        vm.loadingFail = true;  //加载失败
+	                    }
+	
+	                }
+	            });
+	 		}else {
+	 		
+	 			if(vm.isResult && !vm.noMore){
+	 			
+	 				var url = $api.getStorage("interface_url") + api_url.noPatrolPeopleDetail;
+
+		            Ajax({
+		                type: "get",
+		                url: url,
+		                data: {
+		                    access_token: $api.getStorage("access_token"),
+		                    date: api.pageParam.date,
+		                    page: vm.pageCount,
+		                    size: 10,
+		                },
+		                beforeSend: function () {
+		                	vm.isResult = false;
+		                	if(vm.pullDownRefresh){
+		                		vm.loading = true;
+		                	}else {
+		                		vm.loading = false;
+		                	}
+		                },
+		                complete: function () {
+		                	vm.isResult = true;
+		                    vm.loading = false;
+		                    vm.loadingFail = false;
+		                    vm.noData = false;
+		                    api.refreshHeaderLoadDone();
+		                },
+		                success: function (data) {
+		                    if (data.success) {
+		                    	//如果是下拉刷新，则需要清空列表
+		                        if (vm.pullDownRefresh) {
+		                            vm.connectionList.splice(0);
+		                            vm.pullDownRefresh = false;
+		                        }
+		
+		                        //如果一条数据都没有，将在界面显示“暂无数据”
+		                        if (data.page.content.length == 0 && vm.connectionList == 0) {
+		                            vm.noData = true;
+		                            return false;
+		                        }
+		
+		                        for (var i = 0; i < data.page.content.length; i++) {
+		                            vm.connectionList.push(data.page.content[i]);
+		                        }
+		                        
+		                    	//判断是否还有未加载到界面的数据
+		                        if (data.page.last) {
+		                            vm.loadTips = "没有更多数据了";
+		                            vm.noMore = true;
+		                        } else {
+		                            vm.loadTips = "上拉加载更多";
+		                            vm.noMore = false;
+		                        }
+		                        vm.pageCount += 1;
+		
+		                    } else {
+		                        vm.loadingFail = true;  //加载失败
+		                    }
+		                    
+		                    vm.pullDownRefresh = false;
+		
+		                }
+		            });
+	 			}
+	 			
+	 		}
+            
+        };
+        
+    </script>
+</body>
+</html>

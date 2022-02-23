@@ -1,0 +1,171 @@
+﻿<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>点位选择——frm2</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray fail-wrap-45" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray fail-wrap-45" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray fail-wrap-45" v-show="noData">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="fail-wrap bg-gray fail-wrap-45" v-show="timeOut">
+        <p class="fail-info">请求超时</p>
+    </div>
+    <div id="tab" class="custom-tab-wrap">
+        <div class="aui-content-padded">
+            <div class="aui-tab">
+                <ul class="custom-tab">
+                    <li v-bind:class="{'active':tab1}" v-on:click="changeTab(0)">未巡查部位(20)</li>
+                    <li v-bind:class="{'active':tab2}" v-on:click="changeTab(1)">所有部位(30)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="points-list-wrap">
+        <template v-for="list in lists">
+            <div class="points-list-container" v-bind:class="{'active':list.activeClass}" v-on:click="nextStep($index)" v-effect="">{{list.name}}</div>
+        </template>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+                timeOut: false,  //是否显示：全局加载超时
+
+                tab1: true,   //tab1选中
+                tab2: false,  //tab2选中
+
+                isResult: true,
+                constructionId: "",   //工地id
+                constructionName: "",  //工地名称
+                lists: []    //工地列表数组
+            },
+            methods: {
+                changeTab: function (index) {  //切换tab
+
+                    var vm_p = this;
+                    if (vm_p.isResult) {
+
+                        if (index == 0) {
+                            vm_p.tab1 = true;
+                            vm_p.tab2 = false;
+                        } else {
+                            vm_p.tab1 = false;
+                            vm_p.tab2 = true;
+                        }
+
+                    }
+
+                },
+                nextStep: function (index) {  //下一步
+
+                    var vm_p = this;
+                    timeOut300(function () {
+
+                        var script = "";
+                        script += "vm.constructionId = \"" + vm_p.constructionId + "\";";
+                        script += "vm.constructionName = \"" + vm_p.constructionName + "\";";
+                        script += "vm.pointId = \"" + vm_p.lists[index].id + "\";";
+                        script += "vm.pointName = \"" + vm_p.lists[index].name + "\";";
+                        script += "getType();";
+
+                        api.execScript({
+                            name: "add_patrol/add_patrol_win",
+                            frameName: "add_patrol/add_patrol3_frm",
+                            script: script
+                        });
+                        api.execScript({
+                            name: "add_patrol/add_patrol_win",
+                            script: "changeFrm(2);"
+                        });
+
+                    });
+
+                }
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+        };
+
+
+        //获取工地下面的点位
+        function getPoint() {
+
+            if (vm.constructionId) {
+
+                vm.lists.splice(0, vm.lists.length);
+
+                var url = $api.getStorage("interface_url") + api_url.getPointList;
+
+                Ajax({
+                    type: "get",
+                    url: url,
+                    data: {
+                        access_token: $api.getStorage("access_token"),
+                        checkpointGroupId: vm.constructionId,
+                        name: ""
+                    },
+                    beforeSend: function () {
+                        vm.loading = true;
+                    },
+                    complete: function () {
+                        vm.loading = false;
+                    },
+                    success: function (data) {
+
+                        if (data.success) {
+
+                            //如果一条数据都没有，将在界面显示“暂无数据”
+                            if (data.list.length == 0) {
+                                vm.noData = true;
+                                return false;
+                            }
+
+                            for (var i = 0; i < data.list.length; i++) {
+                                vm.lists.push({
+                                    id: data.list[i].id,
+                                    name: data.list[i].name,
+                                    activeClass: false
+                                });
+                            }
+
+                        } else {
+                            vm.loadingFail = true;  //加载失败
+                        }
+
+                    }
+                });
+
+            }
+
+        };
+
+    </script>
+</body>
+</html>

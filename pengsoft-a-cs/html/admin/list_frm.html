@@ -1,0 +1,72 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>巡查记录_frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+<body>
+	<script type="text/javascript">
+		var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+		ele.style.fontSize = size + "px";
+	</script>
+	<!--筛选-->
+    <div class="search-wrap bg-default" v-on:click="openFilter">
+        <div class="search-container">
+            <div class="search-content">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            <span class="search-btn">筛选<i class="aui-iconfont aui-icon-filter"></i></span>
+        </div>
+    </div>
+	
+	<!--列表-->
+	<div class="patrol-list-wrap search-result-wrap">
+		<div class="patrol-list-item">
+			<div class="patrol-list-time">2016.05.05 19:25 <span class="custom-label bg-orange aui-pull-right">事件</span></div>
+			<div class="aui-text-999 f-fs14 aui-ellipsis-1">工地名称工地名称一般比较长工地名称工地名称一般比较长</div>
+			<div class="aui-text-999 f-fs14 aui-ellipsis-1">
+				<i class="aui-iconfont aui-icon-focus aui-text-custom"></i> 点位名称点位名称点位名称点位名称点位名称点位名称
+			</div>
+		</div>
+		<div class="patrol-list-item">
+			<div class="patrol-list-time">2016.05.05 19:25 <span class="custom-label bg-red aui-pull-right">重大</span></div>
+			<div class="aui-text-999 f-fs14">工地名称工地名称一般比较长</div>
+			<div class="aui-text-999 f-fs14 aui-ellipsis-1">
+				<i class="aui-iconfont aui-icon-focus aui-text-custom"></i> 点位名称点位名称点位名称点位名称点位名称点位名称
+			</div>
+		</div>
+		<div class="patrol-list-item">
+			<div class="patrol-list-time">2016.05.05 19:25 <span class="custom-label bg-custom aui-pull-right">重大/已处理</span></div>
+			<div class="aui-text-999 f-fs14">工地名称工地名称一般比较长</div>
+			<div class="aui-text-999 f-fs14 aui-ellipsis-1">
+				<i class="aui-iconfont aui-icon-focus aui-text-custom"></i> 点位名称点位名称点位名称点位名称点位名称点位名称
+			</div>
+		</div>
+		<div class="patrol-list-item">
+			<div class="patrol-list-time">2016.05.05 19:25 <span class="custom-label bg-custom aui-pull-right">事件/已处理</span></div>
+			<div class="aui-text-999 f-fs14">工地名称工地名称一般比较长</div>
+			<div class="aui-text-999 f-fs14 aui-ellipsis-1">
+				<i class="aui-iconfont aui-icon-focus aui-text-custom"></i> 点位名称点位名称点位名称点位名称点位名称点位名称
+			</div>
+		</div>
+		<div class="patrol-list-item">
+			<div class="patrol-list-time">2016.05.05 19:25 <span class="custom-label bg-custom aui-pull-right">安全</span></div>
+			<div class="aui-text-999 f-fs14">工地名称工地名称一般比较长</div>
+			<div class="aui-text-999 f-fs14 aui-ellipsis-1">
+				<i class="aui-iconfont aui-icon-focus aui-text-custom"></i> 点位名称点位名称点位名称点位名称点位名称点位名称
+			</div>
+		</div>
+	</div>
+</body>
+</html>
+<script type="text/javascript">
+    apiready = function () {
+        api.parseTapmode();
+    };
+</script>

@@ -1,0 +1,218 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>激活点位——frm</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+		<style type="text/css">
+			.patrol-list-item {
+				position: relative;
+			}
+			.state-back {
+				color: #ffffff;
+				text-align: left;
+				height: 25px;
+				width: 90px;
+				line-height: 14px;
+				padding:5px;
+				border: 1px #FFFFFF;
+				background-color: #0facfb;
+			}
+			.point-activate {
+				color: #ffffff;
+				border: 1px #FFFFFF;
+				text-align: left;
+				height: 25px;
+				width: 90px;
+				padding:5px;
+				line-height: 14px;
+				background-color: #2ECC71;
+			}
+
+			.bottom {
+				z-index: 2000;
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+				min-height: 45px;
+				line-height: 45px;
+				font-size: 18px;
+				color: #ffffff;
+				margin: 0;
+				left: 0;
+				text-align: center;
+				white-space: nowrap;
+				background-color: #0facfb;
+			}
+
+			.point-detail {
+				position: absolute;
+				right: 10px;
+				top: 8px;
+				width: 90px;
+				height: 50px;
+				line-height: 60px;
+				background-color: #FFFFFF;
+			}
+			.list{
+				margin-bottom: 50px;
+			}
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+			ele.style.fontSize = size + "px";
+		</script>
+		<div class="loading-wrap bg-gray" v-show="loading">
+			<div class="spinner"></div>
+		</div>
+		<div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+			<p class="fail-info">
+				加载失败
+			</p>
+		</div>
+		<div class="fail-wrap bg-gray" v-show="noData">
+			<p class="fail-info">
+				暂无数据
+			</p>
+		</div>
+		<div class="fail-wrap bg-gray" v-show="timeOut">
+			<p class="fail-info">
+				请求超时
+			</p>
+		</div>
+		<!--搜索条-->
+		<div class="aui-searchbar-wrap demo">
+		    <div class="aui-searchbar aui-border-radius" tapmode @click="doSearch">
+		        <i class="aui-iconfont aui-icon-search"></i>
+		        <div class="aui-searchbar-text">请输入搜索内容</div>
+		        <div class="aui-searchbar-input">
+		        	<input type="text" placeholder="请输入搜索内容" v-model="searchInfo">
+		        </div>
+		        <i class="aui-iconfont aui-icon-roundclosefill" tapmode @click="clearInput"></i>
+		    </div>
+		    <div class="aui-searchbar-cancel aui-text-info" tapmode @click="cancelSearch">取消</div>
+		</div>
+
+		<div class="aui-padded-5"></div>
+		<div class="patrol-list-wrap">
+			<template v-for="list in listinfos | filterBy searchInfo in 'name' 'address'">
+				<div class="patrol-list-item" v-on:click="openSiteList(list.index)" v-effect="">
+					<div class="aui-text-333" style="max-width: 2rem;" v-text="list.name"></div>
+					<div class="f-fs14 aui-text-999" style="max-width: 2rem;">
+						<i class="aui-iconfont aui-icon-location aui-text-custom"></i>
+						{{list.address}}
+					</div>
+					<div class="point-detail">
+						<button class="state-back" v-text="list.total"></button>
+						<button class="point-activate" v-text="list.active"></button>
+					</div>
+				</div>
+
+			</template>
+		</div>
+		<div id="bottom" class="bottom">{{groupnum}}{{activepoinnum}}</div>
+		</body>
+		<script src="../../script/api.js"></script>
+		<script src="../../script/vue.js"></script>
+		<script src="../../script/common.js"></script>
+		<script>
+			var vm = new Vue({
+				el : "body",
+				data : {
+					//界面相关参数
+					loading : true, //是否显示：全局加载
+					loadingFail : false, //是否显示：全局加载失败
+					noData : false, //是否显示：全局暂无数据
+					timeOut : false, //是否显示：全局加载超时
+					code : "", //过滤条件
+					listinfos : [], //点位列表数组
+					staticinfo : [], //
+					groupnum : "",
+					activepoinnum : "",
+					currentTab:"2",
+
+					searchInfo: "",
+				},
+				methods : {
+					openSiteList : function(i) {
+						openWin("point_list/activate_point_detail_win",{groupname:this.listinfos[i].name,address:this.listinfos[i].address
+						,totalnum:this.listinfos[i].total,activenum:this.listinfos[i].active,id:this.listinfos[i].id,currentTab:this.currentTab});
+					},
+	                doSearch: function(){
+	                	$api.addCls($api.dom(".aui-searchbar-wrap"),"focus");
+						$api.dom('.aui-searchbar-input input').focus();
+	                },
+	                cancelSearch: function(){
+	                	$api.removeCls($api.dom(".aui-searchbar-wrap.focus"),"focus");
+	                	$api.dom('.aui-searchbar-input input').blur();
+	                	this.searchInfo = "";
+	                },
+	                clearInput: function(){
+	                	this.searchInfo = "";
+	                }
+				},
+				init : function() {
+					effect();
+				}
+			});
+			apiready = function() {
+				api.parseTapmode();
+				timeOut300(function() {
+					vm.$nextTick(function() {
+						vm.code = api.pageParam.code ? api.pageParam.code : "";
+						getPointList(api.pageParam.constructionUrl);
+					});
+				});
+			};
+			//获取点位列表
+			function getPointList(constructionUrl) {
+				vm.listinfos.splice(0, vm.listinfos.length);
+				var url = $api.getStorage("interface_url") + api_url.getPointAll;
+				Ajax({
+					type : "get",
+					url : url,
+					data : {
+						access_token : $api.getStorage("access_token"),
+						name : "",
+						//code: vm.code
+					},
+					beforeSend : function() {
+						vm.loading = true;
+					},
+					complete : function() {
+						vm.loading = false;
+					},
+					success : function(result) {
+
+						if (result.success) {
+							//如果一条数据都没有，将在界面显示“暂无数据”
+							if (result.data.listinfo.length == 0) {
+								vm.noData = true;
+								return false;
+							}
+							for (var i = 0; i < result.data.listinfo.length; i++) {
+								vm.listinfos.push({
+									name : result.data.listinfo[i].checkpointgroupName,
+									address : result.data.listinfo[i].checkpointgroupAddr,
+									active : "激活数："+result.data.listinfo[i].activenum,
+									total : "总数："+result.data.listinfo[i].totalnum+"",
+									id : result.data.listinfo[i].id,
+									index: i
+								});
+							}
+							vm.groupnum = "施工工地总计：" + result.data.staticinfo.groupnum+"个"+"    ";
+							vm.activepoinnum = "激活部位累计：" + result.data.staticinfo.activepoinnum+"个";
+						} else {
+							vm.loadingFail = true;
+							//加载失败
+						}
+					}
+				});
+			};
+		</script>
+	</body>
+</html>

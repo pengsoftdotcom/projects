@@ -1,0 +1,348 @@
+﻿<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>登录——frm</title>
+    <link rel="stylesheet" href="../css/aui.css" />
+    <link rel="stylesheet" href="../css/custom.css" />
+</head>
+<body class="bg-white">
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="aui-content">
+        <div class="aui-form aui-padded-0-10">
+            <img src="../image/logo.png" class="login-img" alt="" />
+            <div class="aui-input-row">
+                <i class="aui-input-addon aui-iconfont aui-icon-people aui-text-custom"></i>
+                <input v-model="username" type="text" class="aui-input" placeholder="用户名/手机号码" value="13709403800" />
+            </div>
+            <div class="aui-input-row">
+                <i class="aui-input-addon aui-iconfont aui-icon-lock aui-text-custom"></i>
+                <input v-model="password" type="{{passwordType}}" class="aui-input" placeholder="密码" />
+                <i class="aui-input-addon aui-iconfont" v-bind:class="{'aui-icon-attention':attention,'aui-icon-attentionfill':attentionfill }" tapmode v-on:click="showPassword"></i>
+            </div>
+            <div class="aui-padded-10"></div>
+            <div class="aui-btn aui-btn-block aui-btn-custom" v-on:click="login" v-effect="light">登 录</div>
+        </div>
+    </div>
+    <a class="aui-pull-right aui-padded-10 aui-text-custom" v-on:click="forgetPassword">忘记密码？</a>
+    <script src="../script/api.js"></script>
+    <script src="../script/vue.js"></script>
+    <script src="../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                username: "",  //用户名
+                password: "",  //密码
+                passwordType: "password",
+                attention: true,  //显示密码的class
+                attentionfill: false   //隐藏密码的class
+            },
+            methods: {
+            	showPassword: function () {  //显示密码
+                    showPassword();
+                },
+                login: function () {  //登录function
+                    timeOut300(login);
+                },
+                forgetPassword: function () {  //忘记密码function
+                    openWin("forget_password_win");
+                }
+            },
+            init: function () {
+                effect();
+
+            }
+
+        });
+
+
+		 //显示密码
+        function showPassword() {
+            if (vm) {
+
+                vm.passwordType = "text";
+                vm.attention = false;
+                vm.attentionfill = true;
+
+                setTimeout(function () {
+
+                    vm.passwordType = "password";
+                    vm.attention = true;
+                    vm.attentionfill = false;
+
+                }, 400);
+
+            }
+
+        };
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            //添加云修复的静默修复事件监听
+	        api.addEventListener({
+	            name: "smartupdatefinish"
+	        }, function (ret, err) {
+
+	            api.alert({
+	                title: "提示",
+	                msg: ret.value[0].extra == "" ? "更新包已自动下载成功，手动重启应用后生效！" : ret.value[0].extra,
+	                buttons: ["关闭应用"]
+	            }, function (ret, err) {
+	                api.closeWidget({
+                        id: "A6919162681008",
+                        silent: true
+                    });
+	            });
+
+	        });
+
+            checkForUpdate();
+
+            api.getCacheSize(function(ret) {
+			    var size = ret.size;
+			    if(size > 10*1000*1000){
+			    	api.clearCache(function() {
+					    api.toast({
+					        msg: '已清除缓存'
+					    });
+					});
+			    }
+			});
+
+        };
+
+
+        //登录
+        function login() {
+            if (vm) {
+
+                //第一步：获取token
+                if (vm.username == "") {
+                    api.toast({ msg: "用户名不能为空！", duration: 3000 });
+                } else if (vm.password == "") {
+                    api.toast({ msg: "密码不能为空！", duration: 3000 });
+                } else {
+
+                    //拼接接口地址：登录
+                    var url = $api.getStorage("interface_url") + api_url.login;
+
+                    Ajax({
+                        type: "post",
+                        url: url,
+                        data: {
+                            client_id: api.systemType == "android" ? "ma" : "mi",
+                            client_secret: api.systemType == "android" ? "ma" : "mi",
+                            grant_type: "password",
+                            username: vm.username,
+                            password: vm.password
+                        },
+                        beforeSend: function () {
+                            api.showProgress({ title: "登录中", animationType: "zoom" });
+                            vm.password = "";
+                        },
+                        complete: function () {
+                            api.hideProgress();
+                        },
+                        success: function (data) {
+							if (data.success) {
+
+                                $api.setStorage("access_token", data.data.access_token);
+                                $api.setStorage("refresh_token", data.data.refresh_token);
+
+                                //第二步：获取用户资料
+                                var userInfo_url = $api.getStorage("interface_url") + api_url.getUserInfo;
+                                Ajax({
+                                    type: "get",
+                                    url: userInfo_url,
+                                    data: {
+                                        access_token: data.data.access_token
+                                    },
+                                    beforeSend: function () {
+                                        api.showProgress({ title: "加载信息" });
+                                    },
+                                    complete: function () {
+                                        api.hideProgress();
+                                    },
+                                    success: function (data) {
+                                        if (data.success) {
+                                            vm.username = "";
+
+                                            $api.setStorage("user", data.data);
+                                            $api.setStorage("readnum", data.data.readnum);
+
+                                            var script = "";
+                                            script += "openSlidLayout();";
+                                            script += "closeWin(\"login_win\");";
+                                            api.execScript({
+                                                name: "root",
+                                                script: script
+                                            });
+
+                                        } else {
+                                            api.alert({ title: "错误", msg: "登录失败：" + data.error.message, buttons: ["确定"] });
+                                        }
+
+                                    }
+                                });
+
+                            } else {
+                                api.alert({ title: "错误", msg: "登录失败：" + data.error.message, buttons: ["确定"] });
+                            }
+
+                        }
+                    });
+
+                }
+
+            }
+
+        };
+
+
+         //检测最新版
+   		function checkForUpdate() {
+
+	        //拼接接口地址：检测app的最新版
+	        var url = $api.getStorage("interface_url") + api_url.getAppVersion;
+	        Ajax({
+	            type: "get",
+	            url: url,
+	            data: {
+	                custType : api.systemType == "ios" ? "mi" : "ma",
+	                number: api.appVersion,
+	                appCode: "SAFETY"
+	            },
+	            beforeSend: function () {
+	            },
+	            complete: function () {
+	            },
+	            success: function (data) {
+
+	                 if (data.success && data.data) {
+
+	                    //更新描述
+	                    var msg = "版本号：" + data.data.number + "\n";
+	                    if (data.data.descript) {
+	                        msg += "更新内容：\n";
+	                        msg += data.data.descript;
+	                    }
+
+	                    //下载地址
+	                    var url = data.data.url;
+	                    if (data.data.forceUpdated) {//强制更新
+
+	                        api.alert({
+	                            title: "发现新版本",
+	                            msg: msg,
+	                            buttons: ["更新"]
+	                        }, function (ret, err) {
+	                            installApp(url);
+	                        });
+
+	                    } else {//选择更新
+
+	                        api.confirm({
+	                            title: "发现新版本，是否更新？",
+	                            msg: msg,
+	                            buttons: ["更新", "取消"]
+	                        }, function (ret, err) {
+	                            if (ret.buttonIndex == 1) {
+	                                installApp(url);
+	                            }
+	                        });
+
+	                    }
+
+	                    //安装应用
+	                    function installApp(url_path) {
+
+	                        if (api.systemType == "ios") {
+
+	                            api.showProgress({
+	                                title: "正在安装",
+	                                animationType: "zoom"
+	                            });
+	                            api.installApp({
+	                                appUri: url_path
+	                            });
+	                            api.closeWidget({
+	                                id: "A6919162681008",
+	                                silent: true
+	                            });
+
+	                        } else {
+
+	                            api.showProgress({
+	                                title: "正在下载",
+	                                text: "进度：0%",
+	                                animationType: "zoom"
+	                            });
+
+	                            //下载最新版文件
+	                            api.download({
+	                                url: url_path,
+	                                savePath: "fs://res/package/" + Date.now() + ".apk",
+	                                report: true,
+	                                cache: true,
+	                                allowResume: true
+	                            }, function (ret, err) {
+
+	                                if (ret.state == 0) {//下载中
+	                                    api.showProgress({
+	                                        title: "正在下载",
+	                                        text: "进度：" + ret.progress + "%",
+	                                        animationType: "zoom"
+	                                    });
+	                                } else if (ret.state == 1) {
+
+	                                    api.hideProgress();
+
+	                                    var file_path = ret.savePath;
+	                                    api.alert({
+	                                        title: "提示",
+	                                        msg: "下载完成！",
+	                                        buttons: ["确定"]
+	                                    }, function (ret, err) {
+
+	                                        api.installApp({
+	                                            appUri: file_path
+	                                        });
+	                                        api.closeWidget({
+	                                            id: "A6919162681008",
+	                                            silent: true
+	                                        });
+
+	                                    });
+	                                } else if (ret.state == 2) {
+
+	                                    api.hideProgress();
+	                                    api.alert({
+	                                        title: "错误",
+	                                        msg: "下载失败！",
+	                                        buttons: ["确定"]
+	                                    });
+
+	                                }
+
+	                            });
+
+	                        }
+	                    };
+
+	                }
+
+	            }
+	        });
+
+	    };
+    </script>
+</body>
+</html>

@@ -1,0 +1,1317 @@
+﻿<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>草稿箱——列表——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap" v-show="loading">
+        <div class="spinner"></div>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" style="display:none;">
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="noData" style="display:none;">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="patrol-list-wrap">
+        <div class="aui-padded-5"></div>
+        <template v-for="list in lists">
+            <div class="patrol-list-item">
+                <div class="patrol-list-time">手机时间：{{list.datetime}}<span class="custom-label aui-pull-right bg-custom" :class="list.catalogBg">{{list.catalogName}}</span></div>
+                <div class="aui-text-666 f-fs14 aui-ellipsis-1">{{list.constructionName}}</div>
+                <div class="aui-text-666 f-fs14 aui-ellipsis-1">
+                    <i class="aui-iconfont aui-icon-focus aui-text-custom"></i>{{list.code}} {{list.pointName}}-{{list.checkpointName}}
+                </div>
+                <div class="aui-text-666 f-fs14 f-oh">
+                    <div class="aui-col-xs-6">巡查人员：{{list.name}}</div>
+                </div>
+                <div class="f-oh aui-padded-5">
+                    <label>
+                    	<input class="aui-checkbox aui-block" style="margin:4px;" type="checkbox" v-model="list.checked">
+                    	点击选中
+                    </label>
+                    <button @click="openPatrolDetail($index)" class="aui-pull-right">查看详情</button>
+                </div>
+            </div>
+        </template>
+        <p class="aui-text-center aui-padded-5" v-text="loadTips"></p>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script src="../../script/submit-draft.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+                noMore: false,  //是否显示：没有更多数据
+                loadTips: "",  //1.没有更多数据了  2.正在加载中...  3.上拉加载更多
+                pullDownRefresh: false,  //下拉刷新
+                showSite: true,   //是否显示：工地筛选项
+                delArray: [],
+                submitArray: [],
+
+                lists: [],  //新闻列表数组
+                count: 0,
+            },
+            methods: {
+                openPatrolDetail: function (i) {  //打开巡查详情
+                    openWin("drafts/drafts_detail_win", { id: i });
+                }
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            api.addEventListener({
+                name: 'flushDraftList'
+            }, function(ret, err){
+                init();
+            });
+
+
+            setTimeout(function () {
+
+                vm.$nextTick(function () {
+
+                    init();
+
+                });
+
+            }, 300);
+
+        };
+
+
+        //格式化时间
+        function formatDatetime(datetime) {
+
+            var time = new Date(datetime);
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+            var hour = p(time.getHours());
+            var min = p(time.getMinutes());
+            var sec = p(time.getSeconds());
+
+            return year + "/" + month + "/" + day + " " + hour + ":" + min + ":" + sec;
+
+            function p(s) {
+                return s < 10 ? "0"
+                + s : s;
+            };
+
+        };
+
+
+
+        //获取今天的日期
+        function getTodayDate() {
+
+            var time = new Date();
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+
+            function p(s) {
+                return s < 10 ? "0" + s : s;
+            };
+
+            return year + "/" + month + "/" + day;
+
+        };
+
+
+        //删除
+        function del() {
+
+			//获取选择的ID
+            var choice_array = new Array();
+            for (var i = 0; i < vm.lists.length; i++) {
+
+                if (vm.lists[i].checked) {
+                    choice_array.push(vm.lists[i].id);
+                }
+
+            }
+            if (choice_array.length <= 0) {
+                api.toast({ msg: "请选择需要删除的数据！" });
+            } else {
+				//删除对应的数据
+                for (i = 0; i < choice_array.length; i++) {
+                	for(var j = 0; j < vm.lists.length; j++){
+                		if(vm.lists[j].id == choice_array[i]){
+                			vm.lists.splice(j,1);
+                			break;
+                		}
+                	}
+                }
+                //将处理后的数据存到对应位置
+                var patrols = $api.getStorage("PatrolLists");
+                for (var i = 0; i < patrols.length; i++) {
+				 	if(patrols[i].userId == $api.getStorage("user").id){
+				 		patrols[i].list = vm.lists;
+				 	}
+				}
+                $api.setStorage("PatrolLists", patrols);
+
+                //更新当前页面
+                if (vm.lists.length == 0) {
+                    vm.noData = true;
+                }
+                api.alert({ title: "提示", msg: "删除成功！", buttons: ["确定"] });
+
+            }
+
+        };
+
+
+        //提交
+        function submitEvent(){
+
+			//判断网络状况
+        	if(api.connectionType == "none"){
+        		api.toast({ msg: "当前无网络连接！" });
+        		return false;
+        	}
+
+        	//获取选择的ID
+            for (var i = 0; i < vm.lists.length; i++) {
+
+                if (vm.lists[i].checked) {
+                    vm.submitArray.push(vm.lists[i].id);
+                }
+
+            }
+
+            //如果有数据则提交
+            if (vm.submitArray.length <= 0) {
+                api.toast({ msg: "请选择需要提交的数据！" });
+            } else {
+                var info = new Array();
+                for(var i = 0; i < vm.submitArray.length; i++){
+                  for(var j = 0; j < vm.lists.length; j++){
+                		if(vm.submitArray[i] == vm.lists[j].id){
+                			info.push(vm.lists[j]);
+                			break;
+                		}
+                	}
+                }
+                selectPatrols = info;
+                api.showProgress({
+                    title: '努力加载中...',
+                    text: '正在提交...',
+                });
+
+                fs = api.require('fs');
+            		hasActiveDrafts();
+            }
+        };
+
+
+        //提交报事
+      //   function submit() {
+			// var data = null;
+			// for(var i = 0; i < vm.lists.length; i++){
+      //   		if(vm.submitArray[vm.count] == vm.lists[i].id){
+      //   			data = vm.lists[i];
+      //   			break;
+      //   		}
+      //   	}
+      //       if (data) {
+      //
+      //           api.showProgress({ title: "收集信息", animationType: "zoom" });
+      //
+      //           //获取对应的值
+      //           var access_token = data.access_token;
+      //           var items = [{ "label": "照片", "name": "image", "type": "imageList", "value": "", "url": "" },
+      //                  { "label": "文字", "name": "content", "type": "textarea", "value": "", "url": "" },
+      //                  { "label": "语音", "name": "audio", "type": "audio", "value": "", "url": "" }]
+      //           var image_array = new Array();
+      //           var name_array = new Array();
+      //           var imageIdArray = new Array();
+      //           var audioId = "";
+      //           var audioUrl = "";  //录音文件的地址
+      //           var audio_Url = "";
+      //           var content = "";
+      //
+      //           var lng = data.lng;
+      //           var lat = data.lat;
+      //           var address = data.address;
+      //           var pointId = data.pointId;
+      //           var catalogId = data.catalogId;
+      //           var constructionId = data.constructionId;
+      //           var dateCreated = data.datetime;
+      //
+      //           var stepId = "";
+      //       	stepId = data.stepId;
+      //
+      //           //拼接报事的附加字段
+      //           for (var i = 0; i < data.extraJson.length; i++) {
+      //
+      //               //图片
+      //               if (data.extraJson[i].type == "imageList" && data.extraJson[i].value.length <= 6) {
+      //               	for (var j = 0; j < data.extraJson[i].value.length ; j++) {
+	    //                     image_array.push(data.extraJson[i].value[j]);
+	    //                     name_array.push(data.extraJson[i].name[j]);
+	    //                 }
+      //               }
+      //
+      //               //文本
+      //               if (data.extraJson[i].type == "textarea") {
+      //                   content = data.extraJson[i].value;
+      //               }
+      //
+      //               //录音
+      //               if (data.extraJson[i].type == "audio") {
+      //               	audio_Url = data.extraJson[i].value;
+      //               }
+      //
+      //           }
+      //
+      //           //验证
+      //           if (!isLogin()) {
+      //               api.hideProgress();
+      //               api.alert({ title: "错误", msg: "用户信息为空，请重新登录！", buttons: ["确定"] });
+      //               return false;
+      //           } else if (image_array.length == 0) {
+      //               api.hideProgress();
+      //               api.toast({ msg: "必须要上传巡查照片！", duration: 3000 });
+      //               return false;
+      //           }
+      //
+      //           //上次文件错误执行次数
+      //           var uploadTime = 0;
+      //
+      //           //判断是否上传文件
+      //           var imageIdArray = new Array();
+      //           if (audio_Url) {
+      //               addVoice();
+      //           } else if (image_array.length > 0) {
+      //               addPicture();
+      //           } else {
+      //               addEvent();
+      //           }
+      //
+      //           //1.上传录音
+      //           function addVoice() {
+      //
+      //               if (uploadTime == 0) {
+      //                   api.showProgress({ title: "上传录音", text: "进度：0%" });
+      //               } else {
+      //                   api.showProgress({ title: "上传录音", text: "进度：100%" });
+      //               }
+      //
+      //               //拼接接口地址：上传文件
+      //               var fileUpload_url = $api.getStorage("interface_url") + api_url.fileUpload + "?access_token=" + access_token;
+      //
+      //               //上传语音
+      //               api.ajax({
+      //                   url: fileUpload_url,
+      //                   method: "post",
+      //                   timeout: 30000,
+      //                   report: true,
+      //                   data: {
+      //                       files: {
+      //                           file: audio_Url
+      //                       }
+      //                   }
+      //               }, function (ret, err) {
+      //
+      //                   if (ret.status == 0) {  //上传中
+      //                       api.showProgress({ title: "上传录音", text: "进度：" + ret.progress + "%" });
+      //                   } else if (ret.status == 1 && ret.body.success) {  //上传完成
+      //
+      //                       //重置上次文件错误执行次数
+      //                       uploadTime = 0;
+      //
+      //                       audioId = ret.body.data.id;
+      //                       audioUrl = ret.body.data.accessAddress;
+      //                       if (image_array.length > 0) {  //上传图片
+      //                           addPicture();
+      //                       } else {  //新增投诉
+      //                           addEvent();
+      //                       }
+      //
+      //                   } else {  //上传失败
+      //
+      //                       if (uploadTime < 4) {  //5次上次失败机会
+      //
+      //                           //上次文件错误执行次数+1
+      //                           uploadTime += 1;
+      //                           addVoice();  //递归上传
+      //
+      //                       } else {
+      //
+      //                           api.hideProgress();
+      //
+      //                           if (ret.statusCode == 500) {
+      //                               api.alert({ title: "错误", msg: "上传录音失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+      //                           } else {
+      //                               api.alert({ title: "错误", msg: "上传录音失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+      //                           }
+      //
+      //                       }
+      //
+      //                   }
+      //
+      //               });
+      //
+      //           };
+      //
+      //           //2.上传图片
+      //           function addPicture() {
+      //
+      //               if (uploadTime == 0) {
+      //                   api.showProgress({ title: "上传图片", text: "进度：0%" });
+      //               } else {
+      //                   api.showProgress({ title: "上传图片", text: "进度：100%" });
+      //               }
+      //
+      //               //拼接接口地址：上传文件
+      //               var fileUpload_url = $api.getStorage("interface_url") + api_url.fileUpload + "?access_token=" + access_token;
+      //
+      //               //上传图片
+      //               api.ajax({
+      //                   url: fileUpload_url,
+      //                   method: "post",
+      //                   timeout: 30000,
+      //                   report: true,
+      //                   data: {
+      //                       files: {
+      //                           file: image_array
+      //                       }
+      //                   }
+      //               }, function (ret, err) {
+      //
+      //                   if (ret.status == 0) {  //上传中
+      //                       api.showProgress({ title: "上传图片", text: "进度：" + ret.progress + "%" });
+      //                   } else if (ret.status == 1 && ret.body.success) {  //上传完成
+      //
+      //                       //重置上次文件错误执行次数
+      //                       uploadTime = 0;
+      //
+      //                       if (image_array.length == 1) {
+      //                           imageIdArray.push({ id: ret.body.data.id, url: ret.body.data.accessAddress, name: name_array[0] });
+      //                       } else {
+      //                           for (var i = 0; i < ret.body.list.length; i++) {
+      //                               imageIdArray.push({ id: ret.body.list[i].id, url: ret.body.list[i].accessAddress, name: name_array[i] });
+      //                           }
+      //                       }
+      //                       addEvent();  //新增投诉
+      //
+      //                   } else {  //上传失败
+      //
+      //                       if (uploadTime < 4) {  //5次上次失败机会
+      //
+      //                           //上次文件错误执行次数+1
+      //                           uploadTime += 1;
+      //                           addPicture();  //递归上传
+      //
+      //                       } else {
+      //
+      //                           api.hideProgress();
+      //
+      //                           if (ret.statusCode == 500) {
+      //                               api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+      //                           } else {
+      //                               api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+      //                           }
+      //
+      //                       }
+      //
+      //                   }
+      //
+      //               });
+      //
+      //           };
+      //
+      //           //3.提交报事
+      //           function addEvent() {
+      //
+      //               //拼接接口地址：新增报事
+      //               var addEvent_url = $api.getStorage("interface_url") + api_url.addFloorPatrol;
+      //
+      //               //拼接报事的附加字段
+      //               for (var i = 0; i < items.length; i++) {
+      //
+      //                   //图片
+      //                   if (items[i].type == "imageList") {
+      //                       items[i].value = imageIdArray;
+      //                   }
+      //
+      //                   //文本
+      //                   if (items[i].type == "textarea") {
+      //                       items[i].value = content;
+      //                   }
+      //
+      //                   //录音
+      //                   if (items[i].type == "audio") {
+      //                       items[i].value = { id: audioId, url: audioUrl };
+      //                   }
+      //
+      //               }
+      //
+      //               //新增投诉
+      //               Ajax({
+      //                   type: "post",
+      //                   url: addEvent_url,
+      //                   data: {
+      //                       access_token: $api.getStorage("access_token"),
+      //                       lng: lng,
+      //                       lat: lat,
+      //                       address: address,
+      //                       checkpointId: pointId,
+      //                       catalogId: catalogId,
+      //                       extraJson: JSON.stringify(items),
+      //                       checkpointGroupId: constructionId,
+      //                       stepId: stepId,
+      //                       dateCreated: dateCreated,
+      //                   },
+      //                   beforeSend: function () {
+      //                       api.showProgress({ title: "提交信息" });
+      //                   },
+      //                   complete: function () {
+      //                   },
+      //                   success: function (data) {
+      //
+			// 				if (data.success) {
+      //                       	for(var i = 0; i < vm.lists.length; i++){
+			//             			if(vm.submitArray[vm.count] == vm.lists[i].id){
+			//             				vm.lists.splice(i,1);
+			//             				break;
+			//             			}
+			//             		}
+			//             		vm.count ++;
+			// 					if(vm.count == vm.submitArray.length && vm.delArray.length == 0){
+			// 						vm.count = 0;
+			// 						vm.submitArray = new Array();
+			// 						vm.delArray = new Array();
+			// 						var patrols = $api.getStorage("PatrolLists");
+			// 		                for (var i = 0; i < patrols.length; i++) {
+			// 						 	if(patrols[i].userId == $api.getStorage("user").id){
+			// 						 		patrols[i].list = vm.lists;
+			// 						 	}
+			// 						}
+			// 		                $api.setStorage("PatrolLists", patrols);
+			// 		                api.hideProgress();
+			// 		                if (vm.lists.length == 0) {
+			// 		                    vm.noData = true;
+			// 		                }
+			// 		            	api.alert({ title: "提示", msg: "全部提交成功！", buttons: ["确定"] },function(ret,data){flushData();});
+			// 					}else if(vm.count == vm.submitArray.length && vm.delArray.length > 0){
+			// 						//重新上传未上传成功信息
+			// 							api.hideProgress();
+			// 							api.confirm({
+			// 				                title: "提示",
+			// 				                msg: "部分信息未上传成功",
+			// 				                buttons: ["重新上传"]
+			// 				            }, function (ret, err) {
+			// 				            	vm.count = 0;
+			// 								vm.submitArray = vm.delArray;
+			// 								submit();
+			// 				            });
+      //
+			// 					}else if(vm.count < vm.submitArray.length){
+			// 						submit();
+			// 					}
+      //
+      //                       } else {
+      //                       	vm.delArray.push(vm.submitArray[vm.count]);
+      //                       	vm.count ++;
+      //                       	if(vm.count == vm.submitArray.length){
+      //                       		api.hideProgress();
+      //                       		vm.count = 0;
+			// 						vm.submitArray = vm.delArray;
+			// 						vm.delArray = new Array();
+			// 						api.confirm({
+			// 							title: "错误",
+			// 							msg: "系统异常：" + data.error.message,
+			// 							buttons: ["重新上传","取消"]
+			// 						},function(ret, err){
+			// 							if(ret.buttonIndex == 1){
+			// 								submit();
+			// 							}
+			// 						});
+      //                       	}else if(vm.count < vm.submitArray.length){
+      //                       		submit();
+      //                       	}
+      //                       }
+      //
+      //                   }
+      //               });
+      //
+      //           };
+      //       }
+      //   };
+
+
+         //提交
+        function checkAll() {
+
+        	for(var i = 0; i < vm.lists.length; i++){
+        		vm.lists[i].checked = true;
+        	}
+        };
+
+
+         //提交
+        function cancelAll() {
+
+            for(var i = 0; i < vm.lists.length; i++){
+        		vm.lists[i].checked = false;
+        	}
+        };
+
+        //刷新首页及列表数据
+        function flushData(){
+
+            //刷新首页统计数据
+            api.execScript({
+                name: "home_win",
+                frameName: "home_frm",
+                script: "vm.changeTab(vm.frameIndex);"
+            });
+
+            //刷新检查列表
+            var script = "";
+            script += "vm.pullDownRefresh = true;";
+            script += "vm.pageCount = 0;";
+            script += "getPatrolList();";
+
+            api.execScript({
+                name: "patrol_list/patrol_list_win",
+                frameName: "patrol_list/patrol_list_frm",
+                script: script
+            });
+
+    	};
+
+
+    	//初始化页面
+    	function init(){
+    		var patrols = $api.getStorage("PatrolLists");
+            var patrol = new Array();
+            vm.lists.splice(0);
+            //判断有没有草稿对象
+            if (!patrols || patrols.length <= 0) {
+                vm.noData = true;
+                return false;
+            } else {
+            	//判断当前用户有没有存草稿
+				for (var i = 0; i < patrols.length; i++) {
+				 	if(patrols[i].userId == $api.getStorage("user").id){
+				 		patrol = patrols[i].list;
+				 	}
+				}
+
+                if (!patrol || patrol.length <= 0) {
+                    vm.noData = true;
+                    return false;
+                }
+
+                //向界面依次添加列表
+                for (var i = 0; i < patrol.length; i++) {
+                	patrol[i].id = i;
+                	patrol[i].checked = false;
+                	if(patrol[i].catalogName == "一般隐患"){
+                		patrol[i].catalogBg = "bg-orange";
+                	}else if(patrol[i].catalogName == "重大隐患"){
+                		patrol[i].catalogBg = "bg-red";
+                	}
+
+                    vm.lists.push(patrol[i]);
+
+                }
+                vm.loading = false;
+
+            }
+    	}
+
+
+
+
+
+
+
+
+
+
+
+
+      var lists = new Array();
+      var submitArray = new Array();
+      var count = 0;
+      var missInfo = false;
+      var delArray = new Array();
+      var activeData = new Array();
+      var wrongTimes = 0;
+      var selectPatrols = new Array();
+      var fs;
+
+      //上传草稿箱
+      function submitDrafts(){
+        lists.splice(0);
+          var patrols = $api.getStorage("PatrolLists");
+          var patrol = new Array();
+          if(selectPatrols.length == 0){
+            if (!patrols || patrols.length <= 0) {
+                return false;
+            } else {
+              for (var i = 0; i < patrols.length; i++) {
+                if(patrols[i].userId == $api.getStorage("user").id){
+                  patrol = patrols[i].list;
+                }
+              }
+
+                if (!patrol || patrol.length <= 0) {
+                    return false;
+                }
+            }
+          }else {
+            patrol = selectPatrols;
+          }
+
+            //向界面依次添加列表
+            for (var i = 0; i < patrol.length; i++) {
+                lists.push(patrol[i]);
+                submitArray.push(patrol[i].uuid);
+            }
+          submit();
+      };
+
+      //提交报事
+      function submit() {
+      var data = null;
+
+      for(var i = 0; i < lists.length; i++){
+          if(submitArray[count] == lists[i].uuid){
+            data = lists[i];
+            break;
+          }
+        }
+          if (data) {
+
+              //获取对应的值
+              var access_token = data.access_token;
+              var items = [{ "label": "照片", "name": "image", "type": "imageList", "value": "", "url": "" },
+                     { "label": "文字", "name": "content", "type": "textarea", "value": "", "url": "" },
+                     { "label": "语音", "name": "audio", "type": "audio", "value": "", "url": "" }]
+              var image_array = new Array();
+              var name_array = new Array();
+              var imageIdArray = new Array();
+              var audioId = "";
+              var audioUrl = "";  //录音文件的地址
+              var audio_Url = "";
+              var content = "";
+
+              var lng = data.lng;
+              var lat = data.lat;
+              var address = data.address;
+              var pointId = data.pointId;
+              var catalogId = data.catalogId;
+              var constructionId = data.constructionId;
+              var dateCreated = data.datetime;
+
+              var uuid = "";
+              if(data.uuid){
+                uuid = data.uuid;
+              }
+
+              var stepId = "";
+            stepId = data.stepId;
+
+              //拼接报事的附加字段
+              for (var i = 0; i < data.extraJson.length; i++) {
+
+                  //图片
+                  if (data.extraJson[i].type == "imageList" && data.extraJson[i].value.length <= 6) {
+
+                    for (var j = 0; j < data.extraJson[i].value.length ; j++) {
+
+                      //判断每个url对应的图片是否还在
+                      fs.exist({
+                path: data.extraJson[i].value[j].url
+            }, function(ret, err) {
+
+              if(!ret.exist){
+
+                missInfo = true;
+
+                exceptionDeal();
+
+              }
+            });
+                        image_array.push(data.extraJson[i].value[j].url);
+                        data.extraJson[i].value[j].name == "补充<br>照片" ? "补充照片" : data.extraJson[i].value[j].name;
+                        name_array.push(data.extraJson[i].value[j].name);
+                    }
+
+                  }
+
+                  //文本
+                  if (data.extraJson[i].type == "textarea") {
+                      content = data.extraJson[i].value;
+                  }
+
+                  //录音
+                  if (data.extraJson[i].type == "audio") {
+                    audio_Url = data.extraJson[i].value;
+                  }
+
+              }
+
+              //验证
+              if (!isLogin()) {
+                  api.alert({ title: "错误", msg: "用户信息为空，请重新登录！", buttons: ["确定"] });
+                  return false;
+              } else if (image_array.length == 0) {
+                missInfo = true;
+                  exceptionDeal();
+              }
+
+              //上次文件错误执行次数
+              var uploadTime = 0;
+
+              //判断是否上传文件
+              var imageIdArray = new Array();
+              if (audio_Url) {
+                  addVoice();
+              } else if (image_array.length > 0) {
+                  addPicture();
+              } else {
+                  addEvent();
+              }
+
+              //1.上传录音
+              function addVoice() {
+
+                  //拼接接口地址：上传文件
+                  var fileUpload_url = $api.getStorage("interface_url") + api_url.fileUpload + "?access_token=" + access_token;
+
+                  //上传语音
+                  api.ajax({
+                      url: fileUpload_url,
+                      method: "post",
+                      timeout: 30000,
+                      report: true,
+                      data: {
+                          files: {
+                              file: audio_Url
+                          }
+                      }
+                  }, function (ret, err) {
+
+                      if (ret.status == 0) {  //上传中
+                      } else if (ret.status == 1 && ret.body.success) {  //上传完成
+
+                          //重置上次文件错误执行次数
+                          uploadTime = 0;
+
+                          audioId = ret.body.data.id;
+                          audioUrl = ret.body.data.accessAddress;
+                          if (image_array.length > 0) {  //上传图片
+                              addPicture();
+                          } else {  //新增投诉
+                              addEvent();
+                          }
+
+                      } else {  //上传失败
+
+                          if (uploadTime < 4) {  //5次上次失败机会
+
+                              //上次文件错误执行次数+1
+                              uploadTime += 1;
+                              addVoice();  //递归上传
+
+                          } else {
+
+                              api.hideProgress();
+
+                              if (ret.statusCode == 500) {
+                              } else {
+                              }
+
+                          }
+
+                      }
+
+                  });
+
+              };
+
+              //2.上传图片
+              function addPicture() {
+
+                  //拼接接口地址：上传文件
+                  var fileUpload_url = $api.getStorage("interface_url") + api_url.fileUpload + "?access_token=" + access_token;
+
+                  //上传图片
+                  api.ajax({
+                      url: fileUpload_url,
+                      method: "post",
+                      timeout: 30000,
+                      report: true,
+                      data: {
+                          files: {
+                              file: image_array
+                          }
+                      }
+                  }, function (ret, err) {
+
+                      if (ret.status == 0) {  //上传中
+                      } else if (ret.status == 1 && ret.body.success) {  //上传完成
+
+                          //重置上次文件错误执行次数
+                          uploadTime = 0;
+
+                          if (image_array.length == 1) {
+                              imageIdArray.push({ id: ret.body.data.id, url: ret.body.data.accessAddress, name: name_array[0] });
+                          } else {
+                              for (var i = 0; i < ret.body.list.length; i++) {
+                                  imageIdArray.push({ id: ret.body.list[i].id, url: ret.body.list[i].accessAddress, name: name_array[i] == "补充<br>照片" ? "补充照片" : name_array[i] });
+                              }
+                          }
+                          addEvent();  //新增投诉
+
+                      } else {  //上传失败
+
+                          if (uploadTime < 4) {  //5次上次失败机会
+
+                              //上次文件错误执行次数+1
+                              uploadTime += 1;
+                              addPicture();  //递归上传
+                          }
+
+                      }
+
+                  });
+
+              };
+
+              //3.提交报事
+              function addEvent() {
+
+                  //拼接接口地址：新增报事
+                  var addEvent_url = $api.getStorage("interface_url") + api_url.addFloorPatrol;
+
+                  //拼接报事的附加字段
+                  for (var i = 0; i < items.length; i++) {
+
+                      //图片
+                      if (items[i].type == "imageList") {
+                          items[i].value = imageIdArray;
+                      }
+
+                      //文本
+                      if (items[i].type == "textarea") {
+                          items[i].value = content;
+                      }
+
+                      //录音
+                      if (items[i].type == "audio") {
+                          items[i].value = { id: audioId, url: audioUrl };
+                      }
+
+                  }
+
+                  //新增投诉
+                  Ajax({
+                      type: "post",
+                      url: addEvent_url,
+                      tag: count,
+                      data: {
+                          access_token: $api.getStorage("access_token"),
+                          lng: lng,
+                          lat: lat,
+                          address: address,
+                          checkpointId: pointId,
+                          catalogId: catalogId,
+                          extraJson: JSON.stringify(items),
+                          checkpointGroupId: constructionId,
+                          stepId: stepId,
+                          dateCreated: dateCreated,
+                          recordId: uuid,
+                      },
+                      beforeSend: function () {
+                      },
+                      complete: function () {
+                      },
+                      success: function (data) {
+
+            if (data.success) {
+                    for(var i = 0; i < lists.length; i++){
+                      if(submitArray[count] == lists[i].uuid){
+                        lists.splice(i,1);
+                        break;
+                      }
+                    }
+
+                    var patrols = $api.getStorage("PatrolLists");
+                      for (var i = 0; i < patrols.length; i++) {
+                if(patrols[i].userId == $api.getStorage("user").id){
+                  for(var j = 0; j < patrols[i].list.length; j++){
+                    if(patrols[i].list[j].uuid == submitArray[count]){
+                      patrols[i].list.splice(j,1);
+                    }
+                  }
+                }
+              }
+                      $api.setStorage("PatrolLists", patrols);
+              count ++;
+              if(count == submitArray.length && delArray.length == 0){
+                count = 0;
+                submitArray = new Array();
+                delArray = new Array();
+                      if(missInfo){
+                        api.alert({ title: "提示", msg: "部分草稿丢失图片，已删除！", buttons: ["确定"] },function(ret,data){flushData();});
+                      }else {
+                        api.alert({ title: "提示", msg: "草稿提交成功！", buttons: ["确定"] },function(ret,data){flushData();});
+                      }
+              }else if(count == submitArray.length && delArray.length > 0){
+                //重新上传未上传成功信息
+                  api.hideProgress();
+                  api.confirm({
+                            title: "提示",
+                            msg: "部分草稿未上传成功",
+                            buttons: ["重新上传","取消"]
+                        }, function (ret, err) {
+                          if(ret.buttonIndex == 1){
+                            count = 0;
+                      submitArray = delArray;
+                      submit();
+                          }
+                        });
+
+              }else if(count < submitArray.length){
+                submit();
+              }
+
+                          } else {
+                            delArray.push(submitArray[count]);
+                            count ++;
+                            if(count == submitArray.length){
+                              api.hideProgress();
+                              count = 0;
+                submitArray = delArray;
+                delArray = new Array();
+                api.confirm({
+                  title: "错误",
+                  msg: "部分草稿未上传成功",
+                  buttons: ["重新上传","取消"]
+                },function(ret, err){
+                  if(ret.buttonIndex == 1){
+                    submit();
+                  }
+                });
+                            }else if(count < submitArray.length){
+                              submit();
+                            }
+                          }
+
+                      }
+                  });
+
+              };
+          }
+      };
+
+
+      //刷新首页及列表数据
+      function flushData(){
+         api.hideProgress();
+         init();
+          api.sendEvent({
+              name: 'flushDraftList',
+          });
+      };
+
+
+      //异常处理
+      function exceptionDeal(){
+      for(var i = 0; i < lists.length; i++){
+        if(submitArray[count] == lists[i].uuid){
+          lists.splice(i,1);
+          break;
+        }
+      }
+      count ++;
+      var patrols = $api.getStorage("PatrolLists");
+          for (var i = 0; i < patrols.length; i++) {
+      if(patrols[i].userId == $api.getStorage("user").id){
+        for(var j = 0; j < patrols[i].list.length; j++){
+          if(patrols[i].list[j].uuid == submitArray[count]){
+            patrols[i].list.splice(j,1);
+          }
+        }
+      }
+      }
+          $api.setStorage("PatrolLists", patrols);
+
+      if(count == submitArray.length && delArray.length == 0){
+      count = 0;
+      submitArray = new Array();
+      delArray = new Array();
+              // if (lists.length == 0) {
+              //     vm.noData = true;
+              // }
+            //   var script = "";
+            // script += "if(lists && lists.length > 0){lists.splice(0);}";
+            //
+            // api.execScript({
+            //     name: "drafts/drafts_list_win",
+            //     frameName: "drafts/patrol_list_frm",
+            //     script: script
+            // });
+            if(missInfo){
+              api.alert({ title: "提示", msg: "部分草稿丢失图片，已删除！", buttons: ["确定"] },function(ret,data){flushData();});
+            }else {
+              api.alert({ title: "提示", msg: "草稿提交成功！", buttons: ["确定"] },function(ret,data){flushData();});
+            }
+      }else if(count == submitArray.length && delArray.length > 0){
+      //重新上传未上传成功信息
+        api.hideProgress();
+        api.confirm({
+                  title: "提示",
+                  msg: "部分草稿未上传成功",
+                  buttons: ["重新上传","取消"]
+              }, function (ret, err) {
+                if(ret.buttonIndex == 1){
+                  count = 0;
+            submitArray = delArray;
+            submit();
+          }else{
+            api.hideProgress();
+          }
+              });
+
+      }else if(count < submitArray.length){
+      submit();
+      }
+      }
+
+      //判断是否有当前点位的激活信息
+      function hasActiveDrafts(){
+        var activeInfos = $api.getStorage("ActiveInfo");
+          var activeInfo = new Array();
+          var flag = true;
+          //判断本地是否有未提交激活信息
+          if (activeInfos && activeInfos != "undefined" && typeof(activeInfos) != "undefined" && activeInfos.length > 0) {
+      for (var i = 0; i < activeInfos.length; i++) {
+        if(activeInfos[i].userId == $api.getStorage("user").id){
+          activeInfo = activeInfos[i].list;
+        }
+      }
+      //本地没有当前用户未提交激活信息
+              if (activeInfo && activeInfo.length > 0) {
+                flag = false;
+                for(var i = 0; i < activeInfo.length; i++){
+                  activeData.push(activeInfo[i]);
+                }
+              submitActive();
+              }
+          }
+          if(flag){
+            submitDrafts();
+          }else {
+          }
+      };
+
+
+      //提交当前巡查点位的激活信息
+      function submitActive(){
+
+          var submitData = null;
+          if(activeData[0]){
+            submitData = activeData[0];
+          }else{
+            submitDrafts();
+            return false;
+          }
+          //获取对应的值
+          var access_token = $api.getStorage("access_token");
+
+          //添加图片
+          var image_array = submitData.extraJson[0].value;
+
+          //上次文件错误执行次数
+          var uploadTime = 0;
+
+          //判断是否上传文件
+          var imageIdArray = new Array();
+
+          if (image_array.length > 0) {
+              addPicture();
+          } else {
+              addEvent();
+          }
+
+          //2.上传图片
+          function addPicture() {
+
+              //拼接接口地址：上传文件
+              var fileUpload_url = $api.getStorage("interface_url") + api_url.fileUpload + "?access_token=" + access_token;
+
+              //上传图片
+              api.ajax({
+                  url: fileUpload_url,
+                  method: "post",
+                  timeout: 30000,
+                  report: true,
+                  data: {
+                      files: {
+                          file: image_array
+                      }
+                  }
+              }, function (ret, err) {
+
+                  if (ret.status == 0) {  //上传中
+
+                  } else if (ret.status == 1 && ret.body.success) {  //上传完成
+
+                      //重置上次文件错误执行次数
+                      uploadTime = 0;
+
+                      if (image_array.length == 1) {
+                          imageIdArray.push({ id: ret.body.data.id, url: ret.body.data.accessAddress });
+                      } else {
+                          for (var i = 0; i < ret.body.list.length; i++) {
+                              imageIdArray.push({ id: ret.body.list[i].id, url: ret.body.list[i].accessAddress });
+                          }
+                      }
+                      addEvent();  //新增投诉
+
+                  } else {  //上传失败
+
+                      if (uploadTime < 4) {  //5次上次失败机会
+
+                          //上次文件错误执行次数+1
+                          uploadTime += 1;
+                          addPicture();  //递归上传
+
+                      } else {
+
+                          api.hideProgress();
+
+                          if (ret.statusCode == 500) {
+                              api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                          } else {
+                              api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                          }
+
+                      }
+
+                  }
+
+              });
+
+          };
+
+          //3.提交报事
+          function addEvent() {
+
+              //拼接接口地址：新增报事
+              var url = $api.getStorage("interface_url") + api_url.activePoint;
+
+              var items = [{ "label": "照片", "name": "image", "type": "imageList", "value": imageIdArray, "url": "" }];
+
+              //新增投诉
+              Ajax({
+                  type: "post",
+                  url: url,
+                  data: {
+                      access_token: access_token,
+                      checkpointId: submitData.pointId,
+                      extraJson: JSON.stringify(items)
+                  },
+                  beforeSend: function () {},
+                  complete: function () {},
+                  success: function (data) {
+
+                      if (data.success) {
+
+                        activeData.splice(0,1);
+                        var activeInfos = $api.getStorage("ActiveInfo");
+                        for (var i = 0; i < activeInfos.length; i++) {
+              if(activeInfos[i].userId == $api.getStorage("user").id){
+                activeInfos[i].list = activeData;
+              }
+            }
+                        $api.setStorage("ActiveInfo",activeInfos);
+
+                        var pointList = $api.getStorage("PointList");
+              if(pointList != "undefined" && typeof(pointList) != "undefined" && pointList.length > 0){
+                for(var i = 0; i < pointList.length; i++){
+                  //存的点位信息中是否有当前点位的信息
+                  if(pointList[i].id == submitData.pointId){
+                    pointList[i].checkpointStatusCode = "ACTIVED";
+                    $api.setStorage("PointList",pointList);
+                    break;
+                  }
+                }
+                storeActivedInfos(submitData.pointId);
+              }else{
+                //没有本地缓存点位信息  1、点位信息过多，一直同步失败  2、不是同步点位信息角色  3、首次登陆，信息还没同步好
+                storeActivedInfos(submitData.pointId);
+              }
+              submitActive();
+
+                      } else {
+                        wrongTimes ++;
+                        if(wrongTimes == 2){
+                          activeData.splice(0,1);
+                          wrongTimes = 0;
+                        }else {
+                          submitActive();
+                        }
+                      }
+
+                  }
+              });
+          };
+      };
+
+
+      //已激活数据。。。防止同步失败等情况
+      function storeActivedInfos(pointId){
+        var activedInfo = $api.getStorage("ActivedInfos");
+
+          if(activedInfo == "undefined" || typeof(activedInfo) == "undefined"){
+            activedInfo = new Array();
+          }
+          var index = 0;
+          for(var i = 0; i < activedInfo.length; i++){
+            if(activedInfo[i] && activedInfo[i].userId == $api.getStorage("user").id){
+              index = i;
+              break;
+            }else {
+              index = activedInfo.length;
+            }
+          }
+          if(!activedInfo[index]){
+            activedInfo[index] = new Object();
+            activedInfo[index].list = new Array();
+          }
+          activedInfo[index].userId = $api.getStorage("user").id;
+          activedInfo[index].list.push(pointId);
+          $api.setStorage("ActivedInfos", activedInfo);
+      };
+
+    </script>
+</body>
+</html>

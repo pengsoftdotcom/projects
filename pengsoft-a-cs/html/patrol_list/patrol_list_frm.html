@@ -1,0 +1,584 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+	<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+	<title>巡查记录——列表——frm</title>
+	<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+	<link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+     <div class="loading-wrap bg-gray fail-wrap-45" v-show="loading" v-cloak>
+        <div class="spinner"></div>
+    </div>
+    <div class="fail-wrap bg-gray fail-wrap-45" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray fail-wrap-45" v-show="noData" v-cloak>
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="custom-filter-menuwrap" v-if="showFilter">
+        <div class="custom-filter-menuitem" @click="openPicker" v-text="picked_date">
+            日期
+        </div>
+        <div class="custom-filter-menuitem" @click="openFilter('site')" v-text="sites" v-show="showSite">
+            工地
+        </div>
+        <div class="custom-filter-menuitem" @click="openFilter('point')" v-text="points">
+            部位
+        </div>
+        <div class="custom-filter-menuitem" @click="openFilter('state')" v-text="states">
+            状态
+        </div>
+        <!--<div class="custom-filter-menubtn" @click="backToDefault">
+        	所有
+        </div>-->
+    </div>
+    <div class="patrol-list-wrap" id="momo" :class="{'search-result-wrap':showFilter}">
+        <template v-for="list in lists">
+            <div class="patrol-list-item" v-on:click="openPatrolDetail($index)">
+                <div class="patrol-list-time">{{list.eventDateCreated}}<span class="custom-label aui-pull-right" v-bind:class="list.icon">{{list.eventCatalogName}}</span></div>
+                <div class="aui-text-666 f-fs14 aui-ellipsis-1">{{list.checkpointCheckpointGroupName}}</div>
+                <div class="aui-text-666 f-fs14 aui-ellipsis-1">
+                    <i class="aui-iconfont aui-icon-focus aui-text-custom"></i>{{list.code}} {{list.checkpointName}}
+                </div>
+                <div class="aui-text-666 f-fs14 f-oh">
+                    <div class="aui-col-xs-6">{{list.post}}：{{list.eventCreatedByName}}</div>
+                </div>
+            </div>
+        </template>
+        <p class="aui-text-center aui-padded-5" v-text="loadTips"></p>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+                noMore: false,  //是否显示：没有更多数据
+                loadTips: "",  //1.没有更多数据了  2.正在加载中...  3.上拉加载更多
+                pullDownRefresh: true,  //下拉刷新
+                showSite: false,   //是否显示：工地筛选项
+
+                //列表相关参数
+                isResult: true,  //判断上次ajax是否返回
+                pageCount: 0,  //当前页数
+                lists: [],  //新闻列表数组
+                showFilter: false, //是否显示筛选项
+
+               //筛选参数
+               date: "全部日期",
+               sites: "全部工地",
+               points: "全部部位",
+               states: "全部状态",
+
+               picked_date: getTodayDate(), //筛选：日期显示
+               picked_site: "",  //筛选：选中项
+               picked_point: "",
+               picked_state: "",
+               scope: "SELF",
+
+               siteList: [{id:"",name:"全部工地"}],  //筛选： 数据列表
+               pointList: [{id:"",name:"全部部位"}],
+               stateList: [{id:"",name:"全部状态"}],
+
+            },
+            methods: {
+
+                openPatrolDetail: function (i) {  //打开巡查详情
+                    openWin("patrol_list/patrol_detail_win", { id: this.lists[i].id, isFlow: this.lists[i].checkpointFLow});
+                },
+
+                openPicker: function(){
+                	openPicker();
+                },
+
+                openFilter: function(type){
+                	openFilter(type);
+                },
+                backToDefault: function(){
+
+                	if(this.siteList.length == 2){
+	                	this.picked_site = this.siteList[1].id;
+	                }else{
+	                	this.picked_site = "";
+	                }
+
+//	                this.date =  "全部日期";
+	                this.sites = "全部工地";
+	                this.points = "全部部位";
+	                this.states = "全部状态";
+
+	                this.picked_date = getTodayDate();
+	                this.picked_point = "";
+	                this.picked_state = "";
+
+	                this.pageCount = 0;
+	                this.pullDownRefresh = true;
+
+	                getPatrolList();
+                }
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+						api.addEventListener({
+						    name: 'flushDraftList'
+						}, function(ret, err){
+							vm.pullDownRefresh = true;
+							vm.pageCount = 0;
+							getPatrolList();
+						});
+
+
+            if(api.systemType == "ios"){
+	        	Vue.config.async = false;
+	        }
+
+            vm.picked_state = api.pageParam.catalogIdArray ? api.pageParam.catalogIdArray : ""; //状态ID
+            vm.states = api.pageParam.states ? api.pageParam.states : "全部状态";                  //状态名称
+            vm.sites = api.pageParam.checkpointCheckpointGroupName ? api.pageParam.checkpointCheckpointGroupName : "全部工地";
+            vm.picked_point = api.pageParam.picked_point ? api.pageParam.picked_point : "";		//点位ID
+            vm.points = api.pageParam.points ? api.pageParam.points : "全部部位";					//点位名称
+            vm.scope = api.pageParam.scope ? api.pageParam.scope : "";							//查询自己的还是所有的
+            vm.picked_date = api.pageParam.date ? api.pageParam.date : getTodayDate();
+            if(api.pageParam.noDate){vm.picked_date="";}
+//          vm.date = api.pageParam.date ? api.pageParam.date : "全部日期";
+
+            var oneSite = $api.getStorage("oneSite"); //如果只有一个工地
+            vm.picked_site = api.pageParam.picked_site ? api.pageParam.picked_site : (oneSite ? oneSite.id : "");
+            if(vm.picked_site){
+            	getPointList();
+            }
+            if(!oneSite){
+            	vm.showSite = true;
+            }
+            getStateList(true);
+
+            if(api.pageParam.hideFilter){
+            	vm.showFilter = false;
+            }else{
+            	vm.showFilter = true;
+            }
+			                    //下拉刷新
+            api.setRefreshHeaderInfo({
+                bgColor: "#efefef",
+                textColor: "#333",
+                textDown: "下拉刷新",
+                textUp: "释放立即刷新",
+            }, function (ret, err) {
+
+                vm.pullDownRefresh = true;
+                vm.pageCount = 0;
+                getPatrolList();
+
+            });
+
+            //上拉加载
+            api.addEventListener({
+                name: "scrolltobottom",
+                extra: {
+                    threshold: 0
+                }
+            }, function (ret, err) {
+
+                if (!vm.noMore) {
+
+                    vm.loadTips = "正在加载中...";
+                    getPatrolList();
+
+                }
+
+            });
+
+        };
+
+
+        //查询巡查记录
+        function getPatrolList() {
+
+            if (vm && vm.isResult) {
+
+            	if(vm.pageCount == 0){
+            		vm.lists.splice(0);
+            	}
+
+            	if(vm.picked_site == ""){
+            		vm.picked_point = "";
+            	}
+
+                //拼接接口地址：分页获取新闻
+                var url = $api.getStorage("interface_url") + api_url.getPatrolList;
+
+                Ajax({
+                    type: "get",
+                    url: url,
+                    data: {
+                        access_token: $api.getStorage("access_token"),
+                        page: vm.pageCount,
+                        scope: vm.scope,
+                        checkpointGroupIdArray: vm.picked_site,
+                        checkpointIdArray: vm.picked_point,
+                        code: vm.picked_state,
+                        startDate: vm.picked_date,
+                        endDate: vm.picked_date,
+                        size: 10
+                    },
+                    beforeSend: function () {
+                    	vm.loadingFail = false;
+                        vm.noData = false;
+                    	if(vm.pullDownRefresh){
+                			vm.loading = true;
+                    	}
+                        vm.isResult = false;
+                        api.execScript({
+						    name: "patrol_list/patrol_list_win",
+						    script: "vm.isRrturn = false;"
+						});
+                    },
+                    complete: function () {
+                        vm.isResult = true;
+                        vm.pullDownRefresh = false;
+                        vm.loading = false;
+                        api.refreshHeaderLoadDone();
+
+                        api.execScript({
+						    name: "patrol_list/patrol_list_win",
+						    script: "vm.isRrturn = true;"
+						});
+                    },
+                    success: function (data) {
+
+                        if (data.success) {
+
+                            //如果是下拉刷新，则需要清空列表
+                            if (vm.pullDownRefresh) {
+                                vm.lists.splice(0, vm.lists.length);
+                            }
+
+                            //如果一条数据都没有，将在界面显示“暂无数据”
+                            if (data.page.content.length == 0 && vm.lists.length == 0) {
+                                vm.noData = true;
+                                vm.loadTips = "";
+                                return false;
+                            }
+
+                            //向界面依次添加列表
+                            for (var i = 0; i < data.page.content.length; i++) {
+                            	var iconColor = data.page.content[i].icon;
+                                if(data.page.content[i].eventCatalogNamAndStatusName == "一般隐患/完成" || data.page.content[i].eventCatalogNamAndStatusName == "重大隐患/完成" || data.page.content[i].eventCatalogNamAndStatusName == "文明施工/完成"){
+                                	iconColor = "bg-green";
+                                }
+                                vm.lists.$set(vm.lists.length,{
+                                    id: data.page.content[i].checkStepeventId ? data.page.content[i].checkStepeventId : data.page.content[i].checkpointeventId ,  //巡查id
+                                    icon: iconColor,  //icon
+                                    checkpointCheckpointGroupName: toEmpty(data.page.content[i].checkpointgroupName),  //巡查工地名称
+                                    code: toEmpty(data.page.content[i].checkpointCode),  //巡查点位编号
+                                    checkpointName: toEmpty(data.page.content[i].checkpointName),  //巡查点位名称
+                                    eventDateCreated: formatDatetime(data.page.content[i].date_created),  //巡查时间
+                                    eventCatalogName: data.page.content[i].eventCatalogNamAndStatusName,  //事件类型
+                                    post: data.page.content[i].jobName,   //巡查人员职位
+                                    eventCreatedByName: data.page.content[i].userName,  //巡查人员名称
+                                    checkpointFLow: data.page.content[i].checkpointFLow  //是否是楼层检查点
+
+                                });
+
+                            }
+
+                            //判断是否还有未加载到界面的数据
+                            if (data.page.content.length < 10) {
+                                vm.loadTips = "没有更多数据了";
+                                vm.noMore = true;
+                            } else {
+                                vm.loadTips = "上拉加载更多";
+                                vm.noMore = false;
+                            }
+                            vm.pageCount += 1;
+
+                        } else {
+                            vm.loadingFail = true;  //加载失败
+                        }
+
+                        vm.pullDownRefresh = false;
+
+                    }
+                });
+
+            }
+
+        };
+
+
+        //获取工地列表
+        function getSiteList(init) {
+
+            vm.siteList.splice(1);
+
+            var url = $api.getStorage("interface_url") + api_url.getConstructionList;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                },
+                beforeSend: function () {
+
+                },
+                complete: function () {
+                    if(init){
+                    	getPatrolList();
+                    }
+                },
+                success: function (data) {
+
+                    if (data.success) {
+
+                        //如果一条数据都没有，将在界面显示“暂无数据”
+                        if (data.list.length == 0) {
+                            return false;
+                        }
+
+                        for (var i = 0; i < data.list.length; i++) {
+                            vm.siteList.push({
+                                id: data.list[i].id,
+                                name: data.list[i].name,
+                            });
+                        }
+
+                    } else {
+                        vm.sites = "加载失败";  //加载失败
+                    }
+
+                }
+            });
+
+        };
+
+
+         //获取点位列表
+        function getPointList(init) {
+
+            vm.pointList.splice(1, vm.pointList.length);
+
+            if(vm.picked_site == ""){
+        		return false;
+        	}
+
+            var url = $api.getStorage("interface_url") + api_url.getSimplePoint;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    checkpointGroupId: vm.picked_site
+                },
+                beforeSend: function () {
+
+                },
+                complete: function () {
+                    getPatrolList();
+                },
+                success: function (data) {
+
+                    if (data.success) {
+
+                        //如果一条数据都没有，将在界面显示“暂无数据”
+                        if (data.list.length == 0) {
+                            return false;
+                        }
+
+                        for (var i = 0; i < data.list.length; i++) {
+                            vm.pointList.push({
+                                id: data.list[i].id,
+                                name: data.list[i].code + " " + data.list[i].name,
+                            });
+                        }
+
+                        vm.picked_point = "";
+                        vm.points = "全部部位";
+
+                    } else {
+                        vm.points = "加载失败";  //加载失败
+                    }
+
+                }
+            });
+
+        };
+
+
+        //获取状态列表
+        function getStateList(init) {
+
+            vm.stateList.splice(1, vm.stateList.length);
+
+            var url = $api.getStorage("interface_url") + api_url.getAllState;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                },
+                beforeSend: function () {
+
+                },
+                complete: function () {
+                	if(init){
+                		getSiteList(true);
+                	}
+                },
+                success: function (data) {
+
+                    if (data.success) {
+                        //如果一条数据都没有，将在界面显示“暂无数据”
+                        if (data.list.length == 0) {
+                            return false;
+                        }
+
+                        for (var i = 0; i < data.list.length; i++) {
+                            vm.stateList.push({
+                                id: data.list[i].code,
+                                name: data.list[i].name,
+                            });
+                        }
+
+                    } else {
+                        vm.states = "加载失败";  //加载失败
+                    }
+
+                }
+            });
+
+        };
+
+
+        //打开选择器
+        function openFilter(type){
+
+        	var list = [];
+        	var ifOpen = true;
+        	if(type == "site" && vm.siteList.length > 2){
+        		list = vm.siteList;
+        	}else if(type == "point" && vm.pointList.length > 2){
+        		list = vm.pointList;
+        	}else if(type == "state" && vm.stateList.length > 2){
+        		list = vm.stateList;
+        	}else {
+        		ifOpen = false;
+        	}
+
+            if(ifOpen){
+            	api.openFrame({
+		            name: "patrol_list/patrol_list_filter_frm",
+		            url: "widget://html/patrol_list/patrol_list_filter_frm.html",
+		            bgColor: "transparent",
+		            bounces: false,
+		            rect: {
+		                x: 0,
+		                y: 0,
+		                w: "auto",
+		                h: "auto"
+		            },
+		            pageParam:{
+		            	list: list,
+		            	type: type
+		            }
+		        });
+            }
+
+        }
+
+
+        //格式化时间
+        function formatDatetime(datetime) {
+
+            var time = new Date(datetime);
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+            var hour = p(time.getHours());
+            var min = p(time.getMinutes());
+            var sec = p(time.getSeconds());
+
+            return year + "/" + month + "/" + day + " " + hour + ":" + min + ":" + sec;
+
+            function p(s) {
+                return s < 10 ? "0"
+                + s : s;
+            };
+
+        };
+
+
+        //打开日期选择器
+		function openPicker() {
+
+		    api.openPicker({
+		        type: "date",
+		        title: "请选择日期"
+		    }, function (ret, err) {
+		        var year = ret.year;
+		        var month = ret.month;
+		        var day = ret.day;
+
+		        var date1 = new Date(year, month - 1, day).getTime();
+		        var now = new Date();
+		        var date2 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+		        if (date1 > date2) {
+		            api.toast({ msg: "请选择正确的日期！", duration: 3000 });
+		            return false;
+		        }
+
+		        var datetime = year + "/" + p(month) + "/" + p(day);
+		        vm.picked_date = datetime;
+		        vm.date = datetime;
+
+		        vm.pullDownRefresh = true;
+		        vm.pageCount = 0;
+		        getPatrolList();
+
+		    });
+
+		    function p(s) {
+		        return s < 10 ? "0" + s : s;
+		    };
+
+		};
+
+
+		//获取今天的日期
+	    function getTodayDate() {
+
+	        var time = new Date();
+	        var year = time.getFullYear();
+	        var month = p(time.getMonth() + 1);
+	        var day = p(time.getDate());
+
+	        function p(s) {
+	            return s < 10 ? "0" + s : s;
+	        };
+
+	        return year + "/" + month + "/" + day;
+
+	    };
+
+    </script>
+</body>
+</html>

@@ -1,0 +1,214 @@
+﻿<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>巡查记录——列表——win</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <header id="header" class="aui-bar aui-bar-nav header-custom">
+        <a class="aui-pull-left" onclick="closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+        <div class="aui-title" v-text="title">
+        </div>
+    </header>
+    <div id="tab" class="custom-tab-wrap" v-if="showFilter">
+        <div class="aui-content-padded">
+            <div class="aui-tab">
+                <ul class="custom-tab">
+                    <li v-bind:class="{'active':tab1}" v-on:click="changeTab(1)">我的巡查记录</li>
+                    <li v-bind:class="{'active':tab2}" v-on:click="changeTab(2)">所有巡查记录</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <footer id="footer" class="aui-nav footer-btn-wrap1 bg-default">
+        <a class="aui-btn aui-btn-custom aui-btn-block" v-effect="light" tapmode onclick="openScanner();">扫描巡查部位二维码</a>
+    </footer>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+    	var FNScanner = null;
+    	var vm = new Vue({
+    		el: "body",
+    		data: {
+    			tab1: true,
+    			tab2: false,
+    			
+    			title: "巡查记录",
+    			showFilter: true,
+    			flow: false,
+    			
+    			scope: "",  //查询自己的还是所有的
+    			
+    			isRrturn: true
+    		},
+    		methods: {
+    			changeTab: function(index){
+    				
+    				var vm_p = this;
+    				
+    				if(vm_p.isRrturn){
+    				
+    					if(index == 1){
+    				
+	    					vm_p.tab1 = true;
+	    					vm_p.tab2 = false;
+	    					this.scope = "SELF";
+	    					changeTab();
+	    					
+	    				}else if(index == 2){
+	    				
+	    					vm_p.tab1 = false;
+	    					vm_p.tab2 = true;
+	    					this.scope = "";
+	    					changeTab();
+	    				}
+    				}
+    				
+    			}
+    		}
+    	});
+    	
+        apiready = function () {
+
+            api.parseTapmode();
+
+            setStatusBarStyle("light");
+            
+            if(api.pageParam.index){
+            	vm.changeTab(api.pageParam.index);
+            }else{
+            	vm.scope = "SELF";
+            }
+            
+            if(api.pageParam.hideFilter){
+            	vm.showFilter = false;
+            }else {
+            	vm.showFilter = true;
+            }
+            
+            if(api.pageParam.title){
+            	vm.title = api.pageParam.title;
+            }
+            
+			FNScanner = api.require('FNScanner');
+            api.openFrame({
+                name: "patrol_list/patrol_list_frm",
+                url: "widget://html/patrol_list/patrol_list_frm.html",
+                bgColor: "#efefef",
+                bounces: true,
+                rect: {
+                    x: 0,
+                    y: $api.offset($api.byId("header")).h +　( vm.showFilter ? $api.offset($api.byId("tab")).h : 0),
+                    w: api.winWidth,
+                    h: api.winHeight - $api.offset($api.byId("header")).h - $api.offset($api.byId("footer")).h - (vm.showFilter ? $api.offset($api.byId("tab")).h : 0)
+                },
+                pageParam: {
+					catalogIdArray: api.pageParam.catalogIdArray,
+                    states: api.pageParam.states,
+                    picked_site: api.pageParam.picked_site,
+                    checkpointCheckpointGroupName: api.pageParam.checkpointCheckpointGroupName, //工地名称
+                    picked_point: api.pageParam.picked_point,
+                    points: api.pageParam.points,
+		            scope: vm.scope,
+		            date: api.pageParam.date,
+		            hideFilter: api.pageParam.hideFilter,
+		            noDate: api.pageParam.noDate,  //待处理事件没有时间筛选项
+                }
+            });
+            
+        };
+        
+        
+        //打开二维码扫描
+        function openScanner() {
+        
+        	api.execScript({
+        		name: "home_win",
+			    frameName: "home_frm",
+			    script: "openScanner();"
+			});
+        
+//			FNScanner.openScanner({
+//			    autorotation: false,
+//			}, function(ret, err) {
+//			    if (ret) {
+//
+//			        if (ret.eventType == "show") {
+//	                } else if (ret.eventType == "selectImage") {
+//	
+//	                } else if (ret.eventType == "success") {
+//						try {
+//	                    	var obj = JSON.parse(ret.content);
+//	                    	if (obj.key == "javascript") {
+//	                    	
+//                          	if(obj.flow){
+//	                            	vm.flow = true;
+//	                            }else {
+//	                            	vm.flow = false;
+//	                            }
+//	                            eval(obj.val);
+//	                        }
+//	                    	setTimeout(function(){FNScanner.closeView();},300);
+//	                	}
+//	                    catch (e) {
+//
+//	                    	FNScanner.closeView();
+//	                        api.alert({ title: "错误", msg: "该二维码不属于本app的扫描范围！", buttons: ["确定"] });
+//	                    }
+//	
+//	                } else if (ret.eventType == "cancel") {
+//	                    setTimeout(function () { api.toast({ msg: "取消扫描！" }); }, 1000);
+//	                } else if (ret.eventType == "fail") {
+//	                    api.alert({ title: "错误", msg: "扫描失败！", buttons: ["确定"] },function(){
+//                      	setTimeout(function(){FNScanner.closeView();},300);
+//                      });
+//	                }
+//			    } else {
+//			    
+//			    }
+//			});
+
+        };
+        
+        //二维码扫描进行添加
+        function addPatrolForScanner(pointID, pointName, siteID, siteName, code) {
+
+            openWin("add_patrol/add_patrol_win", {
+                pointID: pointID,
+                code: code,
+                pointName: pointName,
+                siteID: siteID,
+                siteName: siteName,
+                flow: vm.flow
+            });
+            
+        };
+
+        
+        function changeTab(scope){
+
+        	var script = "";
+        	script += "vm.pullDownRefresh = true;";
+        	script += "vm.scope=\"" + vm.scope + "\";";
+			script += "vm.pageCount=0;";
+        	script += "getPatrolList();";
+        	
+        	api.execScript({
+			    frameName: "patrol_list/patrol_list_frm",
+			    script: script
+			});
+        };
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,173 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>工地列表——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/custom.css" />
+    <style type="text/css">
+		.site-name{
+			font-size: 16px;
+			line-height: 34px;
+			display: inline-block;
+		}
+		.patrol-list-item{
+			position: relative;
+		}
+		.site-date{
+			color: #999;
+			font-size: 14px;
+			position: absolute;
+			right: 10px;
+			top: 8px;
+		}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="noData">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="timeOut">
+        <p class="fail-info">请求超时</p>
+    </div>
+   	<div class="aui-searchbar-wrap demo">
+	    <div class="aui-searchbar aui-border-radius" tapmode @click="doSearch">
+	        <i class="aui-iconfont aui-icon-search"></i>
+	        <div class="aui-searchbar-text">请输入搜索内容</div>
+	        <div class="aui-searchbar-input">
+        		<input type="text" placeholder="请输入搜索内容" v-model="searchInfo">
+	        </div>
+	        <i class="aui-iconfont aui-icon-roundclosefill" tapmode @click="clearInput"></i>
+	    </div>
+	    <div class="aui-searchbar-cancel aui-text-info" tapmode @click="cancelSearch">取消</div>
+	</div>
+    <div class="aui-padded-5"></div>
+    <div class="patrol-list-wrap">
+    	<template v-for="list in lists | filterBy searchInfo in 'site'">
+    	<div class="patrol-list-item" v-on:click="openProgressList(list.index)" v-effect="">
+            <div class="aui-text-333" class="site-name">
+            	<div style="max-width: 2rem;" v-text="list.site"></div>
+            	<div class="site-date" v-text="list.date"></div>
+        	</div>
+            <div class="f-fs14 aui-text-999">
+                <i class="aui-iconfont aui-icon-calendar aui-text-custom"></i>
+            	已巡查时间: <span class="aui-text-custom" v-text="list.day+' 天'"></span>
+            </div>
+        </div>
+        </template>
+    </div>
+    <p class="aui-text-center aui-padded-5" v-text="loadTips"></p>
+    <script src="../../../script/api.js"></script>
+    <script src="../../../script/vue.js"></script>
+    <script src="../../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+
+                isResult: true,
+
+                lists: [],    //工地列表数组
+
+                searchInfo: "",
+            },
+            methods: {
+                openProgressList: function (index) {  //打开工地详情
+                    openWin("rate/progress/progress_list_win", { id: this.lists[index].id });
+                },
+                doSearch: function(){
+                	$api.addCls($api.dom(".aui-searchbar-wrap"),"focus");
+					$api.dom('.aui-searchbar-input input').focus();
+                },
+                cancelSearch: function(){
+                	$api.removeCls($api.dom(".aui-searchbar-wrap.focus"),"focus");
+                	$api.dom('.aui-searchbar-input input').blur();
+                	this.searchInfo = "";
+                },
+                clearInput: function(){
+                	this.searchInfo = "";
+                }
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            getSiteList();
+
+        };
+
+
+        //获取工地列表
+        function getSiteList() {
+
+            if(vm.isResult){
+
+				var url = $api.getStorage("interface_url") + api_url.getSiteList;
+
+	            Ajax({
+	                type: "get",
+	                url: url,
+	                data: {
+	                    access_token: $api.getStorage("access_token"),
+	                },
+	                beforeSend: function () {
+	                	vm.isResult = false;
+	                	vm.loadingFail = false;
+                		vm.loading = true;
+	                },
+	                complete: function () {
+	                	vm.isResult = true;
+	                    vm.loading = false;
+	                    api.refreshHeaderLoadDone();
+	                },
+	                success: function (data) {
+
+	                    if (data.success) {
+
+	                        var list = data.list;
+	                        //如果一条数据都没有，将在界面显示“暂无数据”
+	                        if (list.length == 0) {
+	                            vm.noData = true;
+	                            return false;
+	                        }
+
+	                        for (var i = 0; i < list.length; i++) {
+	                            vm.lists.push({
+	                                id: list[i].id,
+	                                site: list[i].name,
+	                                date: list[i].createdDate,
+	                                day: list[i].inspectedNum,
+                                    index: i,
+	                            });
+	                        }
+
+	                    } else {
+	                        vm.loadingFail = true;  //加载失败
+	                    }
+
+	                }
+	            });
+			}
+        };
+    </script>
+</body>
+</html>

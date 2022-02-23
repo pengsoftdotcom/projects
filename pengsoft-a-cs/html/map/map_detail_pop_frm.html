@@ -1,0 +1,1127 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>网格详情</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css"/>
+    <link rel="stylesheet" type="text/css" href="../../css/map.css"/>
+    <style>
+    	.con{
+    		padding-top: 0.8rem;
+    	}
+    	.list-content{
+    		padding: 15px;
+    	}
+		.bg1{
+			background:#ed4444;
+		}
+		.bg2{
+			background:#efaa2d;
+		}
+		.list-text-p{
+			font-family:PingFangSC-Regular;
+			font-size:16px;
+			color:#333333;
+		}
+    </style>
+</head>
+<body>
+	<script type="text/javascript">
+		var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 375 * 100;
+		ele.style.fontSize = size + "px";
+	</script>
+	<div class="pop">
+		<div class="close-pop" onclick="closeFrame()"></div>
+		<div class="detail-pop" style="background: #fff">
+			<div class="text-pop">
+				<ul>
+					<template v-for="list in menu">
+						<li class="text-pop-li" :class="{'text-pop-li-active':list.flag}" @click="changeTab($index)" v-text="list.name">环境情况</li>
+					</template>
+				</ul>
+				<div>
+					<!--环境情况-->
+					<div v-show="hjShow">
+						<div class="hj-data">
+							<div class="hj-data-div data-right">
+								<p style="color: #FFA11F">56个</p>
+								<p>涵盖项目</p>
+							</div>
+							<div class="hj-data-div data-right">
+								<p style="color: #FFA11F">56个</p>
+								<p>设备总数</p>
+							</div>
+							<div class="hj-data-div" style="flex-grow: 2;margin-right: 0px;margin-bottom: 10px;padding-right: 0px;">
+								<p style="color: #FFA11F">56个</p>
+								<p>24小时预警项目数</p>
+							</div>
+						</div>
+						<div>
+							<p style="text-align: center;color:#333333;">24小时正常运行率</p>
+							<div id="hj" style="height: 140px"></div>
+						</div>
+					</div>
+					<!--施工升降机／塔机情况-->
+					<div style="background: #f4f4f4;" v-show="sgsjjShow">
+						<div style="margin-bottom: 5px;background: #fff;">
+							<div style="padding: 15px;display: -webkit-box;">
+								<p style="background:#1673d5;border-radius:100px;width:3px;margin-right: 5px;"></p>
+								<p style="color:#1673d5;">施工升降机</p>
+							</div>
+							<div class="tj-data">
+								<div class="tj-data-div data-right">
+									<p style="color: #FFA11F">56个</p>
+									<p>涵盖项目</p>
+								</div>
+								<div class="tj-data-div">
+									<p style="color: #FFA11F">56个</p>
+									<p>设备总数</p>
+								</div>
+							</div>
+							<div id="sgsjj" style="height: 140px"></div>
+						</div>
+						<div style="margin-bottom: 5px;background: #fff;">
+							<div style="padding: 15px;display: -webkit-box;">
+								<p style="background:#1673d5;border-radius:100px;width:3px;margin-right: 5px;"></p>
+								<p style="color:#1673d5;">塔机</p>
+							</div>
+							<div class="tj-data">
+								<div class="tj-data-div data-right">
+									<p style="color: #FFA11F">56个</p>
+									<p>涵盖项目</p>
+								</div>
+								<div class="tj-data-div data-right">
+									<p style="color: #FFA11F">56个</p>
+									<p>设备总数</p>
+								</div>
+								<div class="tj-data-div">
+									<p style="color: #FFA11F">56个</p>
+									<p>设备总数</p>
+								</div>
+							</div>
+							<div id="tj" style="height: 140px"></div>
+						</div>
+					</div>
+					<!--安全巡查情况-->
+					<div style="background: #f4f4f4;" v-show="aqxcShow">
+						<div style="margin-bottom: 5px;background: #fff;">
+							<div style="padding: 15px;display: -webkit-box;">
+								<p style="background:#1673d5;border-radius:100px;width:3px;margin-right: 5px;"></p>
+								<p style="color:#1673d5;">工地自检</p>
+							</div>
+							<div id="gdzj" style="height: 180px;"></div>
+						</div>
+						<div style="margin-bottom: 5px;background: #fff;">
+							<div style="padding: 15px;display: -webkit-box;">
+								<p style="background:#1673d5;border-radius:100px;width:3px;margin-right: 5px;"></p>
+								<p style="color:#1673d5;">安全检查</p>
+							</div>
+							<div id="aqjc" style="height: 180px;"></div>
+						</div>
+					</div>
+					<!--危大工程各阶段分布情况-->
+					<div v-show="wdgcfbShow">
+						<div style="padding: 10px;">
+							<div class="dis">
+								<p style="margin-right: 10px;color: #1673d5;">方案报审</p>
+								<div>
+									<p class="dian"></p>
+									<p class="line"></p>
+								</div>
+								<div style=" margin-left: 10px;">
+									<div class="dis" style="margin-bottom: 10px;">
+										<p class="fb-font" style="letter-spacing:4px;">超规模:</p>
+										<p class="fb-sz">1</p>
+									</div>
+									<div class="dis">
+										<p class="fb-font">一般规模:</p>
+										<p class="fb-sz">0</p>
+									</div>
+								</div>
+							</div>
+							<div class="dis">
+								<p style="margin-right: 10px;color: #1673d5;">专家评审</p>
+								<div>
+									<p class="dian"></p>
+									<p class="line"></p>
+								</div>
+								<div style=" margin-left: 10px;">
+									<div class="dis" style="margin-bottom: 10px;">
+										<p class="fb-font" style="letter-spacing:4px;">超规模:</p>
+										<p class="fb-sz">1</p>
+									</div>
+									<div class="dis">
+										<p class="fb-font">一般规模:</p>
+										<p class="fb-sz">0</p>
+									</div>
+								</div>
+							</div>
+							<div class="dis">
+								<p style="margin-right: 10px;color: #1673d5;">等待实施</p>
+								<div>
+									<p class="dian"></p>
+									<p class="line"></p>
+								</div>
+								<div style=" margin-left: 10px;">
+									<div class="dis" style="margin-bottom: 10px;">
+										<p class="fb-font" style="letter-spacing:4px;">超规模:</p>
+										<p class="fb-sz">1</p>
+									</div>
+									<div class="dis">
+										<p class="fb-font">一般规模:</p>
+										<p class="fb-sz">0</p>
+									</div>
+								</div>
+							</div>
+							<div class="dis">
+								<p style="margin-right: 10px;color: #1673d5;">施工监管</p>
+								<div>
+									<p class="dian"></p>
+									<p class="line"></p>
+								</div>
+								<div style=" margin-left: 10px;">
+									<div class="dis" style="margin-bottom: 10px;">
+										<p class="fb-font" style="letter-spacing:4px;">超规模:</p>
+										<p class="fb-sz">1</p>
+									</div>
+									<div class="dis">
+										<p class="fb-font">一般规模:</p>
+										<p class="fb-sz">0</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<!--危大工程覆盖项目-->
+					<div v-show="wdgcfgShow">
+						<div style="margin-bottom: 5px;background: #fff;">
+							<div class="tj-data" style="margin-top: 10px;">
+								<div class="tj-data-div data-right">
+									<p style="color: #FFA11F">56个</p>
+									<p>总数</p>
+								</div>
+								<div class="tj-data-div">
+									<p style="color: #FFA11F">56个</p>
+									<p>危大工程</p>
+								</div>
+							</div>
+							<div id="fgxm" style="height: 140px;"></div>
+						</div>
+					</div>
+					<!--人员考勤情况-->
+					<div style="padding: 10px;" v-show="rykcShow">
+						<div id="rykq" style="height: 200px"></div>
+					</div>
+					<!--视频情况-->
+					<div v-show="spqkShow">
+						<div style="margin-bottom: 5px;background: #fff;">
+							<div class="tj-data" style="margin-top: 10px;    border-bottom: 1px solid #eeeeee;padding-bottom: 10px;">
+								<div class="tj-data-div data-right">
+									<p style="color: #FFA11F">56个</p>
+									<p>涵盖项目</p>
+								</div>
+								<div class="tj-data-div">
+									<p style="color: #FFA11F">56个</p>
+									<p>摄像头总数</p>
+								</div>
+							</div>
+							<div>
+								<p style="text-align: center;color:#333333;padding-top: 10px;">摄像头在线情况</p>
+								<div id="spqk" style="height: 140px"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/vue.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript" src="../../script/echarts.js"></script>
+<script type="text/javascript" src="../../script/jquery-1.11.1.min.js"></script>
+<script type="text/javascript">
+	var vm = new Vue({
+		el : "body",
+		data : {
+			tab1:true,
+			tab2:false,
+			menu:[{name:"环境情况",flag:true},{name:"施工升降机／塔机情况",flag:false},{name:"安全巡查情况",flag:false},
+			{name:"危大工程各阶段分布情况",flag:false},{name:"危大工程覆盖项目",flag:false},{name:"人员考勤情况",flag:false},
+			{name:"视频情况",flag:false}],
+			hjShow:true,
+			sgsjjShow:false,
+			aqxcShow:false,
+			wdgcfbShow:false,
+			wdgcfgShow:false,
+			rykcShow:false,
+			spqkShow:false
+		},
+		methods: {
+			changeTab: function(index){
+				for(var i=0;i<this.menu.length;i++){
+					if(index==i){
+						this.menu[i].flag=true;
+					}else{
+						this.menu[i].flag=false;
+					}
+				}
+				if(index==0){
+					this.hjShow=true;
+					this.sgsjjShow=false;
+					this.aqxcShow=false;
+					this.wdgcfbShow=false;
+					this.wdgcfgShow=false;
+					this.rykcShow=false;
+					this.spqkShow=false;
+					this.$nextTick(function(){
+						hj();
+					})
+				}else if(index==1){
+					this.hjShow=false;
+					this.sgsjjShow=true;
+					this.aqxcShow=false;
+					this.wdgcfbShow=false;
+					this.wdgcfgShow=false;
+					this.rykcShow=false;
+					this.spqkShow=false;
+					this.$nextTick(function(){
+						sgsjj();
+						tj();
+					})
+				}else if(index==2){
+					this.hjShow=false;
+					this.sgsjjShow=false;
+					this.aqxcShow=true;
+					this.wdgcfbShow=false;
+					this.wdgcfgShow=false;
+					this.rykcShow=false;
+					this.spqkShow=false;
+					this.$nextTick(function(){
+						gdzj();
+						aqjc();
+					})
+				}else if(index==3){
+					this.hjShow=false;
+					this.sgsjjShow=false;
+					this.aqxcShow=false;
+					this.wdgcfbShow=true;
+					this.wdgcfgShow=false;
+					this.rykcShow=false;
+					this.spqkShow=false;
+				}else if(index==4){
+					this.hjShow=false;
+					this.sgsjjShow=false;
+					this.aqxcShow=false;
+					this.wdgcfbShow=false;
+					this.wdgcfgShow=true;
+					this.rykcShow=false;
+					this.spqkShow=false;
+					this.$nextTick(function(){
+						fgxm();
+					})
+				}else if(index==5){
+					this.hjShow=false;
+					this.sgsjjShow=false;
+					this.aqxcShow=false;
+					this.wdgcfbShow=false;
+					this.wdgcfgShow=false;
+					this.rykcShow=true;
+					this.spqkShow=false;
+					this.$nextTick(function(){
+						rykq();
+					})
+				}else{
+					this.hjShow=false;
+					this.sgsjjShow=false;
+					this.aqxcShow=false;
+					this.wdgcfbShow=false;
+					this.wdgcfgShow=false;
+					this.rykcShow=false;
+					this.spqkShow=true;
+					this.$nextTick(function(){
+						spqk();
+					})
+				}
+			},
+		}
+	});
+	apiready = function(){
+	};
+	hj();
+	sgsjj();
+	tj();
+	gdzj();
+	aqjc();
+	fgxm();
+	rykq();
+	spqk();
+	//环境情况
+	function hj(){
+		var lineChart = echarts.init(document.getElementById("hj"));
+		option = {
+		    tooltip: {
+		        trigger: 'item',
+		        formatter: "{a} <br/>{b}: {c} ({d}%)"
+		    },
+		    legend: {
+		    	bottom:5,
+		        data:['总数','正常运行数']
+		    },
+		    color:['#cccccc','#1673D5','#ffffff'],
+		    grid: {
+		        left: '3%',
+		        right: '4%',
+		        bottom: '30%',
+		        containLabel: true
+		    },
+		    series: [
+		        {
+		            name:'数量',
+		            type:'pie',
+		            radius: ['45%', '60%'],
+		            center: ['50%','40%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: false,
+		                    position: 'center'
+		                },
+		                emphasis: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '30',
+		                        fontWeight: 'bold'
+		                    }
+		                }
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:335, name:'总数'},
+		                {value:310, name:'正常运行数'},
+
+		            ]
+		        },
+		        {
+                    type: 'pie',
+                    radius : [0, '45%'],
+                    center: ['50%','40%'],
+                    color: '#ffffff',
+                    hoverAnimation: false,
+                    avoidLabelOverlap: true,
+                    silent: true,
+                    stillShowZeroSum : true,
+                    itemStyle : {
+                        normal : {
+                            label : {
+                                show : true,
+                                position : 'center',
+                                color: '#1673D5',
+                                formatter: '85%',
+                                textStyle : {
+                                    fontSize : '16',
+                                }
+                            },
+                            labelLine : {
+                                show : false
+                            }
+                        },
+                    },
+                    data: [{value:0}]
+                }
+		    ]
+		};
+
+		lineChart.setOption(option,true);
+		lineChart.resize();
+	}
+	//施工升降机
+	function sgsjj(){
+		var lineChart = echarts.init(document.getElementById("sgsjj"));
+		option = {
+		    tooltip: {
+		        trigger: 'item',
+		        formatter: "{a} <br/>{b}: {c} ({d}%)"
+		    },
+		    legend: {
+		    	bottom:5,
+		        data:['总数','正常运行数']
+		    },
+		    color:['#cccccc','#1673D5','#ffffff'],
+		    grid: {
+		        left: '3%',
+		        right: '4%',
+		        bottom: '30%',
+		        containLabel: true
+		    },
+		    series: [
+		        {
+		            name:'数量',
+		            type:'pie',
+		            radius: ['45%', '60%'],
+		            center: ['50%','40%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: false,
+		                    position: 'center'
+		                },
+		                emphasis: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '30',
+		                        fontWeight: 'bold'
+		                    }
+		                }
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:335, name:'总数'},
+		                {value:310, name:'正常运行数'},
+
+		            ]
+		        },
+		        {
+                    type: 'pie',
+                    radius : [0, '45%'],
+                    center: ['50%','40%'],
+                    color: '#ffffff',
+                    hoverAnimation: false,
+                    avoidLabelOverlap: true,
+                    silent: true,
+                    stillShowZeroSum : true,
+                    itemStyle : {
+                        normal : {
+                            label : {
+                                show : true,
+                                position : 'center',
+                                color: '#1673D5',
+                                formatter: '85%',
+                                textStyle : {
+                                    fontSize : '16',
+                                }
+                            },
+                            labelLine : {
+                                show : false
+                            }
+                        },
+                    },
+                    data: [{value:0}]
+                }
+		    ]
+		};
+
+		lineChart.setOption(option,true);
+		lineChart.resize();
+	}
+
+	//塔机
+	function tj(){
+		var lineChart = echarts.init(document.getElementById("tj"));
+		option = {
+		    tooltip: {
+		        trigger: 'item',
+		        formatter: "{a} <br/>{b}: {c} ({d}%)"
+		    },
+		    legend: {
+		    	bottom:5,
+		        data:['总数','正常运行数']
+		    },
+		    color:['#cccccc','#1673D5','#ffffff'],
+		    grid: {
+		        left: '3%',
+		        right: '4%',
+		        bottom: '30%',
+		        containLabel: true
+		    },
+		    series: [
+		        {
+		            name:'数量',
+		            type:'pie',
+		            radius: ['45%', '60%'],
+		            center: ['50%','40%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: false,
+		                    position: 'center'
+		                },
+		                emphasis: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '30',
+		                        fontWeight: 'bold'
+		                    }
+		                }
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:335, name:'总数'},
+		                {value:310, name:'正常运行数'},
+
+		            ]
+		        },
+		        {
+                    type: 'pie',
+                    radius : [0, '45%'],
+                    center: ['50%','40%'],
+                    color: '#ffffff',
+                    hoverAnimation: false,
+                    avoidLabelOverlap: true,
+                    silent: true,
+                    stillShowZeroSum : true,
+                    itemStyle : {
+                        normal : {
+                            label : {
+                                show : true,
+                                position : 'center',
+                                color: '#1673D5',
+                                formatter: '85%',
+                                textStyle : {
+                                    fontSize : '16',
+                                }
+                            },
+                            labelLine : {
+                                show : false
+                            }
+                        },
+                    },
+                    data: [{value:0}]
+                }
+		    ]
+		};
+
+		lineChart.setOption(option,true);
+		lineChart.resize();
+	}
+	//工地自检
+	function gdzj(){
+		var lineChart = echarts.init(document.getElementById("gdzj"));
+		option = {
+		    tooltip : {
+		        trigger: 'axis',
+		        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+		            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+		        }
+		    },
+		    grid: {
+		        left: '1%',
+		        right: '4%',
+		        top:'1%',
+		        bottom: '5%',
+		        containLabel: true
+		    },
+		    xAxis : [
+		        {
+		            type : 'category',
+		            data : ['巡查数量', '隐患数量', '未整改数'],
+		            nameTextStyle:{
+		            	color:'#f4f4f4',
+		            	fontSize:'14px'
+		            },
+		            axisLabel: {
+					   	show: true,
+	                    interval:0,
+	                    formatter:function(params) {
+	                        var newParamsName = "";
+	                        var paramsNameNumber = params.length;
+	                        var provideNumber = 2;  //一行显示几个字
+	                        var rowNumber = Math.ceil(paramsNameNumber / provideNumber);
+	                        if (paramsNameNumber > provideNumber) {
+	                            for (var p = 0; p < rowNumber; p++) {
+	                                var tempStr = "";
+	                                var start = p * provideNumber;
+	                                var end = start + provideNumber;
+	                                if (p == rowNumber - 1) {
+	                                    tempStr = params.substring(start, paramsNameNumber);
+	                                } else {
+	                                    tempStr = params.substring(start, end) + "\n";
+	                                }
+	                                newParamsName += tempStr;
+	                            }
+
+	                        } else {
+	                            newParamsName = params;
+	                        }
+	                        return newParamsName
+	                    },
+	                    textStyle: {
+	                        color: '#cccccc' //文字颜色
+	                    }
+					},
+					axisLine:{
+                        lineStyle:{
+                            color:'#cccccc',
+                            width:1,//这里是为了突出显示加上的
+                        }
+                    },
+		            axisTick: {
+		                alignWithLabel: true
+		            },
+		        }
+		    ],
+		    yAxis : [
+		        {
+		            type : 'value',
+		            axisLabel:{
+                         interval:0,//横轴信息全部显示
+                         rotate:30,//-30度角倾斜显示
+                         textStyle: {
+	                        color: '#cccccc' //文字颜色
+	                    }
+                    },
+                    axisLine:{
+                        lineStyle:{
+                            color:'#cccccc',
+                            width:1,//这里是为了突出显示加上的
+                        }
+                    },
+                    splitLine:{
+		            	show:false,
+		            }
+		        }
+		    ],
+		    series : [
+		        {
+		            name:'直接访问',
+		            stack: '总量',
+		            type:'bar',
+		            barWidth: '40%',
+		            data:[300, 500, 831],
+		            itemStyle: {
+			            normal: {
+			            	label: {
+					            show: true,
+					            position: 'top',
+					            textStyle: {
+					                color: '#cccccc'
+					            },
+					            formatter:function(params){
+					                if(params.value==0){
+					                    return '';
+					                }else
+					                {
+					                    return params.value;
+					                }
+					            }
+					        },
+			                // 随机显示
+			                //color:function(d){return "#"+Math.floor(Math.random()*(256*256*256-1)).toString(16);}
+
+			                // 定制显示（按顺序）
+			                color: function(params) {
+			                    var colorList = ['#1673d5','#FF7600','#fa4300'];
+			                    return colorList[params.dataIndex]
+			                }
+			            },
+		         	},
+		        },
+
+		    ]
+		};
+		lineChart.setOption(option,true);
+		lineChart.resize();
+	}
+	//安全检查
+	function aqjc(){
+		var lineChart = echarts.init(document.getElementById("aqjc"));
+		option = {
+		    tooltip : {
+		        trigger: 'axis',
+		        axisPointer : {            // 坐标轴指示器，坐标轴触发有效
+		            type : 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+		        }
+		    },
+		    grid: {
+		        left: '1%',
+		        right: '4%',
+		        top:'1%',
+		        bottom: '5%',
+		        containLabel: true
+		    },
+		    xAxis : [
+		        {
+		            type : 'category',
+		            data : ['巡查数量', '隐患数量', '未整改数'],
+		            nameTextStyle:{
+		            	color:'#f4f4f4',
+		            	fontSize:'14px'
+		            },
+		            axisLabel: {
+					   	show: true,
+	                    interval:0,
+	                    formatter:function(params) {
+	                        var newParamsName = "";
+	                        var paramsNameNumber = params.length;
+	                        var provideNumber = 2;  //一行显示几个字
+	                        var rowNumber = Math.ceil(paramsNameNumber / provideNumber);
+	                        if (paramsNameNumber > provideNumber) {
+	                            for (var p = 0; p < rowNumber; p++) {
+	                                var tempStr = "";
+	                                var start = p * provideNumber;
+	                                var end = start + provideNumber;
+	                                if (p == rowNumber - 1) {
+	                                    tempStr = params.substring(start, paramsNameNumber);
+	                                } else {
+	                                    tempStr = params.substring(start, end) + "\n";
+	                                }
+	                                newParamsName += tempStr;
+	                            }
+
+	                        } else {
+	                            newParamsName = params;
+	                        }
+	                        return newParamsName
+	                    },
+	                    textStyle: {
+	                        color: '#cccccc' //文字颜色
+	                    }
+					},
+					axisLine:{
+                        lineStyle:{
+                            color:'#cccccc',
+                            width:1,//这里是为了突出显示加上的
+                        }
+                    },
+		            axisTick: {
+		                alignWithLabel: true
+		            },
+		        }
+		    ],
+		    yAxis : [
+		        {
+		            type : 'value',
+		            axisLabel:{
+                         interval:0,//横轴信息全部显示
+                         rotate:30,//-30度角倾斜显示
+                         textStyle: {
+	                        color: '#cccccc' //文字颜色
+	                    }
+                    },
+                    axisLine:{
+                        lineStyle:{
+                            color:'#cccccc',
+                            width:1,//这里是为了突出显示加上的
+                        }
+                    },
+                    splitLine:{
+		            	show:false,
+		            }
+		        }
+		    ],
+		    series : [
+		        {
+		            name:'直接访问',
+		            stack: '总量',
+		            type:'bar',
+		            barWidth: '40%',
+		            data:[300, 500, 831],
+		            itemStyle: {
+			            normal: {
+			            	label: {
+					            show: true,
+					            position: 'top',
+					            textStyle: {
+					                color: '#cccccc'
+					            },
+					            formatter:function(params){
+					                if(params.value==0){
+					                    return '';
+					                }else
+					                {
+					                    return params.value;
+					                }
+					            }
+					        },
+			                // 随机显示
+			                //color:function(d){return "#"+Math.floor(Math.random()*(256*256*256-1)).toString(16);}
+
+			                // 定制显示（按顺序）
+			                color: function(params) {
+			                    var colorList = ['#1673d5','#FF7600','#fa4300'];
+			                    return colorList[params.dataIndex]
+			                }
+			            },
+		         	},
+		        },
+
+		    ]
+		};
+		lineChart.setOption(option,true);
+		lineChart.resize();
+	}
+	//危大工程覆盖项目
+	function fgxm(){
+		var lineChart = echarts.init(document.getElementById("fgxm"));
+		option = {
+		    tooltip: {
+		        trigger: 'item',
+		        formatter: "{a} <br/>{b}: {c} ({d}%)"
+		    },
+		    legend: {
+		    	bottom:5,
+		        data:['总数','危大工程']
+		    },
+		    color:['#cccccc','#1673D5','#ffffff'],
+		    grid: {
+		        left: '3%',
+		        right: '4%',
+		        bottom: '30%',
+		        containLabel: true
+		    },
+		    series: [
+		        {
+		            name:'数量',
+		            type:'pie',
+		            radius: ['45%', '60%'],
+		            center: ['50%','40%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: false,
+		                    position: 'center'
+		                },
+		                emphasis: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '30',
+		                        fontWeight: 'bold'
+		                    }
+		                }
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:335, name:'总数'},
+		                {value:310, name:'危大工程'},
+
+		            ]
+		        },
+		        {
+                    type: 'pie',
+                    radius : [0, '45%'],
+                    center: ['50%','40%'],
+                    color: '#ffffff',
+                    hoverAnimation: false,
+                    avoidLabelOverlap: true,
+                    silent: true,
+                    stillShowZeroSum : true,
+                    itemStyle : {
+                        normal : {
+                            label : {
+                                show : true,
+                                position : 'center',
+                                color: '#1673D5',
+                                formatter: '85%',
+                                textStyle : {
+                                    fontSize : '16',
+                                }
+                            },
+                            labelLine : {
+                                show : false
+                            }
+                        },
+                    },
+                    data: [{value:0}]
+                }
+		    ]
+		};
+
+		lineChart.setOption(option,true);
+		lineChart.resize();
+	}
+
+	//人员考勤情况
+	function rykq(){
+		var lineChart = echarts.init(document.getElementById("rykq"));
+		option = {
+			color:['#1673D5','#44B043'],
+		    tooltip: {
+		        trigger: 'axis',
+		        axisPointer: {
+		            type: 'shadow'
+		        }
+		    },
+		    legend: {
+		        data: ['2011年', '2012年']
+		    },
+		    grid: {
+		        left: '3%',
+		        right: '4%',
+		        top:'3%',
+		        bottom: '3%',
+		        containLabel: true
+		    },
+		    xAxis: {
+		        type: 'category',
+		        position:'bottom',
+		        data: ['到岗总人数','到岗施工管理人员','党纲建设单位人员','建设单位人数','到岗农民工人数'],
+		        axisLabel: {
+				   	show: true,
+                    interval:0,
+                    formatter:function(params) {
+                        var newParamsName = "";
+                        var paramsNameNumber = params.length;
+                        var provideNumber = 2;  //一行显示几个字
+                        var rowNumber = Math.ceil(paramsNameNumber / provideNumber);
+                        if (paramsNameNumber > provideNumber) {
+                            for (var p = 0; p < rowNumber; p++) {
+                                var tempStr = "";
+                                var start = p * provideNumber;
+                                var end = start + provideNumber;
+                                if (p == rowNumber - 1) {
+                                    tempStr = params.substring(start, paramsNameNumber);
+                                } else {
+                                    tempStr = params.substring(start, end) + "\n";
+                                }
+                                newParamsName += tempStr;
+                            }
+
+                        } else {
+                            newParamsName = params;
+                        }
+                        return newParamsName
+                    },
+                    textStyle: {
+                        color: '#cccccc' //文字颜色
+                    }
+				},
+				axisLine:{
+                    lineStyle:{
+                        color:'#cccccc',
+                        width:1,//这里是为了突出显示加上的
+                    }
+                },
+		    },
+		    yAxis: {
+		        type: 'value',
+		        boundaryGap: [0, 0.01],
+		        axisLine:{
+                    lineStyle:{
+                        color:'#cccccc',
+                        width:1,//这里是为了突出显示加上的
+                    }
+                },
+		    },
+		    series: [
+		        {
+		            name: '到岗',
+		            type: 'bar',
+		            data: [100, 50, 80, 120, 50]
+		        },
+		        {
+		            name: '未到岗',
+		            type: 'bar',
+		            data: [120, 80, 50, 50, 100]
+		        }
+		    ]
+		};
+		lineChart.setOption(option,true);
+		lineChart.resize();
+	}
+	//视频情况
+	function spqk(){
+		var lineChart = echarts.init(document.getElementById("spqk"));
+		option = {
+		    tooltip: {
+		        trigger: 'item',
+		        formatter: "{a} <br/>{b}: {c} ({d}%)"
+		    },
+		    legend: {
+		    	bottom:5,
+		        data:['摄像头总数','摄像头在线数']
+		    },
+		    color:['#cccccc','#1673D5','#ffffff'],
+		    grid: {
+		        left: '3%',
+		        right: '4%',
+		        bottom: '30%',
+		        containLabel: true
+		    },
+		    series: [
+		        {
+		            name:'数量',
+		            type:'pie',
+		            radius: ['45%', '60%'],
+		            center: ['50%','40%'],
+		            avoidLabelOverlap: false,
+		            label: {
+		                normal: {
+		                    show: false,
+		                    position: 'center'
+		                },
+		                emphasis: {
+		                    show: false,
+		                    textStyle: {
+		                        fontSize: '30',
+		                        fontWeight: 'bold'
+		                    }
+		                }
+		            },
+		            labelLine: {
+		                normal: {
+		                    show: false
+		                }
+		            },
+		            data:[
+		                {value:335, name:'摄像头总数'},
+		                {value:310, name:'摄像头在线数'},
+
+		            ]
+		        },
+		        {
+                    type: 'pie',
+                    radius : [0, '45%'],
+                    center: ['50%','40%'],
+                    color: '#ffffff',
+                    hoverAnimation: false,
+                    avoidLabelOverlap: true,
+                    silent: true,
+                    stillShowZeroSum : true,
+                    itemStyle : {
+                        normal : {
+                            label : {
+                                show : true,
+                                position : 'center',
+                                color: '#1673D5',
+                                formatter: '85%',
+                                textStyle : {
+                                    fontSize : '16',
+                                }
+                            },
+                            labelLine : {
+                                show : false
+                            }
+                        },
+                    },
+                    data: [{value:0}]
+                }
+		    ]
+		};
+
+		lineChart.setOption(option,true);
+		lineChart.resize();
+	}
+	function closeFrame(){
+		api.closeFrame({name:"map/map_detail_pop_frm"});
+	}
+</script>
+</html>

@@ -1,0 +1,449 @@
+﻿<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>巡查记录——详情——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/swiper.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading">
+        <div class="spinner"></div>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" style="display:none;" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="swiper-container">
+        <div class="swiper-wrapper">
+        	<template v-for="image in imageAddress">
+            <div class="swiper-slide" style="background-image:url('{{image.url}}');"></div>
+            </template>
+        </div>
+        <div class="swiper-pagination"></div>
+    </div>
+    <div class="aui-content thing-detail-wrap">
+        <ul class="aui-list-view m-b-10">
+            <li class="aui-list-view-cell">
+                <p class="aui-col-xs-12 f-fs18 aui-text-333 aui-text-center" v-cloak>{{checkpointCheckpointGroupName}}</p>
+            </li>
+            <li class="aui-list-view-cell">
+                <p class="aui-col-xs-12" @click="openMap"><i class="aui-iconfont aui-icon-locationfill aui-text-custom m-r-n"></i>{{address}}</p>
+            </li>
+            <li class="aui-list-view-cell">
+                <p class="aui-col-xs-3">工地面积: </p>
+                <p class="aui-col-xs-9" style="text-align: left;">{{area}}</p>
+            </li>
+            <li class="aui-list-view-cell m-b-10">
+            	<p class="aui-col-xs-4 aui-text-center aui-border-r" @click="openBPI"><i class="aui-iconfont aui-icon-picfill aui-text-custom m-r-n"></i>工程概况</p>
+            	<p class="aui-col-xs-4 aui-text-center aui-border-r" @click="openPoints"><i class="aui-iconfont aui-icon-list aui-text-custom m-r-n"></i>部位列表</p>
+            	<p class="aui-col-xs-4 aui-text-center" @click="openPatrolList"><i class="aui-iconfont aui-icon-calendar aui-text-custom m-r-n"></i>巡查记录</p>
+            </li>
+            <li class="bg-white">
+                <div class="aui-tab aui-tab-info tab-info-custom">
+                    <ul class="aui-tab-nav" >
+                        <template v-for="list in orgsList">
+                            <li v-bind:class="{'active':list.activeClass}" v-on:click="changeTab($index)">{{list.typeName}}</li>
+                        </template>
+                    </ul>
+                </div>
+                <div class="aui-list-view-cell">
+                	<template v-for="list in chiefInspectorList">
+                    <p class="aui-col-xs-12 f-fs16 aui-text-333 m-b-10" v-cloak>{{list.orgName}}</p>
+                    <template v-for="employee in list.employees">
+                        <div class="f-oh m-b-10">
+                            <p class="aui-col-xs-6 aui-text-custom aui-text-right" @click="call(employee.mobile);">{{employee.jobName}}：</p>
+                            <p class="aui-col-xs-6 aui-text-333" @click="call(employee.mobile);">{{employee.userName}}
+                            	<span v-show="employee.isInspector" v-text="employee.inspectCount"></span>
+                            	<span v-show="employee.isController" v-text="employee.patrolCount"></span>
+                            </p>
+                        </div>
+                    </template>
+                    </template>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/swiper.min.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+                noMore: false,  //是否显示：没有更多数据
+                loadTips: "",  //1.没有更多数据了  2.正在加载中...  3.上拉加载更多
+
+                //详情相关参数
+                id: "",  //id
+                checkpointCheckpointGroupName: "",  //工地名称
+                address: "",  //工地地址
+                area: "暂无面积",   //工地面积
+                imageAddress: [],  //工地图片
+                blueprintimages: [],  //工地图纸
+                lon: "",
+                lat: "",
+
+                orgsList: [],  //公司数组
+                orgName: "",  //公司名称
+                chiefInspectorList: [],  //总监数组
+                
+                lists: [],  //巡查点位数组
+                
+                //列表相关参数
+                isResult: true,  //判断上次ajax是否返回
+                pageCount: 0,  //当前页数
+                
+                patrolRecordList: [],  //巡查记录的列表
+                
+                isInspector: false,
+            },
+            methods: {
+            	call: function(number){
+                	api.call({
+                		type:"tel_prompt",
+                		number: number
+                	});
+//              	alert(number);
+                },
+                changeTab: function (index) {
+
+                    var vm_p = this;
+                    for (var i = 0; i < vm_p.orgsList.length; i++) {
+                        vm_p.orgsList[i].activeClass = false;
+                    }
+                    vm_p.orgsList[index].activeClass = true;
+
+                    vm_p.chiefInspectorList.splice(0, vm_p.chiefInspectorList.length);
+                    
+                    for(var i = 0; i < vm_p.orgsList[index].orgs.length; i++){
+                    	var employees = new Array();
+                    	var empList = vm_p.orgsList[index].orgs[i].employees;
+                    	for(var j = 0; j < empList.length; j++){
+                    		var patroler = empList[j].noInspected || empList[j].inspected;
+                    		var manager = (empList[j].work || empList[j].nowork) && !empList[j].flag;
+                    		var actualController = empList[j].flag ? true : false;
+                    		var patrl_count = "(已巡"+ ( empList[j].inspected ? empList[j].inspected : 0) + "天,未巡" + ( empList[j].noInspected ?  empList[j].noInspected : 0) + "天)";
+                    		var mgr_count = "(带班"+ ( empList[j].work ?  empList[j].work : 0) + "天,未带班" + ( empList[j].nowork ?  empList[j].nowork : 0) + "天)"
+                    		var ctrl_count = "(应签到1天,已签到" + ( empList[j].inspectedNumReal ?  empList[j].inspectedNumReal : 0) + "天)";
+                    		employees.push({
+                                jobName: empList[j].jobName,
+                                userName:  empList[j].userName,   
+                                isInspector:  patroler || manager ? true : false,
+                                inspectCount: patroler ? patrl_count : (manager ? mgr_count : ""),
+                                isController: actualController,
+                                patrolCount: ctrl_count,
+                                mobile:empList[j].userMobile
+                    		});
+                    	}
+                    	vm.chiefInspectorList.push({
+                    	 	orgName: vm_p.orgsList[index].orgs[i].orgFullName.replace(new RegExp(/\|/g), ""),
+                    	 	employees: employees
+                        });
+                    }
+
+                },
+                
+                openPatrolDetail: function (i) {  //打开巡查详情
+                    openWin("patrol_list/patrol_detail_win", { id: this.patrolRecordList[i].id });
+                },
+                
+	            openBPI: function(){
+	            	openWin("site/site_detail_drawings_win",{blueprintimages:this.blueprintimages});
+	            },
+	            
+	            openMap: function(){
+	            	openWin("site/site_detail_map_win", { lon: this.lon,lat:this.lat });
+	            },
+	            
+	            openPoints: function(){
+	            	openWin("site/point_list_win", { pointUrl: api_url.getSimplePoint, id: this.id, name: this.checkpointCheckpointGroupName, code: "N"});
+	            },
+	            
+	            openPatrolList: function(){
+	            	openWin("patrol_list/patrol_list_win", {
+		            	picked_site: this.id,
+		            	sites: api.pageParam.name, 
+		            	checkpointCheckpointGroupName: this.checkpointCheckpointGroupName, 
+		            	index: 2
+	            	});
+	            }
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+            
+            timeOut300(function () {
+
+                vm.$nextTick(function () {
+                
+                	vm.id = api.pageParam.id;
+                    getSiteDetail1();
+                    
+					 //上拉加载
+                    api.addEventListener({
+                        name: "scrolltobottom",
+                        extra: {
+                            threshold: 0
+                        }
+                    }, function (ret, err) {
+
+                        if (!vm.noMore) {
+
+                            vm.loadTips = "正在加载中...";
+
+                        }
+
+                    });
+                    
+                    
+                    
+
+                });
+
+            });
+
+        };
+
+
+
+        //页面初始化
+        function getSiteDetail1() {
+
+            //拼接接口地址：查询单个巡查点详情
+            var url = $api.getStorage("interface_url") + api_url.siteDetail1;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    id: vm.id,
+                },
+                beforeSend: function () { },
+                complete: function () {
+                    vm.loading = false;
+                    vm.loadingFail = false;
+                },
+                success: function (data) {
+
+                    if (data.success) {
+						
+						vm.area = data.data.grouparea ? data.data.grouparea : "暂无面积",
+                        vm.checkpointCheckpointGroupName = data.data.name;
+                        var addressRegionFullName = toEmpty(data.data.addressRegionFullName).replace(new RegExp(/\|/g), "");
+                        vm.address = addressRegionFullName + toEmpty(data.data.addressDetail);
+                        vm.lon = data.data.location ? data.data.location.lng : 0;
+                        vm.lat = data.data.location ? data.data.location.lat : 0;
+                        if(vm.address == ""){
+                        	vm.address = "暂无地址";
+                        }
+                        for(var i = 0; i < data.data.images.length; i++){
+                        	vm.imageAddress.push({url: data.data.images[i].imageAccessAddress});
+                        } 
+                        //工地图纸
+                        for(var i = 0; i < data.data.blueprintimages.length; i++){
+
+                        	(function(i){
+
+		                    	var img = new Image();
+                        		img.src = data.data.blueprintimages[i].url;
+                        		
+                        		img.onload = function(){
+                        			
+                        			if(img.width != 0 && img.height != 0){
+                        				for(var j = 0; j < data.data.blueprintimages[i].points.length; j++){
+                        					
+                        					data.data.blueprintimages[i].points[j].pointX /= (img.width/100);
+	                        				data.data.blueprintimages[i].points[j].pointY /= (img.height/100);
+	                        				
+                        				}
+                        				vm.blueprintimages.push({
+			                        		url: data.data.blueprintimages[i].url,
+			                      			points: data.data.blueprintimages[i].points,
+		                        		});
+                        			}
+
+                        		};
+                        	                  		
+                        	})(i);
+      
+                        		
+
+                        }
+
+                        if (data.data.types.length > 0) {
+								
+                            for (var i = 0; i < data.data.types.length; i++) {
+                                vm.orgsList.push({
+                                    typeName: data.data.types[i].typeName,
+                                    orgs: data.data.types[i].orgs,
+                                    activeClass: i == 0 ? true : false
+                                });
+                            }
+                            
+                            for(var i = 0; i < data.data.types[0].orgs.length; i++){
+                            	var employees = new Array();
+                            	var empList = data.data.types[0].orgs[i].employees;
+                            	for(var j = 0; j < empList.length; j++){
+                            	
+                            		var patroler = empList[j].noInspected ||  empList[j].inspected;
+		                    		var manager = (empList[j].work || empList[j].nowork) && !empList[j].flag;
+		                    		var actualController = empList[j].flag ? true : false;
+		                    		var patrl_count = "(已巡"+ ( empList[j].inspected ? empList[j].inspected : 0) + "天,未巡" + ( empList[j].noInspected ?  empList[j].noInspected : 0) + "天)";
+		                    		var mgr_count = "(带班"+ ( empList[j].work ? empList[j].work : 0) + "天,未带班" + ( empList[j].nowork ?  empList[j].nowork : 0) + "天)";
+		                    		var ctrl_count = "(应签到1天,已签到" + ( empList[j].inspectedNumReal ? empList[j].inspectedNumReal : 0) + "天)";
+		                    		employees.push({
+		                    			jobName: empList[j].jobName,
+		                                userName: empList[j].userName,   
+		                                isInspector: patroler || manager ? true : false,
+		                                inspectCount: patroler ? patrl_count : (manager ? mgr_count : ""),
+		                                isController: actualController,
+		                                patrolCount: ctrl_count,
+		                                mobile:empList[j].userMobile
+		                    		});
+		                    		
+                            	}
+                            	vm.chiefInspectorList.push({
+                            	 	orgName: data.data.types[0].orgs[i].orgFullName.replace(new RegExp(/\|/g), ""),
+                            	 	employees: employees
+                                });
+                            }
+                            
+                        }
+                        setTimeout(function () {
+							var mySwiper = new Swiper(".swiper-container", {
+					            loop: true,
+					            autoplay: 5000,
+					            autoplayDisableOnInteraction: true,
+					            pagination: ".swiper-pagination",
+					        });
+				        },300);
+                    } else {
+                        vm.loadingFail = true;
+                    }
+
+                }
+            });
+
+        };
+
+		//页面初始化-查下面的巡查记录
+        function getSiteDetail2() {
+            //拼接接口地址：查询单个巡查点详情
+            var url = $api.getStorage("interface_url") + api_url.getPatrolList;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    page:vm.pageCount,
+                    size:5,
+                    startDate:getTodayDate(),
+                    endDate:getTodayDate(),
+                    checkpointGroupIdArray:vm.id,
+                },
+                beforeSend: function () { },
+                complete: function () {
+                    vm.loading = false;
+                    vm.loadingFail = false;
+                },
+                success: function (data) {
+
+                    if (data.success) {
+                    	
+                    	if (data.page.content.length > 0) {
+
+                            for (var i = 0; i < data.page.content.length; i++) {
+                                vm.patrolRecordList.push({
+                                    id: data.page.content[i].id,
+                                    eventDateCreated: data.page.content[i].eventDateCreated,
+                                    checkpointCheckpointGroupName: data.page.content[i].checkpointCheckpointGroupName,
+                                    checkpointName: data.page.content[i].checkpointName,
+                                    eventCreatedByName: data.page.content[i].eventCreatedByName,
+                                    eventCatalogName: data.page.content[i].eventCatalogName,
+                                    eventCatalogIcon: data.page.content[i].eventCatalogIcon,
+                                });
+                            }
+                        } 
+                        
+					
+						//判断是否还有未加载到界面的数据
+	                    if (data.page.content.length < 5) {
+	                        vm.loadTips = "没有更多数据了";
+	                        vm.noMore = true;
+	                    } else {
+	                        vm.loadTips = "上拉加载更多";
+	                        vm.noMore = false;
+	                        vm.pageCount += 1;
+	                    }
+	                      
+                    
+                    } else {
+                        vm.loadingFail = true;
+                    }
+
+                }
+            });
+
+        };
+		
+        
+        //格式化时间
+        function formatDatetime(datetime) {
+
+            var time = new Date(datetime);
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+            var hour = p(time.getHours());
+            var min = p(time.getMinutes());
+            var sec = p(time.getSeconds());
+
+            return year + "/" + month + "/" + day + " " + hour + ":" + min + ":" + sec;
+
+            function p(s) {
+                return s < 10 ? "0"
+                + s : s;
+            };
+
+        };
+        
+        //获取今天的日期
+        function getTodayDate() {
+
+            var time = new Date();
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+
+            function p(s) {
+                return s < 10 ? "0" + s : s;
+            };
+
+            return year + "/" + month + "/" + day;
+
+        };
+    </script>
+</body>
+
+</html>

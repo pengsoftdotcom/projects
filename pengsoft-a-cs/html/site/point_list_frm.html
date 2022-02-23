@@ -1,0 +1,130 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>点位选择——frm2</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray fail-wrap" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray fail-wrap5" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray fail-wrap" v-show="noData">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="fail-wrap bg-gray fail-wrap" v-show="timeOut">
+        <p class="fail-info">请求超时</p>
+    </div>
+    <div class="points-list-wrap">
+        <template v-for="list in lists">
+            <div class="points-list-container" v-effect="" @click="openDetail($index)">{{list.code}} {{list.name}}</div>
+        </template>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+                timeOut: false,  //是否显示：全局加载超时
+                
+                code: "N",  //是否已巡查
+                isResult: true,
+                lists: []    //工地列表数组
+            },
+            methods: {
+                openDetail: function(index){
+                	
+                	openWin("patrol_list/patrol_list_win",{
+	                	picked_site: api.pageParam.id,
+	                    checkpointCheckpointGroupName: api.pageParam.name, //工地名称
+	                    picked_point: this.lists[index].id,
+	                    points: this.lists[index].code + " " + this.lists[index].name,
+	                	index: 2
+                	});
+                }
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+			
+            api.parseTapmode();
+            vm.code = api.pageParam.code ? (api.pageParam.code == "all" ? "" : api.pageParam.code) :　"N";
+            getPoint(api.pageParam.pointUrl);
+
+        };
+
+
+        //获取工地下面的点位
+        function getPoint(pointUrl) {
+			
+            if (api.pageParam.id) {
+
+                vm.lists.splice(0, vm.lists.length);
+
+                var url = $api.getStorage("interface_url") + pointUrl;
+
+                Ajax({
+                    type: "get",
+                    url: url,
+                    data: {
+                        access_token: $api.getStorage("access_token"),
+                        checkpointGroupId: api.pageParam.id,
+                        code: vm.code
+                    },
+                    beforeSend: function () {
+                        vm.loading = true;
+                    },
+                    complete: function () {
+                          vm.loading = false;
+                    },
+                    success: function (data) {
+
+                        if (data.success) {
+
+                            //如果一条数据都没有，将在界面显示“暂无数据”
+                            if (data.list.length == 0) {
+                                vm.noData = true;
+                                return false;
+                            }else {
+                            	vm.noData = false;
+                            }
+
+                            for (var i = 0; i < data.list.length; i++) {
+                                vm.lists.push({
+                                    id: data.list[i].id,
+                                    name: data.list[i].name,
+                                    code: data.list[i].code,
+                                });
+                            }
+
+                        } else {
+                            vm.loadingFail = true;  //加载失败
+                        }
+
+                    }
+                });
+
+            }
+
+        };
+
+    </script>
+</body>
+</html>

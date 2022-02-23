@@ -1,0 +1,83 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>工地安全卫士——win</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/custom.css" />
+    <style>
+    	.bubbles {
+            display: block;
+		    height: 20px;
+		    width: 20px;
+		    border-radius: 50%;
+		    text-align: center;
+		    line-height: 20px;
+		    color: #ffffff;
+		    margin: 0;
+		    font-size: 14px;
+		    background-color: #ff0000;
+		    position: absolute;
+		    top: 0;
+		    right: -20px;
+        }
+    </style>
+</head>
+<body class="bg-new">
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <header id="header" class="aui-bar aui-bar-nav bg-none">
+        <a class="aui-pull-left" v-on:click="openSlidPane">
+            <span class="aui-iconfont aui-icon-sort"><span class="bubbles" v-show= "allCont > 0" v-text="allCont"></span></span>
+        </a>
+        <div class="aui-title">
+            工地安全卫士
+        </div>
+    </header>
+    <script src="../script/api.js"></script>
+    <script src="../script/vue.js"></script>
+    <script src="../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                username: "",  //用户名
+                password: "",  //密码
+                allCont:0 //总提示
+            },
+            methods: {
+                openSlidPane: function () {  //打开侧滑function
+                    api.openSlidPane({ type: "left"});
+                }
+            }
+        });
+
+        apiready = function () {
+
+            api.parseTapmode();
+            setStatusBarStyle("light");
+
+            api.openFrame({
+                name: "home_frm",
+                url: "widget://html/home_frm.html",
+                bounces: false,
+                bgColor: "transparent",
+                rect: {
+                    x: 0,
+                    y: $api.offset($api.byId("header")).h,
+                    w: api.winWidth,
+                    h: api.winHeight - $api.offset($api.byId("header")).h
+                }
+            });
+
+            api.addEventListener({ name: "keyback" }, function (ret, err) {
+                api.closeWidget();
+            });
+        };
+    </script>
+</body>
+</html>

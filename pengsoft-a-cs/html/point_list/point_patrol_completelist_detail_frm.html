@@ -1,0 +1,410 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>部位详情(已巡查)——frm</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+		<style type="text/css">
+			.aui-content {
+				margin-top: 0px;
+				margin-left: 5px;
+				margin-right: 5px;
+			}
+			.aui-tab-nav {
+				width: 100%;
+				display: box;
+				display: -webkit-box;
+				box-sizing: border-box;
+				font-size: 16px;
+				height: 35px;
+				background-color: #fff;
+				overflow: hidden;
+				overflow-x: hidden;
+				overflow-y: hidden;
+			}
+			.aui-tab-nav.aui-tab-border li.active {
+				background-color: #1abc9c;
+				color: #fff;
+			}
+			.aui-tab-nav.aui-tab-border li {
+				/* width: 1%; */
+				height: 45px;
+				color: #000000;
+				font-size:12px;
+				overflow: hidden;
+				text-align:center;
+				padding-left:0px;
+				line-height: 45px;
+				background-color: #ffffff;
+				border-left: 0px solid;
+			}
+			.aui-tab-nav.aui-tab-border {
+				background-color: transparent;
+				border: 1px solid;
+				 border-color: #1abc9c; 
+				 height:45px;
+				border-radius: 3px;
+			}
+			.aui-content-padded {
+				margin-top: 0px;
+				margin-right: 5px;
+				margin-left: 5px;
+		/* margin-bottom: 15px; */
+			}
+			/*.aui-tab {
+			 margin-top: 150px;
+			 width: 100%;
+			 overflow: hidden;
+			 }*/
+			.aui-card {
+				margin: 10px;
+				margin-bottom: 15px;
+				position: relative;
+				background: #fff;
+				border: 1px solid #F4F4F4;
+				height: 40px;
+			}
+			.aui-list-view-cell {
+				margin-top: 5px;
+				position: relative;
+				padding: 8px 15px;
+				overflow: hidden;
+				-webkit-transform-style: preserve-3d;
+				transform-style: preserve-3d;
+				-webkit-touch-callout: none;
+			}
+			.point-detail {
+				float: right;
+				width: 90px;
+				height: 60px;
+				line-height: 60px;
+				background-color: #FFFFFF;
+			}
+			.point-detail-2 {
+				color: #FFFFFF;
+				float: right;
+				width: 90px;
+				height: 30px;
+				text-align: left;
+				padding:5px;
+				background-color: #0facfb;
+			}
+			.point-detail-3 {
+				color: #FFFFFF;
+				float: right;
+				width: 90px;
+				text-align: left;
+				padding:5px;
+				height: 30px;
+				background-color: #2ECC71;
+			}
+			.text {
+				font-size: 10px;
+				padding-bottom: 20px;
+			}
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+			ele.style.fontSize = size + "px";
+		</script>
+				<div class="aui-content">
+			<ul class="aui-list-view">
+				<li class="aui-list-view-cell aui-img">
+					<div class="point-detail">
+						<button class="point-detail-2" v-text="activenum"></button>
+						<button class="point-detail-3" v-text="inspectednum"></button>
+					</div>
+					<div class="aui-img-body">
+						<div v-text="groupname"></div>
+						<div class="f-fs14 aui-text-999">
+							<div class="aui-iconfont aui-icon-location aui-text-custom" style="max-width: 2rem;" v-text="address"></div>
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div >
+		<div class="aui-content-padded">
+			<footer id="aui-footer" class="aui-tab">
+				<ul class="aui-tab-nav aui-tab-border">
+					<li id="tab1" class="" @click="changeTab(1)" v-text="allnum"></li>
+					<li id="tab2" class="" @click="changeTab(2)" v-text="activesnum"></li>
+					<li id="tab3" class="active" @click="changeTab(3)" v-text="inspectednums"></li>
+					<li id="tab4" class="" @click="changeTab(4)" v-text="noinspectednum"></li>
+				</ul>
+			</footer>
+				<!--未巡查部位-->	
+				<div id="tab4content" style="display: none">				
+				<template v-for="noinspected in noinspecteds">
+					<div class="aui-card">
+						<ul class="aui-list-view">
+							<li class="aui-list-view-cell"  v-effect="" @click="openDetail($index)">
+								<a class="aui-arrow-right"> {{noinspected.code}}-{{noinspected.name}} </a>
+							</li>
+						</ul>
+					</div>
+				</template>
+				</div>
+				<!--已巡查部位-->
+				<div id="tab3content" style="display: block">
+				<template v-for="inspected in inspecteds">
+					<div class="aui-card">
+						<ul class="aui-list-view">
+							<li class="aui-list-view-cell"  v-effect="" @click="openDetail($index)">
+								<a class="aui-arrow-right"> {{inspected.code}}-{{inspected.name}} </a>
+							</li>
+						</ul>
+					</div>
+				</template>
+				</div>
+				<!--已激活部位-->
+				<div id="tab2content" style="display: none">
+				<template v-for="active in actives">
+					<div class="aui-card">
+						<ul class="aui-list-view">
+							<li class="aui-list-view-cell"  v-effect="" @click="openDetail($index)">
+								<a class="aui-arrow-right"> {{active.code}}-{{active.name}} </a>
+							</li>
+						</ul>
+					</div>
+				</template>
+				</div>
+				<!--所有部位-->
+				<div id="tab1content" style="display: none">
+				<template v-for="all in alls">
+					<div class="aui-card">
+						<ul class="aui-list-view">
+							<li class="aui-list-view-cell"  v-effect="" @click="openDetail($index)">
+								<a class="aui-arrow-right"> {{all.code}}-{{all.name}} </a>
+							</li>
+						</ul>
+					</div>
+				</template>
+				</div>
+
+		</div>
+		<script src="../../script/api.js"></script>
+		<script src="../../script/vue.js"></script>
+		<script src="../../script/common.js"></script>
+		<script>
+			var vm = new Vue({
+				el : "body",
+				data : {
+					//界面相关参数
+					loading : true, //是否显示：全局加载
+					loadingFail : false, //是否显示：全局加载失败
+					noData : false, //是否显示：全局暂无数据
+					timeOut : false, //是否显示：全局加载超时
+					code : "", //过滤条件
+					listinfos : [], //点位列表数组
+					staticinfo : [], //
+					groupname : "", //
+					address : "", //
+					totalnum : "", //总数
+					activenum : "", //激活数
+					list : [],
+					id : "",
+					inspectednum:"",//已巡查数按钮
+					
+					//点位详情
+					noinspecteds:[],
+					actives:[],
+					inspecteds:[],
+					alls:[],
+					//所有部位数
+					allnum:"",
+					//已激活数
+					activesnum:"",
+					//已巡查数
+					inspectednums:"",
+					//未巡查数
+					noinspectednum:"",
+//					tab1: false,
+//					tab2: false,
+//					tab3:true,
+//					tab4:false,
+					currentTab : "",
+				},
+				methods : {
+					changeTab:function(tag){
+						
+						if(tag == 1){
+							vm.currentTab = "1"
+							var tab1dom = $api.dom('#tab1');
+							var tab2dom = $api.dom('#tab2');
+							var tab3dom = $api.dom('#tab3');
+							var tab4dom = $api.dom('#tab4');
+							$api.removeCls(tab1dom,"active");
+							$api.removeCls(tab2dom,"active");
+							$api.removeCls(tab3dom,"active");
+							$api.removeCls(tab4dom,"active");
+							$api.addCls(tab1dom,"active");
+							var tab1content = $api.dom('#tab1content');
+							var tab2content = $api.dom('#tab2content');
+							var tab3content = $api.dom('#tab3content');
+							var tab4content = $api.dom('#tab4content');
+							$api.css(tab2content,'display:none');
+							$api.css(tab3content,'display:none');
+							$api.css(tab4content,'display:none');
+							$api.css(tab1content,'display:block');
+						}
+						if(tag == 2){
+							vm.currentTab = "2"
+							var tab2dom = $api.dom('#tab2');
+							var tab1dom = $api.dom('#tab1');
+							var tab3dom = $api.dom('#tab3');
+							var tab4dom = $api.dom('#tab4');
+							$api.removeCls(tab1dom,"active");
+							$api.removeCls(tab2dom,"active");
+							$api.removeCls(tab3dom,"active");
+							$api.removeCls(tab4dom,"active");
+							$api.addCls(tab2dom,"active");
+							var tab1content = $api.dom('#tab1content');
+							var tab2content = $api.dom('#tab2content');
+							var tab3content = $api.dom('#tab3content');
+							var tab4content = $api.dom('#tab4content');
+							$api.css(tab1content,'display:none');
+							$api.css(tab3content,'display:none');
+							$api.css(tab4content,'display:none');
+							$api.css(tab2content,'display:block');
+						}
+						if(tag == 3){
+							vm.currentTab = "3"
+							var tab2dom = $api.dom('#tab2');
+							var tab1dom = $api.dom('#tab1');
+							var tab3dom = $api.dom('#tab3');
+							var tab4dom = $api.dom('#tab4');
+							$api.removeCls(tab1dom,"active");
+							$api.removeCls(tab2dom,"active");
+							$api.removeCls(tab3dom,"active");
+							$api.removeCls(tab4dom,"active");
+							$api.addCls(tab3dom,"active");
+							var tab1content = $api.dom('#tab1content');
+							var tab2content = $api.dom('#tab2content');
+							var tab3content = $api.dom('#tab3content');
+							var tab4content = $api.dom('#tab4content');
+							$api.css(tab2content,'display:none');
+							$api.css(tab1content,'display:none');
+							$api.css(tab4content,'display:none');
+							$api.css(tab3content,'display:block');
+						}
+						if(tag == 4){
+							vm.currentTab = "4"
+							var tab2dom = $api.dom('#tab2');
+							var tab1dom = $api.dom('#tab1');
+							var tab3dom = $api.dom('#tab3');
+							var tab4dom = $api.dom('#tab4');
+							$api.removeCls(tab1dom,"active");
+							$api.removeCls(tab2dom,"active");
+							$api.removeCls(tab3dom,"active");
+							$api.removeCls(tab4dom,"active");
+							$api.addCls(tab4dom,"active");
+							var tab1content = $api.dom('#tab1content');
+							var tab2content = $api.dom('#tab2content');
+							var tab3content = $api.dom('#tab3content');
+							var tab4content = $api.dom('#tab4content');
+							$api.css(tab2content,'display:none');
+							$api.css(tab3content,'display:none');
+							$api.css(tab1content,'display:none');
+							$api.css(tab4content,'display:block');
+						}
+
+				},
+					openDetail: function(index){
+                		if(vm.currentTab == "1"){
+		                	openWin("point_list/point_record_win",{checkpointId:this.alls[index].id,checkpointCode:this.alls[index].code});
+	               	 	}else if(vm.currentTab == "2"){
+	               	 		openWin("point_list/point_record_win",{checkpointId:this.actives[index].id,checkpointCode:this.actives[index].code});
+	               	 	}else if(vm.currentTab == "3"){
+	               	 		openWin("point_list/point_record_win",{checkpointId:this.inspecteds[index].id,checkpointCode:this.inspecteds[index].code});
+	               	 	}else if(vm.currentTab == "4"){
+	               	 		openWin("point_list/point_unrecord_win",{noinspectedid:this.noinspecteds[index].id,noinspectedcode:this.noinspecteds[index].code});
+	               	 	}
+               	 	},
+				},
+				init : function() {
+					effect();
+				}
+			});
+			apiready = function() {
+				
+				api.parseTapmode();
+				vm.currentTab = api.pageParam.currentTab,
+				vm.groupname = api.pageParam.groupname;
+				vm.address = api.pageParam.address;
+				vm.inspectednum = api.pageParam.inspectednum;
+				vm.activenum = api.pageParam.activenum;
+				vm.id = api.pageParam.id;
+				getPointDetail()
+			};
+			//获取点位详情
+			function getPointDetail() {
+				var url = $api.getStorage("interface_url") + api_url.getPointDetail;
+				Ajax({
+					type : "get",
+					url : url,
+					data : {
+						access_token : $api.getStorage("access_token"),
+						checkpointGroupId : vm.id
+						//code: vm.code
+					},
+					beforeSend : function() {
+						vm.loading = true;
+					},
+					complete : function() {
+						vm.loading = false;
+					},
+					success : function(data) {
+						if (data.success) {
+							vm.noinspected = data.data.noinspected;
+							vm.active = data.data.active;
+							vm.inspected = data.data.inspected;
+							vm.all = data.data.all;
+							
+							for (var i = 0; i < data.data.all.length; i++) {
+								vm.alls.push({
+									name : data.data.all[i].name,
+									id : data.data.all[i].id,
+									code : data.data.all[i].code,
+								});
+							}
+							for (var i = 0; i < data.data.inspected.length; i++) {
+								vm.inspecteds.push({
+									name : data.data.inspected[i].name,
+									id : data.data.inspected[i].id,
+									code : data.data.inspected[i].code,
+								});
+							}
+							for (var i = 0; i < data.data.active.length; i++) {
+								vm.actives.push({
+									name : data.data.active[i].name,
+									id : data.data.active[i].id,
+									code : data.data.active[i].code,
+								});
+							}
+							for (var i = 0; i < data.data.noinspected.length; i++) {
+								vm.noinspecteds.push({
+									name : data.data.noinspected[i].name,
+									id : data.data.noinspected[i].id,
+									code : data.data.noinspected[i].code,
+								});
+							}
+							
+							vm.allnum ="所有部位"+"("+vm.all.length+")";
+							vm.activesnum ="已激活部位"+"("+vm.active.length+")";
+							vm.inspectednums ="已巡查部位"+"("+vm.inspected.length+")";
+							vm.noinspectednum ="未巡查部位"+"("+vm.noinspected.length+")";
+							
+						} else {
+							vm.loadingFail = true;
+							//加载失败
+						}
+					}
+				});
+			}
+		</script>
+	</body>
+</html>

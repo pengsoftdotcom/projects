@@ -1,0 +1,107 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>进度管理—win</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/custom.css" />
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <header id="header" class="aui-bar aui-bar-nav header-custom">
+        <a class="aui-pull-left" onclick="closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+        <div class="aui-title">
+          进度管理
+        </div>
+    </header>
+    <div id="tab" class="custom-tab-wrap">
+        <div class="aui-content-padded">
+            <div class="aui-tab">
+                <ul class="custom-tab">
+                    <li :class="{'active':tab1}" @click="changeTab(1)">楼栋进度</li>
+                    <li :class="{'active':tab2}" @click="changeTab(2)">固定点进度</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <script src="../../../script/api.js"></script>
+    <script src="../../../script/common.js"></script>
+    <script src="../../../script/vue.js"></script>
+    <script>
+    	var vm = new Vue({
+    		el: "body",
+    		data: {
+    			tab1: true,
+    			tab2: false,
+    			
+    			isRrturn: true
+    		},
+    		methods: {
+    			changeTab: function(index){
+    				
+    				if(this.isRrturn){
+    				
+    					if(index == 1){
+    				
+	    					this.tab1 = true;
+	    					this.tab2 = false;
+	    					
+	    				}else if(index == 2){
+	    				
+	    					this.tab1 = false;
+	    					this.tab2 = true;
+	    				}
+	    				changeTab(index);
+    				}
+    				
+    			}
+    		}
+    	});
+    	
+        apiready = function () {
+
+            api.parseTapmode();
+            
+            setStatusBarStyle("light");
+
+            api.openFrame({
+                name: "rate/progress/progress_list_frm",
+                url: "widget://html/rate/progress/progress_list_frm.html",
+                bounces: false,
+                bgColor: "transparent",
+                rect: {
+                    x: 0,
+                    y: $api.offset($api.byId("header")).h + $api.offset($api.byId("tab")).h,
+                    w: api.winWidth,
+                    h: api.winHeight - $api.offset($api.byId("header")).h - $api.offset($api.byId("tab")).h,
+                },
+                pageParam: {
+                	id: api.pageParam.id
+                }
+            });
+
+        };
+        
+        function changeTab(index){
+        	vm.isRrturn = false;
+        	var script = "";
+        	if(index == 1){
+        		script += "vm.showFloor = true;getSiteBuildings();";
+        	}else{
+        		script += "vm.showFloor = false;getFixPoint();";
+        	}
+        	
+        	api.execScript({
+        		name: "rate/progress/progress_list_win",
+			    frameName: "rate/progress/progress_list_frm",
+			    script: script
+			});
+        }
+    </script>
+</body>
+</html>

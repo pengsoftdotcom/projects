@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+<title>天气</title>
+<link rel="stylesheet" type="text/css" href="../css/aui.css" />
+<link rel="stylesheet" type="text/css" href="../css/custom.css" />
+<style>
+        .d1{
+            width:100%;
+            height: 140px;
+            overflow: hidden;
+        }
+        .d2{
+            width: 100%;
+            height: 160px;
+            overflow-x: auto;
+			overflow-y: hidden;
+        }
+        .d3{
+            width: 320px;
+            height: 140px;
+        }
+    </style>
+</head>
+
+<body class="weather-body">
+<div class="weather-main">
+<div class="weather-main-date" style="margin-top: 10px;" v-text="dateAndWeek"></div>
+<div class="weather-main-icon"><i class="weather-big" :class="weatherIcon"></i></div>
+<div class="weather-main-text" v-text="weatherText"></div>
+<div class="weather-main-temperature" v-cloak>{{temperature}}<span class="c">&#176;</span></div>
+
+<!--<div class="weather-main-date" style="margin-top: 10px;">2016年11月11日</div>
+<div class="weather-main-icon"><i class="weather-big weather-qing"></i></div>
+<div class="weather-main-text">晴</div>
+<div class="weather-main-temperature">25<span class="c">&#176;</span></div>-->
+</div>
+<div class="d1">
+	<div class="d2">
+		<ul class="weather-future d3" :style="{width:weather_len + 'px'}">
+			<li v-for="weather in weathers">
+				<div class="weather-future-date m-b-10" v-cloak>{{weather.day}}日</div>
+				<div class="weather-future-icon"><i class="weather-small" :class="weather.weatherIcon" ></i></div>
+				<div class="weather-future-text" v-text="weather.weather"></div>
+				<div class="weather-future-temperature" v-cloak>{{weather.mintemp}}<span class="c">&#176;</span>-{{weather.maxtemp}}<span class="c">&#176;</span></div>
+			</li>
+		</ul>
+	</div>
+</div>
+<script src="../script/api.js"></script>
+<script src="../script/vue.js"></script>
+<script src="../script/common.js"></script>
+<script>
+
+	var vm = new Vue({
+		el: "body",
+		data: {
+			isResult: true,
+			dateAndWeek: getTodayAndWeek(),  //今天的日期及星期
+			temperature: 0,  //温度
+            weatherIcon: "", //天气图标
+            weatherText: "",  //天气情况
+            city: "",
+            
+            weathers: [],
+            weather_len: 320,
+		},
+	});
+	
+	
+	apiready = function () {
+	
+        api.parseTapmode();
+        
+        vm.temperature = api.pageParam.temperature ? api.pageParam.temperature : 0;
+        vm.weatherIcon = api.pageParam.weatherIcon ? api.pageParam.weatherIcon : "weather-qing";
+        vm.weatherText = api.pageParam.weatherText ? api.pageParam.weatherText : "晴";
+        vm.city = api.pageParam.city ? api.pageParam.city : "";
+        
+        getStoredWeather();
+        if(api.connectionType != "none"){
+			getRealWeather();
+    	}
+    	api.addEventListener({
+		    name:'online'
+		}, function(ret, err){  
+    		getRealWeather();
+		});
+    };
+	
+	
+	
+	//获取当前天气情况
+    function getRealWeather(){
+
+        var url = $api.getStorage("interface_url") + api_url.getWeather;
+        Ajax({
+            type: "get",
+            url: url,
+            data: {
+                access_token: $api.getStorage("access_token"),
+                cityname: vm.city,
+                code: "forcast"
+            },
+            beforeSend: function () {
+            	vm.isResult = false;
+            },
+            complete: function () {
+            	vm.isResult = true;
+            },
+            success: function (data) {
+				if(data.success && data.list.length > 0){
+					vm.weathers.splice(0);
+					for(var i = 0; i < data.list.length; i++){
+						vm.weathers.push({
+							day: data.list[i].day,
+							mintemp: data.list[i].mintemp,
+							maxtemp: data.list[i].maxtemp,
+							weather: data.list[i].weather,
+							weatherIcon: data.list[i].weathercode,
+						});
+					}
+					vm.city = data.list[0].name;
+					
+					vm.weather_len = api.winWidth/4*vm.weathers.length;
+
+					$api.setStorage("futureWeather",vm.weathers);
+					$api.setStorage("city",vm.city);
+					
+					api.execScript({
+                        name: "weather_win",
+                        script: "vm.city = '" + vm.city + "';"
+                    });
+					
+				}else {
+					getStoredWeather();
+				}
+            }
+            ,error: function(data){
+
+            }
+        });
+    	
+    };
+    
+    
+    //获取存储
+    function getStoredWeather(){
+    	var weather = $api.getStorage("futureWeather");
+		if(weather){
+			vm.weathers = weather;
+			vm.weather_len = api.winWidth/4*vm.weathers.length;
+		}
+    };
+	
+	
+	//获取今天的日期及星期
+    function getTodayAndWeek() {
+
+        var time = new Date();
+        var year = time.getFullYear();
+        var month = p(time.getMonth() + 1);
+        var day = p(time.getDate());
+
+        return year + "年" + month + "月" + day + "日 " + s(time.getDay());
+
+        //返回星期
+        function s(w) {
+
+            var week = "";
+            switch (w) {
+                case 1: week = "星期一"; break;
+                case 2: week = "星期二"; break;
+                case 3: week = "星期三"; break;
+                case 4: week = "星期四"; break;
+                case 5: week = "星期五"; break;
+                case 6: week = "星期六"; break;
+                default: week = "星期天"; break;
+            }
+
+            return week;
+
+        };
+
+        //自动补0
+        function p(s) {
+            return s < 10 ? "0" + s : s;
+        };
+
+    };
+</script>        
+</body>
+</html>

@@ -1,0 +1,221 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <title>工地详情——地图——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <style type="text/css">
+        .aui-nav .aui-bar-tab li {
+            padding: 5px;
+        }
+
+            .aui-nav .aui-bar-tab li .aui-btn {
+                display: block;
+                padding: 6px;
+                height: 45px;
+                line-height: 33px;
+            }
+
+        #aui-footer .aui-bar-tab .aui-iconfont {
+            font-size: 16px;
+            color: inherit;
+            padding-top: 0;
+            height: inherit !important;
+            line-height: inherit;
+            display: inline-block;
+        }
+
+        .aui-bar .aui-btn {
+            font-size: 14px;
+        }
+
+        .aui-input-row {
+            padding: 0;
+        }
+
+            .aui-input-row .aui-input {
+                color: #333;
+            }
+
+        .aui-bar .aui-btn {
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div id="loading" class="spinner-wrap">
+        <div class="spinner"></div>
+    </div>
+    <div id="loading-fail" class="fail-wrap" style="display:none;">
+        <p id="loading-fail-msg" class="fail-info"></p>
+        <a id="loading-fail-a" class="aui-btn" style="display:none;">重新加载</a>
+    </div>
+    
+    <input id="lon" type="hidden" />
+    <input id="lat" type="hidden" />
+</body>
+<script type="text/javascript" src="../../script/api.js"></script>
+<script type="text/javascript" src="../../script/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../script/common.js"></script>
+<script type="text/javascript">
+
+    apiready = function () {
+    
+        setTimeout(function () {
+            init();
+        }, 300);
+    };
+    
+    //页面初始化
+    function init() {
+    
+    	var map = api.require("bMap");
+        map.open({
+            rect: {
+                x: 0,
+                y: 0,
+                w: api.frameWidth,
+                h: api.frameHeight
+            },
+            center: {
+                lon: api.pageParam.lon,
+                lat: api.pageParam.lat
+            },
+            zoomLevel: 18,
+            showUserLocation: true,
+            fixedOn: "site/site_detail_map_frm",
+            fixed: false
+        }, function (ret) {
+
+            if (ret.status) {
+            
+                //设置中心点
+                map.setCenter({
+                    coords: {
+                        lon: api.pageParam.lon,
+                        lat: api.pageParam.lat
+                    }
+                });
+                
+                //添加标注
+                map.addAnnotations({
+                    annotations: [{lon:api.pageParam.lon,lat:api.pageParam.lat}],
+                    draggable: false
+                }, function (ret) {});
+                
+                //添加地图改变视角事件监听
+                map.addEventListener({
+                    name: "viewChange"
+                }, function (ret) {
+                    if (ret.status) {
+                        $("#lon").val(ret.lon);
+                        $("#lat").val(ret.lat);
+                    } else {
+                        api.toast({
+                            msg: "地理位置选取失败，请再试！",
+                            duration: 3000
+                        });
+                    }
+                });
+                //添加地图单击事件监听
+                map.addEventListener({
+                    name: "click"
+                }, function (ret, err) {
+                    if (ret.status) {
+                        $("#lon").val(ret.lon);
+                        $("#lat").val(ret.lat);
+                        
+                        //设置中心点
+                        map.setCenter({
+                            coords: {
+                                lon: ret.lon,
+                                lat: ret.lat
+                            }
+                        });
+                    } else {
+                        api.toast({
+                            msg: "地理位置选取失败，请再试！",
+                            duration: 3000
+                        });
+                    }
+                });
+                //关闭loading
+                $("#loading").fadeOut("slow");
+                $("#lon").val(api.pageParam.lon);
+                $("#lat").val(api.pageParam.lat);
+            } else {
+                $("#loading").hide();
+                $("#loading-fail-msg").text("地图打开失败！");
+                $("#loading-fail-a").show();
+                $("#loading-fail").fadeIn("slow");
+            }
+        });
+    };
+    
+    
+    //查询相邻的网格
+    function getAdjacentGrid(lon, lat) {
+        //拼接接口地址：查询相邻的网格
+        var url = $api.getStorage("interface_url") + api_url.getAdjacentGrid;
+        var access_token = $api.getStorage("access_token");
+
+        Ajax({
+            type: "get",
+            url: url,
+            data: {
+                access_token: access_token,
+                lng: lon,
+                lat: lat
+            },
+            beforeSend: function () {
+                api.showProgress({
+                    title: "查询网格中"
+                });
+            },
+            complete: function () {
+                api.hideProgress();
+            },
+            success: function (data) {
+
+                if (data.success) {
+                    var map = api.require("bMap");
+
+                    //向地图插入网格
+                    for (var i = 0; i < data.list.length; i++) {
+                        if (data.list[i].boundary) {
+                            map.addPolygon({
+                                id: i,
+                                styles: {
+                                    borderColor: "rgba(52, 152, 219, 0.9)",
+                                    borderWidth: 1,
+                                    fillColor: data.list[i].style
+                                },
+                                points: data.list[i].boundary
+                            });
+                        }
+                    }
+                } else {
+                    api.alert({
+                        title: "提示",
+                        msg: data.error.message,
+                        buttons: ["确定"]
+                    });
+                }
+            }
+        });
+
+    };
+
+    //设置地图中心点
+    function setCenter(lon, lat) {
+        var map = api.require("bMap");
+        map.setCenter({
+            coords: {
+                lon: lon,
+                lat: lat
+            }
+        });
+    };
+</script>
+</html>

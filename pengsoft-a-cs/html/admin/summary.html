@@ -1,0 +1,81 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>安全汇总_win</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+<body class="bg-summary">
+	<script type="text/javascript">
+		var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+		ele.style.fontSize = size + "px";
+	</script>
+		<div class="aui-text-custom aui-text-center aui-padded-5">
+            2016年05月12日 星期六
+        </div>
+		<!--汇总tab-->
+	    <div id="tab" class="custom-tab-wrap">
+	        <div class="aui-content-padded">
+	            <div class="aui-tab">
+	                <ul class="custom-tab">
+		                <li class="active">巡查工地</li>
+		                <li class="">巡查部位</li>
+		                <li class="">安全事件</li>
+	                </ul>
+	            </div>
+	        </div>
+	    </div>
+	    
+		<!--汇总统计的内容-->
+	    <div class="summary-wrap">
+	    	<div class="summary-container1">
+	    		<div class="summary-item">
+		    		<div class="summary-number">20</div>
+		    		<div class="summary-name">总数</div>
+	    		</div>
+	    	</div>
+	    	<div class="summary-container2">
+	    		<div class="summary-item bg-orange">
+		    		<div class="summary-number">10</div>
+		    		<div class="summary-name">未巡查</div>
+	    		</div>
+	    	</div>
+	    	<div class="summary-container2">
+	    		<div class="summary-item bg-custom2">
+		    		<div class="summary-number">20</div>
+		    		<div class="summary-name">已巡查</div>
+    			</div>
+	    	</div>
+	    </div>
+    
+	    <!--<div class="summary-wrap">
+	    	<div class="summary-container1">
+	    		<div class="summary-item">
+		    		<div class="summary-number">20</div>
+		    		<div class="summary-name">总数</div>
+	    		</div>
+	    	</div>
+	    	<div class="summary-container2">
+	    		<div class="summary-item bg-orange">
+		    		<div class="summary-number">10</div>
+		    		<div class="summary-name">事件</div>
+	    		</div>
+	    	</div>
+	    	<div class="summary-container2">
+	    		<div class="summary-item bg-red">
+		    		<div class="summary-number">20</div>
+		    		<div class="summary-name">重大</div>
+    			</div>
+	    	</div>
+	    </div>-->
+    
+	    <div class="index-add-btn">新建巡查</div>
+</body>
+</html>
+<script type="text/javascript">
+    apiready = function () {
+        api.parseTapmode();
+    };
+</script>

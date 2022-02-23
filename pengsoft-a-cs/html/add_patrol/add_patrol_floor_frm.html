@@ -1,0 +1,1181 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>点位选择——frm3</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    <style>
+    	.type {
+			display:inline-block;
+			width: 24px;
+			height: 24px;
+			border-radius: 50%;
+			background: #999999;
+			vertical-align: middle;
+		}
+		.slide-container {
+			width: 100%;
+			height: 100px;
+			overflow: hidden;
+		}
+		.slide-content {
+			width: 100%;
+			height: 120px;
+			overflow-x: auto;
+			overflow-y: hidden;
+		}
+		.slide-list {
+			width: 200px;
+			height: 100px; 
+			margin: 0px;
+			padding: 0px;
+			font-size: 25px;
+		}
+		.slide-item {
+			background-color: rgb(15, 172, 251);
+			float: left;
+			width: 120px;
+			height: 100px;
+			line-height: 100px;
+			text-align: center;
+			margin-left: 20px;
+			color: white;
+		}
+		.slide-item-active{
+			background-color: rgba(0, 0, 51, 1);
+		}
+		.slide-item:first-child{
+			margin-left: 0px;
+		}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray" v-if="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="aui-content thing-detail-wrap">
+        <ul class="aui-list-view">
+            <li class="aui-list-view-cell" v-effect="">
+                <p class="aui-col-xs-3 aui-text-custom">工地名称</p>
+                <p class="aui-col-xs-8 aui-text-333" v-cloak>{{constructionName}}</p>
+            </li>
+            <li class="aui-list-view-cell m-b-10" v-effect="">
+                <p class="aui-col-xs-3 aui-text-custom">巡查部位</p>
+                <p class="aui-col-xs-8 aui-text-333" v-cloak>{{code}} {{pointName}}</p>
+            </li>
+            <li class="aui-list-view-cell m-b-10">
+	            <div class="slide-container">
+	                <div class="slide-content">
+		                <ul class="slide-list" :style="{width:checkpointList.length*140-20}">
+		                	<li class="slide-item" v-for="checkpoint in checkpointList" @click="nextCp($index)" :class="{'slide-item-active':checkpoint.isClicked}">{{checkpoint.name}}</li>
+		                </ul>
+	                </div>
+	            </div>
+            </li>
+            
+            <template v-for="(pindex, cplist) in cpDataList">
+            <li class="thing-edit-wrap m-b-10">
+                <ul class="aui-list-view">
+                	<li class="aui-list-view-cell">
+                		<p class="aui-col-xs-3 aui-text-custom">{{cplist.checkpoint.name}}</p>
+                		<p class="aui-col-xs-9" style="text-align:center;">
+                			<template v-for="list in cplist.lists">
+                			<div style="display:inline;" @click="submitOne(pindex,$index)">
+                			<span class="type" :class="list.active ? list.icon : ''"></span> <span style="padding-right:5px;">{{list.name}}</span> 
+                			</div>
+            			  	</template>
+                		</p>
+                	</li>
+                    <li class="aui-list-view-cell">
+                        <div class="addthing-photo-container">
+                            <div class="addthing-imgwrap">
+                                <div class="img-item" v-show="cplist.addPic_btn" v-on:click="addPic(pindex)">
+                                    <div class="add-more text-all-center">添加<br>照片</div>
+                                </div>
+                                <template v-for="list in cplist.thingImageList">
+                                    <div class="img-item">
+                                        <div class="img-div" style="background-image:url('{{list.thumbPath}}');">
+                                            <span class="del-btn" v-on:click="delPic(pindex,$index)"><i class="aui-iconfont aui-icon-close"></i></span>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </li>
+                    <li class="aui-list-view-cell">
+                        <p class="aui-col-xs-12">
+                            <textarea v-model="cplist.content" class="thing-edit-area" placeholder="请用文字描述现场情况"></textarea>
+                        </p>
+                    </li>
+                    <li class="aui-list-view-cell text-all-center">
+                        <div class="voice-edit" v-on:click="startOrStopVoice(pindex)">请录入语音</div>
+                    </li>
+                    <li class="aui-list-view-cell text-all-center" v-show="cplist.voice_time">
+                        <div class="voice-div aui-col-xs-12" v-bind:class="{'aui-invisible':!cplist.voice_url_div}" v-on:click="playVoice(pindex)">
+                            {{cplist.voice_time}}
+                            <i class="aui-iconfont aui-icon-close" v-on:click.stop="delVoice(pindex)"></i>
+                        </div>
+                    </li>
+                </ul>
+            </li>
+            
+            <div class="voice-animation-wrap" v-show="cplist.recording" v-on:click="startOrStopVoice(pindex)">
+		        <div class="voice-animation-container">
+		            <div class="voice-animation-content">
+		                <div class="voice-animation-item voice-animation-item6"></div>
+		                <div class="voice-animation-item voice-animation-item5"></div>
+		                <div class="voice-animation-item voice-animation-item4"></div>
+		                <div class="voice-animation-item voice-animation-item3"></div>
+		                <div class="voice-animation-item voice-animation-item2"></div>
+		                <div class="voice-animation-item voice-animation-item1"></div>
+		            </div>
+		            <div class="voice-animation-msg">正在录音，点击保存录音</div>
+		        </div>
+		    </div>
+            </template>
+        </ul>
+        <div class="f-pd70"></div>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/jquery-1.11.1.min.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+    	var FNScanner = null;
+        var vm = new Vue({
+            el: "body",
+            data: {
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+
+                constructionId: "",  //工地id
+                constructionName: "",  //工地名称
+
+                pointId: "",  //点位id
+                pointName: "",  //点位名称
+                code: "",  //点位编号
+//              flow: false,
+
+                lists: [],  //提交类型
+
+                addPic_btn: true,  //是否显示添加图片按钮
+                thingImageList: [],  //报事图片
+                content: "",          //报事内容
+
+                voice_url_div: false,   //是否显示录音结果
+                voice_time: "",     //录音时长
+                recording: false,       //是否在录音中
+                voice_url: "",  //报事录音
+
+                items: [{ "label": "照片", "name": "image", "type": "imageList", "value": "", "url": "" },
+                       { "label": "文字", "name": "content", "type": "textarea", "value": "", "url": "" },
+                       { "label": "语音", "name": "audio", "type": "audio", "value": "", "url": "" }],
+                lng: 0,
+                lat: 0,
+                address: "",
+                
+                checkpointList: [],  //楼层检查点详情
+                cpDataList: [],   //检查点报事界面控制
+                
+                allArr: [],
+                errorArr: [],
+                index: 0,
+                prompt: "",
+            },
+            methods: {
+                selectConstruction: function () {  //重新选择工地
+
+                    timeOut300(function () {
+
+                        var pointID = api.pageParam.pointID;
+                        var pointName = api.pageParam.pointName;
+                        var siteID = api.pageParam.siteID;
+                        var siteName = api.pageParam.siteName;
+                        var code = api.pageParam.code;
+
+                        if (pointID && pointName && siteID && siteName && code) {
+                            openScanner();
+                        } else {
+
+                            var script = "";
+                            script += "getConstructionList();";
+                            api.execScript({
+                                name: "add_patrol/add_patrol_win",
+                                frameName: "add_patrol/add_patrol1_frm",
+                                script: script
+                            });
+                            api.execScript({
+                                name: "add_patrol/add_patrol_win",
+                                script: "changeFrm(0);"
+                            });
+
+                        }
+
+                    });
+
+                },
+                selectPoint: function () {  //重新选择点位
+
+                    var vm_p = this;
+                    timeOut300(function () {
+
+                        var pointID = api.pageParam.pointID;
+                        var code = api.pageParam.code;
+                        var pointName = api.pageParam.pointName;
+                        var siteID = api.pageParam.siteID;
+                        var siteName = api.pageParam.siteName;
+                        if (pointID && code && pointName && siteID && siteName) {
+                            openScanner();
+                        } else {
+
+                            var script = "";
+                            script += "vm.constructionId = \"" + vm_p.constructionId + "\";";
+                            script += "vm.constructionName = \"" + vm_p.constructionName + "\";";
+                            script += "getPoint();";
+                            api.execScript({
+                                name: "add_patrol/add_patrol_win",
+                                frameName: "add_patrol/add_patrol2_frm",
+                                script: script
+                            });
+                            api.execScript({
+                                name: "add_patrol/add_patrol_win",
+                                script: "changeFrm(1);"
+                            });
+
+                        }
+
+                    });
+
+                },
+                addPic: function (i) {  //添加图片
+                    addPic(i);
+                },
+                delPic: function (i,j) {  //删除图片
+
+                    this.cpDataList[i].thingImageList.splice(j, 1);
+                    if (this.cpDataList[i].thingImageList.length < 6) {
+                        this.cpDataList[i].addPic_btn = true;
+                    }
+
+                },
+                startOrStopVoice: function (i) {    //开始或停止录音
+                    startOrStopVoice(i);
+                },
+                playVoice: function (i) {  //播放录音
+                    playVoice(i);
+                },
+                delVoice: function (i) {  //删除录音
+                    delVoice(i);
+                },
+                submitOne: function (i,j) {  //提交
+                    var vm_p = this;
+                    timeOut300(function () {
+
+                        api.confirm({
+                            msg: "确定此部件“" + vm_p.cpDataList[i].lists[j].name + "”吗？", buttons: ["确定", "取消"]
+                        }, function (ret, err) {
+							
+                            if (ret.buttonIndex == 1) {
+
+                            	for(var k = 0; k < vm_p.cpDataList[i].lists.length; k++){
+                            		vm_p.cpDataList[i].lists[k].active = false;
+                            	}
+                            	vm_p.cpDataList[i].lists[j].active = true;
+                            	vm_p.cpDataList[i].type = vm_p.cpDataList[i].lists[j].id;
+                            	
+                            }
+
+                        });
+
+                    });
+
+                },
+                
+                nextCp: function(index){
+
+                	if(!this.checkpointList[index].isClicked){
+                		this.checkpointList[index].isClicked = true;
+                		
+                		var flag = true;
+        				for(var i = 0; i < this.cpDataList.length; i++){
+            				if(this.cpDataList[i].id == this.checkpointList[index].id){
+            					flag = false;
+            					break;
+            				}
+            				
+            			}
+            			if(flag){
+            				var obj = new Object();
+            				obj.id = this.checkpointList[index].id;
+            				
+            				obj.addPic_btn = true;
+            				
+            				obj.voice_url = "";
+                            obj.voice_url_div = false;
+                            obj.voice_time = "";
+                            obj.recording = false;
+                            
+            				obj.thingImageList = new Array();
+            				obj.voice_time = "";
+            				obj.content = "";
+            				obj.type = "";
+            				
+            				obj.lists = new Array();
+            				for(var i = 0; i < vm.lists.length; i++){
+	        					vm.lists[i].active = false;
+	        					obj.lists.push({
+	        						id: vm.lists[i].id,
+	        						name: vm.lists[i].name,
+	        						icon: vm.lists[i].icon,
+	        						active: vm.lists[i].active,
+	        					});
+	        				}
+            				
+            				obj.checkpoint = this.checkpointList[index];
+            				this.cpDataList.push(obj);
+        				}
+        			}
+            	}
+                	
+        	},
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            FNScanner = api.require('FNScanner');
+            
+            var pointID = api.pageParam.pointID;
+            var pointName = api.pageParam.pointName;
+            var siteID = api.pageParam.siteID;
+            var siteName = api.pageParam.siteName;
+            var code = api.pageParam.code;
+//          var flow = api.pageParam.flow;
+            if (pointID && pointName && siteID && siteName && code) {
+
+                vm.constructionId = siteID;
+                vm.constructionName = siteName;
+                vm.pointId = pointID;
+                vm.pointName = pointName;
+                vm.code = code;
+//              vm.flow = flow;
+                getType();
+                getFloorDetail();
+
+            }
+
+            var map = api.require("bMap");
+            map.getLocation({ accuracy: "10m" }, function (ret, err) {
+
+                if (ret.status) {
+
+                    vm.lng = ret.lon;
+                    vm.lat = ret.lat;
+
+                    map.getNameFromCoords({
+                        lon: vm.lng,
+                        lat: vm.lat
+                    }, function (ret, err) {
+
+                        if (ret.status) {
+                            vm.address = ret.address;
+                        }
+
+                    });
+
+                } else {
+                    api.toast({ msg: "定位失败，请检查是否授予定位权限！", duration: 3000 });
+                }
+
+            });
+
+        };
+
+
+        //获取提交类型
+        function getType() {
+        
+			if($api.getStorage("eventTypeFloor")){
+				 vm.lists = $api.getStorage("eventTypeFloor");
+			}
+            
+            if(api.connectionType == "none" || vm.lists.length > 0){
+            	vm.loading = false;
+            	
+            	if (!vm.lists) {
+                    return false;
+                }
+                
+            }else{
+
+            	var url = $api.getStorage("interface_url") + api_url.getEventType;
+
+	            Ajax({
+	                type: "get",
+	                url: url,
+	                data: {
+	                    access_token: $api.getStorage("access_token")
+	                },
+	                beforeSend: function () {
+	                    vm.loading = true;
+	                },
+	                complete: function () {
+	                    vm.loading = false;
+	                },
+	                success: function (data) {
+						
+	                    if (data.success) {
+
+	                    	vm.lists.splice(0);
+	
+	                        //如果一条数据都没有，将在界面显示“暂无数据”
+	                        if (data.list.length == 0) {
+	                            vm.loadingFail = true;
+	                            return false;
+	                        }
+	
+	                        for (var i = 0; i < data.list.length; i++) {
+	                            vm.lists.push({
+	                                id: data.list[i].id,
+	                                name: data.list[i].name,
+	                                icon: data.list[i].icon,
+	                                active: false,
+	                            });
+	                        }
+	                        
+	                        $api.setStorage("eventTypeFloor",vm.lists);
+	                       
+	
+	                    } else {
+	                        vm.loadingFail = true;  //加载失败
+	                    }
+	
+	                }
+	            });
+            }
+            
+        };
+        
+        
+        //获取楼层检查点详情
+		function getFloorDetail(){
+		
+			var url = $api.getStorage("interface_url") + api_url.getFloorDetail;
+			
+			Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    checkpointId: vm.pointId,
+                },
+                beforeSend: function () {
+                    vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+
+                    if (data.success) {
+
+                        //如果一条数据都没有，将在界面显示“加载失败”
+                        if (data.list.length == 0) {
+                            vm.loadingFail = true;
+                            return false;
+                        }
+						
+						for(var i = 0; i < data.list.length; i++){
+							vm.checkpointList.push({
+								id: data.list[i].id,
+								name: data.list[i].partname,
+								isClicked: i == 0 ? true : false,
+							});
+						}
+						
+						var obj = new Object();
+        				obj.id = vm.checkpointList[0].id;
+        				
+        				obj.addPic_btn = true;
+        				obj.voice_url = "";
+                        obj.voice_url_div = false;
+                        obj.voice_time = "";
+                        obj.recording = false;
+        				
+        				obj.thingImageList = new Array();
+        				obj.voice_time = "";
+        				obj.content = "";
+        				obj.type = "";
+        				
+        				obj.lists = new Array();
+        				for(var i = 0; i < vm.lists.length; i++){
+        					vm.lists[i].active = false;
+        					obj.lists.push({
+        						id: vm.lists[i].id,
+        						name: vm.lists[i].name,
+        						icon: vm.lists[i].icon,
+        						active: vm.lists[i].active,
+        					});
+        				}
+        				obj.checkpoint = vm.checkpointList[0];
+        				
+						vm.cpDataList.push(obj);
+
+                    } else {
+                        vm.loadingFail = true;  //加载失败
+                    }
+
+                }
+            });
+		};
+		
+
+        //添加图片
+        function addPic(i) {
+
+            //选择图片
+            api.getPicture({
+                sourceType: "camera",
+                encodingType: "jpg",
+                allowEdit: true,
+                targetWidth: 800,
+                quality: 50
+            }, function (ret, err) {
+
+                if (ret && ret.data != "") {
+
+                    vm.cpDataList[i].thingImageList.push({
+                        path: ret.data,
+                        thumbPath: ret.data
+                    });
+
+                    if (vm.cpDataList[i].thingImageList.length == 6) {
+                        vm.cpDataList[i].addPic_btn = false;
+                    }
+                    
+                }
+
+            });
+
+        };
+
+
+        //开始或停止录音
+        function startOrStopVoice(index) {
+            if (vm.cpDataList[index].recording == false) {
+                //判断是否已经录音过了
+                if (vm.cpDataList[index].voice_url) {
+
+                    api.confirm({
+                        title: "提示",
+                        msg: "再次录音将会清除上次录音",
+                        buttons: ["确定", "取消"]
+                    }, function (ret, err) {
+
+                        if (ret.buttonIndex == 1) {
+
+                            vm.cpDataList[index].voice_url = "";
+                            vm.cpDataList[index].voice_url_div = false;
+                            vm.cpDataList[index].voice_time = "";
+                            vm.cpDataList[index].recording = true;
+                            api.startRecord({ path: "fs://res/voice/" + Date.now() + ".amr" });
+                        }
+
+                    });
+
+                } else {
+                    vm.cpDataList[index].recording = true;
+                    api.startRecord({ path: "fs://res/voice/" + Date.now() + ".amr" });
+                }
+
+            } else {
+
+                //停止录音
+                api.stopRecord(function (ret, err) {
+
+                    vm.cpDataList[index].recording = false;
+
+                    if (ret && ret.path != "" && ret.duration >= 2) {
+
+                        vm.cpDataList[index].voice_url = ret.path;
+                        vm.cpDataList[index].voice_url_div = true;
+                        vm.cpDataList[index].voice_time = formatVoiceTime(ret.duration);
+
+                    } else {
+                        api.toast({ msg: "录音时间必须大于2秒！", duration: 3000 });
+                    }
+
+                });
+
+            }
+
+        };
+
+
+        //播放录音
+        function playVoice(index) {
+
+            if (vm.cpDataList[index].voice_url != "") {
+                api.startPlay({ path: vm.cpDataList[index].voice_url }, function () { });
+            } else {
+                api.toast({ msg: "录音文件不存在！", duration: 3000 });
+            }
+
+        };
+
+
+
+        //删除录音
+        function delVoice(index) {
+
+            vm.cpDataList[index].voice_url = "";
+            vm.cpDataList[index].voice_url_div = false;
+            vm.cpDataList[index].voice_time = "";
+
+        };
+
+
+        //格式化录音时间
+        function formatVoiceTime(time) {
+
+            var minute = parseInt(time / 60);
+            var second = (p(time % 60));
+
+            return minute + ":" + second + "S";
+
+            function p(s) {
+                return s > 9 ? s : "0" + s;
+            };
+
+        };
+        
+        
+        //提交报事
+        function completePatrol(){
+        	if (vm) {
+        		api.showProgress({ title: "收集信息", animationType: "zoom" });
+                
+                //验证
+                if (!isLogin()) {
+                    api.hideProgress();
+                    api.alert({ title: "错误", msg: "用户信息为空，请重新登录！", buttons: ["确定"] });
+                    return false;
+                }else if (vm.cpDataList.length != vm.checkpointList.length) {
+                    api.hideProgress();
+                    api.toast({ msg: "请巡查完所有检查点再提交！", duration: 3000 });
+                    return false;
+                }  
+                for(var i = 0; i < vm.cpDataList.length; i++){
+                	
+                	if (vm.cpDataList[i].thingImageList.length == 0) {
+	                    api.hideProgress();
+	                    api.toast({ msg: vm.cpDataList[i].checkpoint.name + "必须要上传巡查照片！", duration: 3000 });
+	                    return false;
+	                } else if(vm.cpDataList[i].type == ""){
+	                	api.hideProgress();
+	                    api.toast({ msg: vm.cpDataList[i].checkpoint.name + "未选择报事类型！", duration: 3000 });
+	                    return false;
+	                } else if ((vm.cpDataList[i].type == "4666e8ba-f692-4c45-8a1c-50985321709c" || vm.cpDataList[i].type == "34732a8e-9592-46ab-86a6-d569badfb414") && vm.cpDataList[i].content == ""){
+	                	api.hideProgress();
+	                    api.toast({ msg: vm.cpDataList[i].checkpoint.name + "当前类型必须上传文字！", duration: 3000 });
+	                    return false;
+	                }
+                }
+                
+                if (vm.lng == 0 || vm.lat == 0 || vm.address == "") {
+                	vm.address = "未获取到地址";
+                } 
+                
+                for(var i = 0; i < vm.cpDataList.length; i++){
+                	vm.allArr.push(i);
+                }
+                
+                submit();
+                
+        	}
+        }
+
+
+        //提交报事
+        function submit() {
+
+            if (vm) {
+            	var data = vm.cpDataList[vm.allArr[vm.index]];
+				//获取对应的值
+                var access_token = $api.getStorage("access_token");
+                
+                //添加图片
+                var image_array = new Array();
+                if (data.thingImageList.length > 0 && data.thingImageList.length <= 6) {
+                    for (var i = 0; i < data.thingImageList.length ; i++) {
+                        image_array.push(data.thingImageList[i].path);
+                    }
+                }
+                
+                //上次文件错误执行次数
+                var uploadTime = 0;
+
+                //判断是否上传文件
+                var audioId = "";
+                var audioUrl = "";  //录音文件的网络地址
+                var imageIdArray = new Array();
+                if (data.voice_url) {
+                    addVoice();
+                } else if (image_array.length > 0) {
+                    addPicture();
+                } else {
+                    addEvent();
+                }
+                
+                //1.上传录音
+                function addVoice() {
+
+                    if (uploadTime == 0) {
+                        api.showProgress({ title: "上传录音", text: "进度：0%" });
+                    } else {
+                        api.showProgress({ title: "上传录音", text: "进度：100%" });
+                    }
+
+                    //拼接接口地址：上传文件
+                    var fileUpload_url = $api.getStorage("interface_url") + api_url.fileUpload + "?access_token=" + access_token;
+
+                    //上传语音
+                    api.ajax({
+                        url: fileUpload_url,
+                        method: "post",
+                        timeout: 30000,
+                        report: true,
+                        data: {
+                            files: {
+                                file: data.voice_url
+                            }
+                        }
+                    }, function (ret, err) {
+
+                        if (ret.status == 0) {  //上传中
+                            api.showProgress({ title: "上传录音", text: "进度：" + ret.progress + "%" });
+                        } else if (ret.status == 1 && ret.body.success) {  //上传完成
+
+                            //重置上次文件错误执行次数
+                            uploadTime = 0;
+
+                            audioId = ret.body.data.id;
+                            audioUrl = ret.body.data.accessAddress;
+                            if (image_array.length > 0) {  //上传图片
+                                addPicture();
+                            } else {  //新增投诉
+                                addEvent();
+                            }
+
+                        } else {  //上传失败
+
+                            if (uploadTime < 4) {  //5次上次失败机会
+
+                                //上次文件错误执行次数+1
+                                uploadTime += 1;
+                                addVoice();  //递归上传
+
+                            } else {
+
+                                api.hideProgress();
+
+                                if (ret.statusCode == 500) {
+                                    api.alert({ title: "错误", msg: "上传录音失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                                } else {
+                                    api.alert({ title: "错误", msg: "上传录音失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                                }
+
+                            }
+
+                        }
+
+                    });
+
+                };
+                
+                
+                 //2.上传图片
+                function addPicture() {
+
+                    //拼接接口地址：上传文件
+                    var fileUpload_url = $api.getStorage("interface_url") + api_url.fileUpload + "?access_token=" + access_token;
+
+                    //上传图片
+                    api.ajax({
+                        url: fileUpload_url,
+                        method: "post",
+                        timeout: 30000,
+                        report: true,
+                        data: {
+                            files: {
+                                file: image_array
+                            }
+                        }
+                    }, function (ret, err) {
+
+                        if (ret.status == 0) {  //上传中
+                            api.showProgress({ title: "上传图片", text: "进度：" + ret.progress + "%" });
+                        } else if (ret.status == 1 && ret.body.success) {  //上传完成
+
+                            //重置上次文件错误执行次数
+                            uploadTime = 0;
+
+                            if (image_array.length == 1) {
+                                imageIdArray.push({ id: ret.body.data.id, url: ret.body.data.accessAddress });
+                            } else {
+                                for (var i = 0; i < ret.body.list.length; i++) {
+                                    imageIdArray.push({ id: ret.body.list[i].id, url: ret.body.list[i].accessAddress });
+                                }
+                            }
+                            addEvent();  //新增投诉
+
+                        } else {  //上传失败
+
+                            if (uploadTime < 4) {  //5次上次失败机会
+
+                                //上次文件错误执行次数+1
+                                uploadTime += 1;
+                                addPicture();  //递归上传
+
+                            } else {
+
+                                api.hideProgress();
+
+                                if (ret.statusCode == 500) {
+                                    api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                                } else {
+                                    api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                                }
+
+                            }
+
+                        }
+
+                    });
+
+                };
+                
+                
+                //3.提交报事
+                function addEvent() {
+
+                    //拼接接口地址：新增报事
+                    var addEvent_url = $api.getStorage("interface_url") + api_url.addFloorPatrol;
+                	var items = [{ "label": "照片", "name": "image", "type": "imageList", "value": "", "url": "" },
+                       { "label": "文字", "name": "content", "type": "textarea", "value": "", "url": "" },
+                       { "label": "语音", "name": "audio", "type": "audio", "value": "", "url": "" }];
+
+                    //拼接报事的附加字段
+                    for (var i = 0; i < items.length; i++) {
+
+                        //图片
+                        if (items[i].type == "imageList") {
+                            items[i].value = imageIdArray;
+                        }
+
+                        //文本
+                        if (items[i].type == "textarea") {
+                            items[i].value = data.content;
+                        }
+
+                        //录音
+                        if (items[i].type == "audio") {
+                            items[i].value = { id: audioId, url: audioUrl };
+                        }
+
+                    }
+					vm.prompt = "提交部件“" + vm.cpDataList[vm.allArr[vm.index]].checkpoint.name + "”";
+                    //新增投诉
+                    Ajax({
+                        type: "post",
+                        url: addEvent_url,
+                        data: {
+                            access_token: access_token,
+                            lng: vm.lng,
+                            lat: vm.lat,
+                            address: vm.address,
+                            checkpointId: vm.pointId,
+                            checkpointGroupId: vm.constructionId,
+                            catalogId: data.type,
+                            extraJson: JSON.stringify(items),
+                            stepId: data.id,
+                        },
+                        beforeSend: function () {
+                            api.showProgress({ title: "提交信息", msg: vm.prompt, });
+                        },
+                        complete: function () {
+                            api.hideProgress();
+                        },
+                        success: function (data) {
+                            if (data.success) {
+                            	vm.index ++;
+								if(vm.index == vm.allArr.length && vm.errorArr.length == 0){
+									flushData();
+								}else if(vm.index == vm.allArr.length && vm.errorArr.length > 0){
+									//重新上传未上传成功信息
+										api.alert({
+							                title: "提示",
+							                msg: "部分信息未上传成功",
+							                buttons: ["重新上传"]
+							            }, function (ret, err) {
+							            	vm.index = 0;
+											vm.allArr = vm.errorArr;
+											submit();
+							            });
+									
+								}else if(vm.index < vm.allArr.length){
+									vm.prompt = "提交部件“" + vm.cpDataList[vm.allArr[vm.index]].checkpoint.name + "”成功";
+									submit();
+								}
+
+                            } else {
+                            	vm.errorArr.push(vm.allArr[vm.errorArr]);
+                            	vm.index ++;
+                            	vm.prompt = "提交部件“" + vm.cpDataList[vm.allArr[vm.index]].checkpoint.name + "”未成功";
+                            	if(vm.index == vm.allArr.length){
+                            		vm.index = 0;
+									vm.allArr = vm.errorArr;
+									api.alert({ 
+										title: "错误", 
+										msg: "系统异常：" + data.error.message, 
+										buttons: ["重新上传"]
+									},function(ret, err){
+										submit();
+									});
+                            	}else if(vm.index < vm.allArr.length){
+                            		submit();
+                            	}
+                            }
+
+                        }
+                    });
+
+                };
+
+
+                
+                //添加到草稿箱
+                function addDrafts() {
+
+                    api.confirm({
+                        title: "提示",
+                        msg: "你的网络已断开，是否添加此条报事到草稿箱？",
+                        buttons: ["确定", "取消"]
+                    }, function (ret, err) {
+
+                        if (ret.buttonIndex == 1) {
+
+                            //拼接报事的附加字段（图片和录音）
+                            for (var i = 0; i < vm.items.length; i++) {
+
+                                //图片
+                                if (vm.items[i].type == "imageList") {
+                                    vm.items[i].value = image_array;
+                                }
+
+                                //文本
+                                if (vm.items[i].type == "textarea") {
+                                    vm.items[i].value = vm.content;
+                                }
+
+                                //录音
+                                if (vm.items[i].type == "audio") {
+                                    vm.items[i].value = vm.voice_url;
+                                }
+
+                            }
+
+                            var patrol = $api.getStorage("PatrolLists");
+                            
+                            if(patrol == "undefined" || typeof(patrol) == "undefined"){
+                            	patrol = new Array();
+                            }
+                            var index = 0;
+                            for(var i = 0; i < patrol.length; i++){
+                            	if(patrol[i] && patrol[i].userId == $api.getStorage("user").id){
+                            		index = i;
+                            		break;
+                            	}else {
+                            		index = patrol.length;
+                            	}
+                            }
+                            if(!patrol[index]){
+                            	patrol[index] = new Object();
+                            	patrol[index].list = new Array();
+                            }
+                            patrol[index].userId = $api.getStorage("user").id;
+                            patrol[index].list.push({
+                                access_token: access_token,
+                                lng: vm.lng,
+                                lat: vm.lat,
+                                address: vm.address,
+                                pointId: vm.pointId,
+                                pointName: vm.pointName,
+                                constructionId: vm.constructionId,
+                                constructionName: vm.constructionName,
+                                catalogId: typeId,
+                                catalogName: typeName,
+                                code: vm.code,
+                                extraJson: vm.items,
+                                datetime: nowTime(),
+                                voice_time: vm.voice_time,
+                                name: $api.getStorage("user").name,
+                            });
+                            $api.setStorage("PatrolLists", patrol);
+
+                            api.alert({
+                                title: "提示",
+                                msg: "添加成功！",
+                                buttons: ["确定"]
+                            }, function (ret, err) {
+                                closeWin('add_patrol/add_patrol_win');
+                            });
+
+                        }
+
+                    });
+
+                };
+
+            }
+
+        };
+        
+        
+        //刷新首页及列表数据
+        function flushData(){
+        	api.alert({
+                title: "提示",
+                msg: "提交成功！",
+                buttons: ["确定"]
+            }, function (ret, err) {
+
+                //刷新首页统计数据
+                api.execScript({
+                    name: "home_win",
+                    frameName: "home_frm",
+                    script: "vm.changeTab(vm.frameIndex);closeWin('add_patrol/add_patrol_win');"
+                });
+
+                //刷新检查列表
+                var script = "";
+                script += "vm.pullDownRefresh = true;";
+                script += "vm.pageCount = 0;";
+                script += "getPatrolList();";
+                script += "closeWin('add_patrol/add_patrol_win');";
+
+                api.execScript({
+                    name: "patrol_list/patrol_list_win",
+                    frameName: "patrol_list/patrol_list_frm",
+                    script: script
+                });
+
+            });
+    	}
+
+
+        //打开二维码扫描
+        function openScanner() {
+
+			FNScanner.openScanner({
+			    autorotation: false,
+//			    saveToAlbum: false,
+			}, function(ret, err) {
+			    if (ret) {
+
+			        if (ret.eventType == "show") {
+	                } else if (ret.eventType == "selectImage") {
+	
+	                } else if (ret.eventType == "success") {
+						try {
+	                    	var obj = JSON.parse(ret.content);
+	                    	if (obj.key == "javascript") {
+	                            eval(obj.val);
+	                        }
+	                    	setTimeout(function(){FNScanner.closeView();},300);
+	                	}
+	                    catch (e) {
+
+	                    	FNScanner.closeView();
+	                        api.alert({ title: "错误", msg: "该二维码不属于本app的扫描范围！", buttons: ["确定"] });
+	                    }
+	
+	                } else if (ret.eventType == "cancel") {
+	                    setTimeout(function () { api.toast({ msg: "取消扫描！" }); }, 1000);
+	                } else if (ret.eventType == "fail") {
+	                    api.alert({ title: "错误", msg: "扫描失败！", buttons: ["确定"] },function(){
+                        	setTimeout(function(){FNScanner.closeView();},300);
+                        });
+	                }
+			    } else {
+			    
+			    }
+			});
+
+        };
+
+
+        //二维码扫描进行添加
+        function addPatrolForScanner(pointID, pointName, siteID, siteName, code) {
+
+//			if(vm.flow){
+				vm.constructionId = siteID;
+	            vm.constructionName = siteName;
+	            vm.pointId = pointID;
+	            vm.pointName = pointName;
+	            vm.code = code;
+//			}else{
+//				var script = "";
+//				script += "vm.constructionId = \"" + siteID + "\";";
+//				script += "vm.constructionName = \"" + siteName + "\";";
+//				script += "vm.pointId = \"" + pointID + "\";";
+//				script += "vm.pointName = \"" + pointName + "\";";
+//				script += "vm.code = \"" + code + "\";";
+//				
+//          	api.execScript({
+//	                name: "add_patrol/add_patrol_win",
+//	                frameName: "add_patrol/add_patrol3_frm",
+//	                script: script
+//	            });
+//				api.execScript({
+//                  name: "add_patrol/add_patrol_win",
+//                  script: "changeFrm(0);"
+//              });
+//			}
+
+        };
+
+
+        //格式化时间
+        function nowTime() {
+
+            var time = new Date();
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+            var hour = p(time.getHours());
+            var min = p(time.getMinutes());
+            var sec = p(time.getSeconds());
+
+            return year + "/" + month + "/" + day + " " + hour + ":" + min + ":" + sec;
+
+            function p(s) {
+                return s < 10 ? "0" + s : s;
+            };
+
+        };
+    </script>
+</body>
+</html>

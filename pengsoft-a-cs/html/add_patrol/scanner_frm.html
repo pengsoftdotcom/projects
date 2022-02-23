@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0"/>
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>title</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    <style>
+	    .scan-wrap {
+	    	position:absolute;
+	    	width: 100%;
+	    	height:100%;
+	    }
+    	.scan-box {
+    		width:2.5rem;
+    		height:2.5rem;
+    		border:1px solid rgba(255,255,255,0.3);
+    		box-shadow: 0 0 0 1000px rgba(0,0,0,0.7);
+    		background-color: transparent;
+    		position:relative;
+    	}
+    	.scan-line {
+    		width:2.3rem;
+    		height:2px;
+    		margin:auto;
+    		background:rgba(99,228,0,0.6);
+    		position:absolute;
+    		top:0;
+    		left:0.1rem;
+    		animation: scan-animation 3s linear infinite;
+    		-webkit-animation: scan-animation 3s linear infinite;
+    	}
+    	@keyframes scan-animation {
+			from {top:0;}
+			to {top:2.45rem;}
+		}
+		@-webkit-keyframes scan-animation {
+			from {top:0;}
+			to {top:2.45rem;}
+		}
+    	#header{
+    		position: fixed;
+    		background-color: transparent;
+    	}
+    </style>
+</head>
+<body style="background-color:transparent;">
+	<script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+
+ 	<header id="header" class="aui-bar aui-bar-nav f-fs18">
+	        <a class="aui-pull-left" onclick="cancel();"><i class="aui-iconfont aui-icon-left"></i> 取消 </a>
+	        <a class="aui-pull-right" @click="lightCtrl"> <span v-text="lightDeco"></span> <i class="aui-iconfont" :class="{'aui-icon-lightforbid':lightOff,'aui-icon-light':!lightOff}"></i> </a>
+    </header> 
+    <div class="scan-wrap text-all-center">
+    	<div class="scan-box">
+    		<div class="scan-line"></div>
+    	</div>
+    </div>
+</body>
+<script src="../../script/api.js"></script>
+<script src="../../script/common.js"></script>
+<script src="../../script/vue.js"></script>
+<script type="text/javascript">
+
+	var vm = new Vue({
+		el: "body",
+		data: {
+			lightDeco: "闪光关",
+			lightOff: true,
+		},
+		methods: {
+			lightCtrl: function(){
+				if(this.lightOff){
+					this.lightOff = false;
+					this.lightDeco = "闪光开";
+					api.execScript({
+                        name: "home_win",
+                        frameName: "home_frm",
+                        script: "FNScanner.switchLight({status: 'on'});"
+                    });
+                    api.execScript({
+                        name: "add_patrol/add_patrol_win",
+                        frameName: "add_patrol/add_patrol3_frm",
+                        script: "FNScanner.switchLight({status: 'on'});"
+                    });
+                    api.execScript({
+                        name: "patrol_list/patrol_list_win",
+                        script: "FNScanner.switchLight({status: 'on'});"
+                    });
+				}else{
+					this.lightOff = true;
+					this.lightDeco = "闪光关";
+					api.execScript({
+                        name: "home_win",
+                        frameName: "home_frm",
+                        script: "FNScanner.switchLight();"
+                    });
+                    api.execScript({
+                       name: "add_patrol/add_patrol_win",
+                        frameName: "add_patrol/add_patrol3_frm",
+                        script: "FNScanner.switchLight();"
+                    });
+                    api.execScript({
+                        name: "patrol_list/patrol_list_win",
+                        script: "FNScanner.switchLight();"
+                    });
+				}
+			}
+		}
+		
+	});
+	apiready = function(){
+	
+		api.parseTapmode();
+		
+		setStatusBarStyle("light");
+		
+	};
+	
+	function cancel(){
+		api.execScript({
+            name: "home_win",
+            frameName: "home_frm",
+            script: "FNScanner.closeView();api.toast({ msg: '取消扫描！' });"
+        });
+        api.execScript({
+            name: "add_patrol/add_patrol_win",
+            frameName: "add_patrol/add_patrol3_frm",
+            script: "FNScanner.closeView();api.toast({ msg: '取消扫描！' });"
+        });
+        api.execScript({
+           name: "patrol_list/patrol_list_win",
+            script: "FNScanner.closeView();api.toast({ msg: '取消扫描！' });"
+        });
+        closeFrm();
+	}
+</script>
+</html>

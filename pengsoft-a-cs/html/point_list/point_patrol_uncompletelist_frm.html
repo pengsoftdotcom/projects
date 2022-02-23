@@ -1,0 +1,192 @@
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>未巡查点位——frm</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+		<style type="text/css">
+			.patrol-list-item {
+				position: relative;
+			}
+			.state-back {
+				color: #ffffff;
+				text-align: left;
+				padding:5px;
+				height: 25px;
+				width: 90px;
+				line-height: 14px;
+				border: 1px #FFFFFF;
+				background-color: #0facfb;
+			}
+			.point-activate {
+				color: #ffffff;
+				border: 1px #FFFFFF;
+				text-align: left;
+				padding:5px;
+				height: 25px;
+				width: 90px;
+				line-height: 14px;
+				background-color: #2ECC71;
+			}
+			
+			.bottom {
+				z-index: 2000;
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+				min-height: 45px;
+				line-height: 45px;
+				font-size: 18px;
+				color: #ffffff;
+				margin: 0;
+				text-align: center;
+				white-space: nowrap;
+				background-color: #0facfb;
+			}
+			.bottom-left {
+				z-index: 2000;
+				position: fixed;
+				bottom: 0;
+				width: 50%;
+				margin: 0;
+				text-align: center;
+			}
+			.bottom-right {
+				z-index: 2000;
+				position: fixed;
+				bottom: 0;
+				width: 50%;
+				margin-left: 50%;
+				text-align: left;
+			}
+			.point-detail {
+				position: absolute;
+				right: 10px;
+				top: 8px;
+				width: 90px;
+				height: 50px;
+				line-height: 60px;
+				background-color: #FFFFFF;
+			}
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+			ele.style.fontSize = size + "px";
+		</script>
+		<div class="loading-wrap bg-gray" v-show="loading">
+			<div class="spinner"></div>
+		</div>
+		<div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+			<p class="fail-info">
+				加载失败
+			</p>
+		</div>
+		<div class="fail-wrap bg-gray" v-show="noData">
+			<p class="fail-info">
+				暂无数据
+			</p>
+		</div>
+		<div class="fail-wrap bg-gray" v-show="timeOut">
+			<p class="fail-info">
+				请求超时
+			</p>
+		</div>
+		<div class="aui-padded-5"></div>
+		<div class="patrol-list-wrap">
+			<template v-for="list in lists">
+				<div class="patrol-list-item" v-on:click="openSiteList($index)" v-effect="">
+					<div class="aui-text-333" style="max-width: 2rem;" v-text="list.name"></div>
+					<div class="f-fs14 aui-text-999" style="max-width: 2rem;">
+						<i class="aui-iconfont aui-icon-location aui-text-custom"></i>
+						{{list.address}}
+					</div>
+					<div class="point-detail">
+						<button class="state-back" v-text="list.activenum"></button>
+						<button class="point-activate" v-text="list.noinspectednum"></button>
+					</div>
+				</div>
+			</template>
+		</div>
+		<script src="../../script/api.js"></script>
+		<script src="../../script/vue.js"></script>
+		<script src="../../script/common.js"></script>
+		<script>
+			var vm = new Vue({
+				el : "body",
+				data : {
+					//界面相关参数
+					loading : true, //是否显示：全局加载
+					loadingFail : false, //是否显示：全局加载失败
+					noData : false, //是否显示：全局暂无数据
+					timeOut : false, //是否显示：全局加载超时
+					code : "", //过滤条件
+					lists : [], //点位列表数组
+					currentTab:"4",
+				},
+				methods : {
+					openSiteList : function(i) {
+						openWin("point_list/point_patrol_uncompletelist_detail_win",{groupname:this.lists[i].name,address:this.lists[i].address
+						,noinspectednum:this.lists[i].noinspectednum,activenum:this.lists[i].activenum,id:this.lists[i].id,currentTab:this.currentTab});
+					}
+				},
+				init : function() {
+					effect();
+				}
+			});
+			apiready = function() {
+				api.parseTapmode();
+				timeOut300(function() {
+					vm.$nextTick(function() {
+						vm.code = api.pageParam.code ? api.pageParam.code : "";
+						getUnCompletelist();
+					});
+				});
+			};
+			//获取未巡查点位列表
+			function getUnCompletelist() {
+				
+				var url = $api.getStorage("interface_url") + api_url.getUnCompletelist;
+				Ajax({
+					type : "get",
+					url : url,
+					data : {
+						access_token : $api.getStorage("access_token"),
+						name : "",
+						//code: vm.code
+					},
+					beforeSend : function() {
+						vm.loading = true;
+					},
+					complete : function() {
+						vm.loading = false;
+					},
+					success : function(result) {
+						if (result.success) {
+							//如果一条数据都没有，将在界面显示“暂无数据”
+							if (result.list.length == 0) {
+								vm.noData = true;
+								return false;
+							}
+							for (var i = 0; i < result.list.length; i++) {
+								vm.lists.push({
+									activenum:"激活数："+result.list[i].activenum,
+									noinspectednum:"未巡查："+result.list[i].noinspectednum,
+									address:result.list[i].checkpointgroupAddr,
+									name:result.list[i].checkpointgroupName,
+									id : result.list[i].id
+								});
+							}
+						} else {
+							vm.loadingFail = true;
+							//加载失败
+						}
+					}
+				});
+			};
+		</script>
+	</body>
+</html>

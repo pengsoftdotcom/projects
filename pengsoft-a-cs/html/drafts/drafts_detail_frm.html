@@ -1,0 +1,268 @@
+﻿<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>巡查记录——详情——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    <style>
+        .thing-deal-wrap {
+            padding-top: 0;
+        }
+    </style>
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap" v-show="loading">
+        <div class="spinner"></div>
+    </div>
+    <div class="loading-wrap bg-gray" v-show="loading" style="display:none;">
+        <div class="spinner"></div>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" style="display:none;">
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="aui-content thing-detail-wrap">
+        <ul class="aui-list-view">
+            <li class="aui-list-view-cell selectable">
+                <p class="aui-col-xs-3 aui-text-custom">工地名称</p>
+                <p class="aui-col-xs-8 aui-text-333" v-cloak>{{checkpointCheckpointGroupName}}</p>
+            </li>
+            <li class="aui-list-view-cell">
+                <p class="aui-col-xs-3 aui-text-custom">巡查部位</p>
+                <p class="aui-col-xs-9 aui-text-333">{{code}} {{checkpointName}}-{{cpChildrenName}}</p>
+            </li>
+            <li class="aui-list-view-cell m-b-10">
+                <p class="aui-col-xs-3 aui-text-custom">巡查状态</p>
+                <p class="aui-col-xs-9 aui-text-333">
+                    <span class="custom-label aui-pull-left bg-custom" :class="catalogBg">{{catalogName}}</span>
+                </p>
+            </li>
+            <li>
+                <ul class="aui-list-view">
+                    <li class="aui-list-view-cell f-fs14">
+                        <div class="m-b-10 f-oh">
+                            <p class="aui-col-xs-3 aui-text-custom">手机时间</p>
+                            <p class="aui-col-xs-9 aui-text-333">
+                                {{datetime}}
+                            </p>
+                        </div>
+                        <div class="m-b-10 f-oh">
+                            <p class="aui-col-xs-3 aui-text-custom">巡查人员</p>
+                            <p class="aui-col-xs-9 aui-text-333">
+                                {{name}}
+                            </p>
+                        </div>
+                        <div class="m-b-10 f-oh">
+                            <p class="aui-col-xs-3 aui-text-custom">巡查照片</p>
+                        </div>
+                        <div class="addthing-photo-container m-b-10">
+                            <div class="addthing-imgwrap">
+                                <template v-for="img in imageList">
+                                    <div class="img-item" v-on:click="openBigImage($index)" style="text-align: center;height:1.5rem;">
+                                        <div class="img-div" style="background-image:url('{{img.url}}');"></div>
+                                        <span v-text="img.name" style="height:0.5rem;"></span>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                        <div class="m-b-10 f-oh">
+                            <p class="aui-col-xs-3 aui-text-custom">巡查内容</p>
+                        </div>
+                        <div class="m-b-10" :class="contentColor">{{textarea}}</div>
+                        <div class="voice-div m-b-10" v-if="audio" @click="openAudio();">
+                            {{voice_time}}
+                        </div>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+
+                //详情相关参数
+                id: -1,  //id
+                checkpointCheckpointGroupName: "",  //工地名称
+                checkpointName: "",  //巡查点位名称
+                cpChildrenName: "",   //巡查点位部件名称
+                catalogName: "",  //巡查状态
+                code: "",  //点位编号
+                name: "",  //巡查人名称
+                datetime: "", //手机时间
+                imageList: [],  //报事图片
+                audio: "",  //报事录音
+                voice_time: "",  //录音时长
+                textarea: "",  //报事内容
+
+                catalogBg: "",
+                contentColor: "",
+            },
+            methods: {
+                openBigImage: function (index) {  //打开报事详情大图
+
+                    var vm_p = this;
+                    var array = new Array();
+
+                    for (var i = 0; i < vm_p.imageList.length; i++) {
+                        array.push(vm_p.imageList[i].url == "../../image/noConcern.png" ? "widget://image/noConcern.png" : vm_p.imageList[i].url);
+                    }
+                    openBigImage(array.join(","),index);
+
+                },
+                openAudio: function () {
+                    playVoice();
+                }
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            setTimeout(function () {
+
+                vm.$nextTick(function () {
+
+                    vm.id = api.pageParam.id;
+
+                    getPatrolDetail();
+
+                });
+
+            }, 300);
+
+        };
+
+
+        //页面初始化
+        function getPatrolDetail() {
+
+            if (vm.id >= 0) {
+
+                var patrols = $api.getStorage("PatrolLists");
+                //获取当前user的草稿信息
+                var patrol = new Array();
+                for (var i = 0; i < patrols.length; i++) {
+				 	if(patrols[i].userId == $api.getStorage("user").id){
+				 		patrol = patrols[i].list;
+				 	}
+				}
+				if(patrol.length <= 0){
+					vm.loadingFail = false;
+					return fasle;
+				}
+
+                vm.checkpointCheckpointGroupName = patrol[vm.id].constructionName;
+                vm.checkpointName = patrol[vm.id].pointName;
+                vm.cpChildrenName = patrol[vm.id].checkpointName;
+                vm.catalogName = patrol[vm.id].catalogName;
+                vm.name = patrol[vm.id].name;
+                vm.code = patrol[vm.id].code;
+                vm.datetime = patrol[vm.id].datetime;
+                if(vm.catalogName == "一般隐患"){
+                	vm.catalogBg = "bg-orange";
+                	vm.contentColor = "aui-text-orange";
+                }else if(vm.catalogName == "重大隐患"){
+                	vm.catalogBg = "bg-red";
+                	vm.contentColor = "aui-text-danger";
+                }
+
+
+                //获取文件
+                for (var i = 0; i < patrol[vm.id].extraJson.length; i++) {
+
+                    //图片
+                    if (patrol[vm.id].extraJson[i].type == "imageList") {
+                        for(var j = 0; j < patrol[vm.id].extraJson[i].value.length; j++){
+                        	vm.imageList.push({
+                        		url: patrol[vm.id].extraJson[i].value[j].url == "widget://image/noConcern.png" ? "../../image/noConcern.png" : patrol[vm.id].extraJson[i].value[j].url,
+                        		name: patrol[vm.id].extraJson[i].value[j].name == "补充<br>照片" ? "补充照片" : patrol[vm.id].extraJson[i].value[j].name,
+                        	});
+                        }
+                    }
+
+                    //文字
+                    if (patrol[vm.id].extraJson[i].type == "textarea") {
+                        vm.textarea = patrol[vm.id].extraJson[i].value;
+                    }
+
+                    //语音
+                    if (patrol[vm.id].extraJson[i].type == "audio") {
+                        vm.audio = patrol[vm.id].extraJson[i].value;
+                        vm.voice_time = patrol[vm.id].voice_time;
+                    }
+
+                }
+                vm.loading = false;
+
+            } else {
+                vm.loadingFail = true;
+            }
+
+        };
+
+
+        //播放录音
+        function playVoice() {
+
+            if (vm.audio != "") {
+
+                api.startPlay({ path: vm.audio }, function () { });
+            } else {
+                api.toast({ msg: "录音文件不存在！", duration: 3000 });
+            }
+
+        };
+
+
+        //查看大图
+	    function openBigImage(images,index) {
+
+	        var imageBrowser = api.require("imageBrowser");
+	        imageBrowser.openImages({
+	            imageUrls: images.split(","),
+	            activeIndex: index
+	        });
+
+	    };
+
+
+        //格式化时间
+        function formatDatetime(datetime) {
+
+            var time = new Date(datetime);
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+            var hour = p(time.getHours());
+            var min = p(time.getMinutes());
+            var sec = p(time.getSeconds());
+
+            return year + "/" + month + "/" + day + " " + hour + ":" + min + ":" + sec;
+
+            function p(s) {
+                return s < 10 ? "0"
+                + s : s;
+            };
+
+        };
+    </script>
+</body>
+
+</html>

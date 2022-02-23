@@ -1,0 +1,46 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>管理员_win</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+<body>
+	<script type="text/javascript">
+		var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+		ele.style.fontSize = size + "px";
+	</script>
+	<header id="header" class="aui-bar aui-bar-nav header-custom">
+		<div class="aui-title">
+			安全汇总
+		</div>
+	</header>
+    <footer class="aui-nav" id="aui-footer">
+        <ul class="aui-bar-tab footer-custom-menu">
+            <li class="active" id="tabbar1" tapmode onclick="randomSwitchBtn(this,'栏目1',0)">
+                <span class="aui-iconfont aui-icon-pic"></span>
+                <p>安全汇总</p>
+            </li>
+            <li id="tabbar2" tapmode onclick="randomSwitchBtn(this,'栏目2',1)">
+                <span class="aui-iconfont aui-icon-cascades"></span>
+                <p>工地列表</p>
+            </li>
+            <li id="tabbar3" tapmode onclick="randomSwitchBtn(this,'栏目3',2)">
+                <span class="aui-iconfont aui-icon-calendar"></span>
+                <p>巡查记录</p>
+            </li>
+            <li id="tabbar4" tapmode onclick="randomSwitchBtn(this,'栏目4',3)">
+                <span class="aui-iconfont aui-icon-people"></span>
+                <p>个人中心</p>
+            </li>
+        </ul>
+    </footer>
+</body>
+</html>
+<script type="text/javascript">
+    apiready = function () {
+        api.parseTapmode();
+    };
+</script>

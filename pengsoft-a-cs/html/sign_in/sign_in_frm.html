@@ -1,0 +1,484 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>登录——frm</title>
+    <link rel="stylesheet" href="../../css/aui.css" />
+    <link rel="stylesheet" href="../../css/custom.css" />
+    <link rel="stylesheet" href="../../css/clndr.css" />
+    <style>
+    	.every{
+    		border-radius: 50%;
+    		width: 25px;
+    		height: 25px;
+    		color: white;
+    		font-size: 14px;
+    	}
+    	.day{
+    		background-color:#0e2c63;
+    		border-radius: 50%;
+    		width: 25px;
+    		height: 25px;
+    		color: white;
+    		font-size: 14px;
+    	}
+    	/*.today{
+    		background-color:#05FF98;
+    	}*/
+    	.event{
+    		background-color:#ff7800;
+    		color: white;
+    	}
+    	
+    	.cant-sign-up{
+    		background: grey;
+    	}
+    </style>
+</head>
+<body class="bg-white">
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    
+    <div class="loading-wrap bg-gray" v-show="loading">
+        <div class="spinner"></div>
+    </div>
+    
+    <div class="aui-content m-b-n">
+	    <div class="f-fs16 aui-padded-10">
+	    	本月签到：
+	    	<span class="aui-text-info f-fs18">{{signDate}}</span>
+	    	天
+		</div>
+	</div>
+	<div class="aui-padded-5 bg-gray"></div>
+	<!--日历-->
+	<div class="aui-content m-b-n">
+		<div class="cal3 text-all-center" id="pass-in-events"></div>
+	</div>
+	<div class="aui-padded-5 bg-gray"></div>
+	<!--状态展示-->
+	<div class="aui-content bg-custom m-b-10 aui-text-center aui-text-white m-b-n aui-padded-10" style="line-height:24px;">
+		<span class="tip-sign"></span>
+		已签到
+		<span class="tip-unsign" style="margin-left:20px;"></span>
+		未签到
+	</div>
+	<!--签到按钮-->
+	<div class="text-all-center aui-padded-20">
+		<a class="btn-sign-in" onclick="signUp();" :class="{'cant-sign-up':cantSign}">
+			{{ifSign}}
+			<span v-text="time"></span>
+		</a>
+	</div>
+	<p class="aui-text-center" style="border-bottom:none;" v-show="outOfRange">当前位置不在签到范围内</p>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script src="../../script/underscore.js"></script>
+    <script src="../../script/jquery-1.11.1.min.js"></script>
+    <script src="../../script/moment-with-locales.min.js"></script>
+    <script src="../../script/clndr.js"></script>
+    <script>
+    	
+		var interval = null;
+    	var template = "<div class='clndr-controls'>" +
+            "<div class='clndr-control-button' tapmode onclick='lastMonth();'>" +
+                "<span class='clndr-previous-button'>上月</span>" +
+            "</div>" +
+            "<div class='month'><%= month %> <%= year %>年</div>" +
+            "<div class='clndr-control-button rightalign' tapmode onclick='nextMonth();'>" +
+                "<span class='clndr-next-button'>下月</span>" +
+            "</div>" +
+        "</div>" +
+        "<table class='clndr-table' border='0' cellspacing='15px' cellpadding='0px' style='text-align:center;'>" +
+            "<thead>" +
+                "<tr class='header-days'>" +
+                "<% for(var i = 0; i < daysOfTheWeek.length; i++) { %>" +
+                    "<td class='header-day'><%= daysOfTheWeek[i] %></td>" +
+                "<% } %>" +
+                "</tr>" +
+            "</thead>" +
+            "<tbody>" +
+            "<% for(var i = 0; i < numberOfRows; i++){ %>" +
+                "<tr>" +
+                "<% for(var j = 0; j < 7; j++){ %>" +
+                "<% var d = j + i * 7; %>" +
+                    "<td class='<%= days[d].classes %>'>" +
+                        "<div class='day-contents every'><%= days[d].day %></div>" +
+                    "</td>" +
+                "<% } %>" +
+                "</tr>" +
+            "<% } %>" +
+            "</tbody>" +
+        "</table>";
+        
+        var vm = new Vue({
+        	el: "body",
+        	data: {
+//      		loading: true,
+        		isResult: true,
+        		signDate: "0",   //签到天数
+        		ifSign: "签到打卡",  //签到按钮提示语
+        		time: "00:00:00",  //签到按钮上的时间
+        		cantSign: true,   //按钮样式是否为不可用
+        		signed: true,
+        		outOfRange: false,   //是否显示超出范围
+        		
+        		//查询记录时间
+        		timeBegin: "0000/00/00", 
+        		timeEnd: "0000/00/00",
+        		
+        		signList: [],   //签到列表
+        		
+        		month: 0,
+        		lng: 0,
+        		lat: 0,
+        		
+        		init:true,
+        	},
+        });
+
+    	
+        apiready = function () {
+
+            api.parseTapmode();
+            
+            vm.timeBegin = formatDate(new Date().setDate(1));
+            var nextMonth = new Date().setMonth(new Date().getMonth()+1);  
+			vm.timeEnd = formatDate(new Date(nextMonth).setDate(0));
+            
+            getHistory(0);
+            
+            $('#pass-in-events').clndr({
+	    		daysOfTheWeek: ['日','一', '二', '三', '四', '五', '六'],
+	    		startWithMonth: moment(),
+	    		numberOfRows: 5,
+	    		template: template,
+	    		targets: {
+				    nextButton: 'clndr-next-button',
+				    previousButton: 'clndr-previous-button',
+				    todayButton: 'clndr-today-button',
+				    day: 'day',
+				    empty: 'empty',
+			    },
+			    showAdjacentMonths: false,
+			    
+			    events: vm.signList,
+			    multiDayEvents: {
+			        endDate: 'end',
+			        singleDay: 'date',
+			        startDate: 'start'
+			    }
+	    	});
+            
+        };
+
+        
+        //获取工地列表
+        function getConstructionList() {
+
+        	if(vm.signed){
+        		return false;
+        	}
+
+            var url = $api.getStorage("interface_url") + api_url.getConstructionList;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    name: "",
+                },
+                beforeSend: function () {
+                    vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+
+                    if (data.success) {
+
+                        //如果一条数据都没有，将在界面显示“暂无数据”
+                        if (data.list.length == 0) {
+							api.toast({ msg: "未获取到工地信息！", duration: 3000 });
+                            return false;
+                        }
+                        
+                        vm.lng = data.list[0].location.lng;
+                        vm.lat = data.list[0].location.lat;
+                        getDistance();
+                    }
+                }
+            });
+
+        };
+        
+        
+        //是否可以签到
+        function canSignUp(){
+        	var url = $api.getStorage("interface_url") + api_url.canSignUp;
+        	 Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                },
+                beforeSend: function () {
+                	vm.loading = true;
+                },
+                complete: function () {
+                	vm.loading = false;
+                },
+                success: function (data) {
+
+					if(data.success){
+						if(data.data.sign){  //未签到，即可以签到
+							vm.signed = false;
+							interval = setInterval(function(){timeInterval();},1000);
+							getConstructionList();
+							vm.outOfRange = false;
+							vm.ifSign = "签到打卡";
+						}else{  //已过签到
+							vm.cantSign = true;
+							vm.signed = true;
+							vm.ifSign = "已签到";
+							vm.outOfRange = false;
+							if(data.data.time){
+								interval ? clearInterval(interval) : "";
+								vm.time = data.data.time.split(" ")[1];
+							}
+						}
+					}
+
+                }
+            });
+
+        };
+        
+        //签到
+        function signUp(){
+        
+        	if(vm.signed || vm.cantSign){
+        		return false;
+        	}
+    		var url = $api.getStorage("interface_url") + api_url.signUp;
+        	Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    signtime: formatDatetime(new Date())
+                },
+                beforeSend: function () {
+                },
+                complete: function () {
+                },
+                success: function (data) {
+
+					if(data.success){
+						vm.cantSign = true;
+						getHistory(vm.month);
+						vm.ifSign = "已签到";
+						interval ? clearInterval(interval) : "";
+					}else{
+						vm.cantSign = false;
+					}
+
+                }
+            });
+        }
+        
+        
+        //获取签到记录
+        function getHistory(month){
+        	if(vm.isResult){
+	        	vm.signList.splice(0);
+	        	var url = $api.getStorage("interface_url") + api_url.signHistory;
+	        	
+	        	Ajax({
+	                type: "get",
+	                url: url,
+	                data: {
+	                    access_token: $api.getStorage("access_token"),
+	                    begintime: vm.timeBegin,
+	                    endtime: vm.timeEnd,
+	                },
+	                beforeSend: function () {
+	                	vm.isResult = false;
+	                },
+	                complete: function () {
+	                	vm.loading = false;
+	                	if(vm.init){
+	                		canSignUp();
+	                		vm.init = false;
+	                	}
+	                	vm.isResult = true;
+	                },
+	                success: function (data) {
+						
+						if(data.success){
+				        	for(var i = 0; i < data.list.length; i++){
+				        		if(data.list[i].sign){
+				        		
+				        			vm.signList.push({
+				        				title: 'signedup',
+			        					date: data.list[i].time.split("/").join("-")
+			        				});	
+			        				
+			        				$(".calendar-day-" + data.list[i].time.split("/").join("-")).addClass("event");
+			        				
+								}
+								
+				        	}
+				        	
+				        	vm.signDate = vm.signList.length;
+							
+						}else {
+							vm.loading = false;
+						}
+	
+	                }
+	            });
+            }
+        };
+        
+        
+        //检查定位距离
+       	function getDistance(){
+
+       		var map = api.require("bMap");
+            map.getLocation({ accuracy: "10m" }, function (ret, err) {
+
+                if (ret.status) {
+                    
+                    map.getDistance({
+					    start: {
+					        lon: ret.lon,
+					        lat: ret.lat
+					    },
+					    end: {
+					        lon: vm.lng,
+					        lat: vm.lat
+					    }
+					}, function(ret) {
+
+					    if (ret.status) {
+					    	if(ret.distance > 1000){
+					    		vm.outOfRange = true;
+					    		vm.cantSign = true;
+					    	}else {
+					    		vm.cantSign = false;
+					    	}
+					    }
+					});
+					
+                }else {
+                    api.toast({ msg: "定位失败，请检查是否授予定位权限！", duration: 3000 });
+                }
+            });
+//          if(api.systemType == "ios"){
+//          	var privacy = api.require('privacy');
+//          	privacy.location(function(ret, err) {
+//				    if (ret.status && (ret.details == "notDetermined" || ret.details == "denied")) {
+//				    	vm.cantSign = true;
+//				        api.alert({ title: "提示", msg: "未开启定位权限，无法获取当前位置！", buttons: ["确定"] });
+//				    }
+//				});
+//          }
+       	};
+        
+        //格式化日期时间
+        function formatDatetime(datetime) {
+
+            var time = new Date(datetime);
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+            var hour = p(time.getHours());
+            var min = p(time.getMinutes());
+            var sec = p(time.getSeconds());
+
+            return year + "/" + month + "/" + day + " " + hour + ":" + min + ":" + sec;
+
+            function p(s) {
+                return s < 10 ? "0"
+                + s : s;
+            };
+
+        };
+        
+        
+        //格式化日期
+        function formatDate(date) {
+
+            var time = new Date(date);
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+
+            return year + "/" + month + "/" + day;
+
+            function p(s) {
+                return s < 10 ? "0"
+                + s : s;
+            };
+
+        };
+        
+        
+        //格式化时间
+        function formatTime(time) {
+
+            var time = new Date(time);
+            var hour = p(time.getHours());
+            var min = p(time.getMinutes());
+            var sec = p(time.getSeconds());
+            
+            return hour + ":" + min + ":" + sec;
+			
+            function p(s) {
+                return s < 10 ? "0"
+                + s : s;
+            };
+
+        };
+        
+        
+        //下一月
+        function nextMonth(){
+        	vm.month ++;
+        	vm.signList.splice(0);
+        	vm.signDate = 0;
+        	var begin = new Date(vm.timeBegin);
+        	vm.timeBegin = formatDate(begin.setMonth(begin.getMonth()+1));
+            var nextMonth = new Date(vm.timeBegin).setMonth(new Date(vm.timeBegin).getMonth()+1);  
+			vm.timeEnd = formatDate(new Date(nextMonth).setDate(0));
+        	getHistory(vm.month);
+        };
+        
+        
+        //上一月
+        function lastMonth(){
+        	vm.month --;
+        	vm.signList.splice(0);
+        	vm.signDate = 0;
+        	var begin = new Date(vm.timeBegin);
+        	vm.timeBegin = formatDate(begin.setMonth(begin.getMonth()-1));
+            var nextMonth = new Date(vm.timeBegin).setMonth(new Date(vm.timeBegin).getMonth()+1);  
+			vm.timeEnd = formatDate(new Date(nextMonth).setDate(0));
+        	getHistory(vm.month);
+        };
+        
+        
+        //计时器函数
+        function timeInterval(){
+        	vm.time = formatTime(new Date());
+        }
+    </script>
+</body>
+</html>

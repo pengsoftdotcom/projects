@@ -1,0 +1,487 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>工地列表——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../../css/custom.css" />
+    <style type="text/css">
+    	/*进度条*/
+    	.bar{
+			position:relative;
+			background-color:#8f8f8f;
+			font-size:14px;
+			line-height:21px;
+		}
+		.bar .rate{
+			position:relative;
+			color:#ffffff;
+			height:21px;
+			line-height:21px;
+			display:block;
+		}
+		.bar .left{
+			position: absolute;
+			left: 5px;
+			top: 0;
+			color:#fff;
+		}
+		.bar .right{
+			position: absolute;
+			right: 5px;
+			top: 0;
+			color:#fff;
+		}
+		.bar .proceed-color{
+			background-color:#1fa1e2;
+		}
+		.bar .complete-color{
+			background-color:#29bc34;
+		}
+		
+		.site-name{
+			font-size: 14px;
+			line-height: 34px;
+			display: inline-block;
+		}
+		.floor-back{
+			background-color: #1fa1e2;
+			color: #ffffff;
+			text-align: center;
+			width: 36px;
+			padding:3px;
+			height: 26px;
+		}
+		.patrol-list-item{
+			position: relative;
+		}
+		.site-date{
+			position: absolute;
+			right: 10px;
+			color: #999;
+			font-size: 14px;
+			top: 8px;
+		}
+		.state-back{
+			background-color: #1fa1e2;
+			color: #ffffff;
+			text-align: center;
+			padding:3px;
+			height: 26px;
+			line-height: 16px;
+		}
+		.INACTIVATED{
+			background-color: #cccccc;
+		}
+		.ACTIVED{
+			 background-color: #2ecc71;
+		}
+		.SPOTCHECKS{
+			 background-color: #3498db;
+		}
+		.FAILURE{
+			 background-color: #c5b52a;
+		}
+    </style>
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="noData">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="aui-padded-5"></div>
+    <div class="patrol-list-wrap">
+    	<template v-if="showFloor">
+    	<template v-for="floor in floorLists">
+    	<div class="patrol-list-item" v-on:click="openFloorDetail($index)" v-effect="">
+            <div class="aui-text-333" class="site-name">
+            	<div style="max-width: 2rem;">
+	            	<span v-text="floor.siteName"></span>
+	            	<button class="floor-back" v-text="floor.totalFloor+' 层'"></button>
+            	</div>
+            	<span class="site-date" v-text="floor.date"></span>
+        	</div>
+            <div class="f-fs14 aui-text-999">
+                <i class="aui-iconfont aui-icon-focus aui-text-custom"></i>
+               已巡查楼层: <span class="aui-text-custom" v-text="floor.currentFloor+ ' 层'"></span>
+            </div>
+            <div class="f-fs14 aui-text-999 m-b-10">
+                <i class="aui-iconfont aui-icon-calendar aui-text-custom"></i>
+                未巡查楼层: <span class="aui-text-custom" v-text="floor.notPatrolFloor+' 层'"></span>
+                <input type="checkbox" class="aui-switch aui-switch-success aui-pull-right" v-model="floor.flag" checked @click.stop="changeFloorState($index);" v-show="floor.showSwitch">
+            </div>
+            <div class="bar">
+            	<span class="rate proceed-color" :class="{'complete-color': floor.rate == 100 ? true : false}" :style="{width: floor.rate+'%'}"></span>
+            	<span class="left">楼栋总进度</span>
+            	<span class="right">已完成<span v-text="floor.rate"></span>%</span>
+        	</div>
+        </div>
+        </template>
+        </template>
+        <template v-if="!showFloor">
+        <template v-for="point in pointLists">
+    	<div class="patrol-list-item" v-effect="">
+            <div class="aui-text-333" class="site-name">
+            	<div style="max-width: 2rem;">
+	            	<span class="aui-text-333" v-text="point.pointName">3#电梯</span>
+	            	<button class="state-back" :class="point.stateStyle" v-text="point.state"></button>
+            	</div>
+            	<span class="site-date" v-text="point.date"></span>
+        	</div>
+            
+            <div class="f-fs14 aui-text-999">
+                <i class="aui-iconfont aui-icon-calendar aui-text-custom"></i>
+	           	 已巡查时间: <span class="aui-text-custom" v-text="point.days+' 天'"></span>
+	            <input type="checkbox" class="aui-switch aui-switch-success aui-pull-right" v-model="point.flag" @click.stop="changePointState($index);" v-show="point.showSwitch">
+            </div>
+        </div>
+        </template>
+        </template>
+    </div>
+    <script src="../../../script/api.js"></script>
+    <script src="../../../script/vue.js"></script>
+    <script src="../../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+                
+                showFloor: true,
+
+                floorLists: [],    //楼层进度数组
+                pointLists: [],    //固定点数组  
+            },
+            methods: {
+                openFloorDetail: function (index) {  //打开工地详情
+                    openWin("rate/progress/progress_detail_win", { id: this.floorLists[index].id, builderNum: this.floorLists[index].builderNum});
+                },
+                changeFloorState: function(index){
+                
+                	api.confirm({
+                        msg: "确定主体已完工？", 
+                        buttons: ["确定", "取消"]
+                    }, function (ret, err) {
+						if(ret.buttonIndex == 1){
+							changeFloorState(index);
+						}else{
+							vm.floorLists[index].flag = !vm.floorLists[index].flag;
+						}
+                    });
+                },
+                changePointState: function(index){
+                	
+                	api.confirm({
+                        msg: "是否" + (vm.pointLists[index].flag ? "开启" : "关闭") + "巡查点？", 
+                        buttons: ["确定", "取消"]
+                    }, function (ret, err) {
+						if(ret.buttonIndex == 1){
+							changePointState(index);
+						}else{
+							vm.pointLists[index].flag = !vm.pointLists[index].flag;
+						}
+                    });
+                },
+            },
+            init: function () {
+                effect();
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+			
+			getSiteBuildings();
+			
+        };
+
+
+        //获取工地楼栋信息
+        function getSiteBuildings() {
+
+            vm.floorLists.splice(0);
+            vm.noData = false;
+            vm.loadingFail = false;
+
+            var url = $api.getStorage("interface_url") + api_url.getSiteBuildings;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    checkpointroupId: api.pageParam.id
+                },
+                beforeSend: function () {
+                    vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                    api.execScript({
+		        		name: "rate/progress/progress_list_win",
+					    script: "vm.isRrturn = true;"
+					});
+                },
+                success: function (data) {
+
+                    if (data.success) {
+
+                        //如果一条数据都没有，将在界面显示“暂无数据”
+                        if (data.list.length == 0) {
+                            vm.noData = true;
+                            return false;
+                        }
+						var list = data.list;
+                        for (var i = 0; i < list.length; i++) {
+                            vm.floorLists.push({
+                                id: list[i].checkpointgroupId,
+                                builderNum: list[i].builderNum,
+                                siteName: list[i].name,
+                                totalFloor: list[i].totalFloorNum,
+								date: list[i].createdTime,
+								currentFloor: list[i].inspectedFloors,
+								days: list[i].inspectedDays,
+								rate: list[i].progress,
+								showSwitch: list[i].showSwitch,
+								flag: list[i].flag ? list[i].flag : false,
+								notPatrolFloor: list[i].noInspectedFloors
+                            });
+                        }
+
+                    } else {
+                        vm.loadingFail = true;  //加载失败
+                    }
+
+                }
+            });
+
+        };
+        
+        
+        //获取固定点进度
+        function getFixPoint() {
+
+            vm.pointLists.splice(0);
+            vm.noData = false;
+            vm.loadingFail = false;
+
+            var url = $api.getStorage("interface_url") + api_url.getFixPoint;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    checkpointgroupId: api.pageParam.id
+                },
+                beforeSend: function () {
+                    vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                    api.execScript({
+		        		name: "rate/progress/progress_list_win",
+					    script: "vm.isRrturn = true;"
+					});
+                },
+                success: function (data) {
+
+                    if (data.success) {
+
+                        //如果一条数据都没有，将在界面显示“暂无数据”
+                        if (data.list.length == 0) {
+                            vm.noData = true;
+                            return false;
+                        }
+						var list = data.list;
+						
+                        for (var i = 0; i < data.list.length; i++) {
+                            vm.pointLists.push({
+                                id: list[i].id,
+                                pointName: list[i].name,
+                                state: list[i].status,
+								stateStyle: list[i].code,
+								date: list[i].datecreated,
+								days: list[i].inspectedDays,
+								showSwitch: list[i].showSwitch,
+								flag: list[i].flag ? list[i].flag : false,
+                            });
+                        }
+
+                    } else {
+                        vm.loadingFail = true;  //加载失败
+                    }
+
+                }
+            });
+
+        };
+        
+        
+         //修改楼栋状态
+        function changeFloorState(index) {
+
+            var url = $api.getStorage("interface_url") + api_url.changeFloorState;
+
+            Ajax({
+                type: "post",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    checkpointgroupId: api.pageParam.id,
+                    builderNum: vm.floorLists[index].builderNum,
+                    flag: "N"
+                },
+                beforeSend: function () {
+                    api.showProgress({ title: "正在提交信息", animationType: "zoom" });
+                },
+                complete: function () {
+                    api.hideProgress();
+                },
+                success: function (data) {
+
+                    if (data.success) {
+                    	vm.floorLists[index].showSwitch = false;
+                    } else {
+                        api.alert({ title: "提示", msg: data.error.message, buttons: ["确定"] });
+                    }
+
+                }
+            });
+
+        };
+        
+        
+        //修改固定点状态
+        function changePointState(index) {
+
+            var url = $api.getStorage("interface_url") + api_url.changeState;
+
+            Ajax({
+                type: "post",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    checkpointId: vm.pointLists[index].id,
+                    flag: vm.pointLists[index].flag ? "Y" : "N"
+                },
+                beforeSend: function () {
+                    api.showProgress({ title: "正在" + (vm.pointLists[index].flag ? "开启" : "关闭") + "该检查点！", animationType: "zoom" });
+                },
+                complete: function () {
+                    api.hideProgress();
+                },
+                success: function (data) {
+
+                    if (data.success) {
+                    	flushData();
+                    	vm.pointLists[index].state = vm.pointLists[index].flag ? "已激活" : "已失效";
+                    	vm.pointLists[index].stateStyle = vm.pointLists[index].flag ? "ACTIVED" : "FAILURE";
+                        api.alert({ title: "提示", msg: (vm.pointLists[index].flag ? "开启" : "关闭") + "该检查点成功！", buttons: ["确定"] });
+                    } else {
+                        api.alert({ title: "提示", msg: (vm.pointLists[index].flag ? "开启" : "关闭") + "该检查点失败！", buttons: ["确定"] });
+                        vm.pointLists[index].flag = !vm.pointLists[index].flag;
+                    }
+
+                }
+            });
+
+        };
+        
+         //判断本地点位列表是否有激活的缓存信息
+        function hasLocalPoint(index){
+        	var pointList = $api.getStorage("PointList");
+    		if(pointList != "undefined" && typeof(pointList) != "undefined" && pointList.length > 0){
+    			for(var i = 0; i < pointList.length; i++){
+	    			//存的点位信息中是否有当前点位的信息
+	    			if(pointList[i].id == vm.pointLists[index].id){
+	    				pointList[i].checkpointStatusCode = vm.pointLists[index].flag ? "ACTIVED" : "FAILURE";
+	    			}
+    			}
+    		}
+    		$api.setStorage("PointList",pointList);
+    		
+    		var activeInfos = $api.getStorage("ActiveInfo");
+            var activeInfo = new Array();
+            var activeInfoIndex = -1;
+            //判断本地是否有未提交激活信息
+            if (activeInfos && activeInfos != "undefined" && typeof(activeInfos) != "undefined" && activeInfos.length > 0) {
+				for (var i = 0; i < activeInfos.length; i++) {
+				 	if(activeInfos[i].userId == $api.getStorage("user").id){
+				 		activeInfo = activeInfos[i].list;
+				 		activeInfoIndex = i;
+				 	}
+				}
+				//本地没有当前用户未提交激活信息
+                if (activeInfo && activeInfo.length > 0) {
+                	//本地有未提交激活信息----判断是否有当前点位的激活信息
+                	var flag = false;
+	                for (var i = 0; i < activeInfo.length; i++) {
+	                	if(activeInfo[i].id == vm.pointLists[index].id){
+	                		if(!vm.pointLists[index].flag){
+	                			activeInfo.splice(i,1);
+	                		}
+	                		break;
+	                	}
+	                }
+                }
+            }
+            if(activeInfoIndex >= 0){
+            	activeInfos[i].list = activeInfo;
+            	$api.setStorage("ActiveInfo",activeInfos);
+            }
+            
+            var activedInfos = $api.getStorage("ActivedInfos");
+            var activedInfo = new Array();
+            var activedInfoIndex = -1;
+            //判断本地是否有isActived
+            if (activedInfos && activedInfos != "undefined" && typeof(activedInfos) != "undefined" && activedInfos.length > 0) {
+				for (var i = 0; i < activedInfos.length; i++) {
+				 	if(activedInfos[i].userId == $api.getStorage("user").id){
+				 		activedInfo = activedInfos[i].list;
+				 		activedInfoIndex = i;
+				 	}
+				}
+				//本地没有当前用户isActived
+                if (activedInfo && activedInfo.length > 0) {
+                	var acIndex = activedInfo.indexOf(vm.pointLists[index].id);
+                	if(acIndex >=0){
+                		if(!vm.pointLists[index].flag){
+                			activedInfo.splice(acIndex,1);
+                		}else{
+                			activedInfo.push(vm.pointLists[index].id);
+                		}
+                	}
+                }
+            }
+            if(activedInfoIndex >= 0){
+            	activedInfos[i].list = activedInfo;
+            	$api.setStorage("ActivedInfos",activedInfos);
+            }
+        };
+        
+        //刷新首页数据
+        function flushData(){
+        	//刷新首页统计数据
+            api.execScript({
+                name: "home_win",
+                frameName: "home_frm",
+                script: "vm.changeTab(vm.frameIndex);"
+            });
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,458 @@
+﻿<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>菜单</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/custom.css" />
+    <style>
+    	.bubbles {
+            display: block;
+            height: 25px;
+            width: 25px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 25px;
+            color: #ffffff;
+            margin-right: 5px;
+            font-size: 14px;
+            background-color: #ff0000;
+            position:absolute;
+    		top:10px;
+    		right:10px;
+        }
+    </style>
+</head>
+<body class="menu-body">
+	<script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="menu-userinfo-wrap aui-text-center">
+        <img src="../image/default_user_image.jpg" class="menu-user-img" alt="" />
+        <div class="f-fs18">{{nickname}}</div>
+        <div class="f-fs14">{{jobName}}</div>
+        <div class="f-fs14">{{antherJobs}}</div>
+    </div>
+    <div class="menu-list-wrap menu-body">
+        <template v-for="list in menuList">
+            <div class="menu-list-item" tapmode v-bind:class="list.icon" onclick="{{list.url}}">{{list.name}}
+	            <span class="bubbles" v-show="(num>0||num=='99+')&&list.url=='applyOff();'" v-text="num"></span>
+	            <span class="bubbles" v-show="(noHandleApplycount>0||noHandleApplycount=='99+')&&list.url=='reviewOff();'" v-text="noHandleApplycount"></span>
+	            <span class="bubbles" v-show="(newsCount>0||newsCount=='99+')&&list.url=='thongzi();'" v-text="newsCount"></span>
+	            <span class="bubbles" v-show="(eventnum>0||eventnum=='99+')&&list.url=='danger();'" v-text="eventnum"></span>
+            </div>
+        </template>
+        <div class="menu-list-item menu-list-5" tapmode onclick="signOut();">退出登录</div>
+        <!--<div class="menu-list-item menu-list-5" tapmode onclick="danger();">重大隐患</div>-->
+    </div>
+    <script src="../script/api.js"></script>
+    <script src="../script/vue.js"></script>
+    <script src="../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                nickname: "",  //昵称
+                appVersion: "",  //app版本号
+                antherJobs: "",  //所属街道
+                jobName: "",  //所属职位
+
+                lists:[],  //缓存报事类型按钮
+
+                menuList: [],   //菜单数组
+                onlyOne: false,   //工地数组
+                url: "",
+                hasBubble: false,
+	            num: 0,  //待审批数目
+                noHandleApplycount: 0,
+                eventnum:0,
+                newsCount: 0,   //显示的气泡数量，计算得到
+                newsAll:0,      //返回的总数
+                newsRead:0      //返回的已读数
+            					},
+            methods: {
+
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+            vm.lists.push({
+			id: 'cd9000d1-fcef-4997-9337-917cf8cb9dff',
+			name: '安全',
+			icon: 'bg-custom',
+			active: false,
+			});
+			vm.lists.push({
+			id: '4666e8ba-f692-4c45-8a1c-50985321709c',
+			name: '一般隐患',
+			icon: 'bg-orange',
+			active: false,
+			});
+			vm.lists.push({
+			id: '34732a8e-9592-46ab-86a6-d569badfb414',
+			name: '重大隐患',
+			icon: 'bg-red',
+			active: false,
+			});
+            $api.setStorage("eventTypeFloor",vm.lists);
+//			getType();
+            vm.$nextTick(function () {
+
+            	init();
+
+            });
+
+        };
+
+        function init(){
+        	var user = $api.getStorage("user");
+        	var userId = user.id.replace(new RegExp("-", "gm"), "");
+        	// startAjpush(userId);
+
+            vm.nickname = user.name;
+            var orgFullName = user.currentJob ? toEmpty(user.currentJob.orgFullName) : "";
+            if (orgFullName && orgFullName.indexOf("|") != -1) {
+                orgFullName = orgFullName.substring(orgFullName.indexOf("|") + 1);
+                orgFullName = orgFullName.replace(new RegExp(/\|/g), "");
+            }
+            vm.antherJobs = orgFullName;
+            vm.jobName = user.currentJob ? toEmpty(user.currentJob.name) : "";
+
+            getSiteList();
+        }
+
+
+        //创建菜单
+        function createMenu() {
+			vm.menuList.splice(0);
+            var menu_tree = $api.getStorage("user").menuList;
+
+
+            for (var i = 0; i < menu_tree.length; i++) {
+				if(menu_tree[i].id == "9add4c2d-eaf6-417c-b7d5-341e9901a961" || menu_tree[i].id == "1122f98d-ddb8-41b7-b576-542c459ba5af"){
+					continue;
+				}
+
+				if(menu_tree[i].id == "d9a7cd15-b50f-46c8-88f7-8a1196ef4526" && vm.onlyOne){
+
+					vm.menuList.push({
+	                    id: menu_tree[i].id,
+	                    name: "工地详情",
+	                    icon: menu_tree[i].icon,
+	                    url: vm.url
+	                });
+	                continue;
+				}
+				if(menu_tree[i].url == "reviewOff();" || menu_tree[i].url == "thongzi();"){
+					vm.hasBubble = true;
+					getBubbles();
+				}
+                vm.menuList.push({
+                    id: menu_tree[i].id,
+                    name: menu_tree[i].name,
+                    icon: menu_tree[i].icon,
+                    url: menu_tree[i].url ? menu_tree[i].url : ""
+                });
+
+            }
+
+        };
+
+
+        //退出登录
+        function signOut() {
+            api.confirm({
+                msg: "确定退出登录吗？",
+                buttons: ["确定", "取消"],
+            }, function (ret, err) {
+                if (ret.buttonIndex == 1) {
+                	  // stopAjpush(); //停止极光推送
+
+                	  // var userId = $api.getStorage("userId");
+                    // var interface_url = $api.getStorage("interface_url");
+                    // var patrolLists = $api.getStorage("PatrolLists");
+                    $api.clearStorage();
+                    // $api.setStorage("userId",userId);
+                    // $api.setStorage("PatrolLists",patrolLists);
+                    // $api.setStorage("interface_url", interface_url);
+
+                    openWin("login_win");
+					          api.closeWin({name:'slidLayout'});
+
+                }
+            });
+
+        };
+
+
+        //获取工地列表
+        function getSiteList() {
+
+        	if($api.getStorage("oneSite")){
+        		vm.onlyOne = true;
+        		vm.url = "openWin(\"site/site_detail_win\", { id: \"" + $api.getStorage("oneSite").id + "\" });";
+//      		getType();
+        		createMenu();
+        		return false;
+        	}else if(api.connectionType == "none"){
+//      		getType();
+        		createMenu();
+        		return false;
+        	}
+            var url = $api.getStorage("interface_url") + api_url.getSiteCount;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                },
+                beforeSend: function () {},
+                complete: function () {
+                },
+                success: function (data) {
+
+                    if (data.success) {
+						if(data.data && data.data.flag){
+							vm.onlyOne = false;
+						}else{
+							$api.setStorage("oneSite",{"id":data.data.groupId,"name":data.data.groupName});
+                        	vm.onlyOne = true;
+                        	vm.url = "openWin(\"site/site_detail_win\", { id: \"" + data.data.groupId + "\" });";
+						}
+//                      getType();
+                        createMenu();
+
+                    }
+
+                }
+
+            });
+
+        };
+
+         //极光推送事件监听
+        function startAjpush(userId) {
+
+            var ajpush = api.require("ajpush");
+
+            if (api.systemType == "android") {
+                //初始化推送服务
+                ajpush.init(function (ret) {
+                    if (ret && ret.status) {
+                        bindAliasAndTags();
+                    }
+                });
+
+            } else {
+                bindAliasAndTags();
+            }
+
+            //添加推送消息事件监听
+            function bindAliasAndTags() {
+                //绑定别名
+                ajpush.bindAliasAndTags({
+                    alias: userId,
+                    tags: []
+                }, function (ret) {
+                    if (ret.statusCode == 0) {
+
+                        //绑定消息事件监听
+                        api.addEventListener({
+                            name: "appintent"
+                        }, function (ret, err) {
+                            if (ret && ret.appParam.ajpush) {
+                                var extra = ret.appParam.ajpush.extra;
+                                if (typeof extra == 'string') {
+                                    extra = JSON.parse(extra);
+                                }
+                                eval(extra.script);
+                            }
+
+                        });
+
+                    } else {
+
+                        if (ret.statusCode == 6002) {
+                            startAjpush(userId);
+                        }
+
+                    }
+
+                });
+
+            };
+
+        };
+
+        //移除极光推送事件监听
+        function stopAjpush() {
+        	var ajpush = api.require("ajpush");
+    		if (api.systemType == "android") {
+	            //初始化推送服务
+	            ajpush.init(function (ret) {
+
+	                if (ret && ret.status) {
+	                    bindAliasAndTags();
+	                }
+	            });
+	        } else {
+	            bindAliasAndTags();
+	        }
+
+		    //添加推送消息事件监听
+	        function bindAliasAndTags() {
+	            //绑定别名
+	            ajpush.bindAliasAndTags({
+	                alias: "signOut",
+	                tags: []
+	            }, function (ret) {
+	            });
+	        };
+	    };
+
+
+
+		//同步数据
+		function cpDataInfoUpdate(){
+
+			if(api.connectionType != "none"){
+				api.execScript({
+                    name: "home_win",
+                    frameName: "home_frm",
+                    script: "getConstructionList('true','true');"
+                });
+			}else{
+				api.toast({ msg: "当前无网络连接！", duration: 3000 });
+			}
+		};
+
+
+		//获取未巡查列表
+		function openSummary(){
+			openWin("summary/no_patrol_summary_win");
+		};
+
+
+		 //获取提交类型
+     function getType() {
+    	if($api.getStorage("eventTypeFloor")){
+    		return false;
+    	}
+
+        var url = $api.getStorage("interface_url") + api_url.getEventType;
+        Ajax({
+            type: "get",
+            url: url,
+            data: {
+                access_token: $api.getStorage("access_token")
+            },
+            beforeSend: function () {
+                vm.loading = true;
+            },
+            complete: function () {
+                vm.loading = false;
+            },
+            success: function (data) {
+                if (data.success) {
+
+                	vm.lists.splice(0);
+
+            		//如果一条数据都没有，将在界面显示“暂无数据”
+                    if (data.list.length == 0) {
+                        return false;
+                    }
+
+                    for (var i = 0; i < data.list.length; i++) {
+                        vm.lists.push({
+                            id: data.list[i].id,
+                            name: data.list[i].name,
+                            icon: data.list[i].icon,
+                            active: false,
+                        });
+                    }
+
+                    $api.setStorage("eventTypeFloor",vm.lists);
+
+                }
+            }
+        });
+
+    };
+
+
+    //获取气泡
+    function getBubbles(){
+
+    	if(vm.hasBubble){
+    		var url = $api.getStorage("interface_url") + api_url.getAllCount;
+
+	        Ajax({
+	            type: "get",
+	            url: url,
+	            data: {
+	                access_token: $api.getStorage("access_token")
+	            },
+	            beforeSend: function () {},
+	            complete: function () {},
+	            success: function (data) {
+	                if (data.success) {
+	                	//申请总数
+	                	vm.num = data.data.applyCount > 99 ? "99+" : data.data.applyCount;
+                		//待办总数
+                		vm.noHandleApplycount = data.data.noHandleApplycount > 99 ? "99+" : data.data.noHandleApplycount;
+                		//重大隐患总数
+                		vm.eventnum = data.data.eventnum > 99 ? "99+" : data.data.eventnum;
+
+						vm.newsAll = data.data.newsCount;
+						vm.newsRead = $api.getStorage("readnum");
+						var unreadnews = vm.newsAll - vm.newsRead;
+	                	vm.newsCount = unreadnews > 99 ? "99+" :  unreadnews;
+
+						//列表上气泡总数
+	                	var allcount = vm.noHandleApplycount + vm.newsCount + vm.num + vm.eventnum;
+	                	api.execScript({
+	                        name: "home_win",
+	                        script: "vm.allCont='"+allcount+"';"
+	                    });
+
+	                }
+	            }
+			});
+    	}
+    };
+
+
+    //停复工审批
+    function reviewOff(){
+    	openWin("rate/off_work/approval_list_win");
+    };
+     //停复工申请
+    function applyOff(){
+    	openWin("rate/off_work/off_apply_win");
+    };
+     //通知公告
+    function thongzi(){
+    	openWin("news/newslist_win",{newsAll:vm.newsAll});
+    };
+
+
+     //重大隐患
+    function danger(){
+    	var catalogId ="34732a8e-9592-46ab-86a6-d569badfb414";
+    	var catalogName = "重大隐患";
+    	openWin("patrol_list/patrol_list_win", { "catalogIdArray":catalogId + "_SUBMIT","states":catalogName,"index":2,"date":"","hideFilter": true,"title": "待处理隐患"+"("+catalogName+")" });
+    };
+
+    function openProgress(){
+    	openWin("rate/progress/site_list_win");
+    };
+    </script>
+</body>
+</html>

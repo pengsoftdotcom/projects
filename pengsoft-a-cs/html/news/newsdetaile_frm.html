@@ -1,0 +1,124 @@
+﻿<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>公告——详情——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+<body class="bg-gray">
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading"><div class="spinner"></div></div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" style="display:none;" v-cloak>
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="aui-padded-10"></div>
+    <div class="wui-newsdetail-wrap">
+        <div>
+            <h1 class="wui-newsdetail-title" v-text="title"></h1>
+            <p class="wui-newsdetail-date" v-text="datePublished"></p>
+        </div>
+        <div class="wui-newsdetail-content" v-html="content"></div>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/jquery-1.11.1.min.js"></script>
+    <script src="../../script/lazyload/jquery.lazyload.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+
+                //详情相关参数
+                id: "",  //公告id
+                title: "",  //公告标题
+                datePublished: "",  //公告发布时间
+                content: "",  //公告内容
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            setTimeout(function () {
+
+                vm.$nextTick(function () {
+
+                    vm.id = api.pageParam.id;
+
+                    getNewDetail();
+
+                });
+
+            }, 300);
+
+        };
+
+
+        //页面初始化
+        function getNewDetail() {
+
+            //拼接接口地址：分页获取新闻
+            var url = $api.getStorage("interface_url") + api_url.getNewsDetail;
+
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    id: vm.id
+                },
+                beforeSend: function () { },
+                complete: function () {
+                    vm.loading = false;
+                    vm.loadingFail = false;
+                },
+                success: function (data) {
+
+                    if (data.success) {
+
+                        vm.title = data.data.title;
+                        vm.datePublished = formatDatetime(data.data.datePublished);
+                        vm.content = data.data.content;
+
+                        //开启图片的延迟加载
+                        $("img").lazyload({ effect: "fadeIn" });
+
+                    } else {
+                        vm.loadingFail = true;
+                    }
+
+                }
+            });
+
+        };
+
+
+        //格式化时间
+        function formatDatetime(datetime) {
+
+            var time = new Date(datetime);
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+
+            return year + "/" + month + "/" + day;
+
+            function p(s) {
+                return s < 10 ? "0" + s : s;
+            };
+
+        };
+    </script>
+</body>
+</html>

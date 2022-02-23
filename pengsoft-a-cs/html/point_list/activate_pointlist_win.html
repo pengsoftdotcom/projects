@@ -1,0 +1,90 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+		<meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+		<title>激活点位—win</title>
+		<link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+		<link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+		<style>
+			.bottom {
+				z-index: 2000;
+				position: fixed;
+				bottom: 0;
+				width: 100%;
+				min-height: 45px;
+				line-height: 45px;
+				font-size: 18px;
+				color: #ffffff;
+				margin: 0;
+				text-align: center;
+				white-space: nowrap;
+				background-color: #0facfb;
+			}
+			.bottom-left {
+				z-index: 2000;
+				position: fixed;
+				bottom: 0;
+				width: 50%;
+				margin: 0;
+				text-align: center;
+			}
+			.bottom-right {
+				z-index: 2000;
+				position: fixed;
+				bottom: 0;
+				width: 50%;
+				margin-left: 50%;
+				text-align: left;
+			}
+		</style>
+	</head>
+	<body>
+		<script type="text/javascript">
+			var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+			ele.style.fontSize = size + "px";
+		</script>
+		<header id="header" class="aui-bar aui-bar-nav header-custom">
+			<a class="aui-pull-left" onclick="closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+			<div class="aui-title" v-text="siteListTittle">
+				激活部位分布
+			</div>
+			
+		</header>
+		<div id="bottom" class="bottom">
+			<div class="bottom bottom-left">
+				工地总计:111
+			</div>
+			<div class="bottom bottom-right">
+				激活部位累计:111
+			</div>
+		</div>
+		<script src="../../script/api.js"></script>
+		<script src="../../script/vue.js"></script>
+		<script src="../../script/common.js"></script>
+		<script>
+			
+			apiready = function() {
+				api.parseTapmode();
+				setStatusBarStyle("light");
+				
+				api.openFrame({
+					name : "point_list/activate_pointlist_frm",
+					url : "widget://html/point_list/activate_pointlist_frm.html",
+					bounces : false,
+					rect : {
+						x : 0,
+						y : $api.offset($api.byId("header")).h,
+						w : api.winWidth,
+						h : api.winHeight - $api.offset($api.byId("header")).h
+					},
+					pageParam : {
+						code : api.pageParam.code,
+						constructionUrl : api.pageParam.constructionUrl ? api.pageParam.constructionUrl : api_url.getConstructionList
+					}
+				});
+			};
+		</script>
+	</body>
+</html>

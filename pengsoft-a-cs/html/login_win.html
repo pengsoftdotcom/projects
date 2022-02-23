@@ -1,0 +1,44 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>登录——win</title>
+    <link rel="stylesheet" type="text/css" href="../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../css/custom.css" />
+</head>
+
+<body>
+    <header id="header" class="aui-bar aui-bar-nav bg-white"></header>
+    <script src="../script/api.js"></script>
+    <script src="../script/common.js"></script>
+    <script>
+        apiready = function () {
+
+            api.parseTapmode();
+
+            setStatusBarStyle("dark");
+
+            api.addEventListener({ name: "keyback" }, function (ret, err) {
+                api.closeWidget();
+            });
+
+            api.openFrame({
+                name: "login_frm",
+                url: "widget://html/login_frm.html",
+                bounces: false,
+                rect: {
+                    x: 0,
+                    y: $api.offset($api.byId("header")).h,
+                    w: api.winWidth,
+                    h: api.winHeight - $api.offset($api.byId("header")).h
+                }
+            });
+
+        };
+    </script>
+</body>
+
+</html>
