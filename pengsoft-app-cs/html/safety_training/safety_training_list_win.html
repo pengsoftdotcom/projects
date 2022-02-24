@@ -1,0 +1,77 @@
+﻿<!doctype html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>安全培训——列表——win</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <header id="header" class="aui-bar aui-bar-nav header-custom">
+        <a class="aui-pull-left" onclick="closeWin();">
+            <span class="aui-iconfont aui-icon-left"></span>
+        </a>
+        <div class="aui-title">安全培训</div>
+    </header>
+
+    <footer id="footer" class="aui-nav footer-btn-wrap1 bg-default" v-show="showFooter">
+        <a class="aui-btn aui-btn-custom aui-btn-block" v-effect="light" tapmode
+            v-on:click="addSafetyTraining();">开展安全培训</a>
+    </footer>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                showFooter: false,
+            },
+            methods: {
+                addSafetyTraining() {
+                    openWin('safety_training/add_safety_training_win')
+                }
+            },
+        });
+
+        apiready = function () {
+            console.log('api is ready')
+            api.parseTapmode();
+
+            setStatusBarStyle("light");
+
+            var user = $api.getStorage("user");
+            var matchedRole = user.roleList.find(i => i.code === 'ROL_SECURITY_OFFICER');
+            console.log(JSON.stringify(user))
+            if (matchedRole) {
+                vm.showFooter = true;
+            }
+
+            vm.$nextTick(() => {
+                api.openFrame({
+                    name: "safety_training/safety_training_list_frm",
+                    url: "widget://html/safety_training/safety_training_list_frm.html",
+                    bgColor: "#e4e4e4",
+                    bounces: true,
+                    rect: {
+                        x: 0,
+                        y: $api.offset($api.byId("header")).h,
+                        w: api.winWidth,
+                        h: api.winHeight - $api.offset($api.byId("header")).h - $api.offset($api.byId("footer")).h
+                    },
+                });
+            })
+        };
+    </script>
+</body>
+
+</html>

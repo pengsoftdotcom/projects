@@ -1,0 +1,253 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>安全培训——列表——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+
+<body class="bg-gray">
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading">
+        <div class="spinner"></div>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" style="display:none;">
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="noData" style="display:none;">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="aui-content wui-news-wrap" style="padding-top: 0px;">
+
+        <div class="wui-newslist-wrap">
+            <template v-for="list in lists">
+                <div class="wui-newslist-content shadow-2" v-on:click="openNewsDetatil($index)">
+                    <p class="wui-newslist-title aui-ellipsis-1" v-text="list.title"></p>
+                    <div class="wui-newslist-info">
+                        <div class="wui-newslist-img" v-if="list.image"
+                            v-bind:style="{'background-image':'url('+list.image_address+')'}"></div>
+                        <div class="wui-newslist-text aui-ellipsis-2" v-text="list.summary"></div>
+                    </div>
+                    <p class="wui-newslist-date">
+                        <span v-text="list.datePublished"></span>
+                        <span class="aui-pull-right">查看全部>></span>
+                    </p>
+                </div>
+            </template>
+            <p class="aui-text-center aui-padded-5" v-text="loadTips"></p>
+        </div>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: true,  //是否显示：全局加载
+                loadingFail: false,  //是否显示：全局加载失败
+                noData: false,  //是否显示：全局暂无数据
+                noMore: false,  //是否显示：没有更多数据
+                loadTips: "",  //1.没有更多数据了  2.正在加载中...  3.上拉加载更多
+                pullDownRefresh: false,  //下拉刷新
+
+                //列表相关参数
+                isResult: true,  //判断上次ajax是否返回
+                pageCount: 0,  //当前页数
+                lists: [],  //新闻列表数组
+            },
+            methods: {
+                openNewsDetatil: function (i) {  //打开新闻详情
+                    openWin("news/newsdetaile_win", { id: this.lists[i].id });
+                }
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            setTimeout(function () {
+
+                vm.$nextTick(function () {
+
+                    getNewsList();
+
+                    //下拉刷新
+                    api.setRefreshHeaderInfo({
+                        bgColor: "#efefef",
+                        textColor: "#333",
+                        textDown: "下拉刷新",
+                        textUp: "释放立即刷新",
+                    }, function (ret, err) {
+
+                        vm.pullDownRefresh = true;
+                        vm.pageCount = 0;
+                        getNewsList();
+
+                    });
+
+                    //上拉加载
+                    api.addEventListener({
+                        name: "scrolltobottom",
+                        extra: {
+                            threshold: 0
+                        }
+                    }, function (ret, err) {
+
+                        if (!vm.noMore) {
+
+                            vm.loadTips = "正在加载中...";
+                            getNewsList();
+
+                        }
+
+                    });
+
+                });
+
+            }, 300);
+
+        };
+
+
+        //页面初始化
+        function getNewsList() {
+
+            if (vm && vm.isResult) {
+
+                //拼接接口地址：分页获取新闻
+                var url = $api.getStorage("interface_url") + api_url.getNewsListForPage;
+
+                // Ajax({
+                //     type: "get",
+                //     url: url,
+                //     data: {
+                //         type: "CONST_NEWS",
+                //         page: vm.pageCount,
+                //         access_token: $api.getStorage("access_token"),
+                //         size: 5
+                //     },
+                //     beforeSend: function () {
+                //         vm.isResult = false;
+                //     },
+                //     complete: function () {
+                //         vm.isResult = true;
+                //         vm.loading = false;
+                //         vm.loadingFail = false;
+                //         vm.noData = false;
+                //         api.refreshHeaderLoadDone();
+                //     },
+                //     success: function (data) {
+                //         if (data.success) {
+
+
+                //             //如果是下拉刷新，则需要清空列表
+                //             if (vm.pullDownRefresh) {
+                //                 vm.lists.splice(0, vm.lists.length);
+                //             }
+
+                //             //如果一条数据都没有，将在界面显示“暂无数据”
+                //             if (data.page.content.length == 0 && vm.lists.length == 0) {
+                //                 vm.noData = true;
+                //                 return false;
+                //             }
+
+                //             //向界面依次添加列表
+                //             for (var i = 0; i < data.page.content.length; i++) {
+
+                //                 vm.lists.push({
+                //                     id: data.page.content[i].id,  //新闻id
+                //                     title: toEmpty(data.page.content[i].title),  //新闻标题
+                //                     image: data.page.content[i].coverAccessAddress ? true : false,  //是否有新闻缩略图
+                //                     image_address: thumb(data.page.content[i].coverAccessAddress, 50, 50),  //新闻缩略图地址
+                //                     summary: toEmpty(data.page.content[i].summary),  //新闻简单描述
+                //                     datePublished: formatDatetime(data.page.content[i].datePublished)  //新闻发布时间
+                //                 });
+
+                //             }
+
+                //             //判断是否还有未加载到界面的数据
+                //             if (data.page.content.length < 5) {
+                //                 vm.loadTips = "没有更多数据了";
+                //                 vm.noMore = true;
+                //             } else {
+                //                 vm.loadTips = "上拉加载更多";
+                //                 vm.noMore = false;
+                //             }
+                //             vm.pageCount += 1;
+
+                //         } else {
+                //             vm.loadingFail = true;  //加载失败
+                //         }
+
+                //         vm.pullDownRefresh = false;
+
+                //         //提交已读数量
+                //         getRead();
+                //     }
+                // });
+
+            }
+
+        };
+
+
+        //格式化时间
+        function formatDatetime(datetime) {
+
+            var time = new Date(datetime);
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+
+            return year + "/" + month + "/" + day;
+
+            function p(s) {
+                return s < 10 ? "0" + s : s;
+            };
+
+        };
+
+
+        //提交已读总数
+        function getRead() {
+
+            var url = $api.getStorage("interface_url") + api_url.getRead;
+            Ajax({
+                type: "post",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    readnum: api.pageParam.newsAll,
+                    //	                version:$api.getStorage("user").version,
+                },
+                beforeSend: function () { },
+                complete: function () { },
+                success: function (data) {
+                    if (data.success) {
+                        $api.setStorage("readnum", api.pageParam.newsAll);
+
+                        api.execScript({
+                            name: "menu_win",
+                            script: "getBubbles();"
+                        });
+                    }
+                }
+            })
+
+        }
+    </script>
+</body>
+
+</html>

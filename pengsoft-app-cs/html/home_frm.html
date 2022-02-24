@@ -283,8 +283,13 @@
                 changeTab: function (index) {  //切换tab
 
                     var vm_p = this;
-
-                    if (vm_p.isResult&&vm_p.menuList[index].icon != "active-summary") {
+                    
+                    // 如果是安全培训,就不做操作,直接执行
+                    if(vm_p.menuList[index].id == "460bafc6-d061-4745-a365-d7ed4465c5d1") {
+                        vm_p.$nextTick(function(){
+                            eval(vm_p.menuList[index].url);
+                        });
+                    }else if (vm_p.isResult&&vm_p.menuList[index].icon != "active-summary") {
                     	if(vm_p.loading){
                     		api.showProgress({animationType: "zoom" });
                     	}
@@ -790,7 +795,10 @@
 
         };
 
-
+        // 安全培训
+        function safetyTraining(){
+            openWin('safety_training/safety_training_list_win')
+        }
 
         //打开二维码扫描
         function openScanner() {
@@ -2157,6 +2165,7 @@
 
 	    	var user = $api.getStorage("user");
 	    	var menu_tree = user.menuList;
+            console.log(JSON.stringify(user))
 	        //生成切换菜单
 	        for (var i = 0; i < menu_tree.length; i++) {
 

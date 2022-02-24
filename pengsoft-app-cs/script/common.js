@@ -109,6 +109,9 @@
 
     getMySalaryList: "service/const/checkpoint-group-employee-salary/my-salaries",
     salaryConfirm: "service/const/checkpoint-group-employee-salary/confirm",
+
+    getMyCheckpointGroups: "service/event/checkpoint-group-employee/my-checkpoint-groups", // 我的工地
+    getEmployeesByCheckpointGroup: "service/event/checkpoint-group-employee/employees-by-checkpoint-group" //工地员工
 };
 
 var api_role = {
@@ -276,7 +279,7 @@ function Ajax(obj) {
                                 api.alert({ title: "错误", msg: "请求地址错误！", buttons: ["确定"] });
                                 break;
                             default:
-                                api.alert({ title: "错误", msg: err.body.error.message, buttons: ["确定"] });
+                                api.alert({ title: "错误", msg: JSON.stringify(err), buttons: ["确定"] });
                                 break;
                         }
 

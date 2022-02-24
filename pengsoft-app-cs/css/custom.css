@@ -1165,6 +1165,7 @@ body{
 }
 .addthing-imgwrap .img-item {
     width:33.33%;
+	height: 100px;
     float: left;
     position: relative;
 }

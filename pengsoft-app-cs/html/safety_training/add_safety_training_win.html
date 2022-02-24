@@ -1,0 +1,58 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>开展安全培训—win</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+</head>
+<body>
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <header id="header" class="aui-bar aui-bar-nav header-custom">
+        <a class="aui-pull-left" onclick="closeWin();"> <span class="aui-iconfont aui-icon-left"></span> </a>
+        开展安全培训
+        </div>
+    </header>
+    <footer id="footer" class="aui-nav footer-btn-wrap1 bg-default" onclick="submit();">
+        <a class="aui-btn aui-btn-custom aui-btn-block" tapmode>确定</a>
+    </footer>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        apiready = function () {
+
+            api.parseTapmode();
+
+            setStatusBarStyle("light");
+            
+            api.openFrame({
+                name: "safety_training/add_safety_training_frm",
+                url: "widget://html/safety_training/add_safety_training_frm.html",
+                bounces: false,
+                bgColor: "transparent",
+                rect: {
+                    x: 0,
+                    y: $api.offset($api.byId("header")).h,
+                    w: api.winWidth,
+                    h: api.winHeight - $api.offset($api.byId("header")).h - $api.offset($api.byId("footer")).h
+                },
+            });
+
+        };
+        
+        
+        function submit(){
+        	api.execScript({
+                name: "rate/progress/active_win",
+                frameName: "rate/progress/active_frm",
+                script: "submit();"
+            });
+        };
+    </script>
+</body>
+</html>
