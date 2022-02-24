@@ -8888,7 +8888,6 @@
                     }
                 }
             }
-            console.log(data);
         };
 
         /**

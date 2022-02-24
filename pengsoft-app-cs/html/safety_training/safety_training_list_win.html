@@ -44,14 +44,12 @@
         });
 
         apiready = function () {
-            console.log('api is ready')
             api.parseTapmode();
 
             setStatusBarStyle("light");
 
             var user = $api.getStorage("user");
             var matchedRole = user.roleList.find(i => i.code === 'ROL_SECURITY_OFFICER');
-            console.log(JSON.stringify(user))
             if (matchedRole) {
                 vm.showFooter = true;
             }

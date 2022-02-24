@@ -2,8 +2,7 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport"
-        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <title>开展安全培训——frm</title>
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
@@ -17,8 +16,8 @@
         .body {
             background-color: #eaedf3;
         }
-
         /*申请页面*/
+
         .addthing-detail-wrap {
             padding: 15px 10px 70px;
         }
@@ -57,8 +56,8 @@
             -webkit-flex: 1;
             flex: 1;
         }
-
         /*图片信息*/
+
         .img-wrap {
             overflow: hidden;
             padding: 0;
@@ -118,7 +117,8 @@
 
 <body>
     <script type="text/javascript">
-        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        var ele = document.getElementsByTagName("html")[0],
+            size = document.body.clientWidth / 320 * 100;
         ele.style.fontSize = size + "px";
     </script>
 
@@ -148,8 +148,7 @@
         <div class="addthing-detail-container" @click.stop="addPic">
             <div class="addthing-detail-title aui-col-xs-3">图片</div>
             <div class="addthing-detail-body aui-col-xs-7"></div>
-            <div class="aui-iconfont aui-icon-camera aui-col-xs-2 aui-text-ccc"
-                style="font-size: 25px;font-weight: bold;"></div>
+            <div class="aui-iconfont aui-icon-camera aui-col-xs-2 aui-text-ccc" style="font-size: 25px;font-weight: bold;"></div>
         </div>
         <div class="addthing-detail-container" v-show="imageList.length>0">
             <div class="addthing-imgwrap" style="width:100%;">
@@ -173,16 +172,16 @@
             el: "body",
             data: {
                 //界面相关参数
-                loading: true,  //是否显示：全局加载
-                loadingFail: false,  //是否显示：全局加载失败
+                loading: true, //是否显示：全局加载
+                loadingFail: false, //是否显示：全局加载失败
 
-                mySite: "",  //工地名字
-                pickedSite: "",  //工地ID
+                mySite: "", //工地名字
+                pickedSite: "", //工地ID
                 groupEmployeeName: '',
-                beginTimeShow: "请选择(必填)",  //显示的开始时间
-                beginTime: "",   //提交的开始时间
-                endTimeShow: "请选择(必填)",  //显示的结束时间
-                endTime: "",   //提交的结束时间
+                beginTimeShow: "请选择(必填)", //显示的开始时间
+                beginTime: "", //提交的开始时间
+                endTimeShow: "请选择(必填)", //显示的结束时间
+                endTime: "", //提交的结束时间
 
                 imageList: [],
                 typeList: [],
@@ -193,12 +192,12 @@
 
             },
             methods: {
-                openBeginTime: function () {
+                openBeginTime: function() {
 
                     api.openPicker({
                         type: "date",
                         title: "请选择开始日期"
-                    }, function (ret, err) {
+                    }, function(ret, err) {
                         var year = ret.year;
                         var month = ret.month;
                         var day = ret.day;
@@ -208,7 +207,10 @@
                         var date2 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
                         if (date1 < date2) {
-                            api.toast({ msg: "不能选以前的日期！", duration: 3000 });
+                            api.toast({
+                                msg: "不能选以前的日期！",
+                                duration: 3000
+                            });
                             return false;
                         }
 
@@ -223,12 +225,12 @@
                     };
 
                 },
-                endEndTime: function () {
+                endEndTime: function() {
 
                     api.openPicker({
                         type: "date",
                         title: "请选择结束日期"
-                    }, function (ret, err) {
+                    }, function(ret, err) {
                         var year = ret.year;
                         var month = ret.month;
                         var day = ret.day;
@@ -238,7 +240,10 @@
                         var date2 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
 
                         if (date1 < date2) {
-                            api.toast({ msg: "不能选以前的日期！", duration: 3000 });
+                            api.toast({
+                                msg: "不能选以前的日期！",
+                                duration: 3000
+                            });
                             return false;
                         }
 
@@ -253,18 +258,18 @@
                     };
 
                 },
-                changeSite: function () {
+                changeSite: function() {
                     this.mySite = $("#siteSe option:selected").text();
                     getTypeInfo();
                 },
-                changeReason: function () {
+                changeReason: function() {
                     this.checkedReasonName = $("#reasonSe option:selected").text();
                 },
-                changeType: function () {
+                changeType: function() {
                     this.checkedTypeName = $("#typeSe option:selected").text();
                     getReasonInfo();
                 },
-                addPic: function () {
+                addPic: function() {
                     //选择图片
                     if (vm.imageList.length < 6) {
                         api.getPicture({
@@ -273,7 +278,7 @@
                             allowEdit: true,
                             targetWidth: 800,
                             quality: 50
-                        }, function (ret, err) {
+                        }, function(ret, err) {
                             if (ret && ret.data != "") {
 
                                 vm.imageList.push({
@@ -285,20 +290,24 @@
                         });
 
                     } else {
-                        api.alert({ title: "提示", msg: "最多可添加6张照片！", buttons: ["确定"] });
+                        api.alert({
+                            title: "提示",
+                            msg: "最多可添加6张照片！",
+                            buttons: ["确定"]
+                        });
                     }
                 },
-                delPic: function (index) {
+                delPic: function(index) {
                     this.imageList.splice(index, 1);
                 }
             },
-            init: function () {
+            init: function() {
                 effect();
             }
         });
 
 
-        apiready = function () {
+        apiready = function() {
 
             api.parseTapmode();
 
@@ -321,14 +330,13 @@
                 data: {
                     access_token: $api.getStorage("access_token"),
                 },
-                beforeSend: function () {
+                beforeSend: function() {
                     vm.loading = true;
                 },
-                complete: function () {
+                complete: function() {
                     vm.loading = false;
                 },
-                success: function (data) {
-                    console.log(JSON.stringify(data))
+                success: function(data) {
                     if (data.success) {
                         if (data.list.length > 0) {
                             for (var i = 0; i < data.list.length; i++) {
@@ -359,34 +367,64 @@
 
             if (!isLogin()) {
                 api.hideProgress();
-                api.alert({ title: "提示", msg: "用户信息为空，请重新登录！", buttons: ["确定"] });
+                api.alert({
+                    title: "提示",
+                    msg: "用户信息为空，请重新登录！",
+                    buttons: ["确定"]
+                });
                 return false;
             } else if (vm.pickedSite == "") {
                 api.hideProgress();
-                api.alert({ title: "提示", msg: "请选择工地！", buttons: ["确定"] });
+                api.alert({
+                    title: "提示",
+                    msg: "请选择工地！",
+                    buttons: ["确定"]
+                });
                 return false;
             } else if (vm.typeId == "") {
                 api.hideProgress();
-                api.alert({ title: "提示", msg: "请选择申请类型！", buttons: ["确定"] });
+                api.alert({
+                    title: "提示",
+                    msg: "请选择申请类型！",
+                    buttons: ["确定"]
+                });
                 return false;
             } else if (vm.reasonId == "") {
                 api.hideProgress();
-                api.alert({ title: "提示", msg: "请选择申请事由！", buttons: ["确定"] });
+                api.alert({
+                    title: "提示",
+                    msg: "请选择申请事由！",
+                    buttons: ["确定"]
+                });
                 return false;
             } else if (vm.reasonContent.trim() == "") {
                 api.hideProgress();
-                api.alert({ title: "提示", msg: "请输入详细事由！", buttons: ["确定"] });
+                api.alert({
+                    title: "提示",
+                    msg: "请输入详细事由！",
+                    buttons: ["确定"]
+                });
                 return false;
             } else if (vm.beginTime == "") {
                 api.hideProgress();
-                api.alert({ title: "提示", msg: "请选择时间！", buttons: ["确定"] });
+                api.alert({
+                    title: "提示",
+                    msg: "请选择时间！",
+                    buttons: ["确定"]
+                });
                 return false;
             }
 
-            var items = [{ "label": "照片", "name": "image", "type": "imageList", "value": "", "url": "" }];
+            var items = [{
+                "label": "照片",
+                "name": "image",
+                "type": "imageList",
+                "value": "",
+                "url": ""
+            }];
             var image_array = new Array();
             var imageIdArray = new Array();
-            var uploadTime = 0;  //上次文件错误执行次数
+            var uploadTime = 0; //上次文件错误执行次数
 
             if (vm.imageList.length > 0) {
                 for (var i = 0; i < vm.imageList.length; i++) {
@@ -402,9 +440,15 @@
             function addPicture() {
 
                 if (uploadTime == 0) {
-                    api.showProgress({ title: "上传图片", text: "进度：0%" });
+                    api.showProgress({
+                        title: "上传图片",
+                        text: "进度：0%"
+                    });
                 } else {
-                    api.showProgress({ title: "上传图片", text: "进度：100%" });
+                    api.showProgress({
+                        title: "上传图片",
+                        text: "进度：100%"
+                    });
                 }
 
                 //拼接接口地址：上传文件
@@ -421,39 +465,56 @@
                             file: image_array
                         }
                     }
-                }, function (ret, err) {
+                }, function(ret, err) {
 
-                    if (ret.status == 0) {  //上传中
-                        api.showProgress({ title: "上传图片", text: "进度：" + ret.progress + "%" });
-                    } else if (ret.status == 1 && ret.body.success) {  //上传完成
+                    if (ret.status == 0) { //上传中
+                        api.showProgress({
+                            title: "上传图片",
+                            text: "进度：" + ret.progress + "%"
+                        });
+                    } else if (ret.status == 1 && ret.body.success) { //上传完成
 
                         //重置上次文件错误执行次数
                         uploadTime = 0;
                         if (image_array.length == 1) {
-                            imageIdArray.push({ id: ret.body.data.id, url: ret.body.data.accessAddress });
+                            imageIdArray.push({
+                                id: ret.body.data.id,
+                                url: ret.body.data.accessAddress
+                            });
                         } else {
                             for (var i = 0; i < ret.body.list.length; i++) {
-                                imageIdArray.push({ id: ret.body.list[i].id, url: ret.body.list[i].accessAddress });
+                                imageIdArray.push({
+                                    id: ret.body.list[i].id,
+                                    url: ret.body.list[i].accessAddress
+                                });
                             }
                         }
-                        addEvent();  //新增投诉
+                        addEvent(); //新增投诉
 
-                    } else {  //上传失败
+                    } else { //上传失败
 
-                        if (uploadTime < 4) {  //5次上次失败机会
+                        if (uploadTime < 4) { //5次上次失败机会
 
                             //上次文件错误执行次数+1
                             uploadTime += 1;
-                            addPicture();  //递归上传
+                            addPicture(); //递归上传
 
                         } else {
 
                             api.hideProgress();
 
                             if (ret.statusCode == 500) {
-                                api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                                api.alert({
+                                    title: "错误",
+                                    msg: "上传图片失败：网络错误，请检查网络设置！",
+                                    buttons: ["确定"]
+                                });
                             } else {
-                                api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                                api.alert({
+                                    title: "错误",
+                                    msg: "上传图片失败：网络错误，请检查网络设置！",
+                                    buttons: ["确定"]
+                                });
                             }
 
                         }
@@ -479,20 +540,22 @@
                     url: url,
                     data: {
                         access_token: $api.getStorage("access_token"),
-                        checkpointGroupId: vm.pickedSite,  //工地ID
-                        applyTypeId: vm.typeId,  //申请类型id
-                        applyReasonTypeId: vm.reasonId,  //申请原因类型
-                        applyReasonDetail: vm.reasonContent.trim(),  //申请具体原因
+                        checkpointGroupId: vm.pickedSite, //工地ID
+                        applyTypeId: vm.typeId, //申请类型id
+                        applyReasonTypeId: vm.reasonId, //申请原因类型
+                        applyReasonDetail: vm.reasonContent.trim(), //申请具体原因
                         extra: JSON.stringify(items),
                         beginDate: vm.beginTime,
                     },
-                    beforeSend: function () {
-                        api.showProgress({ title: "提交信息" });
+                    beforeSend: function() {
+                        api.showProgress({
+                            title: "提交信息"
+                        });
                     },
-                    complete: function () {
+                    complete: function() {
                         api.hideProgress();
                     },
-                    success: function (data) {
+                    success: function(data) {
 
                         if (data.success) {
 
@@ -500,7 +563,7 @@
                                 title: "提示",
                                 msg: data.data ? data.data : "提交成功！",
                                 buttons: ["确定"]
-                            }, function (ret, err) {
+                            }, function(ret, err) {
 
                                 openWin("rate/off_work/my_list_win");
                                 closeWin();
@@ -508,7 +571,11 @@
                             });
 
                         } else {
-                            api.alert({ title: "错误", msg: data.error.message, buttons: ["确定"] });
+                            api.alert({
+                                title: "错误",
+                                msg: data.error.message,
+                                buttons: ["确定"]
+                            });
                         }
 
                     }

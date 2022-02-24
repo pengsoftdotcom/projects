@@ -1,10 +1,10 @@
-﻿<!DOCTYPE HTML>
+
+<!DOCTYPE HTML>
 <html>
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport"
-        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <title>安全培训——列表——frm</title>
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
@@ -13,7 +13,8 @@
 
 <body class="bg-gray">
     <script type="text/javascript">
-        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        var ele = document.getElementsByTagName("html")[0],
+            size = document.body.clientWidth / 320 * 100;
         ele.style.fontSize = size + "px";
     </script>
     <div class="loading-wrap bg-gray" v-show="loading">
@@ -53,33 +54,35 @@
             el: "body",
             data: {
                 //界面相关参数
-                loading: true,  //是否显示：全局加载
-                loadingFail: false,  //是否显示：全局加载失败
-                noData: false,  //是否显示：全局暂无数据
-                noMore: false,  //是否显示：没有更多数据
-                loadTips: "",  //1.没有更多数据了  2.正在加载中...  3.上拉加载更多
-                pullDownRefresh: false,  //下拉刷新
+                loading: true, //是否显示：全局加载
+                loadingFail: false, //是否显示：全局加载失败
+                noData: false, //是否显示：全局暂无数据
+                noMore: false, //是否显示：没有更多数据
+                loadTips: "", //1.没有更多数据了  2.正在加载中...  3.上拉加载更多
+                pullDownRefresh: false, //下拉刷新
 
                 //列表相关参数
-                isResult: true,  //判断上次ajax是否返回
-                pageCount: 0,  //当前页数
-                lists: [],  //新闻列表数组
+                isResult: true, //判断上次ajax是否返回
+                pageCount: 0, //当前页数
+                lists: [], //新闻列表数组
             },
             methods: {
-                openNewsDetatil: function (i) {  //打开新闻详情
-                    openWin("news/newsdetaile_win", { id: this.lists[i].id });
+                openNewsDetatil: function(i) { //打开新闻详情
+                    openWin("news/newsdetaile_win", {
+                        id: this.lists[i].id
+                    });
                 }
             }
         });
 
 
-        apiready = function () {
+        apiready = function() {
 
             api.parseTapmode();
 
-            setTimeout(function () {
+            setTimeout(function() {
 
-                vm.$nextTick(function () {
+                vm.$nextTick(function() {
 
                     getNewsList();
 
@@ -89,7 +92,7 @@
                         textColor: "#333",
                         textDown: "下拉刷新",
                         textUp: "释放立即刷新",
-                    }, function (ret, err) {
+                    }, function(ret, err) {
 
                         vm.pullDownRefresh = true;
                         vm.pageCount = 0;
@@ -103,7 +106,7 @@
                         extra: {
                             threshold: 0
                         }
-                    }, function (ret, err) {
+                    }, function(ret, err) {
 
                         if (!vm.noMore) {
 
@@ -219,34 +222,6 @@
 
         };
 
-
-        //提交已读总数
-        function getRead() {
-
-            var url = $api.getStorage("interface_url") + api_url.getRead;
-            Ajax({
-                type: "post",
-                url: url,
-                data: {
-                    access_token: $api.getStorage("access_token"),
-                    readnum: api.pageParam.newsAll,
-                    //	                version:$api.getStorage("user").version,
-                },
-                beforeSend: function () { },
-                complete: function () { },
-                success: function (data) {
-                    if (data.success) {
-                        $api.setStorage("readnum", api.pageParam.newsAll);
-
-                        api.execScript({
-                            name: "menu_win",
-                            script: "getBubbles();"
-                        });
-                    }
-                }
-            })
-
-        }
     </script>
 </body>
 

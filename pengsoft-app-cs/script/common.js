@@ -225,9 +225,6 @@ function Ajax(obj) {
             },
             timeout: obj.timeout ? obj.timeout : 30 //timeout
         }, function (ret, err) {
-//   		console.log(api.winName+"----"+api.frameName+": "+obj.url);
-//        	console.log(JSON.stringify(ret));
-//        	console.log(JSON.stringify(err));
             //complete
             if (obj.complete) {
                 obj.complete();

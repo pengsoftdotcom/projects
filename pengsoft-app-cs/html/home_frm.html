@@ -1,4 +1,4 @@
-﻿﻿<!DOCTYPE HTML>
+<!DOCTYPE HTML>
 <html>
 
 <head>
@@ -10,47 +10,51 @@
     <link rel="stylesheet" type="text/css" href="../css/custom.css" />
     <link rel="stylesheet" type="text/css" href="../css/animate.min.css" />
     <style media="screen">
-        .apply-tip{
-            font-size:14px;
-            font-weight:bold;
-            color:#000;
-            line-height:14px;
-            color:#0076ff;
-            position:relative;
-            display:flex;
-            align-items:center;
+        .apply-tip {
+            font-size: 14px;
+            font-weight: bold;
+            color: #000;
+            line-height: 14px;
+            color: #0076ff;
+            position: relative;
+            display: flex;
+            align-items: center;
         }
-        .apply-list{
+
+        .apply-list {
             align-items: center;
             justify-content: space-between;
-            display:flex;
-            width:100%;
+            display: flex;
+            width: 100%;
             position: relative;
             flex-wrap: no-wrap;
             padding: 15px 5px 15px 15px;
-            color:#333;
+            color: #333;
             border-bottom: 1px solid #eeeeee;
         }
-        .apply-list:last-of-type{
+
+        .apply-list:last-of-type {
             border: none;
         }
-        .apply-name{
-            text-align:center;
-            font-size:14px;
+
+        .apply-name {
+            text-align: center;
+            font-size: 14px;
             position: relative;
-            font-weight:bold;
-            margin-right:8px;
+            font-weight: bold;
+            margin-right: 8px;
         }
-        .apply-count{
-            text-align:center;
-            font-size:12px;
-            background:#f42700;
+
+        .apply-count {
+            text-align: center;
+            font-size: 12px;
+            background: #f42700;
             line-height: 16px;
-            height:16px;
+            height: 16px;
             min-width: 16px;
             padding: 0 2px;
-            border-radius:16px;
-            color:#ffffff;
+            border-radius: 16px;
+            color: #ffffff;
             position: relative;
             top: -1px;
         }
@@ -59,10 +63,11 @@
 
 <body class="bg-none">
     <script type="text/javascript">
-        var ele = document.getElementsByTagName("html")[0], size = document.body.clientWidth / 320 * 100;
+        var ele = document.getElementsByTagName("html")[0],
+            size = document.body.clientWidth / 320 * 100;
         ele.style.fontSize = size + "px";
     </script>
-    <div class="index-main-wrap" v-show="showCharts"v-cloak>
+    <div class="index-main-wrap" v-show="showCharts" v-cloak>
         <div class="index-top-wrap text-all-center" style="height:40%;width:100%;position:relative;" id="mychart">
         </div>
         <div class="index-bottom-wrap" style="background-color:#f5f5f5;height:60%">
@@ -92,23 +97,23 @@
         </div>
     </div>
     <div class="index-main-wrap" v-show="olympics">
-			<div class="index-top-wrap text-all-center">
-				<div style="width:95%;">
+        <div class="index-top-wrap text-all-center">
+            <div style="width:95%;">
 
-					<div class="index-weather" @click="openWeather">
-						<div class="index-weather-datetime"><span class="time" v-text="time"></span><span class="date" v-text="dateAndWeek"></span></div>
-						<div class="index-weather-temperature" v-cloak>{{temperature}}<span class="c">&#176;</span></div>
-						<div class="index-weather-info"><i class="weather-small" :class="weatherIcon"></i><span class="text" v-text="weatherText">晴</span></div>
-					</div>
+                <div class="index-weather" @click="openWeather">
+                    <div class="index-weather-datetime"><span class="time" v-text="time"></span><span class="date" v-text="dateAndWeek"></span></div>
+                    <div class="index-weather-temperature" v-cloak>{{temperature}}<span class="c">&#176;</span></div>
+                    <div class="index-weather-info"><i class="weather-small" :class="weatherIcon"></i><span class="text" v-text="weatherText">晴</span></div>
+                </div>
 
-					<div class="aui-text-center aui-padded-5 f-fs16 aui-text-date">
-						今日巡查情况
-					</div>
+                <div class="aui-text-center aui-padded-5 f-fs16 aui-text-date">
+                    今日巡查情况
+                </div>
 
-					<div class="index-main-container">
-						<div class="summary-container3">
+                <div class="index-main-container">
+                    <div class="summary-container3">
 
-						<template v-for="list in summaryList1">
+                        <template v-for="list in summaryList1">
 							<div class="summary-item" onclick="{{list.event}}">
 								<div class="summary-number" :class="list.icon" v-cloak>
 									{{list.count}}
@@ -118,19 +123,19 @@
 							</div>
 						</template>
 
-						</div>
-					</div>
+                    </div>
+                </div>
 
-				</div>
-			</div>
-			<div class="index-bottom-wrap text-all-center">
-				<div style="width:100%;">
-					<div class="aui-text-center aui-padded-5 index-bottom-title">
-						待处理隐患
-					</div>
-					<div class="index-main-container">
+            </div>
+        </div>
+        <div class="index-bottom-wrap text-all-center">
+            <div style="width:100%;">
+                <div class="aui-text-center aui-padded-5 index-bottom-title">
+                    待处理隐患
+                </div>
+                <div class="index-main-container">
 
-						<template v-for="list in summaryTodo">
+                    <template v-for="list in summaryTodo">
 						<div class="summary-container2" onclick="{{list.event}}" v-cloak>
 							<div class="summary-item" :class="list.icon">
 								<div class="summary-number">
@@ -143,32 +148,32 @@
 						</div>
 						</template>
 
-					</div>
-				</div>
-			</div>
-		</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="index-main-wrap" v-show="fourCircle">
-		<div class="index-top-wrap text-all-center">
-			<div style="width:95%;">
-				<div class="aui-text-date aui-text-center aui-padded-5 f-fs14" v-text="dateAndWeek"></div>
-				<div class="index-main-container">
-					<div class="summary-container1" onclick="{{totalNumEvent}}">
-						<div class="summary-item">
-							<div class="summary-number" v-text="summaryTotal">
-								0
-							</div>
-							<div class="summary-name" v-text="summaryName"></div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="index-bottom-wrap text-all-center">
-			<div style="width:70%;">
-				<div class="index-main-container">
+        <div class="index-top-wrap text-all-center">
+            <div style="width:95%;">
+                <div class="aui-text-date aui-text-center aui-padded-5 f-fs14" v-text="dateAndWeek"></div>
+                <div class="index-main-container">
+                    <div class="summary-container1" onclick="{{totalNumEvent}}">
+                        <div class="summary-item">
+                            <div class="summary-number" v-text="summaryTotal">
+                                0
+                            </div>
+                            <div class="summary-name" v-text="summaryName"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="index-bottom-wrap text-all-center">
+            <div style="width:70%;">
+                <div class="index-main-container">
 
-					<template v-for="list in summaryList">
+                    <template v-for="list in summaryList">
 					<div class="summary-container2" onclick="{{list.event}}">
 						<div class="summary-item" :class="list.icon">
 							<div class="summary-number">
@@ -181,80 +186,80 @@
 					</div>
 					</template>
 
-				</div>
-			</div>
-		</div>
-	</div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div :class="isScan ? 'index-scan-btn' : 'index-not-scan-btn'" v-effect="light" @click="openScanner">
-		扫描巡查部位二维码
-	</div>
-	<div class="index-not-scan"　v-effect="light" @click="openPatrol" v-show="!isScan">
-		直接巡查
-	</div>
+        扫描巡查部位二维码
+    </div>
+    <div class="index-not-scan" 　v-effect="light" @click="openPatrol" v-show="!isScan">
+        直接巡查
+    </div>
 
     <div id="tab" class="index-nav-wrap">
-		<div class="aui-tab">
-			<ul class="index-nav">
-				<template v-for="list in menuList">
-				<li :class="[list.icon,{'active':list.activeClass}]" @click="changeTab($index)">
-					{{list.name}}
-				</li>
-				</template>
-			</ul>
-		</div>
-	</div>
+        <div class="aui-tab">
+            <ul class="index-nav">
+                <template v-for="list in menuList">
+            				<li :class="[list.icon,{'active':list.activeClass}]" @click="changeTab($index)">
+            					{{list.name}}
+            				</li>
+        				</template>
+            </ul>
+        </div>
+    </div>
     <script src="../script/api.js"></script>
     <script src="../script/vue.js"></script>
     <script src="../script/common.js"></script>
     <script src="../script/ecahrts/echarts.min.js"></script>
     <script>
-    	var FNScanner = null;
-    	var fs = null;
-    	var interval = null;
+        var FNScanner = null;
+        var fs = null;
+        var interval = null;
         var vm = new Vue({
             el: "body",
             data: {
                 //界面相关参数
-                loading: true,  //是否显示：全局加载
-                loadingFail: false,  //是否显示：全局加载失败
-                loadingFailTips: "加载失败",		//加载失败提示文字
-                isResult: true,  //判断上次ajax是否返回
+                loading: true, //是否显示：全局加载
+                loadingFail: false, //是否显示：全局加载失败
+                loadingFailTips: "加载失败", //加载失败提示文字
+                isResult: true, //判断上次ajax是否返回
                 isResultTD: true,
                 isResultBF: true,
                 weatherResult: true,
 
-                dateAndWeek: getTodayAndWeek(),  //今天的日期及星期
-                time: "",  //当前系统时间
-                temperature: 0,  //温度
+                dateAndWeek: getTodayAndWeek(), //今天的日期及星期
+                time: "", //当前系统时间
+                temperature: 0, //温度
                 weatherIcon: "", //天气图标
-                weatherText: "",  //天气情况
+                weatherText: "", //天气情况
 
-                uploadTrajectoryTime: 0,  //轨迹回调函数被调用的次数
-                menuList: [],  //菜单列表
+                uploadTrajectoryTime: 0, //轨迹回调函数被调用的次数
+                menuList: [], //菜单列表
 
                 summaryTotal: 0, //巡查总数
-                summaryList: [],  //统计数据的数组
+                summaryList: [], //统计数据的数组
                 summaryList1: [],
-                summaryClass: "",  //统计总数的样式
-                summaryTodo: [],  //待办事件数组
-                applyList: [],  //申请列表
+                summaryClass: "", //统计总数的样式
+                summaryTodo: [], //待办事件数组
+                applyList: [], //申请列表
 
-                frameIndex: 0,  //当前frame
+                frameIndex: 0, //当前frame
 
-                siteTotal: 0,  //工地总数，如果只有一个，则可以点击
+                siteTotal: 0, //工地总数，如果只有一个，则可以点击
                 checkpointGroupId: "", //工地ID，只有一个时
-                totalNumEvent: "",  //点击总数事件
+                totalNumEvent: "", //点击总数事件
 
-                olympics: false,  //显示五个圈
-                showCharts: false,  //显示工地管理的图表界面
-                fourCircle: false,  //显示四个圈
+                olympics: false, //显示五个圈
+                showCharts: false, //显示工地管理的图表界面
+                fourCircle: false, //显示四个圈
 
                 lng: 0,
                 lat: 0,
 
                 siteList: [],
-                lists: [],  //草稿列表
+                lists: [], //草稿列表
                 count: 0,
                 delArray: [],
                 submitArray: [],
@@ -272,112 +277,114 @@
                 stopCount: false,
                 isInit: true,
 
-                isScan: true,  //是否需要扫描二维码
+                isScan: true, //是否需要扫描二维码
 
-//              flow: false,  //是否为楼层检查点
-				typeLists: [],
-				summaryName: "",
+                //              flow: false,  //是否为楼层检查点
+                typeLists: [],
+                summaryName: "",
 
             },
             methods: {
-                changeTab: function (index) {  //切换tab
+                changeTab: function(index) { //切换tab
 
                     var vm_p = this;
-                    
+
                     // 如果是安全培训,就不做操作,直接执行
-                    if(vm_p.menuList[index].id == "460bafc6-d061-4745-a365-d7ed4465c5d1") {
-                        vm_p.$nextTick(function(){
+                    if (vm_p.menuList[index].id == "460bafc6-d061-4745-a365-d7ed4465c5d1") {
+                        vm_p.$nextTick(function() {
                             eval(vm_p.menuList[index].url);
                         });
-                    }else if (vm_p.isResult&&vm_p.menuList[index].icon != "active-summary") {
-                    	if(vm_p.loading){
-                    		api.showProgress({animationType: "zoom" });
-                    	}
-						this.frameIndex = index;
+                    } else if (vm_p.isResult && vm_p.menuList[index].icon != "active-summary") {
+                        if (vm_p.loading) {
+                            api.showProgress({
+                                animationType: "zoom"
+                            });
+                        }
+                        this.frameIndex = index;
 
-						if(vm_p.menuList[index].icon == "active-thing"){
-							this.olympics = true;
+                        if (vm_p.menuList[index].icon == "active-thing") {
+                            this.olympics = true;
                             this.showCharts = false;
-                			this.fourCircle = false;
-						}else if (vm_p.menuList[index].icon == "active-manage") {
+                            this.fourCircle = false;
+                        } else if (vm_p.menuList[index].icon == "active-manage") {
                             this.olympics = false;
                             this.showCharts = true;
-                			this.fourCircle = false;
-						}else {
-							this.olympics = false;
+                            this.fourCircle = false;
+                        } else {
+                            this.olympics = false;
                             this.showCharts = false;
-                			this.fourCircle = true;
-						}
-						for (var i = 0; i < vm_p.menuList.length; i++) {
+                            this.fourCircle = true;
+                        }
+                        for (var i = 0; i < vm_p.menuList.length; i++) {
                             vm_p.menuList[i].activeClass = false;
                         }
                         vm_p.menuList[index].activeClass = true;
                         vm_p.summaryClass = vm_p.menuList[index].icon;
-                        vm_p.$nextTick(function(){
+                        vm_p.$nextTick(function() {
                             eval(vm_p.menuList[index].url);
                         });
                         vm_p.loading = true;
-                    }else if(vm_p.menuList[index].icon == "active-summary"){
-                    	vm_p.$nextTick(function(){
+                    } else if (vm_p.menuList[index].icon == "active-summary") {
+                        vm_p.$nextTick(function() {
                             eval(vm_p.menuList[index].url);
                         });
                     }
 
                 },
-                openScanner: function () {
+                openScanner: function() {
                     openScanner();
                 },
-                openPatrol: function(){
-                	openWin("add_patrol/add_patrol_win",{
-                		notScan: true
-                	});
+                openPatrol: function() {
+                    openWin("add_patrol/add_patrol_win", {
+                        notScan: true
+                    });
                 },
-                openWeather: function(){ //打开天气预报
-            		openWin('weather_win',{
-                		temperature: this.temperature,
-						weatherIcon: this.weatherIcon,
-						weatherText: this.weatherText,
-						city: this.city
-                	});
+                openWeather: function() { //打开天气预报
+                    openWin('weather_win', {
+                        temperature: this.temperature,
+                        weatherIcon: this.weatherIcon,
+                        weatherText: this.weatherText,
+                        city: this.city
+                    });
                 },
-                getPartApply: function(index){
-                    openWin("rate/off_work/my_list_win",{
+                getPartApply: function(index) {
+                    openWin("rate/off_work/my_list_win", {
                         url: api_url.getPartApply,
                         code: vm.applyList[index].code
                     })
                 }
             },
-            init: function () {
+            init: function() {
                 effect();
             }
         });
 
 
-        apiready = function () {
+        apiready = function() {
 
             //添加云修复的静默修复事件监听
-	        api.addEventListener({
-	            name: "smartupdatefinish"
-	        }, function (ret, err) {
+            api.addEventListener({
+                name: "smartupdatefinish"
+            }, function(ret, err) {
 
-	            api.alert({
-	                title: "提示",
-	                msg: ret.value[0].extra == "" ? "更新包已自动下载成功，手动重启应用后生效！" : ret.value[0].extra,
-	                buttons: ["关闭应用"]
-	            }, function (ret, err) {
-	                api.closeWidget({
+                api.alert({
+                    title: "提示",
+                    msg: ret.value[0].extra == "" ? "更新包已自动下载成功，手动重启应用后生效！" : ret.value[0].extra,
+                    buttons: ["关闭应用"]
+                }, function(ret, err) {
+                    api.closeWidget({
                         id: "A6919162681008",
                         silent: true
                     });
-	            });
+                });
 
-	        });
+            });
 
             api.parseTapmode();
 
             api.addEventListener({
                 name: 'flushDraftList'
-            }, function(ret, err){
+            }, function(ret, err) {
                 vm.changeTab(vm.frameIndex);
             });
 
@@ -386,99 +393,101 @@
             fs = api.require('fs');
 
             var user = $api.getStorage("user");
-            for(var i = 0; i < user.roleList.length; i++){
-            	if(user.roleList[i].code == "ROL_SECURITY_NOSCAN"){
-            		vm.isScan = false;
-            		break;
-            	}
+            for (var i = 0; i < user.roleList.length; i++) {
+                if (user.roleList[i].code == "ROL_SECURITY_NOSCAN") {
+                    vm.isScan = false;
+                    break;
+                }
             }
             createHome();
         };
 
 
-		function init(){
+        function init() {
 
             // checkForUpdate();
 
-            vm.$nextTick(function () {
-				//显示存储的天气
-	            getStoredWeather();
+            vm.$nextTick(function() {
+                //显示存储的天气
+                getStoredWeather();
 
-	            if(api.connectionType != "none"){
-	        		hasActiveDrafts();
-	        		getRealWeather();
-	        		var user = $api.getStorage("user");
-	        		var ifCache = false;
-		            for(var i = 0; i < user.roleList.length; i++){
-		            	if(user.roleList[i].code == "ROL_SECURITY_MANAGER" || user.roleList[i].code == "ROL_REAL_SECURITY_MANAGER"){
-		            		canSignUp();
-		            	}else if(user.roleList[i].code == "ROL_SECURITY_NOSCAN"){
-		            		ifCache = false;
-		            		break;
-		            	}else if(user.roleList[i].code == "ROL_SECURITY_OFFICER"){
-		            		ifCache = true;
-		            	}
-		            }
-		            if(ifCache){
-		            	getConstructionList(true);
-		            }
-		            for(var i = 0; i < user.roleList.length; i++){
-		            	if(user.roleList[i].code == "ROL_SECURITY_OFFICER"){
-//		            		changeaddUserSign();
-//							addUserSign();
-		            	}
-		            }
-	            }
-	            
-	            api.addEventListener({
-				    name:'online'
-				}, function(ret, err){
+                if (api.connectionType != "none") {
+                    hasActiveDrafts();
+                    getRealWeather();
+                    var user = $api.getStorage("user");
+                    var ifCache = false;
+                    for (var i = 0; i < user.roleList.length; i++) {
+                        if (user.roleList[i].code == "ROL_SECURITY_MANAGER" || user.roleList[i].code == "ROL_REAL_SECURITY_MANAGER") {
+                            canSignUp();
+                        } else if (user.roleList[i].code == "ROL_SECURITY_NOSCAN") {
+                            ifCache = false;
+                            break;
+                        } else if (user.roleList[i].code == "ROL_SECURITY_OFFICER") {
+                            ifCache = true;
+                        }
+                    }
+                    if (ifCache) {
+                        getConstructionList(true);
+                    }
+                    for (var i = 0; i < user.roleList.length; i++) {
+                        if (user.roleList[i].code == "ROL_SECURITY_OFFICER") {
+                            //		            		changeaddUserSign();
+                            //							addUserSign();
+                        }
+                    }
+                }
 
-	        		vm.loading = false;
-	        		vm.changeTab(vm.frameIndex);
-	        		var user = $api.getStorage("user");
-	        		var ifCache = false;
-	        		setTimeout(function(){
-	        			for(var i = 0; i < user.roleList.length; i++){
-			            	if(user.roleList[i].code == "ROL_SECURITY_MANAGER" || user.roleList[i].code == "ROL_REAL_SECURITY_MANAGER"){
-			            		canSignUp();
-			            	}else if(user.roleList[i].code == "ROL_SECURITY_NOSCAN"){
-			            		ifCache = false;
-			            		break;
-			            	}else if(user.roleList[i].code == "ROL_SECURITY_OFFICER"){
-			            		ifCache = true;
-			            	}
-			            }
-			            if(ifCache){
-			            	getConstructionList(true);
-			            }
-			            hasActiveDrafts();
-		        		getRealWeather();
-	        		},5000);
-				});
+                api.addEventListener({
+                    name: 'online'
+                }, function(ret, err) {
 
-				api.addEventListener({
-				    name:'offline'
-				}, function(ret, err){
+                    vm.loading = false;
+                    vm.changeTab(vm.frameIndex);
+                    var user = $api.getStorage("user");
+                    var ifCache = false;
+                    setTimeout(function() {
+                        for (var i = 0; i < user.roleList.length; i++) {
+                            if (user.roleList[i].code == "ROL_SECURITY_MANAGER" || user.roleList[i].code == "ROL_REAL_SECURITY_MANAGER") {
+                                canSignUp();
+                            } else if (user.roleList[i].code == "ROL_SECURITY_NOSCAN") {
+                                ifCache = false;
+                                break;
+                            } else if (user.roleList[i].code == "ROL_SECURITY_OFFICER") {
+                                ifCache = true;
+                            }
+                        }
+                        if (ifCache) {
+                            getConstructionList(true);
+                        }
+                        hasActiveDrafts();
+                        getRealWeather();
+                    }, 5000);
+                });
 
-					api.hideProgress();
-					api.cancelAjax({
-					    tag: vm.count
-					});
+                api.addEventListener({
+                    name: 'offline'
+                }, function(ret, err) {
 
-					api.execScript({
-		                name: "drafts/drafts_list_win",
-		                frameName: "drafts/drafts_list_frm",
-		                script: "init();"
-		            });
+                    api.hideProgress();
+                    api.cancelAjax({
+                        tag: vm.count
+                    });
 
-				});
+                    api.execScript({
+                        name: "drafts/drafts_list_win",
+                        frameName: "drafts/drafts_list_frm",
+                        script: "init();"
+                    });
 
-				nowTime();
-				setInterval(function(){nowTime();},1000);
+                });
+
+                nowTime();
+                setInterval(function() {
+                    nowTime();
+                }, 1000);
 
             });
-		};
+        };
 
         //获取巡查工地的统计
         function getSiteSummary() {
@@ -491,16 +500,16 @@
                 data: {
                     access_token: $api.getStorage("access_token")
                 },
-                beforeSend: function () {
+                beforeSend: function() {
                     vm.isResult = false;
                 },
-                complete: function () {
+                complete: function() {
                     vm.isResult = true;
                     vm.summaryList.splice(0, vm.summaryList.length);
                     vm.summaryName = "施工总数";
                     api.hideProgress();
                 },
-                success: function (data) {
+                success: function(data) {
                     if (data.success) {
 
                         var total = 0;
@@ -510,14 +519,15 @@
                                 count: data.list[i].count,
                                 name: data.list[i].name,
                                 icon: data.list[i].icon,
-                                event: "openWin(\"site/site_list_win\", { \"code\": \"" + data.list[i].code + "\", \"constructionUrl\": \"" + api_url.getHomeSite + "\",\"name\":\"施工" + data.list[i].name + "\",\"showFilter\":\"" + false + "\" });"
+                                event: "openWin(\"site/site_list_win\", { \"code\": \"" + data.list[i].code + "\", \"constructionUrl\": \"" + api_url.getHomeSite + "\",\"name\":\"施工" + data.list[i].name + "\",\"showFilter\":\"" +
+                                    false + "\" });"
                             });
                             total += data.list[i].count;
 
                         }
                         vm.summaryTotal = total;
                         vm.siteTotal = total;
-						vm.totalNumEvent = "openWin(\"site/site_list_win\", {name:\"施工中\", constructionUrl: \"" + api_url.getHomeSite + "\"});";
+                        vm.totalNumEvent = "openWin(\"site/site_list_win\", {name:\"施工中\", constructionUrl: \"" + api_url.getHomeSite + "\"});";
                     }
 
                 }
@@ -525,7 +535,7 @@
 
         };
 
-        function constManage(){
+        function constManage() {
 
             var url = $api.getStorage("interface_url") + api_url.getSiteMngSummary;
             Ajax({
@@ -534,19 +544,19 @@
                 data: {
                     access_token: $api.getStorage("access_token")
                 },
-                beforeSend: function () {
+                beforeSend: function() {
                     vm.isResult = false;
                     vm.applyList.splice(0);
                 },
-                complete: function () {
+                complete: function() {
                     vm.isResult = true;
                     api.hideProgress();
                 },
-                success: function (data) {
+                success: function(data) {
                     if (data.success) {
                         var constMap = new Array();
                         var totalMap = new Array();
-                        if(data.data.applyList){
+                        if (data.data.applyList) {
                             vm.applyList.push({
                                 value: data.data.applyList.stopApply,
                                 name: "停工申请",
@@ -563,7 +573,7 @@
                                 code: "COMPLETE"
                             })
                         }
-                        if(data.data.constMap){
+                        if (data.data.constMap) {
                             constMap.push({
                                 value: data.data.constMap.construction,
                                 name: "施工",
@@ -589,17 +599,17 @@
                                 name: "工地总数"
                             });
                         }
-                        drawPie(constMap,totalMap);
+                        drawPie(constMap, totalMap);
                     }
 
                 }
             });
         }
 
-        function drawPie(data1,data2){
+        function drawPie(data1, data2) {
             var myChart = echarts.init(document.getElementById("mychart"));
             var option = {
-                tooltip : {
+                tooltip: {
                     trigger: 'item',
                     formatter: "{a} <br/>{b} : {c} ({d}%)"
                 },
@@ -610,71 +620,68 @@
                     textStyle: {
                         color: "#ffffff"
                     },
-                    align : "right",
-                    data:['施工','停工','竣工','待开工']
+                    align: "right",
+                    data: ['施工', '停工', '竣工', '待开工']
                 },
-                calculable : true,
-                series : [
-                    {
-                        type:'pie',
-                        name:"工地",
-                        radius : ['43%', '70%'],
-                        center: ['40%','48%'],
-                        minAngle : 30,
-                        color:['#1abc9c', '#f1c40f','#2ecc71','#44cef6'],
-                        avoidLabelOverlap : false,
-                        itemStyle : {
-                            normal : {
-                                label : {
-                                    show : true,
-                                    align : 'center',
-                                    formatter: '{b}\n{c}'
-                                },
-                                labelLine : {
-                                    show : true,
-                                    length : 15,
-                                    length2: 8,
-                                }
+                calculable: true,
+                series: [{
+                    type: 'pie',
+                    name: "工地",
+                    radius: ['43%', '70%'],
+                    center: ['40%', '48%'],
+                    minAngle: 30,
+                    color: ['#1abc9c', '#f1c40f', '#2ecc71', '#44cef6'],
+                    avoidLabelOverlap: false,
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                align: 'center',
+                                formatter: '{b}\n{c}'
                             },
+                            labelLine: {
+                                show: true,
+                                length: 15,
+                                length2: 8,
+                            }
                         },
-                        data:data1
                     },
-                    {
-                        type: 'pie',
-                        radius : [0, '40%'],
-                        center: ['40%','48%'],
-                        color: '#ffffff',
-                        hoverAnimation: false,
-                        avoidLabelOverlap: true,
-                        silent: true,
-                        stillShowZeroSum : true,
-                        itemStyle : {
-                            normal : {
-                                label : {
-                                    show : true,
-                                    position : 'center',
-                                    color: '#333',
-                                    formatter: '{b}\n{c}',
-                                    textStyle : {
-                                        fontSize : '16',
-                                    }
-                                },
-                                labelLine : {
-                                    show : false
+                    data: data1
+                }, {
+                    type: 'pie',
+                    radius: [0, '40%'],
+                    center: ['40%', '48%'],
+                    color: '#ffffff',
+                    hoverAnimation: false,
+                    avoidLabelOverlap: true,
+                    silent: true,
+                    stillShowZeroSum: true,
+                    itemStyle: {
+                        normal: {
+                            label: {
+                                show: true,
+                                position: 'center',
+                                color: '#333',
+                                formatter: '{b}\n{c}',
+                                textStyle: {
+                                    fontSize: '16',
                                 }
                             },
+                            labelLine: {
+                                show: false
+                            }
                         },
-                        data: data2,
-                    }
-                ]
+                    },
+                    data: data2,
+                }]
             };
-            myChart.setOption(option,true);
-            myChart.on('click', function (params) {
-                openWin("site/site_list_win",{
+            myChart.setOption(option, true);
+            myChart.on('click', function(params) {
+                openWin("site/site_list_win", {
                     searchCode: data1[params.dataIndex].code,
                     name: data1[params.dataIndex].name,
                 })
-    		});
+            });
         }
 
         function summary() {
@@ -692,28 +699,28 @@
                 data: {
                     access_token: $api.getStorage("access_token")
                 },
-                beforeSend: function () {
+                beforeSend: function() {
                     vm.isResult = false;
                 },
-                complete: function () {
+                complete: function() {
                     vm.isResult = true;
                     vm.summaryList.splice(0, vm.summaryList.length);
                     vm.summaryName = "激活部位";
                     api.hideProgress();
                 },
-                success: function (data) {
+                success: function(data) {
                     if (data.success) {
 
                         var total = 0;
                         for (var i = 0; i < data.list.length; i++) {
-                        	var eventStr = ""
-							if(data.list[i].icon == "bg-newgreen"){
-								eventStr = "openWin(\"point_list/point_patrol_completelist_win\");";
-							}else if(data.list[i].icon == "bg-newred"){
-								eventStr = "openWin(\"point_list/point_patrol_uncompletelist_win\");";
-							}else{
-								eventStr = "openWin(\"point_list/activate_pointlist_win\");";
-							}
+                            var eventStr = ""
+                            if (data.list[i].icon == "bg-newgreen") {
+                                eventStr = "openWin(\"point_list/point_patrol_completelist_win\");";
+                            } else if (data.list[i].icon == "bg-newred") {
+                                eventStr = "openWin(\"point_list/point_patrol_uncompletelist_win\");";
+                            } else {
+                                eventStr = "openWin(\"point_list/activate_pointlist_win\");";
+                            }
                             vm.summaryList.push({
                                 count: data.list[i].count,
                                 name: data.list[i].name,
@@ -747,30 +754,31 @@
                 data: {
                     access_token: $api.getStorage("access_token")
                 },
-                beforeSend: function () {
+                beforeSend: function() {
                     vm.isResult = false;
                 },
-                complete: function () {
+                complete: function() {
                     vm.isResult = true;
                     vm.summaryTodo.splice(0);
                     vm.summaryList1.splice(0);
-                    if(vm.isInit){
-                    	init();
+                    if (vm.isInit) {
+                        init();
                     }
                     vm.isInit = false;
                     api.hideProgress();
                 },
-                success: function (data) {
+                success: function(data) {
                     if (data.success) {
 
-                         for (var i = 0; i < data.list[0].beforeData.length; i++) {
+                        for (var i = 0; i < data.list[0].beforeData.length; i++) {
 
                             vm.summaryTodo.push({
                                 count: data.list[0].beforeData[i].count,
                                 name: data.list[0].beforeData[i].name,
                                 icon: data.list[0].beforeData[i].count > 0 ? data.list[0].beforeData[i].icon : "",
                                 isBlink: data.list[0].beforeData[i].count > 0 ? true : false,
-                                event: "openWin('patrol_list/patrol_list_win', { 'noDate':" + true + ",'catalogIdArray': '" + data.list[0].beforeData[i].id + "_SUBMIT','states':'" + data.list[0].beforeData[i].name + "','index':'2','date':'','hideFilter':" + true + ",'title': '待处理隐患(" + data.list[0].beforeData[i].name + ")' });"
+                                event: "openWin('patrol_list/patrol_list_win', { 'noDate':" + true + ",'catalogIdArray': '" + data.list[0].beforeData[i].id + "_SUBMIT','states':'" + data.list[0].beforeData[i].name +
+                                    "','index':'2','date':'','hideFilter':" + true + ",'title': '待处理隐患(" + data.list[0].beforeData[i].name + ")' });"
                             });
 
                         }
@@ -781,7 +789,8 @@
                                 count: data.list[0].todayData[i].count,
                                 name: data.list[0].todayData[i].name,
                                 icon: data.list[0].todayData[i].icon,
-                                event: "openWin(\"patrol_list/patrol_list_win\", { \"catalogIdArray\": \"" + data.list[0].todayData[i].id + "\",\"states\":\"" + data.list[0].todayData[i].name + "\",\"index\":\"2\",\"date\":\"" + getTodayDate() + "\",\"hideFilter\":" + true + ",\"title\": \"今日巡查记录(" + data.list[0].todayData[i].name + ")\"});"
+                                event: "openWin(\"patrol_list/patrol_list_win\", { \"catalogIdArray\": \"" + data.list[0].todayData[i].id + "\",\"states\":\"" + data.list[0].todayData[i].name + "\",\"index\":\"2\",\"date\":\"" +
+                                    getTodayDate() + "\",\"hideFilter\":" + true + ",\"title\": \"今日巡查记录(" + data.list[0].todayData[i].name + ")\"});"
                             });
 
                         }
@@ -796,227 +805,251 @@
         };
 
         // 安全培训
-        function safetyTraining(){
+        function safetyTraining() {
             openWin('safety_training/safety_training_list_win')
         }
 
         //打开二维码扫描
         function openScanner() {
 
-	        FNScanner = api.require('FNScanner');
-			FNScanner.openScanner({
-			    autorotation: false,
-			}, function(ret, err) {
-			    if (ret) {
+            FNScanner = api.require('FNScanner');
+            FNScanner.openScanner({
+                autorotation: false,
+            }, function(ret, err) {
+                if (ret) {
 
-			        if (ret.eventType == "show") {
-	                } else if (ret.eventType == "selectImage") {
+                    if (ret.eventType == "show") {} else if (ret.eventType == "selectImage") {
 
-	                } else if (ret.eventType == "success") {
+                    } else if (ret.eventType == "success") {
 
-						try {
-	                    	var obj = JSON.parse(ret.content);
-	                    	if (obj.key == "javascript") {
-	                            eval(obj.val);
-	                        }
-//	                    	setTimeout(function(){FNScanner.closeView();},300);
-	                	}
-	                    catch (e) {
-	                    	FNScanner.closeView();
-	                        api.alert({ title: "错误", msg: "该二维码不属于本app的扫描范围！", buttons: ["确定"] });
-	                    }
+                        try {
+                            var obj = JSON.parse(ret.content);
+                            if (obj.key == "javascript") {
+                                eval(obj.val);
+                            }
+                            //	                    	setTimeout(function(){FNScanner.closeView();},300);
+                        } catch (e) {
+                            FNScanner.closeView();
+                            api.alert({
+                                title: "错误",
+                                msg: "该二维码不属于本app的扫描范围！",
+                                buttons: ["确定"]
+                            });
+                        }
 
-	                } else if (ret.eventType == "cancel") {
-	                    setTimeout(function () { api.toast({ msg: "取消扫描！" }); }, 1000);
-	                } else if (ret.eventType == "fail") {
-	                    api.alert({ title: "错误", msg: "扫描失败！", buttons: ["确定"] },function(){
-                        	setTimeout(function(){FNScanner.closeView();},300);
+                    } else if (ret.eventType == "cancel") {
+                        setTimeout(function() {
+                            api.toast({
+                                msg: "取消扫描！"
+                            });
+                        }, 1000);
+                    } else if (ret.eventType == "fail") {
+                        api.alert({
+                            title: "错误",
+                            msg: "扫描失败！",
+                            buttons: ["确定"]
+                        }, function() {
+                            setTimeout(function() {
+                                FNScanner.closeView();
+                            }, 300);
                         });
-	                }
-			    } else {
+                    }
+                } else {
 
-			    }
-			});
+                }
+            });
 
         };
 
 
         //二维码扫描进行添加
         function addPatrolForScanner(pointId, pointName, siteID, siteName, code) {
-			FNScanner.closeView();
-        	if(api.connectionType == "none"){
-        		hasLocalPoint(pointId, pointName, siteID, siteName, code);
-        	}else{
-        		var url = $api.getStorage("interface_url") + api_url.getPointStatus;
+            FNScanner.closeView();
+            if (api.connectionType == "none") {
+                hasLocalPoint(pointId, pointName, siteID, siteName, code);
+            } else {
+                var url = $api.getStorage("interface_url") + api_url.getPointStatus;
 
-	            Ajax({
-	                type: "get",
-	                url: url,
-	                data: {
-	                    access_token: $api.getStorage("access_token"),
-	                    checkpointId: pointId,
-	                },
-	                beforeSend: function () {
-	                    api.showProgress();
-	                },
-	                complete: function () {
-	                    api.hideProgress();
-	                },
-	                success: function (data) {
+                Ajax({
+                    type: "get",
+                    url: url,
+                    data: {
+                        access_token: $api.getStorage("access_token"),
+                        checkpointId: pointId,
+                    },
+                    beforeSend: function() {
+                        api.showProgress();
+                    },
+                    complete: function() {
+                        api.hideProgress();
+                    },
+                    success: function(data) {
 
-	                    if (data.success) {
-	                    	var Statuscode = data.data;
-                    		statusJudge(Statuscode, pointId, pointName, siteID, siteName, code);
-	                    } else {
-	                        hasLocalPoint(pointId, pointName, siteID, siteName, code);
-	                    }
+                        if (data.success) {
+                            var Statuscode = data.data;
+                            statusJudge(Statuscode, pointId, pointName, siteID, siteName, code);
+                        } else {
+                            hasLocalPoint(pointId, pointName, siteID, siteName, code);
+                        }
 
-	                }
-	            });
-        	}
+                    }
+                });
+            }
 
         };
 
 
         //判断本地点位列表是否有激活的缓存信息
-        function hasLocalPoint(pointId, pointName, siteID, siteName, code){
-        	var pointList = $api.getStorage("PointList");
-    		if(pointList != "undefined" && typeof(pointList) != "undefined" && pointList.length > 0){
-    			var flag = false;
-    			for(var i = 0; i < pointList.length; i++){
+        function hasLocalPoint(pointId, pointName, siteID, siteName, code) {
+            var pointList = $api.getStorage("PointList");
+            if (pointList != "undefined" && typeof(pointList) != "undefined" && pointList.length > 0) {
+                var flag = false;
+                for (var i = 0; i < pointList.length; i++) {
 
-	    			//存的点位信息中是否有当前点位的信息
-	    			if(pointList[i].id == pointId){
+                    //存的点位信息中是否有当前点位的信息
+                    if (pointList[i].id == pointId) {
 
-	    				flag = true;
+                        flag = true;
 
-	    				if(pointList[i].checkpointStatusCode && pointList[i].checkpointStatusCode != "undefined" && typeof(pointList[i].checkpointStatusCode) != "undefined"){
-	    					//本地缓存点位有激活信息
-	    					statusJudge(pointList[i].checkpointStatusCode, pointId, pointName, siteID, siteName, code);
-	    				}else{
-	    					//缓存有点位信息，但是没有激活信息
-	    					isActived(pointId, pointName, siteID, siteName, code);
-	    				}
+                        if (pointList[i].checkpointStatusCode && pointList[i].checkpointStatusCode != "undefined" && typeof(pointList[i].checkpointStatusCode) != "undefined") {
+                            //本地缓存点位有激活信息
+                            statusJudge(pointList[i].checkpointStatusCode, pointId, pointName, siteID, siteName, code);
+                        } else {
+                            //缓存有点位信息，但是没有激活信息
+                            isActived(pointId, pointName, siteID, siteName, code);
+                        }
 
-	    			}
-    			}
-    			if(!flag){
-    				api.alert({ title: "提示", msg: "请在有网络连接时同步部位信息！", buttons: ["确定"] });
-    			}
-    		}else{
-    			//没有本地缓存点位信息  1、点位信息过多，一直同步失败  2、不是同步点位信息角色  3、首次登陆，信息还没同步好
-    			api.alert({ title: "提示", msg: "请在有网络连接时使用！", buttons: ["确定"] });
-    		}
+                    }
+                }
+                if (!flag) {
+                    api.alert({
+                        title: "提示",
+                        msg: "请在有网络连接时同步部位信息！",
+                        buttons: ["确定"]
+                    });
+                }
+            } else {
+                //没有本地缓存点位信息  1、点位信息过多，一直同步失败  2、不是同步点位信息角色  3、首次登陆，信息还没同步好
+                api.alert({
+                    title: "提示",
+                    msg: "请在有网络连接时使用！",
+                    buttons: ["确定"]
+                });
+            }
 
         };
 
 
         //判断本地是否有激活草稿
-        function hasActiveInfo(pointId){
-        	var activeInfos = $api.getStorage("ActiveInfo");
+        function hasActiveInfo(pointId) {
+            var activeInfos = $api.getStorage("ActiveInfo");
             var activeInfo = new Array();
             //判断本地是否有未提交激活信息
             if (activeInfos && activeInfos != "undefined" && typeof(activeInfos) != "undefined" && activeInfos.length > 0) {
-				for (var i = 0; i < activeInfos.length; i++) {
-				 	if(activeInfos[i].userId == $api.getStorage("user").id){
-				 		activeInfo = activeInfos[i].list;
-				 	}
-				}
-				//本地没有当前用户未提交激活信息
+                for (var i = 0; i < activeInfos.length; i++) {
+                    if (activeInfos[i].userId == $api.getStorage("user").id) {
+                        activeInfo = activeInfos[i].list;
+                    }
+                }
+                //本地没有当前用户未提交激活信息
                 if (!activeInfo || activeInfo.length == 0) {
-                	isActived(pointId, pointName, siteID, siteName, code);
-                }else{
-                	//本地有未提交激活信息----判断是否有当前点位的激活信息
-                	var flag = false;
-	                for (var i = 0; i < activeInfo.length; i++) {
-	                	if(activeInfo[i].id == pointId){
-	                		flag = true;
-	                		break;
-	                	}
-	                }
-	                if(flag){
-	                	openWin("add_patrol/add_patrol_win", {
-							pointID: pointId,
-							siteName: siteName,
-							code: code,
-							pointName: pointName,
-							siteID: siteID,
-						});
-	                }else {
-	                	isActived(pointId, pointName, siteID, siteName, code);
-	                }
+                    isActived(pointId, pointName, siteID, siteName, code);
+                } else {
+                    //本地有未提交激活信息----判断是否有当前点位的激活信息
+                    var flag = false;
+                    for (var i = 0; i < activeInfo.length; i++) {
+                        if (activeInfo[i].id == pointId) {
+                            flag = true;
+                            break;
+                        }
+                    }
+                    if (flag) {
+                        openWin("add_patrol/add_patrol_win", {
+                            pointID: pointId,
+                            siteName: siteName,
+                            code: code,
+                            pointName: pointName,
+                            siteID: siteID,
+                        });
+                    } else {
+                        isActived(pointId, pointName, siteID, siteName, code);
+                    }
                 }
 
-            }else{
-            	//本地没有未提交激活信息
-            	isActived(pointId, pointName, siteID, siteName, code);
+            } else {
+                //本地没有未提交激活信息
+                isActived(pointId, pointName, siteID, siteName, code);
             }
         };
 
 
         //是否已经激活过，而缓存没有点位数据
-        function isActived(pointId, pointName, siteID, siteName, code){
-        	var activedInfos = $api.getStorage("ActivedInfos");
+        function isActived(pointId, pointName, siteID, siteName, code) {
+            var activedInfos = $api.getStorage("ActivedInfos");
             var activedInfo = new Array();
             //判断本地是否有isActived
             if (activedInfos && activedInfos != "undefined" && typeof(activedInfos) != "undefined" && activedInfos.length > 0) {
-				for (var i = 0; i < activedInfos.length; i++) {
-				 	if(activedInfos[i].userId == $api.getStorage("user").id){
-				 		activedInfo = activedInfos[i].list;
-				 	}
-				}
-				//本地没有当前用户isActived
+                for (var i = 0; i < activedInfos.length; i++) {
+                    if (activedInfos[i].userId == $api.getStorage("user").id) {
+                        activedInfo = activedInfos[i].list;
+                    }
+                }
+                //本地没有当前用户isActived
                 if (!activedInfo || activedInfo.length == 0) {
-                	openActiveWin(pointId, pointName, siteID, siteName, code);
-                }else{
-                	//本地有isActived----判断是否有当前点位的isActived
-                	if(activedInfo.indexOf(pointId) >=0){
-                		openWin("add_patrol/add_patrol_win", {
-							pointID: pointId,
-							siteName: siteName,
-							code: code,
-							pointName: pointName,
-							siteID: siteID,
-						});
-                	}else {
-                		openActiveWin(pointId, pointName, siteID, siteName, code);
-                	}
+                    openActiveWin(pointId, pointName, siteID, siteName, code);
+                } else {
+                    //本地有isActived----判断是否有当前点位的isActived
+                    if (activedInfo.indexOf(pointId) >= 0) {
+                        openWin("add_patrol/add_patrol_win", {
+                            pointID: pointId,
+                            siteName: siteName,
+                            code: code,
+                            pointName: pointName,
+                            siteID: siteID,
+                        });
+                    } else {
+                        openActiveWin(pointId, pointName, siteID, siteName, code);
+                    }
                 }
 
-            }else{
-            	//本地没有未提交激活信息
-            	openActiveWin(pointId, pointName, siteID, siteName, code);
+            } else {
+                //本地没有未提交激活信息
+                openActiveWin(pointId, pointName, siteID, siteName, code);
             }
         };
 
 
-        function statusJudge(Statuscode, pointId, pointName, siteID, siteName, code){
-        	if(Statuscode == "INACTIVATED"){
-				isActived(pointId, pointName, siteID, siteName, code)
-			}else if(Statuscode == "FAILURE"){
-				api.alert({ title: "提示", msg: "该巡查部位已失效！", buttons: ["确定"] });
-			}else {
-				openWin("add_patrol/add_patrol_win", {
-					pointID: pointId,
-					siteName: siteName,
-					code: code,
-					pointName: pointName,
-					siteID: siteID,
-				});
-			}
+        function statusJudge(Statuscode, pointId, pointName, siteID, siteName, code) {
+            if (Statuscode == "INACTIVATED") {
+                isActived(pointId, pointName, siteID, siteName, code)
+            } else if (Statuscode == "FAILURE") {
+                api.alert({
+                    title: "提示",
+                    msg: "该巡查部位已失效！",
+                    buttons: ["确定"]
+                });
+            } else {
+                openWin("add_patrol/add_patrol_win", {
+                    pointID: pointId,
+                    siteName: siteName,
+                    code: code,
+                    pointName: pointName,
+                    siteID: siteID,
+                });
+            }
         };
 
 
         //打开激活页面
-        function openActiveWin(pointId, pointName, siteID, siteName, code){
-        	openWin("rate/progress/active_win", {
-				pointId: pointId,
-				siteName: siteName,
-				code: code,
-				pointName: pointName,
-				siteID: siteID,
+        function openActiveWin(pointId, pointName, siteID, siteName, code) {
+            openWin("rate/progress/active_win", {
+                pointId: pointId,
+                siteName: siteName,
+                code: code,
+                pointName: pointName,
+                siteID: siteID,
 
-			});
+            });
         };
 
 
@@ -1035,13 +1068,27 @@
 
                 var week = "";
                 switch (w) {
-                    case 1: week = "星期一"; break;
-                    case 2: week = "星期二"; break;
-                    case 3: week = "星期三"; break;
-                    case 4: week = "星期四"; break;
-                    case 5: week = "星期五"; break;
-                    case 6: week = "星期六"; break;
-                    default: week = "星期天"; break;
+                    case 1:
+                        week = "星期一";
+                        break;
+                    case 2:
+                        week = "星期二";
+                        break;
+                    case 3:
+                        week = "星期三";
+                        break;
+                    case 4:
+                        week = "星期四";
+                        break;
+                    case 5:
+                        week = "星期五";
+                        break;
+                    case 6:
+                        week = "星期六";
+                        break;
+                    default:
+                        week = "星期天";
+                        break;
                 }
 
                 return week;
@@ -1057,26 +1104,26 @@
 
 
         //获取今天的日期
-	    function getTodayDate() {
+        function getTodayDate() {
 
-	        var time = new Date();
-	        var year = time.getFullYear();
-	        var month = p(time.getMonth() + 1);
-	        var day = p(time.getDate());
+            var time = new Date();
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
 
-	        function p(s) {
-	            return s < 10 ? "0" + s : s;
-	        };
+            function p(s) {
+                return s < 10 ? "0" + s : s;
+            };
 
-	        return year + "/" + month + "/" + day;
+            return year + "/" + month + "/" + day;
 
-	    };
+        };
 
 
-	    //打开点位列表
-	    function openPointList(code){
+        //打开点位列表
+        function openPointList(code) {
 
-	    	var url = $api.getStorage("interface_url") + api_url.getHomeSite;
+            var url = $api.getStorage("interface_url") + api_url.getHomeSite;
 
             Ajax({
                 type: "get",
@@ -1084,196 +1131,197 @@
                 data: {
                     access_token: $api.getStorage("access_token"),
                 },
-                beforeSend: function () {
+                beforeSend: function() {
 
                 },
-                complete: function () {
+                complete: function() {
 
                 },
-                success: function (data) {
+                success: function(data) {
 
                     if (data.success) {
 
-                        if(data.list.length == 1){
-                        	openWin("site/point_list_win", { pointUrl: api_url.getActivePoint, id:data.list[0].id,code:code, title: "部位列表(已激活)"});
+                        if (data.list.length == 1) {
+                            openWin("site/point_list_win", {
+                                pointUrl: api_url.getActivePoint,
+                                id: data.list[0].id,
+                                code: code,
+                                title: "部位列表(已激活)"
+                            });
                         }
                     }
 
                 }
 
             });
-	    };
+        };
 
 
 
 
-	      //检测最新版
-   		function checkForUpdate() {
+        //检测最新版
+        function checkForUpdate() {
 
-	        //拼接接口地址：检测app的最新版
-	        var url = $api.getStorage("interface_url") + api_url.getAppVersion;
-	        Ajax({
-	            type: "get",
-	            url: url,
-	            data: {
-	                custType : api.systemType == "ios" ? "mi" : "ma",
-	                number: api.appVersion,
-	                appCode: "SAFETY"
-	            },
-	            beforeSend: function () {
-	            },
-	            complete: function () {
-	            },
-	            success: function (data) {
+            //拼接接口地址：检测app的最新版
+            var url = $api.getStorage("interface_url") + api_url.getAppVersion;
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    custType: api.systemType == "ios" ? "mi" : "ma",
+                    number: api.appVersion,
+                    appCode: "SAFETY"
+                },
+                beforeSend: function() {},
+                complete: function() {},
+                success: function(data) {
 
-	                 if (data.success && data.data) {
+                    if (data.success && data.data) {
 
-	                    //更新描述
-	                    var msg = "版本号：" + data.data.number + "\n";
-	                    if (data.data.descript) {
-	                        msg += "更新内容：\n";
-	                        msg += data.data.descript;
-	                    }
+                        //更新描述
+                        var msg = "版本号：" + data.data.number + "\n";
+                        if (data.data.descript) {
+                            msg += "更新内容：\n";
+                            msg += data.data.descript;
+                        }
 
-	                    //下载地址
-	                    var url = data.data.url;
-	                    if (data.data.forceUpdated) {//强制更新
+                        //下载地址
+                        var url = data.data.url;
+                        if (data.data.forceUpdated) { //强制更新
 
-	                        api.alert({
-	                            title: "发现新版本",
-	                            msg: msg,
-	                            buttons: ["更新"]
-	                        }, function (ret, err) {
-	                            installApp(url);
-	                        });
+                            api.alert({
+                                title: "发现新版本",
+                                msg: msg,
+                                buttons: ["更新"]
+                            }, function(ret, err) {
+                                installApp(url);
+                            });
 
-	                    } else {//选择更新
+                        } else { //选择更新
 
-	                        api.confirm({
-	                            title: "发现新版本，是否更新？",
-	                            msg: msg,
-	                            buttons: ["更新", "取消"]
-	                        }, function (ret, err) {
-	                            if (ret.buttonIndex == 1) {
-	                                installApp(url);
-	                            }
-	                        });
+                            api.confirm({
+                                title: "发现新版本，是否更新？",
+                                msg: msg,
+                                buttons: ["更新", "取消"]
+                            }, function(ret, err) {
+                                if (ret.buttonIndex == 1) {
+                                    installApp(url);
+                                }
+                            });
 
-	                    }
+                        }
 
-	                    //安装应用
-	                    function installApp(url_path) {
+                        //安装应用
+                        function installApp(url_path) {
 
-	                        if (api.systemType == "ios") {
+                            if (api.systemType == "ios") {
 
-	                            api.showProgress({
-	                                title: "正在安装",
-	                                animationType: "zoom"
-	                            });
-	                            api.installApp({
-	                                appUri: url_path
-	                            });
-	                            api.closeWidget({
-	                                id: "A6919162681008",
-	                                silent: true
-	                            });
+                                api.showProgress({
+                                    title: "正在安装",
+                                    animationType: "zoom"
+                                });
+                                api.installApp({
+                                    appUri: url_path
+                                });
+                                api.closeWidget({
+                                    id: "A6919162681008",
+                                    silent: true
+                                });
 
-	                        } else {
+                            } else {
 
-	                            api.showProgress({
-	                                title: "正在下载",
-	                                text: "进度：0%",
-	                                animationType: "zoom"
-	                            });
+                                api.showProgress({
+                                    title: "正在下载",
+                                    text: "进度：0%",
+                                    animationType: "zoom"
+                                });
 
-	                            //下载最新版文件
-	                            api.download({
-	                                url: url_path,
-	                                savePath: "fs://res/package/" + Date.now() + ".apk",
-	                                report: true,
-	                                cache: true,
-	                                allowResume: true
-	                            }, function (ret, err) {
+                                //下载最新版文件
+                                api.download({
+                                    url: url_path,
+                                    savePath: "fs://res/package/" + Date.now() + ".apk",
+                                    report: true,
+                                    cache: true,
+                                    allowResume: true
+                                }, function(ret, err) {
 
-	                                if (ret.state == 0) {//下载中
-	                                    api.showProgress({
-	                                        title: "正在下载",
-	                                        text: "进度：" + ret.progress + "%",
-	                                        animationType: "zoom"
-	                                    });
-	                                } else if (ret.state == 1) {
+                                    if (ret.state == 0) { //下载中
+                                        api.showProgress({
+                                            title: "正在下载",
+                                            text: "进度：" + ret.progress + "%",
+                                            animationType: "zoom"
+                                        });
+                                    } else if (ret.state == 1) {
 
-	                                    api.hideProgress();
+                                        api.hideProgress();
 
-	                                    var file_path = ret.savePath;
-	                                    api.alert({
-	                                        title: "提示",
-	                                        msg: "下载完成！",
-	                                        buttons: ["确定"]
-	                                    }, function (ret, err) {
+                                        var file_path = ret.savePath;
+                                        api.alert({
+                                            title: "提示",
+                                            msg: "下载完成！",
+                                            buttons: ["确定"]
+                                        }, function(ret, err) {
 
-	                                        api.installApp({
-	                                            appUri: file_path
-	                                        });
-	                                        api.closeWidget({
-	                                            id: "A6919162681008",
-	                                            silent: true
-	                                        });
+                                            api.installApp({
+                                                appUri: file_path
+                                            });
+                                            api.closeWidget({
+                                                id: "A6919162681008",
+                                                silent: true
+                                            });
 
-	                                    });
-	                                } else if (ret.state == 2) {
+                                        });
+                                    } else if (ret.state == 2) {
 
-	                                    api.hideProgress();
-	                                    api.alert({
-	                                        title: "错误",
-	                                        msg: "下载失败！",
-	                                        buttons: ["确定"]
-	                                    });
+                                        api.hideProgress();
+                                        api.alert({
+                                            title: "错误",
+                                            msg: "下载失败！",
+                                            buttons: ["确定"]
+                                        });
 
-	                                }
+                                    }
 
-	                            });
+                                });
 
-	                        }
-	                    };
+                            }
+                        };
 
-	                }
+                    }
 
-	            }
-	        });
+                }
+            });
 
-	    };
+        };
 
 
-	    //是否可以签到
-        function canSignUp(){
-        	var url = $api.getStorage("interface_url") + api_url.canSignUp;
-        	Ajax({
+        //是否可以签到
+        function canSignUp() {
+            var url = $api.getStorage("interface_url") + api_url.canSignUp;
+            Ajax({
                 type: "get",
                 url: url,
                 data: {
                     access_token: $api.getStorage("access_token"),
                 },
-                beforeSend: function () {
-                },
-                complete: function () {
-                },
-                success: function (data) {
-					if(data.success){
-						if(data.data.sign){  //未签到，即可以签到
-							getConstructionList(false);
-						}else{  //已过签到
-							if(api.systemType == "ios" && interval){
-								vm.stopCount = true;
-								clearInterval(interval);
-							} else {
-								var bMap = api.require("bMap");
-								bMap.stopLocation();
-							}
-							getConstructionList(true);
+                beforeSend: function() {},
+                complete: function() {},
+                success: function(data) {
+                    if (data.success) {
+                        if (data.data.sign) { //未签到，即可以签到
+                            getConstructionList(false);
+                        } else { //已过签到
+                            if (api.systemType == "ios" && interval) {
+                                vm.stopCount = true;
+                                clearInterval(interval);
+                            } else {
+                                var bMap = api.require("bMap");
+                                bMap.stopLocation();
+                            }
+                            getConstructionList(true);
 
-						}
-					}
+                        }
+                    }
 
                 }
             });
@@ -1281,61 +1329,73 @@
 
 
         //获取工地列表
-        function getConstructionList(flag,flush) {
-			if(flush == "undefined" || typeof(flush) == "undefined"){
-            	flush = false;
+        function getConstructionList(flag, flush) {
+            if (flush == "undefined" || typeof(flush) == "undefined") {
+                flush = false;
             }
-            if(flag == "undefined" || typeof(flag) == "undefined"){
-            	flag = false;
+            if (flag == "undefined" || typeof(flag) == "undefined") {
+                flag = false;
             }
             var url = $api.getStorage("interface_url") + api_url.getConstructionList;
 
-        	Ajax({
+            Ajax({
                 type: "get",
                 url: url,
                 data: {
                     access_token: $api.getStorage("access_token"),
                     name: "",
                 },
-                beforeSend: function () {
-                	vm.updateResult = false;
+                beforeSend: function() {
+                    vm.updateResult = false;
                 },
-                complete: function () {
-                	vm.updateResult = true;
+                complete: function() {
+                    vm.updateResult = true;
                 },
-                success: function (data) {
+                success: function(data) {
 
                     if (data.success) {
 
                         //如果一条数据都没有，将在界面显示“暂无数据”
                         if (data.list.length == 0) {
-                        	setTimeout(function(){getConstructionList(flag,flush);},1000*60*10);
-                        	api.alert({ title: "错误", msg: "未获取到工地信息！", buttons: ["确定"] });
-                        	return false;
+                            setTimeout(function() {
+                                getConstructionList(flag, flush);
+                            }, 1000 * 60 * 10);
+                            api.alert({
+                                title: "错误",
+                                msg: "未获取到工地信息！",
+                                buttons: ["确定"]
+                            });
+                            return false;
                         }
 
                         vm.siteList.splice(0);
-                        for(var i = 0; i < data.list.length; i++){
-                        	vm.siteList.push({
-	                        	id: data.list[i].id,
-	                        	name: data.list[i].name,
-	                        });
+                        for (var i = 0; i < data.list.length; i++) {
+                            vm.siteList.push({
+                                id: data.list[i].id,
+                                name: data.list[i].name,
+                            });
                         }
-                        if(flush){ //是否获取最新点位信息
-                        	setTimeout(function(){getPointList(flush);},1000);
-                        }else {
-                        	setTimeout(function(){getPointList();},1000);
+                        if (flush) { //是否获取最新点位信息
+                            setTimeout(function() {
+                                getPointList(flush);
+                            }, 1000);
+                        } else {
+                            setTimeout(function() {
+                                getPointList();
+                            }, 1000);
                         }
 
-                        if(flag){  //如果已签到，则不需要获取当前位置
-                        	return false;
+                        if (flag) { //如果已签到，则不需要获取当前位置
+                            return false;
                         }
 
                         vm.lng = data.list[0].location.lng;
                         vm.lat = data.list[0].location.lat;
                         getCurrentLocation();
-                    }else {
-                    	setTimeout(function(){getConstructionList(flag,flush);},1000*60*10);
+                    } else {
+                        setTimeout(function() {
+                            getConstructionList(flag, flush);
+                        }, 1000 * 60 * 10);
                     }
                 }
             });
@@ -1344,27 +1404,27 @@
 
 
 
-       	//获取位置
-        var currentLocation = 0;  //回调函数被调用的次数
+        //获取位置
+        var currentLocation = 0; //回调函数被调用的次数
         function getCurrentLocation() {
 
             //拼接接口地址：上传员工轨迹
             var url = $api.getStorage("interface_url") + api_url.addUserLocation;
             if (api.systemType == "ios") {
 
-                interval = setInterval(function () {
-					var map = api.require("bMap");
-					if(!vm.stopCount){
-						map.getLocation({
-		                    accuracy: "10m",
-		                    autoStop: true,
-		                    filter: 10
-		                }, function (ret, err) {
-		                	currentLocation = 2;
-		                    getDistance(ret, err);
-		                });
-					}
-				}, 1000 * 15);
+                interval = setInterval(function() {
+                    var map = api.require("bMap");
+                    if (!vm.stopCount) {
+                        map.getLocation({
+                            accuracy: "10m",
+                            autoStop: true,
+                            filter: 10
+                        }, function(ret, err) {
+                            currentLocation = 2;
+                            getDistance(ret, err);
+                        });
+                    }
+                }, 1000 * 15);
 
             } else {
 
@@ -1373,85 +1433,83 @@
                     accuracy: "10m",
                     autoStop: false,
                     filter: 100
-                }, function (ret, err) {
+                }, function(ret, err) {
                     getDistance(ret, err);
                 });
 
             }
 
-		};
+        };
 
         //检查定位距离
-       	function getDistance(ret, err){
-       		var map = api.require("bMap");
-       		currentLocation += 1;
+        function getDistance(ret, err) {
+            var map = api.require("bMap");
+            currentLocation += 1;
             if (currentLocation == 3) {
-	       		if (ret.status) {  //定位成功
+                if (ret.status) { //定位成功
 
-	                var lon = ret.lon;
-	                var lat = ret.lat;
+                    var lon = ret.lon;
+                    var lat = ret.lat;
 
-			        map.getDistance({
-					    start: {
-					        lon: lon,
-					        lat: lat
-					    },
-					    end: {
-					        lon: vm.lng,
-					        lat: vm.lat
-					    }
-					}, function(ret) {
+                    map.getDistance({
+                        start: {
+                            lon: lon,
+                            lat: lat
+                        },
+                        end: {
+                            lon: vm.lng,
+                            lat: vm.lat
+                        }
+                    }, function(ret) {
 
-					    if (ret.status) {
-							//是否在签到范围之内（1000m）
-					    	if(ret.distance > 1000){
-					    		currentLocation = 0;
-					    	}else {
-					    		signUp();
-					    	}
-					    }
-					});
-				}else{
-					currentLocation = 0;
-				}
-			}
+                        if (ret.status) {
+                            //是否在签到范围之内（1000m）
+                            if (ret.distance > 1000) {
+                                currentLocation = 0;
+                            } else {
+                                signUp();
+                            }
+                        }
+                    });
+                } else {
+                    currentLocation = 0;
+                }
+            }
 
-       	};
+        };
 
 
-       	//签到
-       	function signUp(){
+        //签到
+        function signUp() {
 
-    		var url = $api.getStorage("interface_url") + api_url.signUp;
-        	Ajax({
+            var url = $api.getStorage("interface_url") + api_url.signUp;
+            Ajax({
                 type: "get",
                 url: url,
                 data: {
                     access_token: $api.getStorage("access_token"),
                     signtime: formatDatetime(new Date())
                 },
-                beforeSend: function () {
-                },
-                complete: function () {
-                },
-                success: function (data) {
+                beforeSend: function() {},
+                complete: function() {},
+                success: function(data) {
 
-					if(data.success){
-						if(api.systemType == "ios" && interval){
-							vm.stopCount = true;
-							clearInterval(interval);
-						} else {
-							var bMap = api.require('bMap');
-							bMap.stopLocation();
-						}
-            api.alert({
-                title: '提示',
-                msg: '签到成功！',
-            });
+                    if (data.success) {
+                        if (api.systemType == "ios" && interval) {
+                            vm.stopCount = true;
+                            clearInterval(interval);
+                        } else {
+                            var bMap = api.require('bMap');
+                            bMap.stopLocation();
+                        }
+                        api.alert({
+                            title: '提示',
+                            msg: '签到成功！',
+                        });
 
-					}else{
-						currentLocation = 0;
-					}
+                    } else {
+                        currentLocation = 0;
+                    }
 
                 }
             });
@@ -1463,99 +1521,105 @@
         var checkPointList = new Array();
         var isFlush = false;
         //获取点位列表
-	    function getPointList(flush){
-	    	if(flush == "undefined" || typeof(flush) == "undefined"){
-            	flush = false;
+        function getPointList(flush) {
+            if (flush == "undefined" || typeof(flush) == "undefined") {
+                flush = false;
             }
-	    	var url = $api.getStorage("interface_url") + api_url.getPointList;
+            var url = $api.getStorage("interface_url") + api_url.getPointList;
 
-	    	//如果没有更新时间或是更新时间超过12小时则更新
-	    	var lastTime = $api.getStorage("lastTime");
-	    	var lastTimeMils = "";
-	    	if(lastTime){
-	    		lastTimeMils = new Date(lastTime).getTime();
-	    	};
-	    	var nowTime = new Date().getTime();
+            //如果没有更新时间或是更新时间超过12小时则更新
+            var lastTime = $api.getStorage("lastTime");
+            var lastTimeMils = "";
+            if (lastTime) {
+                lastTimeMils = new Date(lastTime).getTime();
+            };
+            var nowTime = new Date().getTime();
 
-	    	if((lastTimeMils != "" && nowTime - lastTimeMils >= 12*60*60*1000) || !lastTime){
-	    		isFlush = true;
-	    	} else {
-	    		isFlush = false;
-	    	}
+            if ((lastTimeMils != "" && nowTime - lastTimeMils >= 12 * 60 * 60 * 1000) || !lastTime) {
+                isFlush = true;
+            } else {
+                isFlush = false;
+            }
 
-			//如果没有存点位信息，则新建数组
-	    	if(pointList == "undefined" || typeof(pointList) == "undefined"){
-            	pointList = new Array();
+            //如果没有存点位信息，则新建数组
+            if (pointList == "undefined" || typeof(pointList) == "undefined") {
+                pointList = new Array();
             }
 
             //没有网络，只能玩完
-            if( api.connectionType == "none"){
-            	return false;
+            if (api.connectionType == "none") {
+                return false;
             }
             //如果有数据，且更新时间不超过12小时，又没有强制更新的，就不更新呗
-            if(pointList.length > 0 && !isFlush && !flush){
-            	return false;
+            if (pointList.length > 0 && !isFlush && !flush) {
+                return false;
             }
 
-			//获取所属的每个工地的点位信息
-			if(count < vm.siteList.length){
+            //获取所属的每个工地的点位信息
+            if (count < vm.siteList.length) {
 
-            	Ajax({
-	                type: "get",
-	                url: url,
-	                data: {
-	                    access_token: $api.getStorage("access_token"),
-	                    checkpointGroupId: vm.siteList[count].id
-	                },
-	                beforeSend: function () {
-	                    vm.updateResult = false;
-	                },
-	                complete: function () {
-	                    vm.updateResult = true;
-	                },
-	                success: function (data) {
+                Ajax({
+                    type: "get",
+                    url: url,
+                    data: {
+                        access_token: $api.getStorage("access_token"),
+                        checkpointGroupId: vm.siteList[count].id
+                    },
+                    beforeSend: function() {
+                        vm.updateResult = false;
+                    },
+                    complete: function() {
+                        vm.updateResult = true;
+                    },
+                    success: function(data) {
 
-	                    if (data.success) {
-	                    	for(var i = 0; i < data.list.length; i++){
-	                    		checkPointList.push(data.list[i]);
-                    		}
-                    		count ++;
-                    		setTimeout(function(){getPointList(flush);},1000);
-	                    }
+                        if (data.success) {
+                            for (var i = 0; i < data.list.length; i++) {
+                                checkPointList.push(data.list[i]);
+                            }
+                            count++;
+                            setTimeout(function() {
+                                getPointList(flush);
+                            }, 1000);
+                        }
 
-	                }
+                    }
 
-	            });
+                });
             }
 
             //所有点位信息获取后，则存储起来
-            if(vm.siteList.length == count){
-            	$api.setStorage("PointList",checkPointList);
-            	$api.setStorage("lastTime",formatDatetime(new Date()));
-            	count = 0;
-            	checkPointList.splice(0);
-            	if(flush){
-            		api.alert({ title: "提示", msg: "工地部位信息同步成功！", buttons: ["确定"] });
-            	};
+            if (vm.siteList.length == count) {
+                $api.setStorage("PointList", checkPointList);
+                $api.setStorage("lastTime", formatDatetime(new Date()));
+                count = 0;
+                checkPointList.splice(0);
+                if (flush) {
+                    api.alert({
+                        title: "提示",
+                        msg: "工地部位信息同步成功！",
+                        buttons: ["确定"]
+                    });
+                };
             }
 
-	    };
+        };
 
 
         //上传草稿箱
-        function submitDrafts(){
-        	vm.lists.splice(0);
-        	var patrols = $api.getStorage("PatrolLists");
+        function submitDrafts() {
+            vm.lists.splice(0);
+            var patrols = $api.getStorage("PatrolLists");
             var patrol = new Array();
 
             if (!patrols || patrols.length <= 0) {
                 return false;
             } else {
-				for (var i = 0; i < patrols.length; i++) {
-				 	if(patrols[i].userId == $api.getStorage("user").id){
-				 		patrol = patrols[i].list;
-				 	}
-				}
+                for (var i = 0; i < patrols.length; i++) {
+                    if (patrols[i].userId == $api.getStorage("user").id) {
+                        patrol = patrols[i].list;
+                    }
+                }
 
                 if (!patrol || patrol.length <= 0) {
                     return false;
@@ -1563,7 +1627,7 @@
 
                 //向界面依次添加列表
                 for (var i = 0; i < patrol.length; i++) {
-                	patrol[i].id = i;
+                    patrol[i].id = i;
                     vm.lists.push(patrol[i]);
                     vm.submitArray.push(i);
                 }
@@ -1574,27 +1638,43 @@
 
         //提交报事
         function submit() {
-			var data = null;
+            var data = null;
 
-			for(var i = 0; i < vm.lists.length; i++){
-        		if(vm.submitArray[vm.count] == vm.lists[i].id){
-        			data = vm.lists[i];
-        			break;
-        		}
-        	}
+            for (var i = 0; i < vm.lists.length; i++) {
+                if (vm.submitArray[vm.count] == vm.lists[i].id) {
+                    data = vm.lists[i];
+                    break;
+                }
+            }
 
             if (data) {
 
                 //获取对应的值
                 var access_token = data.access_token;
-                var items = [{ "label": "照片", "name": "image", "type": "imageList", "value": "", "url": "" },
-                       { "label": "文字", "name": "content", "type": "textarea", "value": "", "url": "" },
-                       { "label": "语音", "name": "audio", "type": "audio", "value": "", "url": "" }]
+                var items = [{
+                    "label": "照片",
+                    "name": "image",
+                    "type": "imageList",
+                    "value": "",
+                    "url": ""
+                }, {
+                    "label": "文字",
+                    "name": "content",
+                    "type": "textarea",
+                    "value": "",
+                    "url": ""
+                }, {
+                    "label": "语音",
+                    "name": "audio",
+                    "type": "audio",
+                    "value": "",
+                    "url": ""
+                }]
                 var image_array = new Array();
                 var name_array = new Array();
                 var imageIdArray = new Array();
                 var audioId = "";
-                var audioUrl = "";  //录音文件的地址
+                var audioUrl = ""; //录音文件的地址
                 var audio_Url = "";
                 var content = "";
 
@@ -1607,12 +1687,12 @@
                 var dateCreated = data.datetime;
 
                 var uuid = "";
-                if(data.uuid){
-                	uuid = data.uuid;
+                if (data.uuid) {
+                    uuid = data.uuid;
                 }
 
                 var stepId = "";
-            	stepId = data.stepId;
+                stepId = data.stepId;
 
                 //拼接报事的附加字段
                 for (var i = 0; i < data.extraJson.length; i++) {
@@ -1620,25 +1700,25 @@
                     //图片
                     if (data.extraJson[i].type == "imageList" && data.extraJson[i].value.length <= 6) {
 
-                    	for (var j = 0; j < data.extraJson[i].value.length ; j++) {
+                        for (var j = 0; j < data.extraJson[i].value.length; j++) {
 
-                    		//判断每个url对应的图片是否还在
-                    		fs.exist({
-							    path: data.extraJson[i].value[j].url
-							}, function(ret, err) {
+                            //判断每个url对应的图片是否还在
+                            fs.exist({
+                                path: data.extraJson[i].value[j].url
+                            }, function(ret, err) {
 
-								if(!ret.exist){
+                                if (!ret.exist) {
 
-									vm.missInfo = true;
+                                    vm.missInfo = true;
 
-									exceptionDeal();
+                                    exceptionDeal();
 
-								}
-							});
-	                        image_array.push(data.extraJson[i].value[j].url);
-	                        data.extraJson[i].value[j].name == "补充<br>照片" ? "补充照片" : data.extraJson[i].value[j].name;
-	                        name_array.push(data.extraJson[i].value[j].name);
-	                    }
+                                }
+                            });
+                            image_array.push(data.extraJson[i].value[j].url);
+                            data.extraJson[i].value[j].name == "补充<br>照片" ? "补充照片" : data.extraJson[i].value[j].name;
+                            name_array.push(data.extraJson[i].value[j].name);
+                        }
 
                     }
 
@@ -1649,17 +1729,21 @@
 
                     //录音
                     if (data.extraJson[i].type == "audio") {
-                    	audio_Url = data.extraJson[i].value;
+                        audio_Url = data.extraJson[i].value;
                     }
 
                 }
 
                 //验证
                 if (!isLogin()) {
-                    api.alert({ title: "错误", msg: "用户信息为空，请重新登录！", buttons: ["确定"] });
+                    api.alert({
+                        title: "错误",
+                        msg: "用户信息为空，请重新登录！",
+                        buttons: ["确定"]
+                    });
                     return false;
                 } else if (image_array.length == 0) {
-                	vm.missInfo = true;
+                    vm.missInfo = true;
                     exceptionDeal();
                 }
 
@@ -1693,37 +1777,35 @@
                                 file: audio_Url
                             }
                         }
-                    }, function (ret, err) {
+                    }, function(ret, err) {
 
-                        if (ret.status == 0) {  //上传中
-                        } else if (ret.status == 1 && ret.body.success) {  //上传完成
+                        if (ret.status == 0) { //上传中
+                        } else if (ret.status == 1 && ret.body.success) { //上传完成
 
                             //重置上次文件错误执行次数
                             uploadTime = 0;
 
                             audioId = ret.body.data.id;
                             audioUrl = ret.body.data.accessAddress;
-                            if (image_array.length > 0) {  //上传图片
+                            if (image_array.length > 0) { //上传图片
                                 addPicture();
-                            } else {  //新增投诉
+                            } else { //新增投诉
                                 addEvent();
                             }
 
-                        } else {  //上传失败
+                        } else { //上传失败
 
-                            if (uploadTime < 4) {  //5次上次失败机会
+                            if (uploadTime < 4) { //5次上次失败机会
 
                                 //上次文件错误执行次数+1
                                 uploadTime += 1;
-                                addVoice();  //递归上传
+                                addVoice(); //递归上传
 
                             } else {
 
                                 api.hideProgress();
 
-                                if (ret.statusCode == 500) {
-                                } else {
-                                }
+                                if (ret.statusCode == 500) {} else {}
 
                             }
 
@@ -1750,30 +1832,38 @@
                                 file: image_array
                             }
                         }
-                    }, function (ret, err) {
+                    }, function(ret, err) {
 
-                        if (ret.status == 0) {  //上传中
-                        } else if (ret.status == 1 && ret.body.success) {  //上传完成
+                        if (ret.status == 0) { //上传中
+                        } else if (ret.status == 1 && ret.body.success) { //上传完成
 
                             //重置上次文件错误执行次数
                             uploadTime = 0;
 
                             if (image_array.length == 1) {
-                                imageIdArray.push({ id: ret.body.data.id, url: ret.body.data.accessAddress, name: name_array[0] });
+                                imageIdArray.push({
+                                    id: ret.body.data.id,
+                                    url: ret.body.data.accessAddress,
+                                    name: name_array[0]
+                                });
                             } else {
                                 for (var i = 0; i < ret.body.list.length; i++) {
-                                    imageIdArray.push({ id: ret.body.list[i].id, url: ret.body.list[i].accessAddress, name: name_array[i] == "补充<br>照片" ? "补充照片" : name_array[i] });
+                                    imageIdArray.push({
+                                        id: ret.body.list[i].id,
+                                        url: ret.body.list[i].accessAddress,
+                                        name: name_array[i] == "补充<br>照片" ? "补充照片" : name_array[i]
+                                    });
                                 }
                             }
-                            addEvent();  //新增投诉
+                            addEvent(); //新增投诉
 
-                        } else {  //上传失败
+                        } else { //上传失败
 
-                            if (uploadTime < 4) {  //5次上次失败机会
+                            if (uploadTime < 4) { //5次上次失败机会
 
                                 //上次文件错误执行次数+1
                                 uploadTime += 1;
-                                addPicture();  //递归上传
+                                addPicture(); //递归上传
                             }
 
                         }
@@ -1803,7 +1893,10 @@
 
                         //录音
                         if (items[i].type == "audio") {
-                            items[i].value = { id: audioId, url: audioUrl };
+                            items[i].value = {
+                                id: audioId,
+                                url: audioUrl
+                            };
                         }
 
                     }
@@ -1826,88 +1919,98 @@
                             dateCreated: dateCreated,
                             recordId: uuid,
                         },
-                        beforeSend: function () {
-                        },
-                        complete: function () {
-                        },
-                        success: function (data) {
+                        beforeSend: function() {},
+                        complete: function() {},
+                        success: function(data) {
 
-							if (data.success) {
-                            	for(var i = 0; i < vm.lists.length; i++){
-			            			if(vm.submitArray[vm.count] == vm.lists[i].id){
-			            				vm.lists.splice(i,1);
-			            				break;
-			            			}
-			            		}
-			            		vm.count ++;
-			            		var patrols = $api.getStorage("PatrolLists");
-				                for (var i = 0; i < patrols.length; i++) {
-								 	if(patrols[i].userId == $api.getStorage("user").id){
-								 		patrols[i].list = vm.lists;
-								 	}
-								}
+                            if (data.success) {
+                                for (var i = 0; i < vm.lists.length; i++) {
+                                    if (vm.submitArray[vm.count] == vm.lists[i].id) {
+                                        vm.lists.splice(i, 1);
+                                        break;
+                                    }
+                                }
+                                vm.count++;
+                                var patrols = $api.getStorage("PatrolLists");
+                                for (var i = 0; i < patrols.length; i++) {
+                                    if (patrols[i].userId == $api.getStorage("user").id) {
+                                        patrols[i].list = vm.lists;
+                                    }
+                                }
 
-				                $api.setStorage("PatrolLists", patrols);
+                                $api.setStorage("PatrolLists", patrols);
 
-								if(vm.count == vm.submitArray.length && vm.delArray.length == 0){
-									vm.count = 0;
-									vm.submitArray = new Array();
-									vm.delArray = new Array();
-					                if (vm.lists.length == 0) {
-					                    vm.noData = true;
-					                }
-					                var script = "";
-						            script += "if(vm.lists && vm.lists.length > 0){vm.lists.splice(0);}";
+                                if (vm.count == vm.submitArray.length && vm.delArray.length == 0) {
+                                    vm.count = 0;
+                                    vm.submitArray = new Array();
+                                    vm.delArray = new Array();
+                                    if (vm.lists.length == 0) {
+                                        vm.noData = true;
+                                    }
+                                    var script = "";
+                                    script += "if(vm.lists && vm.lists.length > 0){vm.lists.splice(0);}";
 
-						            api.execScript({
-						                name: "drafts/drafts_list_win",
-						                frameName: "drafts/patrol_list_frm",
-						                script: script
-						            });
-					            	if(vm.missInfo){
-						            	api.alert({ title: "提示", msg: "部分草稿丢失图片，已删除！", buttons: ["确定"] },function(ret,data){flushData();});
-						            }else {
-						            	api.alert({ title: "提示", msg: "全部草稿提交成功！", buttons: ["确定"] },function(ret,data){flushData();});
-						            }
-								}else if(vm.count == vm.submitArray.length && vm.delArray.length > 0){
-									//重新上传未上传成功信息
-										api.hideProgress();
-										api.confirm({
-							                title: "提示",
-							                msg: "部分草稿未上传成功",
-							                buttons: ["重新上传","取消"]
-							            }, function (ret, err) {
-							            	if(ret.buttonIndex == 1){
-							            		vm.count = 0;
-												vm.submitArray = vm.delArray;
-												submit();
-							            	}
-							            });
+                                    api.execScript({
+                                        name: "drafts/drafts_list_win",
+                                        frameName: "drafts/patrol_list_frm",
+                                        script: script
+                                    });
+                                    if (vm.missInfo) {
+                                        api.alert({
+                                            title: "提示",
+                                            msg: "部分草稿丢失图片，已删除！",
+                                            buttons: ["确定"]
+                                        }, function(ret, data) {
+                                            flushData();
+                                        });
+                                    } else {
+                                        api.alert({
+                                            title: "提示",
+                                            msg: "全部草稿提交成功！",
+                                            buttons: ["确定"]
+                                        }, function(ret, data) {
+                                            flushData();
+                                        });
+                                    }
+                                } else if (vm.count == vm.submitArray.length && vm.delArray.length > 0) {
+                                    //重新上传未上传成功信息
+                                    api.hideProgress();
+                                    api.confirm({
+                                        title: "提示",
+                                        msg: "部分草稿未上传成功",
+                                        buttons: ["重新上传", "取消"]
+                                    }, function(ret, err) {
+                                        if (ret.buttonIndex == 1) {
+                                            vm.count = 0;
+                                            vm.submitArray = vm.delArray;
+                                            submit();
+                                        }
+                                    });
 
-								}else if(vm.count < vm.submitArray.length){
-									submit();
-								}
+                                } else if (vm.count < vm.submitArray.length) {
+                                    submit();
+                                }
 
                             } else {
-                            	vm.delArray.push(vm.submitArray[vm.count]);
-                            	vm.count ++;
-                            	if(vm.count == vm.submitArray.length){
-                            		api.hideProgress();
-                            		vm.count = 0;
-									vm.submitArray = vm.delArray;
-									vm.delArray = new Array();
-									api.confirm({
-										title: "错误",
-										msg: "部分草稿未上传成功",
-										buttons: ["重新上传","取消"]
-									},function(ret, err){
-										if(ret.buttonIndex == 1){
-											submit();
-										}
-									});
-                            	}else if(vm.count < vm.submitArray.length){
-                            		submit();
-                            	}
+                                vm.delArray.push(vm.submitArray[vm.count]);
+                                vm.count++;
+                                if (vm.count == vm.submitArray.length) {
+                                    api.hideProgress();
+                                    vm.count = 0;
+                                    vm.submitArray = vm.delArray;
+                                    vm.delArray = new Array();
+                                    api.confirm({
+                                        title: "错误",
+                                        msg: "部分草稿未上传成功",
+                                        buttons: ["重新上传", "取消"]
+                                    }, function(ret, err) {
+                                        if (ret.buttonIndex == 1) {
+                                            submit();
+                                        }
+                                    });
+                                } else if (vm.count < vm.submitArray.length) {
+                                    submit();
+                                }
                             }
 
                         }
@@ -1919,7 +2022,7 @@
 
 
         //刷新首页及列表数据
-        function flushData(){
+        function flushData() {
 
             vm.changeTab(vm.frameIndex);
 
@@ -1941,124 +2044,144 @@
                 script: "init();"
             });
 
-    	};
+        };
 
 
-    	//异常处理
-    	function exceptionDeal(){
-    		for(var i = 0; i < vm.lists.length; i++){
-    			if(vm.submitArray[vm.count] == vm.lists[i].id){
-    				vm.lists.splice(i,1);
-    				break;
-    			}
-    		}
-    		vm.count ++;
-    		var patrols = $api.getStorage("PatrolLists");
+        //异常处理
+        function exceptionDeal() {
+            for (var i = 0; i < vm.lists.length; i++) {
+                if (vm.submitArray[vm.count] == vm.lists[i].id) {
+                    vm.lists.splice(i, 1);
+                    break;
+                }
+            }
+            vm.count++;
+            var patrols = $api.getStorage("PatrolLists");
             for (var i = 0; i < patrols.length; i++) {
-			 	if(patrols[i].userId == $api.getStorage("user").id){
-			 		patrols[i].list = vm.lists;
-			 	}
-			}
+                if (patrols[i].userId == $api.getStorage("user").id) {
+                    patrols[i].list = vm.lists;
+                }
+            }
             $api.setStorage("PatrolLists", patrols);
 
-			if(vm.count == vm.submitArray.length && vm.delArray.length == 0){
-				vm.count = 0;
-				vm.submitArray = new Array();
-				vm.delArray = new Array();
+            if (vm.count == vm.submitArray.length && vm.delArray.length == 0) {
+                vm.count = 0;
+                vm.submitArray = new Array();
+                vm.delArray = new Array();
                 if (vm.lists.length == 0) {
                     vm.noData = true;
                 }
                 var script = "";
-	            script += "if(vm.lists && vm.lists.length > 0){vm.lists.splice(0);}";
+                script += "if(vm.lists && vm.lists.length > 0){vm.lists.splice(0);}";
 
-	            api.execScript({
-	                name: "drafts/drafts_list_win",
-	                frameName: "drafts/patrol_list_frm",
-	                script: script
-	            });
-	            if(vm.missInfo){
-	            	api.alert({ title: "提示", msg: "部分草稿丢失图片，已删除！", buttons: ["确定"] },function(ret,data){flushData();});
-	            }else {
-	            	api.alert({ title: "提示", msg: "全部草稿提交成功！", buttons: ["确定"] },function(ret,data){flushData();});
-	            }
+                api.execScript({
+                    name: "drafts/drafts_list_win",
+                    frameName: "drafts/patrol_list_frm",
+                    script: script
+                });
+                if (vm.missInfo) {
+                    api.alert({
+                        title: "提示",
+                        msg: "部分草稿丢失图片，已删除！",
+                        buttons: ["确定"]
+                    }, function(ret, data) {
+                        flushData();
+                    });
+                } else {
+                    api.alert({
+                        title: "提示",
+                        msg: "全部草稿提交成功！",
+                        buttons: ["确定"]
+                    }, function(ret, data) {
+                        flushData();
+                    });
+                }
 
-			}else if(vm.count == vm.submitArray.length && vm.delArray.length > 0){
-				//重新上传未上传成功信息
-					api.hideProgress();
-					api.confirm({
-		                title: "提示",
-		                msg: "部分草稿未上传成功",
-		                buttons: ["重新上传","取消"]
-		            }, function (ret, err) {
-		            	if(ret.buttonIndex == 1){
-		            		vm.count = 0;
-							vm.submitArray = vm.delArray;
-							submit();
-		            	}
-		            });
+            } else if (vm.count == vm.submitArray.length && vm.delArray.length > 0) {
+                //重新上传未上传成功信息
+                api.hideProgress();
+                api.confirm({
+                    title: "提示",
+                    msg: "部分草稿未上传成功",
+                    buttons: ["重新上传", "取消"]
+                }, function(ret, err) {
+                    if (ret.buttonIndex == 1) {
+                        vm.count = 0;
+                        vm.submitArray = vm.delArray;
+                        submit();
+                    }
+                });
 
-			}else if(vm.count < vm.submitArray.length){
-				submit();
-			}
-    	}
+            } else if (vm.count < vm.submitArray.length) {
+                submit();
+            }
+        }
 
 
 
         //获取当前天气情况
-        function getRealWeather(){
+        function getRealWeather() {
 
-        	vm.weatherResult = false;
-    		var map = api.require("bMap");
-            map.getLocation({ accuracy: "10m" }, function (ret, err) {
+            vm.weatherResult = false;
+            var map = api.require("bMap");
+            map.getLocation({
+                accuracy: "10m"
+            }, function(ret, err) {
 
                 if (ret.status) {
 
                     map.getNameFromCoords({
                         lon: ret.lon,
                         lat: ret.lat
-                    }, function (ret, err) {
+                    }, function(ret, err) {
 
                         if (ret.status) {
 
                             var url = $api.getStorage("interface_url") + api_url.getWeather;
 
-				            Ajax({
-				                type: "get",
-				                url: url,
-				                data: {
-				                    access_token: $api.getStorage("access_token"),
-				                    cityname: ret.city,
-				                    code: "real"
-				                },
-				                beforeSend: function () {},
-				                complete: function () {},
-				                success: function (data) {
+                            Ajax({
+                                type: "get",
+                                url: url,
+                                data: {
+                                    access_token: $api.getStorage("access_token"),
+                                    cityname: ret.city,
+                                    code: "real"
+                                },
+                                beforeSend: function() {},
+                                complete: function() {},
+                                success: function(data) {
 
-									if(data.success){
-										vm.temperature = data.list[0].AirTemp;
-						    			vm.weatherIcon = data.list[0].weathercode;
-						    			vm.weatherText = data.list[0].weather;
-						    			$api.setStorage("todayWeather",{
-						    				temperature : data.list[0].AirTemp,
-							    			weatherIcon : data.list[0].weathercode,
-							    			weatherText : data.list[0].weather
-						    			});
-						    			vm.city = data.list[0].name;
-						    			vm.weatherResult = true;
-						    			getFutureWeather();
-									}else {
-										getStoredWeather();
-									}
-				                }
-				            });
-                        }else {
-                        	api.toast({ msg: "定位失败，请检查是否授予定位权限！", duration: 3000 });
+                                    if (data.success) {
+                                        vm.temperature = data.list[0].AirTemp;
+                                        vm.weatherIcon = data.list[0].weathercode;
+                                        vm.weatherText = data.list[0].weather;
+                                        $api.setStorage("todayWeather", {
+                                            temperature: data.list[0].AirTemp,
+                                            weatherIcon: data.list[0].weathercode,
+                                            weatherText: data.list[0].weather
+                                        });
+                                        vm.city = data.list[0].name;
+                                        vm.weatherResult = true;
+                                        getFutureWeather();
+                                    } else {
+                                        getStoredWeather();
+                                    }
+                                }
+                            });
+                        } else {
+                            api.toast({
+                                msg: "定位失败，请检查是否授予定位权限！",
+                                duration: 3000
+                            });
                         }
 
                     });
 
                 } else {
-                    api.toast({ msg: "定位失败，请检查是否授予定位权限！", duration: 3000 });
+                    api.toast({
+                        msg: "定位失败，请检查是否授予定位权限！",
+                        duration: 3000
+                    });
                 }
 
             });
@@ -2066,19 +2189,19 @@
 
 
         //获取存储的天气情况
-        function getStoredWeather(){
+        function getStoredWeather() {
 
-        	var weather = $api.getStorage("todayWeather");
-    		if(weather){
-    			vm.temperature = weather.temperature;
-    			vm.weatherIcon = weather.weatherIcon;
-    			vm.weatherText = weather.weatherText;
-    		}else {
-    			vm.temperature = 0;
-    			vm.weatherIcon = "weather-qing";
-    			vm.weatherText = "晴";
-    		}
-    		vm.weatherResult = true;
+            var weather = $api.getStorage("todayWeather");
+            if (weather) {
+                vm.temperature = weather.temperature;
+                vm.weatherIcon = weather.weatherIcon;
+                vm.weatherText = weather.weatherText;
+            } else {
+                vm.temperature = 0;
+                vm.weatherIcon = "weather-qing";
+                vm.weatherText = "晴";
+            }
+            vm.weatherResult = true;
         };
 
         //格式化时间和日期
@@ -2102,10 +2225,10 @@
 
 
         //格式化当前时间
-        function nowTime(){
+        function nowTime() {
 
-        	var time = new Date();
-        	var hour = p(time.getHours());
+            var time = new Date();
+            var hour = p(time.getHours());
             var min = p(time.getMinutes());
 
             vm.time = hour + ":" + min;
@@ -2117,124 +2240,123 @@
 
 
         //获取当前天气情况
-	    function getFutureWeather(){
+        function getFutureWeather() {
 
-	        var url = $api.getStorage("interface_url") + api_url.getWeather;
+            var url = $api.getStorage("interface_url") + api_url.getWeather;
 
-	        Ajax({
-	            type: "get",
-	            url: url,
-	            data: {
-	                access_token: $api.getStorage("access_token"),
-	                cityname: vm.city,
-	                code: "forcast"
-	            },
-	            beforeSend: function () {
-	            	vm.isResult = false;
-	            },
-	            complete: function () {
-	            	vm.isResult = true;
-	            },
-	            success: function (data) {
+            Ajax({
+                type: "get",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    cityname: vm.city,
+                    code: "forcast"
+                },
+                beforeSend: function() {
+                    vm.isResult = false;
+                },
+                complete: function() {
+                    vm.isResult = true;
+                },
+                success: function(data) {
 
-					if(data.success && data.list.length > 0){
-						vm.weathers.splice(0);
-						for(var i = 0; i < data.list.length; i++){
-							vm.weathers.push({
-								day: data.list[i].day,
-								mintemp: data.list[i].mintemp,
-								maxtemp: data.list[i].maxtemp,
-								weather: data.list[i].weather,
-								weatherIcon: data.list[i].weathercode,
-							});
-						}
-						vm.city = data.list[0].name;
+                    if (data.success && data.list.length > 0) {
+                        vm.weathers.splice(0);
+                        for (var i = 0; i < data.list.length; i++) {
+                            vm.weathers.push({
+                                day: data.list[i].day,
+                                mintemp: data.list[i].mintemp,
+                                maxtemp: data.list[i].maxtemp,
+                                weather: data.list[i].weather,
+                                weatherIcon: data.list[i].weathercode,
+                            });
+                        }
+                        vm.city = data.list[0].name;
 
-						$api.setStorage("futureWeather",vm.weathers);
-						$api.setStorage("city",vm.city);
+                        $api.setStorage("futureWeather", vm.weathers);
+                        $api.setStorage("city", vm.city);
 
-					}
-	            }
-	        });
+                    }
+                }
+            });
 
-	    };
-
-
-	    //初始化
-	    function createHome(){
-
-	    	var user = $api.getStorage("user");
-	    	var menu_tree = user.menuList;
-            console.log(JSON.stringify(user))
-	        //生成切换菜单
-	        for (var i = 0; i < menu_tree.length; i++) {
-
-	            if (menu_tree[i].id == "9add4c2d-eaf6-417c-b7d5-341e9901a961") {
-
-	            	if(menu_tree[i].children[0].id == "9460f317-b5e9-40a3-9933-83321eae2e37"){
-						vm.olympics = true;
-	        			vm.fourCircle = false;
-					}else{
-						vm.olympics = false;
-	        			vm.fourCircle = true;
-					}
-					eval(menu_tree[i].children[0].url);
-
-	                vm.summaryClass = menu_tree[0].children[0].icon;
-	                for (var j = 0; j < menu_tree[i].children.length; j++) {
-	                    vm.menuList.push({
-	                        id: menu_tree[i].children[j].id,
-	                        name: menu_tree[i].children[j].name,
-	                        url: menu_tree[i].children[j].url,
-	                        icon: menu_tree[i].children[j].icon,
-	                        activeClass: j == 0 ? true : false
-	                    });
-
-	                }
-
-	            }
-
-	        }
-	    };
+        };
 
 
+        //初始化
+        function createHome() {
 
-	    //判断是否有当前点位的激活信息
-        function hasActiveDrafts(){
-        	var activeInfos = $api.getStorage("ActiveInfo");
+            var user = $api.getStorage("user");
+            var menu_tree = user.menuList;
+            //生成切换菜单
+            for (var i = 0; i < menu_tree.length; i++) {
+
+                if (menu_tree[i].id == "9add4c2d-eaf6-417c-b7d5-341e9901a961") {
+
+                    if (menu_tree[i].children[0].id == "9460f317-b5e9-40a3-9933-83321eae2e37") {
+                        vm.olympics = true;
+                        vm.fourCircle = false;
+                    } else {
+                        vm.olympics = false;
+                        vm.fourCircle = true;
+                    }
+                    eval(menu_tree[i].children[0].url);
+
+                    vm.summaryClass = menu_tree[0].children[0].icon;
+                    for (var j = 0; j < menu_tree[i].children.length; j++) {
+                        vm.menuList.push({
+                            id: menu_tree[i].children[j].id,
+                            name: menu_tree[i].children[j].name,
+                            url: menu_tree[i].children[j].url,
+                            icon: menu_tree[i].children[j].icon,
+                            activeClass: j == 0 ? true : false
+                        });
+
+                    }
+
+                }
+
+            }
+        };
+
+
+
+        //判断是否有当前点位的激活信息
+        function hasActiveDrafts() {
+            var activeInfos = $api.getStorage("ActiveInfo");
             var activeInfo = new Array();
             var flag = true;
             //判断本地是否有未提交激活信息
             if (activeInfos && activeInfos != "undefined" && typeof(activeInfos) != "undefined" && activeInfos.length > 0) {
-				for (var i = 0; i < activeInfos.length; i++) {
-				 	if(activeInfos[i].userId == $api.getStorage("user").id){
-				 		activeInfo = activeInfos[i].list;
-				 	}
-				}
-				//本地没有当前用户未提交激活信息
+                for (var i = 0; i < activeInfos.length; i++) {
+                    if (activeInfos[i].userId == $api.getStorage("user").id) {
+                        activeInfo = activeInfos[i].list;
+                    }
+                }
+                //本地没有当前用户未提交激活信息
                 if (activeInfo && activeInfo.length > 0) {
-                	flag = false;
-                	for(var i = 0; i < activeInfo.length; i++){
-                		vm.activeData.push(activeInfo[i]);
-                	}
-            		submitActive();
+                    flag = false;
+                    for (var i = 0; i < activeInfo.length; i++) {
+                        vm.activeData.push(activeInfo[i]);
+                    }
+                    submitActive();
                 }
             }
-            if(flag){
-            	submitDrafts();
+            if (flag) {
+                submitDrafts();
             }
         };
 
 
         //提交当前巡查点位的激活信息
-	    function submitActive(){
+        function submitActive() {
 
             var submitData = null;
-            if(vm.activeData[0]){
-            	submitData = vm.activeData[0];
-            }else{
-            	submitDrafts();
-            	return false;
+            if (vm.activeData[0]) {
+                submitData = vm.activeData[0];
+            } else {
+                submitDrafts();
+                return false;
             }
             //获取对应的值
             var access_token = $api.getStorage("access_token");
@@ -2271,40 +2393,54 @@
                             file: image_array
                         }
                     }
-                }, function (ret, err) {
+                }, function(ret, err) {
 
-                    if (ret.status == 0) {  //上传中
+                    if (ret.status == 0) { //上传中
 
-                    } else if (ret.status == 1 && ret.body.success) {  //上传完成
+                    } else if (ret.status == 1 && ret.body.success) { //上传完成
 
                         //重置上次文件错误执行次数
                         uploadTime = 0;
 
                         if (image_array.length == 1) {
-                            imageIdArray.push({ id: ret.body.data.id, url: ret.body.data.accessAddress });
+                            imageIdArray.push({
+                                id: ret.body.data.id,
+                                url: ret.body.data.accessAddress
+                            });
                         } else {
                             for (var i = 0; i < ret.body.list.length; i++) {
-                                imageIdArray.push({ id: ret.body.list[i].id, url: ret.body.list[i].accessAddress });
+                                imageIdArray.push({
+                                    id: ret.body.list[i].id,
+                                    url: ret.body.list[i].accessAddress
+                                });
                             }
                         }
-                        addEvent();  //新增投诉
+                        addEvent(); //新增投诉
 
-                    } else {  //上传失败
+                    } else { //上传失败
 
-                        if (uploadTime < 4) {  //5次上次失败机会
+                        if (uploadTime < 4) { //5次上次失败机会
 
                             //上次文件错误执行次数+1
                             uploadTime += 1;
-                            addPicture();  //递归上传
+                            addPicture(); //递归上传
 
                         } else {
 
                             api.hideProgress();
 
                             if (ret.statusCode == 500) {
-                                api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                                api.alert({
+                                    title: "错误",
+                                    msg: "上传图片失败：网络错误，请检查网络设置！",
+                                    buttons: ["确定"]
+                                });
                             } else {
-                                api.alert({ title: "错误", msg: "上传图片失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                                api.alert({
+                                    title: "错误",
+                                    msg: "上传图片失败：网络错误，请检查网络设置！",
+                                    buttons: ["确定"]
+                                });
                             }
 
                         }
@@ -2321,7 +2457,13 @@
                 //拼接接口地址：新增报事
                 var url = $api.getStorage("interface_url") + api_url.activePoint;
 
-                var items = [{ "label": "照片", "name": "image", "type": "imageList", "value": imageIdArray, "url": "" }];
+                var items = [{
+                    "label": "照片",
+                    "name": "image",
+                    "type": "imageList",
+                    "value": imageIdArray,
+                    "url": ""
+                }];
 
                 //新增投诉
                 Ajax({
@@ -2332,127 +2474,126 @@
                         checkpointId: submitData.pointId,
                         extraJson: JSON.stringify(items)
                     },
-                    beforeSend: function () {},
-                    complete: function () {},
-                    success: function (data) {
+                    beforeSend: function() {},
+                    complete: function() {},
+                    success: function(data) {
 
                         if (data.success) {
 
-                        	vm.activeData.splice(0,1);
-                        	var activeInfos = $api.getStorage("ActiveInfo");
-                        	for (var i = 0; i < activeInfos.length; i++) {
-							 	if(activeInfos[i].userId == $api.getStorage("user").id){
-							 		activeInfos[i].list = vm.activeData;
-							 	}
-							}
-                        	$api.setStorage("ActiveInfo",activeInfos);
+                            vm.activeData.splice(0, 1);
+                            var activeInfos = $api.getStorage("ActiveInfo");
+                            for (var i = 0; i < activeInfos.length; i++) {
+                                if (activeInfos[i].userId == $api.getStorage("user").id) {
+                                    activeInfos[i].list = vm.activeData;
+                                }
+                            }
+                            $api.setStorage("ActiveInfo", activeInfos);
 
-                        	var pointList = $api.getStorage("PointList");
-				    		if(pointList != "undefined" && typeof(pointList) != "undefined" && pointList.length > 0){
-				    			for(var i = 0; i < pointList.length; i++){
-					    			//存的点位信息中是否有当前点位的信息
-					    			if(pointList[i].id == submitData.pointId){
-					    				pointList[i].checkpointStatusCode = "ACTIVED";
-					    				$api.setStorage("PointList",pointList);
-					    				break;
-					    			}
-				    			}
-				    			storeActivedInfos(submitData.pointId);
-				    		}else{
-				    			//没有本地缓存点位信息  1、点位信息过多，一直同步失败  2、不是同步点位信息角色  3、首次登陆，信息还没同步好
-				    			storeActivedInfos(submitData.pointId);
-				    		}
-				    		submitActive();
+                            var pointList = $api.getStorage("PointList");
+                            if (pointList != "undefined" && typeof(pointList) != "undefined" && pointList.length > 0) {
+                                for (var i = 0; i < pointList.length; i++) {
+                                    //存的点位信息中是否有当前点位的信息
+                                    if (pointList[i].id == submitData.pointId) {
+                                        pointList[i].checkpointStatusCode = "ACTIVED";
+                                        $api.setStorage("PointList", pointList);
+                                        break;
+                                    }
+                                }
+                                storeActivedInfos(submitData.pointId);
+                            } else {
+                                //没有本地缓存点位信息  1、点位信息过多，一直同步失败  2、不是同步点位信息角色  3、首次登陆，信息还没同步好
+                                storeActivedInfos(submitData.pointId);
+                            }
+                            submitActive();
 
                         } else {
-                        	vm.wrongTimes ++;
-                        	if(vm.wrongTimes == 2){
-                        		vm.activeData.splice(0,1);
-                        		vm.wrongTimes = 0;
-                        	}else {
-                        		submitActive();
-                        	}
+                            vm.wrongTimes++;
+                            if (vm.wrongTimes == 2) {
+                                vm.activeData.splice(0, 1);
+                                vm.wrongTimes = 0;
+                            } else {
+                                submitActive();
+                            }
                         }
 
                     }
                 });
             };
-	    };
+        };
 
 
-	    //已激活数据。。。防止同步失败等情况
-        function storeActivedInfos(pointId){
-        	var activedInfo = $api.getStorage("ActivedInfos");
+        //已激活数据。。。防止同步失败等情况
+        function storeActivedInfos(pointId) {
+            var activedInfo = $api.getStorage("ActivedInfos");
 
-            if(activedInfo == "undefined" || typeof(activedInfo) == "undefined"){
-            	activedInfo = new Array();
+            if (activedInfo == "undefined" || typeof(activedInfo) == "undefined") {
+                activedInfo = new Array();
             }
             var index = 0;
-            for(var i = 0; i < activedInfo.length; i++){
-            	if(activedInfo[i] && activedInfo[i].userId == $api.getStorage("user").id){
-            		index = i;
-            		break;
-            	}else {
-            		index = activedInfo.length;
-            	}
+            for (var i = 0; i < activedInfo.length; i++) {
+                if (activedInfo[i] && activedInfo[i].userId == $api.getStorage("user").id) {
+                    index = i;
+                    break;
+                } else {
+                    index = activedInfo.length;
+                }
             }
-            if(!activedInfo[index]){
-            	activedInfo[index] = new Object();
-            	activedInfo[index].list = new Array();
+            if (!activedInfo[index]) {
+                activedInfo[index] = new Object();
+                activedInfo[index].list = new Array();
             }
             activedInfo[index].userId = $api.getStorage("user").id;
             activedInfo[index].list.push(pointId);
             $api.setStorage("ActivedInfos", activedInfo);
         };
         //改变气泡的值
-		function changeaddUserSign() {
-			setInterval(function() {
-				addUserSign();
-			}, 60000*5);
-		};
-		//所有人员签到工地
-		function addUserSign(){
-			var access_token = $api.getStorage("access_token");
-			if(!access_token){
-				return false;
-			}
-			var map = api.require("bMap");
+        function changeaddUserSign() {
+            setInterval(function() {
+                addUserSign();
+            }, 60000 * 5);
+        };
+        //所有人员签到工地
+        function addUserSign() {
+            var access_token = $api.getStorage("access_token");
+            if (!access_token) {
+                return false;
+            }
+            var map = api.require("bMap");
             map.getLocation({
                 accuracy: "10m",
                 autoStop: false,
                 filter: 100
-            }, function (ret, err) {
-                if (ret.status) {  //定位成功
-	                var lon = ret.lon;
-	                var lat = ret.lat;
-	                var url = $api.getStorage("interface_url") + api_url.addUserSign;
-		        	Ajax({
-		                type: "post",
-		                url: url,
-		                data: {
-		                    access_token: $api.getStorage("access_token"),
-		                    lng: lon,
-		                    lat: lat
-		                },
-		                beforeSend: function () {
-		                },
-		                complete: function () {
-		                },
-		                success: function (data) {
-		
-							if(data.success){
-//					            api.alert({
-//					                title: '提示',
-//					                msg: '签到成功！',
-//					            });
-//					
-							}
-		
-		                }
-		            });
-				}
+            }, function(ret, err) {
+                if (ret.status) { //定位成功
+                    var lon = ret.lon;
+                    var lat = ret.lat;
+                    var url = $api.getStorage("interface_url") + api_url.addUserSign;
+                    Ajax({
+                        type: "post",
+                        url: url,
+                        data: {
+                            access_token: $api.getStorage("access_token"),
+                            lng: lon,
+                            lat: lat
+                        },
+                        beforeSend: function() {},
+                        complete: function() {},
+                        success: function(data) {
+
+                            if (data.success) {
+                                //					            api.alert({
+                                //					                title: '提示',
+                                //					                msg: '签到成功！',
+                                //					            });
+                                //
+                            }
+
+                        }
+                    });
+                }
             });
-		}
+        }
     </script>
 </body>
+
 </html>
