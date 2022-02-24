@@ -49,11 +49,19 @@
                 <p class="aui-col-xs-8 aui-text-333" v-cloak>{{item.siteName}}</p>
             </li>
             <li class="aui-list-view-cell">
-                <p class="aui-col-xs-3 aui-text-custom">合同类型</p>
-                <p class="aui-col-xs-9 aui-text-333" v-cloak>{{item.contractType}}</p>
+                <p class="aui-col-xs-3 aui-text-custom">发放年月</p>
+                <p class="aui-col-xs-9 aui-text-333" v-cloak>{{item.year}}-{{item.month}}</p>
             </li>
             <li class="aui-list-view-cell">
-                <p class="aui-col-xs-3 aui-text-custom">合同状态</p>
+                <p class="aui-col-xs-3 aui-text-custom">发放金额</p>
+                <p class="aui-col-xs-9 aui-text-333">{{item.amount}}</p>
+            </li>
+            <li class="aui-list-view-cell">
+                <p class="aui-col-xs-3 aui-text-custom">发放时间</p>
+                <p class="aui-col-xs-9 aui-text-333">{{item.datePaid}}</p>
+            </li>
+            <li class="aui-list-view-cell">
+                <p class="aui-col-xs-3 aui-text-custom">工资状态</p>
                 <p class="aui-col-xs-9 aui-text-333">
                     <span class="custom-label aui-pull-left" v-bind:class="statusObj[item.status].statusClass" v-cloak>
                         {{statusObj[item.status].statusName}}
@@ -64,25 +72,11 @@
                 <p class="aui-col-xs-3 aui-text-custom">确认时间</p>
                 <p class="aui-col-xs-9 aui-text-333">{{item.dateConfirmed}}</p>
             </li>
-            <li class="aui-list-view-cell m-b-10" v-if="item.status !== '1'">
-                <p class="aui-text-custom">合同</p>
-                <div class="addthing-photo-container m-b-10">
-                    <div class="addthing-imgwrap">
-                        <template v-for="img in item.files">
-                            <div class="img-item" v-on:click="openBigImage($index);" style="text-align: center;height:100px;">
-                                <div class="img-div" style="background-image:url('{{img.file.accessAddress}}');"></div>
 
-                                <span v-text="img.name" style="height:0.5rem;"></span>
-                            </div>
-                        </template>
-                    </div>
-                </div>
-
-            </li>
         </ul>
         <div class="f-pd70"></div>
     </div>
-    <div class="thing-edit-btnwrap" v-if="item.status==='2'" v-on:click="contractConfirm" v-effect="">
+    <div class="thing-edit-btnwrap" v-if="item.status==='2'" v-on:click="salaryConfirm" v-effect="">
         <div class="thing-edit-btn" tapmode>确认</div>
     </div>
     <script src="../../script/api.js"></script>
@@ -136,8 +130,8 @@
                     var array = this.item.files.map(i => i.file.accessAddress)
                     openBigImage(array, index);
                 },
-                contractConfirm: function() {
-                    var url = $api.getStorage("interface_url") + api_url.contractConfirm;
+                salaryConfirm: function() {
+                    var url = $api.getStorage("interface_url") + api_url.salaryConfirm;
                     Ajax({
                         type: "post",
                         url: url,
@@ -158,7 +152,7 @@
                                     msg: "确认成功！",
                                     buttons: ["确定"]
                                 }, function() {
-                                    closeWin('contract/contract_detail_win');
+                                    closeWin('salary/salary_detail_win');
                                 });
                             } else {
                                 vm.loadingFail = true; //加载失败

@@ -102,7 +102,13 @@
     getVedioInfo: "service/constr-site/get-video-info",  // 获取视频情况
     getLifter: "service/constr-site/get-lifter-info",  //  获取施工升降机情况
     getTower: "service/constr-site/get-tower-info",  // 获取塔机情况
-    addUserSign:"service/const/super-sign/sign"
+    addUserSign:"service/const/super-sign/sign",
+
+    getMyContractList: "service/const/checkpoint-group-employee-contract/my-contracts",
+    contractConfirm: "service/const/checkpoint-group-employee-contract/confirm",
+
+    getMySalaryList: "service/const/checkpoint-group-employee-salary/my-salaries",
+    salaryConfirm: "service/const/checkpoint-group-employee-salary/confirm",
 };
 
 var api_role = {

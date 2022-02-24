@@ -70,11 +70,12 @@
     <div class="aui-padded-5"></div>
     <div class="patrol-list-wrap">
         <template v-for="list in lists">
-            <div class="patrol-list-item" v-on:click="openContractDetail(list)" v-effect="">
+            <div class="patrol-list-item" v-on:click="openSalaryDetail(list)" v-effect="">
                 <div class="aui-text-333" style="padding-right: 80px;" v-text="list.siteName"></div>
                 <button class="state-back" :class="statusObj[list.status].statusClass" v-text="statusObj[list.status].statusName"></button>
                 <div class="f-fs14 aui-text-999">
-                    {{list.contractType}}
+                    {{list.year}}-{{list.month}}
+                    {{list.amount}}
                 </div>
             </div>
         </template>
@@ -114,8 +115,8 @@
                 }
             },
             methods: {
-                openContractDetail: function(item) { //打开工地详情
-                    openWin("contract/contract_detail_win", {
+                openSalaryDetail: function(item) { //打开工地详情
+                    openWin("salary/salary_detail_win", {
                         item: item
                     });
                 },
@@ -149,7 +150,7 @@
                     vm.code = api.pageParam.code ? api.pageParam.code : "";
                     vm.searchCode = api.pageParam.searchCode ? api.pageParam.searchCode : "";
 
-                    getContractList();
+                    getsalaryList();
                 });
 
             });
@@ -158,8 +159,8 @@
 
 
         //获取工地列表
-        function getContractList() {
-            var url = $api.getStorage("interface_url") + api_url.getMyContractList;
+        function getsalaryList() {
+            var url = $api.getStorage("interface_url") + api_url.getMySalaryList;
             Ajax({
                 type: "get",
                 url: url,
@@ -185,9 +186,11 @@
                             vm.lists.push({
                                 id: data.list[i].id,
                                 siteName: data.list[i].groupEmployee.checkpointGroup.name,
-                                contractType: data.list[i].type.name,
+                                year: data.list[i].year,
+                                month: data.list[i].month,
+                                amount: data.list[i].amount,
                                 status: data.list[i].dateConfirmed ? '3' : '2',
-                                files: data.list[i].files,
+                                datePaid: data.list[i].datePaid,
                                 dateConfirmed: data.list[i].dateConfirmed,
                                 index: i
                             });
