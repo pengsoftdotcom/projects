@@ -1,9 +1,9 @@
-
 <html>
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <title>工地列表——frm</title>
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
@@ -71,11 +71,13 @@
     <div class="patrol-list-wrap">
         <template v-for="list in lists">
             <div class="patrol-list-item" v-on:click="openSalaryDetail(list)" v-effect="">
-                <div class="aui-text-333" style="padding-right: 80px;" v-text="list.siteName"></div>
-                <button class="state-back" :class="statusObj[list.status].statusClass" v-text="statusObj[list.status].statusName"></button>
+                <div class="aui-text-333" style="padding-right: 80px;">
+                    {{list.year}}年{{list.month}}月 -- {{list.amount}}元
+                </div>
+                <button class="state-back" :class="statusObj[list.status].statusClass"
+                    v-text="statusObj[list.status].statusName"></button>
                 <div class="f-fs14 aui-text-999">
-                    {{list.year}}-{{list.month}}
-                    {{list.amount}}
+                    {{list.siteName}}
                 </div>
             </div>
         </template>
@@ -115,37 +117,37 @@
                 }
             },
             methods: {
-                openSalaryDetail: function(item) { //打开工地详情
+                openSalaryDetail: function (item) { //打开工地详情
                     openWin("salary/salary_detail_win", {
                         item: item
                     });
                 },
-                doSearch: function() {
+                doSearch: function () {
                     $api.addCls($api.dom(".aui-searchbar-wrap"), "focus");
                     $api.dom('.aui-searchbar-input input').focus();
                 },
-                cancelSearch: function() {
+                cancelSearch: function () {
                     $api.removeCls($api.dom(".aui-searchbar-wrap.focus"), "focus");
                     $api.dom('.aui-searchbar-input input').blur();
                     this.searchInfo = "";
                 },
-                clearInput: function() {
+                clearInput: function () {
                     this.searchInfo = "";
                 }
             },
-            init: function() {
+            init: function () {
                 effect();
             }
         });
 
 
-        apiready = function() {
+        apiready = function () {
 
             api.parseTapmode();
 
-            timeOut300(function() {
+            timeOut300(function () {
 
-                vm.$nextTick(function() {
+                vm.$nextTick(function () {
 
                     vm.code = api.pageParam.code ? api.pageParam.code : "";
                     vm.searchCode = api.pageParam.searchCode ? api.pageParam.searchCode : "";
@@ -167,13 +169,13 @@
                 data: {
                     access_token: $api.getStorage("access_token")
                 },
-                beforeSend: function() {
+                beforeSend: function () {
                     vm.loading = true;
                 },
-                complete: function() {
+                complete: function () {
                     vm.loading = false;
                 },
-                success: function(data) {
+                success: function (data) {
                     if (data.success) {
 
                         //如果一条数据都没有，将在界面显示“暂无数据”
