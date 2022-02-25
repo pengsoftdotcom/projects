@@ -113,7 +113,8 @@
     getMyCheckpointGroups: "service/event/checkpoint-group-employee/my-checkpoint-groups", // 我的工地
     getEmployeesByCheckpointGroup: "service/event/checkpoint-group-employee/employees-by-checkpoint-group", //工地员工
 
-    submitSafetyTraining: "service/const/checkpoint-group-safety-training/submit" // 提交安全培训
+    submitSafetyTraining: "service/const/checkpoint-group-safety-training/submit", // 提交安全培训
+    mySafetyTrainings: "service/const/checkpoint-group-safety-training/my-safety-trainings",  //安全培训列表
 };
 
 var api_role = {

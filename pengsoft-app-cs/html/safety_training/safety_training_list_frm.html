@@ -1,14 +1,42 @@
-
-<!DOCTYPE HTML>
+﻿<!DOCTYPE HTML>
 <html>
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <title>安全培训——列表——frm</title>
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
     <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    <style type="text/css">
+        .patrol-list-item {
+            position: relative;
+        }
+
+        .state-back {
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            color: #ffffff;
+            text-align: center;
+            padding: 3px;
+            height: 26px;
+            line-height: 16px;
+        }
+
+        .unstarted {
+            background-color: #e74c3c;
+        }
+
+        .taining {
+            background-color: #2ecc71;
+        }
+
+        .ended {
+            background-color: #e7e7e7;
+        }
+    </style>
 </head>
 
 <body class="bg-gray">
@@ -26,24 +54,28 @@
     <div class="fail-wrap bg-gray" v-show="noData" style="display:none;">
         <p class="fail-info">暂无数据</p>
     </div>
-    <div class="aui-content wui-news-wrap" style="padding-top: 0px;">
+    <div class="aui-content wui-news-wrap" style="padding-top: 10px;">
 
-        <div class="wui-newslist-wrap">
-            <template v-for="list in lists">
-                <div class="wui-newslist-content shadow-2" v-on:click="openNewsDetatil($index)">
-                    <p class="wui-newslist-title aui-ellipsis-1" v-text="list.title"></p>
-                    <div class="wui-newslist-info">
-                        <div class="wui-newslist-img" v-if="list.image"
-                            v-bind:style="{'background-image':'url('+list.image_address+')'}"></div>
-                        <div class="wui-newslist-text aui-ellipsis-2" v-text="list.summary"></div>
+        <div class="patrol-list-wrap">
+            <template v-for="item in lists">
+                <div class="patrol-list-item" v-on:click="openDetail(item)">
+                    <div class="aui-text-333" style="padding-right: 80px;">{{item.subject}}</div>
+                    <button class="state-back" :class="statusObj[item.status].statusClass"
+                        v-text="statusObj[item.status].statusName"></button>
+                    <div class="f-fs14 aui-text-999">
+                        地址: {{item.address}}
                     </div>
-                    <p class="wui-newslist-date">
-                        <span v-text="list.datePublished"></span>
-                        <span class="aui-pull-right">查看全部>></span>
-                    </p>
+                    <div class="f-fs14 aui-text-999">
+                        项目: {{item.group.name}}
+                    </div>
+                    <div class="f-fs14 aui-text-999">
+                        培训人: {{item.trainer.employee.user.name}}
+                    </div>
+                    <div class="f-fs14 aui-text-999">
+                        开始时间: {{item.dateStarted}}
+                    </div>
                 </div>
             </template>
-            <p class="aui-text-center aui-padded-5" v-text="loadTips"></p>
         </div>
     </div>
     <script src="../../script/api.js"></script>
@@ -65,24 +97,39 @@
                 isResult: true, //判断上次ajax是否返回
                 pageCount: 0, //当前页数
                 lists: [], //新闻列表数组
+
+                statusObj: {
+                    '1': {
+                        statusName: '未开始',
+                        statusClass: 'unstarted'
+                    },
+                    '2': {
+                        statusName: '进行中',
+                        statusClass: 'taining'
+                    },
+                    '3': {
+                        statusName: '已结束',
+                        statusClass: 'ended'
+                    },
+                }
             },
             methods: {
-                openNewsDetatil: function(i) { //打开新闻详情
-                    openWin("news/newsdetaile_win", {
-                        id: this.lists[i].id
+                openDetail: function (item) { //打开详情
+                    openWin("safety_training/add_safety_training_win", {
+                        item: item
                     });
-                }
+                },
             }
         });
 
 
-        apiready = function() {
+        apiready = function () {
 
             api.parseTapmode();
 
-            setTimeout(function() {
+            setTimeout(function () {
 
-                vm.$nextTick(function() {
+                vm.$nextTick(function () {
 
                     getNewsList();
 
@@ -92,7 +139,7 @@
                         textColor: "#333",
                         textDown: "下拉刷新",
                         textUp: "释放立即刷新",
-                    }, function(ret, err) {
+                    }, function (ret, err) {
 
                         vm.pullDownRefresh = true;
                         vm.pageCount = 0;
@@ -106,7 +153,7 @@
                         extra: {
                             threshold: 0
                         }
-                    }, function(ret, err) {
+                    }, function (ret, err) {
 
                         if (!vm.noMore) {
 
@@ -130,76 +177,67 @@
             if (vm && vm.isResult) {
 
                 //拼接接口地址：分页获取新闻
-                var url = $api.getStorage("interface_url") + api_url.getNewsListForPage;
+                var url = $api.getStorage("interface_url") + api_url.mySafetyTrainings;
 
-                // Ajax({
-                //     type: "get",
-                //     url: url,
-                //     data: {
-                //         type: "CONST_NEWS",
-                //         page: vm.pageCount,
-                //         access_token: $api.getStorage("access_token"),
-                //         size: 5
-                //     },
-                //     beforeSend: function () {
-                //         vm.isResult = false;
-                //     },
-                //     complete: function () {
-                //         vm.isResult = true;
-                //         vm.loading = false;
-                //         vm.loadingFail = false;
-                //         vm.noData = false;
-                //         api.refreshHeaderLoadDone();
-                //     },
-                //     success: function (data) {
-                //         if (data.success) {
+                Ajax({
+                    type: "get",
+                    url: url,
+                    data: {
+                        type: "CONST_NEWS",
+                        page: vm.pageCount,
+                        access_token: $api.getStorage("access_token"),
+                        size: 5
+                    },
+                    beforeSend: function () {
+                        vm.isResult = false;
+                    },
+                    complete: function () {
+                        vm.isResult = true;
+                        vm.loading = false;
+                        vm.loadingFail = false;
+                        vm.noData = false;
+                        api.refreshHeaderLoadDone();
+                    },
+                    success: function (data) {
+                        if (data.success) {
 
 
-                //             //如果是下拉刷新，则需要清空列表
-                //             if (vm.pullDownRefresh) {
-                //                 vm.lists.splice(0, vm.lists.length);
-                //             }
+                            //如果是下拉刷新，则需要清空列表
+                            if (vm.pullDownRefresh) {
+                                vm.lists.splice(0, vm.lists.length);
+                            }
 
-                //             //如果一条数据都没有，将在界面显示“暂无数据”
-                //             if (data.page.content.length == 0 && vm.lists.length == 0) {
-                //                 vm.noData = true;
-                //                 return false;
-                //             }
+                            //如果一条数据都没有，将在界面显示“暂无数据”
+                            if (data.page.content.length == 0 && vm.lists.length == 0) {
+                                vm.noData = true;
+                                return false;
+                            }
+                            console.log(JSON.stringify(data))
+                            //向界面依次添加列表
+                            for (var i = 0; i < data.page.content.length; i++) {
+                                var dataDetail = data.page.content[i];
+                                dataDetail.status = '1';
+                                vm.lists.push(dataDetail);
+                            }
 
-                //             //向界面依次添加列表
-                //             for (var i = 0; i < data.page.content.length; i++) {
+                            //判断是否还有未加载到界面的数据
+                            if (data.page.content.length < 5) {
+                                vm.loadTips = "没有更多数据了";
+                                vm.noMore = true;
+                            } else {
+                                vm.loadTips = "上拉加载更多";
+                                vm.noMore = false;
+                            }
+                            vm.pageCount += 1;
 
-                //                 vm.lists.push({
-                //                     id: data.page.content[i].id,  //新闻id
-                //                     title: toEmpty(data.page.content[i].title),  //新闻标题
-                //                     image: data.page.content[i].coverAccessAddress ? true : false,  //是否有新闻缩略图
-                //                     image_address: thumb(data.page.content[i].coverAccessAddress, 50, 50),  //新闻缩略图地址
-                //                     summary: toEmpty(data.page.content[i].summary),  //新闻简单描述
-                //                     datePublished: formatDatetime(data.page.content[i].datePublished)  //新闻发布时间
-                //                 });
+                        } else {
+                            vm.loadingFail = true;  //加载失败
+                        }
 
-                //             }
+                        vm.pullDownRefresh = false;
 
-                //             //判断是否还有未加载到界面的数据
-                //             if (data.page.content.length < 5) {
-                //                 vm.loadTips = "没有更多数据了";
-                //                 vm.noMore = true;
-                //             } else {
-                //                 vm.loadTips = "上拉加载更多";
-                //                 vm.noMore = false;
-                //             }
-                //             vm.pageCount += 1;
-
-                //         } else {
-                //             vm.loadingFail = true;  //加载失败
-                //         }
-
-                //         vm.pullDownRefresh = false;
-
-                //         //提交已读数量
-                //         getRead();
-                //     }
-                // });
+                    }
+                });
 
             }
 

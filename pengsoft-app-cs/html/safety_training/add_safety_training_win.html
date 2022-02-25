@@ -3,7 +3,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <title>开展安全培训—win</title>
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
@@ -21,42 +22,85 @@
         开展安全培训
         </div>
     </header>
-    <footer id="footer" class="aui-nav footer-btn-wrap1 bg-default" onclick="submit();">
-        <a class="aui-btn aui-btn-custom aui-btn-block" tapmode>提交</a>
+
+    <footer id="footer" class="aui-nav footer-btn-wrap1 bg-default">
+        <template v-if="pageType === 'add' && userRole === 'ROL_SECURITY_OFFICER'">
+            <a class="aui-btn aui-btn-custom aui-btn-block" tapmode @click="submit();">提交</a>
+        </template>
+
+        <template v-if="pageType === 'detail' && userRole === 'ROL_WORKER'">
+            <div class="aui-col-xs-6 aui-padded-5">
+                <a class="aui-btn aui-btn-block aui-btn-success" v-effect="light" tapmode @click="join();">参加</a>
+            </div>
+            <div class="aui-col-xs-6 aui-padded-5">
+                <a class="aui-btn aui-btn-block aui-btn-danger" v-effect="light" tapmode @click="leave();">请假</a>
+            </div>
+        </template>
+
+        <template v-if="pageType === 'detail' && userRole === 'ROL_SECURITY_OFFICER'">
+            <a class="aui-btn aui-btn-block aui-btn-success" v-effect="light" tapmode @click="start();">开始</a>
+        </template>
+        <template v-if="pageType === 'detail' && userRole === 'ROL_SECURITY_OFFICER'">
+            <a class="aui-btn aui-btn-block aui-btn-danger" v-effect="light" tapmode @click="end();">结束</a>
+        </template>
     </footer>
     <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
     <script src="../../script/common.js"></script>
     <script>
-        apiready = function() {
-
-            api.parseTapmode();
-
-            setStatusBarStyle("light");
-
-            api.openFrame({
-                name: "safety_training/add_safety_training_frm",
-                url: "widget://html/safety_training/add_safety_training_frm.html",
-                bounces: false,
-                bgColor: "transparent",
-                rect: {
-                    x: 0,
-                    y: $api.offset($api.byId("header")).h,
-                    w: api.winWidth,
-                    h: api.winHeight - $api.offset($api.byId("header")).h - $api.offset($api.byId("footer")).h
+        var vm = new Vue({
+            el: "body",
+            data: {
+                pageType: 'add', // 页面类型 add | detail
+                userRole: 'ROL_SECURITY_OFFICER',   // ROL_WORKER | ROL_SECURITY_OFFICER
+            },
+            methods: {
+                submit() {
+                    api.execScript({
+                        name: "safety_training/add_safety_training_win",
+                        frameName: "safety_training/add_safety_training_frm",
+                        script: "submit();"
+                    });
                 },
-            });
+                join() { },
+                leave() { },
+                start() { },
+                end() { },
+            },
+        });
 
+        apiready = function () {
+            api.parseTapmode();
+            setStatusBarStyle("light");
+            // 状态更新
+            vm.pageType = api.pageParam.item ? 'detail' : 'add';
+
+            var user = $api.getStorage("user");
+            if (user.roleList.find(i => i.code === 'ROL_SECURITY_OFFICER')) {
+                vm.userRole = 'ROL_SECURITY_OFFICER';
+            } else if (user.roleList.find(i => i.code === 'ROL_WORKER')) {
+                vm.userRole = 'ROL_WORKER';
+            }
+
+            vm.$nextTick(() => {
+                api.openFrame({
+                    name: "safety_training/add_safety_training_frm",
+                    url: "widget://html/safety_training/add_safety_training_frm.html",
+                    bounces: false,
+                    bgColor: "transparent",
+                    rect: {
+                        x: 0,
+                        y: $api.offset($api.byId("header")).h,
+                        w: api.winWidth,
+                        h: api.winHeight - $api.offset($api.byId("header")).h - $api.offset($api.byId("footer")).h
+                    },
+                    pageParam: {
+                        item: api.pageParam.item,
+                    }
+                });
+            })
         };
 
-
-        //提交
-        function submit() {
-            api.execScript({
-                name: "safety_training/add_safety_training_win",
-                frameName: "safety_training/add_safety_training_frm",
-                script: "submit();"
-            });
-        };
     </script>
 </body>
 
