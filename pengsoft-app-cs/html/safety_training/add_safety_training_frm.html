@@ -2,7 +2,8 @@
 
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
     <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
     <title>开展安全培训——frm</title>
     <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
@@ -16,6 +17,7 @@
         .body {
             background-color: #eaedf3;
         }
+
         /*申请页面*/
 
         .addthing-detail-wrap {
@@ -56,6 +58,7 @@
             -webkit-flex: 1;
             flex: 1;
         }
+
         /*图片信息*/
 
         .img-wrap {
@@ -135,6 +138,16 @@
             <div class="addthing-detail-title aui-col-xs-3">培训人</div>
             <div class="addthing-detail-body aui-col-xs-8" v-text="groupEmployeeName"></div>
         </div>
+        <div class="addthing-detail-container">
+            <div class="addthing-detail-title aui-col-xs-3">参与人</div>
+            <div class="addthing-detail-body aui-col-xs-8" style="text-align: left;">
+                <div v-for="i in participants">{{i}}</div>
+            </div>
+            <select v-model="pickedParticipants" @change="changeParticipants" multiple="multiple">
+                <option v-for="opt in participantsOpts" :value="opt.id" v-text="opt.name"></option>
+            </select>
+            <div class="aui-iconfont aui-icon-right aui-col-xs-1 aui-text-ccc"></div>
+        </div>
         <div class="addthing-detail-container" @click="openBeginTime">
             <div class="addthing-detail-title aui-col-xs-3">开始时间</div>
             <div class="addthing-detail-body aui-col-xs-8" v-text="beginTimeShow"></div>
@@ -145,10 +158,21 @@
             <div class="addthing-detail-body aui-col-xs-8" v-text="endTimeShow"></div>
             <div class="aui-iconfont aui-icon-right aui-col-xs-1 aui-text-ccc"></div>
         </div>
+        <div class="addthing-detail-container">
+            <div class="addthing-detail-title aui-col-xs-4" style="z-index: 1;">培训地点</div>
+            <textarea name="" rows="4" style="border: 0;padding: 5px 0 0;" placeholder="请输入培训地点" v-model="addess">
+            </textarea>
+        </div>
+        <div class="addthing-detail-container">
+            <div class="addthing-detail-title aui-col-xs-4" style="z-index: 1;">培训主题</div>
+            <textarea name="" rows="4" style="border: 0;padding: 5px 0 0;" placeholder="请输入培训主题" v-model="subject">
+            </textarea>
+        </div>
         <div class="addthing-detail-container" @click.stop="addPic">
             <div class="addthing-detail-title aui-col-xs-3">图片</div>
             <div class="addthing-detail-body aui-col-xs-7"></div>
-            <div class="aui-iconfont aui-icon-camera aui-col-xs-2 aui-text-ccc" style="font-size: 25px;font-weight: bold;"></div>
+            <div class="aui-iconfont aui-icon-camera aui-col-xs-2 aui-text-ccc"
+                style="font-size: 25px;font-weight: bold;"></div>
         </div>
         <div class="addthing-detail-container" v-show="imageList.length>0">
             <div class="addthing-imgwrap" style="width:100%;">
@@ -162,6 +186,7 @@
                 </template>
             </div>
         </div>
+
     </div>
     <script src="../../script/api.js"></script>
     <script src="../../script/vue.js"></script>
@@ -182,22 +207,22 @@
                 beginTime: "", //提交的开始时间
                 endTimeShow: "请选择(必填)", //显示的结束时间
                 endTime: "", //提交的结束时间
+                addess: '', // 培训地点
+                subject: '',    // 培训主题
+
+                participantsOpts: [],   // 参与人选项
+                participants: [],   // 参与人展示内容
+                pickedParticipants: [], // 参与人id
 
                 imageList: [],
-                typeList: [],
-                reasonList: [],
                 siteList: [],
-
-                typeSelect: false,
-
             },
             methods: {
-                openBeginTime: function() {
-
+                openBeginTime: function () {
                     api.openPicker({
                         type: "date",
                         title: "请选择开始日期"
-                    }, function(ret, err) {
+                    }, function (ret, err) {
                         var year = ret.year;
                         var month = ret.month;
                         var day = ret.day;
@@ -225,12 +250,11 @@
                     };
 
                 },
-                endEndTime: function() {
-
+                endEndTime: function () {
                     api.openPicker({
                         type: "date",
                         title: "请选择结束日期"
-                    }, function(ret, err) {
+                    }, function (ret, err) {
                         var year = ret.year;
                         var month = ret.month;
                         var day = ret.day;
@@ -258,18 +282,21 @@
                     };
 
                 },
-                changeSite: function() {
+                changeSite: function () {
                     this.mySite = $("#siteSe option:selected").text();
-                    getTypeInfo();
+                    getEmployeesByCheckpointGroup();
+                    this.participantsOpts = [];
+                    this.participants = [];
+                    this.pickedParticipants = [];
                 },
-                changeReason: function() {
-                    this.checkedReasonName = $("#reasonSe option:selected").text();
+                changeParticipants() {
+                    this.participants = [];
+                    this.pickedParticipants.forEach(i => {
+                        this.participants.push((this.participantsOpts.find(p => p.id === i)).name)
+                    });
+                    console.log(this.participants)
                 },
-                changeType: function() {
-                    this.checkedTypeName = $("#typeSe option:selected").text();
-                    getReasonInfo();
-                },
-                addPic: function() {
+                addPic: function () {
                     //选择图片
                     if (vm.imageList.length < 6) {
                         api.getPicture({
@@ -278,15 +305,13 @@
                             allowEdit: true,
                             targetWidth: 800,
                             quality: 50
-                        }, function(ret, err) {
+                        }, function (ret, err) {
                             if (ret && ret.data != "") {
-
                                 vm.imageList.push({
                                     path: ret.data,
                                     thumbPath: ret.data
                                 });
                             }
-
                         });
 
                     } else {
@@ -297,17 +322,17 @@
                         });
                     }
                 },
-                delPic: function(index) {
+                delPic: function (index) {
                     this.imageList.splice(index, 1);
                 }
             },
-            init: function() {
+            init: function () {
                 effect();
             }
         });
 
 
-        apiready = function() {
+        apiready = function () {
 
             api.parseTapmode();
 
@@ -318,25 +343,22 @@
             getSiteList();
         };
 
-
         //获取工地列表
         function getSiteList() {
-
             var url = $api.getStorage("interface_url") + api_url.getMyCheckpointGroups;
-
             Ajax({
                 type: "get",
                 url: url,
                 data: {
                     access_token: $api.getStorage("access_token"),
                 },
-                beforeSend: function() {
+                beforeSend: function () {
                     vm.loading = true;
                 },
-                complete: function() {
+                complete: function () {
                     vm.loading = false;
                 },
-                success: function(data) {
+                success: function (data) {
                     if (data.success) {
                         if (data.list.length > 0) {
                             for (var i = 0; i < data.list.length; i++) {
@@ -347,6 +369,7 @@
                             }
                             vm.mySite = data.list[0].name;
                             vm.pickedSite = data.list[0].id;
+                            getEmployeesByCheckpointGroup();
                         } else {
                             vm.mySite = "未查询到工地信息";
                             vm.pickedSite = "";
@@ -361,6 +384,39 @@
             });
 
         };
+
+        // 获取选中的工地的人员列表
+        function getEmployeesByCheckpointGroup() {
+            var url = $api.getStorage("interface_url") + api_url.getEmployeesByCheckpointGroup;
+            Ajax({
+                type: "get",
+                url: url + '?groupId=' + vm.pickedSite,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                },
+                beforeSend: function () {
+                    vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+                    if (data.success) {
+                        if (data.list.length > 0) {
+                            data.list.forEach(i => {
+                                vm.participantsOpts.push({
+                                    id: i.id,
+                                    name: i.user.name + ' - ' + i.job.name
+                                })
+                            });
+                        }
+                    }
+
+                }
+
+            });
+
+        }
 
         //停复工申请
         function submitApply() {
@@ -465,7 +521,7 @@
                             file: image_array
                         }
                     }
-                }, function(ret, err) {
+                }, function (ret, err) {
 
                     if (ret.status == 0) { //上传中
                         api.showProgress({
@@ -547,15 +603,15 @@
                         extra: JSON.stringify(items),
                         beginDate: vm.beginTime,
                     },
-                    beforeSend: function() {
+                    beforeSend: function () {
                         api.showProgress({
                             title: "提交信息"
                         });
                     },
-                    complete: function() {
+                    complete: function () {
                         api.hideProgress();
                     },
-                    success: function(data) {
+                    success: function (data) {
 
                         if (data.success) {
 
@@ -563,7 +619,7 @@
                                 title: "提示",
                                 msg: data.data ? data.data : "提交成功！",
                                 buttons: ["确定"]
-                            }, function(ret, err) {
+                            }, function (ret, err) {
 
                                 openWin("rate/off_work/my_list_win");
                                 closeWin();
