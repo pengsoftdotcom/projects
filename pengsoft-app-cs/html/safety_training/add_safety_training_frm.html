@@ -153,13 +153,15 @@
         <div class="addthing-detail-container">
             <div class="addthing-detail-title aui-col-xs-3">开始时间</div>
             <div class="addthing-detail-body aui-col-xs-8" v-text="beginTimeShow"></div>
-            <input type="datetime-local" v-model="beginTimeShow" class="hidden-input" :disabled="pageType==='detail'">
+            <input type="datetime-local" @change="changeBeginTime" v-model="beginTime" class="hidden-input"
+                :disabled="pageType==='detail'">
             <div class="aui-iconfont aui-icon-right aui-col-xs-1 aui-text-ccc"></div>
         </div>
         <div class="addthing-detail-container">
             <div class="addthing-detail-title aui-col-xs-3">结束时间</div>
             <div class="addthing-detail-body aui-col-xs-8" v-text="endTimeShow"></div>
-            <input type="datetime-local" v-model="endTimeShow" class="hidden-input" :disabled="pageType==='detail'">
+            <input type="datetime-local" @change="changeEndTime" v-model="endTime" class="hidden-input"
+                :disabled="pageType==='detail'">
             <div class="aui-iconfont aui-icon-right aui-col-xs-1 aui-text-ccc"></div>
         </div>
         <div class="addthing-detail-container">
@@ -212,9 +214,9 @@
                 pickedSite: "", //工地ID
                 groupEmployeeName: '',
                 beginTimeShow: "请选择(必填)", //显示的开始时间
-                beginTime: "", //提交的开始时间
+                beginTime: "请选择(必填)", //显示的开始时间
                 endTimeShow: "请选择(必填)", //显示的结束时间
-                endTime: "", //提交的结束时间
+                endTime: "请选择(必填)", //显示的结束时间
                 address: '', // 培训地点
                 subject: '', // 培训主题
 
@@ -226,74 +228,6 @@
                 siteList: [],
             },
             methods: {
-                openBeginTime: function () {
-                    if (this.pageType === 'add') {
-                        api.openPicker({
-                            type: "date",
-                            title: "请选择开始日期"
-                        }, function (ret, err) {
-                            var year = ret.year;
-                            var month = ret.month;
-                            var day = ret.day;
-
-                            var date1 = new Date(year, month - 1, day).getTime();
-                            var now = new Date();
-                            var date2 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-
-                            if (date1 < date2) {
-                                api.toast({
-                                    msg: "不能选以前的日期！",
-                                    duration: 3000
-                                });
-                                return false;
-                            }
-
-                            var datetime = year + "/" + p(month) + "/" + p(day);
-                            vm.beginTimeShow = datetime;
-                            vm.beginTime = datetime;
-
-                        });
-                    }
-
-                    function p(s) {
-                        return s < 10 ? "0" + s : s;
-                    };
-
-                },
-                endEndTime: function () {
-                    if (this.pageType === 'add') {
-                        api.openPicker({
-                            type: "date",
-                            title: "请选择结束日期"
-                        }, function (ret, err) {
-                            var year = ret.year;
-                            var month = ret.month;
-                            var day = ret.day;
-
-                            var date1 = new Date(year, month - 1, day).getTime();
-                            var now = new Date();
-                            var date2 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-
-                            if (date1 < date2) {
-                                api.toast({
-                                    msg: "不能选以前的日期！",
-                                    duration: 3000
-                                });
-                                return false;
-                            }
-
-                            var datetime = year + "/" + p(month) + "/" + p(day);
-                            vm.endTimeShow = datetime;
-                            vm.endTime = datetime;
-
-                        });
-                    }
-
-                    function p(s) {
-                        return s < 10 ? "0" + s : s;
-                    };
-
-                },
                 changeSite: function () {
                     this.mySite = $("#siteSe option:selected").text();
                     getEmployeesByCheckpointGroup();
@@ -306,6 +240,12 @@
                     this.pickedParticipants.forEach(i => {
                         this.participants.push((this.participantsOpts.find(p => p.id === i)).name)
                     });
+                },
+                changeBeginTime() {
+                    this.beginTimeShow = this.beginTime.replace('T', ' ').substring(0, 19)
+                },
+                changeEndTime() {
+                    this.endTimeShow = this.endTime.replace('T', ' ').substring(0, 19)
                 },
                 addPic: function () {
                     //选择图片
