@@ -151,16 +151,10 @@
             <div class="aui-iconfont aui-icon-right aui-col-xs-1 aui-text-ccc"></div>
         </div>
         <div class="addthing-detail-container">
-            <div class="addthing-detail-title aui-col-xs-3">开始时间</div>
-            <div class="addthing-detail-body aui-col-xs-8" v-text="beginTimeShow"></div>
-            <input type="datetime-local" v-model="beginTimeShow" class="hidden-input" :disabled="pageType==='detail'">
-            <div class="aui-iconfont aui-icon-right aui-col-xs-1 aui-text-ccc"></div>
-        </div>
-        <div class="addthing-detail-container">
-            <div class="addthing-detail-title aui-col-xs-3">结束时间</div>
-            <div class="addthing-detail-body aui-col-xs-8" v-text="endTimeShow"></div>
-            <input type="datetime-local" v-model="endTimeShow" class="hidden-input" :disabled="pageType==='detail'">
-            <div class="aui-iconfont aui-icon-right aui-col-xs-1 aui-text-ccc"></div>
+            <div class="addthing-detail-title aui-col-xs-4" style="z-index: 1;">培训主题</div>
+            <textarea name="" rows="4" style="border: 0;padding: 5px 0 0;" placeholder="请输入培训主题" v-model="subject"
+                :disabled="pageType==='detail'">
+            </textarea>
         </div>
         <div class="addthing-detail-container">
             <div class="addthing-detail-title aui-col-xs-4" style="z-index: 1;">培训地点</div>
@@ -169,13 +163,19 @@
             </textarea>
         </div>
         <div class="addthing-detail-container">
-            <div class="addthing-detail-title aui-col-xs-4" style="z-index: 1;">培训主题</div>
-            <textarea name="" rows="4" style="border: 0;padding: 5px 0 0;" placeholder="请输入培训主题" v-model="subject"
-                :disabled="pageType==='detail'">
-            </textarea>
+            <div class="addthing-detail-title aui-col-xs-3">开始时间</div>
+            <div class="addthing-detail-body aui-col-xs-8" v-text="beginTimeShow"></div>
+            <input type="datetime-local" v-model="beginTimeShow" class="hidden-input" :disabled="pageType==='detail'">
+            <div class="aui-iconfont aui-icon-right aui-col-xs-1 aui-text-ccc"></div>
         </div>
-        <div class="addthing-detail-container" @click.stop="addPic" v-if="pageType==='add'">
-            <div class="addthing-detail-title aui-col-xs-3">图片</div>
+        <div class="addthing-detail-container">
+            <div class="addthing-detail-title aui-col-xs-3">结束时间</div>
+            <div class="addthing-detail-body aui-col-xs-8" v-text="endTimeShow"></div>
+            <div class="aui-iconfont aui-icon-right aui-col-xs-1 aui-text-ccc"></div>
+        </div>
+        <div class="addthing-detail-container" @click.stop="addPic"
+            v-if="pageType==='detail' && dateActualStarted && !endTimeShow">
+            <div class="addthing-detail-title aui-col-xs-3">培训图片</div>
             <div class="addthing-detail-body aui-col-xs-7"></div>
             <div class="aui-iconfont aui-icon-camera aui-col-xs-2 aui-text-ccc"
                 style="font-size: 25px;font-weight: bold;"></div>
@@ -208,12 +208,14 @@
 
                 pageType: 'add', // 页面类型 add | detail
 
+                id: '',
                 mySite: "", //工地名字
                 pickedSite: "", //工地ID
                 groupEmployeeName: '',
                 beginTimeShow: "请选择(必填)", //显示的开始时间
                 beginTime: "", //提交的开始时间
                 endTimeShow: "请选择(必填)", //显示的结束时间
+                dateActualStarted: "",
                 endTime: "", //提交的结束时间
                 address: '', // 培训地点
                 subject: '', // 培训主题
@@ -226,74 +228,6 @@
                 siteList: [],
             },
             methods: {
-                openBeginTime: function () {
-                    if (this.pageType === 'add') {
-                        api.openPicker({
-                            type: "date",
-                            title: "请选择开始日期"
-                        }, function (ret, err) {
-                            var year = ret.year;
-                            var month = ret.month;
-                            var day = ret.day;
-
-                            var date1 = new Date(year, month - 1, day).getTime();
-                            var now = new Date();
-                            var date2 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-
-                            if (date1 < date2) {
-                                api.toast({
-                                    msg: "不能选以前的日期！",
-                                    duration: 3000
-                                });
-                                return false;
-                            }
-
-                            var datetime = year + "/" + p(month) + "/" + p(day);
-                            vm.beginTimeShow = datetime;
-                            vm.beginTime = datetime;
-
-                        });
-                    }
-
-                    function p(s) {
-                        return s < 10 ? "0" + s : s;
-                    };
-
-                },
-                endEndTime: function () {
-                    if (this.pageType === 'add') {
-                        api.openPicker({
-                            type: "date",
-                            title: "请选择结束日期"
-                        }, function (ret, err) {
-                            var year = ret.year;
-                            var month = ret.month;
-                            var day = ret.day;
-
-                            var date1 = new Date(year, month - 1, day).getTime();
-                            var now = new Date();
-                            var date2 = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
-
-                            if (date1 < date2) {
-                                api.toast({
-                                    msg: "不能选以前的日期！",
-                                    duration: 3000
-                                });
-                                return false;
-                            }
-
-                            var datetime = year + "/" + p(month) + "/" + p(day);
-                            vm.endTimeShow = datetime;
-                            vm.endTime = datetime;
-
-                        });
-                    }
-
-                    function p(s) {
-                        return s < 10 ? "0" + s : s;
-                    };
-
-                },
                 changeSite: function () {
                     this.mySite = $("#siteSe option:selected").text();
                     getEmployeesByCheckpointGroup();
@@ -318,10 +252,7 @@
                             quality: 50
                         }, function (ret, err) {
                             if (ret && ret.data != "") {
-                                vm.imageList.push({
-                                    path: ret.data,
-                                    thumbPath: ret.data
-                                });
+                                addPicture(ret.data);
                             }
                         });
 
@@ -346,22 +277,24 @@
         apiready = function () {
 
             api.parseTapmode();
+            vm.subject = "测试培训-" + new Date().getTime();
+            vm.address = "测试地点";
             // 有item,就是详情进来的,
             if (api.pageParam.item) {
                 var itemDetail = api.pageParam.item;
                 // 初始化数据
+                vm.id = itemDetail.id;
                 vm.pageType = 'detail';
                 vm.mySite = itemDetail.group.name;
                 vm.groupEmployeeName = itemDetail.trainer.employee.user.name;
                 vm.participants = itemDetail.participants.map(i => i.employee.user.name + ' - ' + i.employee.job.name);
                 vm.beginTimeShow = itemDetail.dateStarted;
                 vm.endTimeShow = itemDetail.dateEnded;
+                vm.dateActualStarted = itemDetail.dateActualStarted;
                 vm.address = itemDetail.address;
                 vm.subject = itemDetail.subject;
                 vm.imageList = itemDetail.files;
-            }
-            //没有,就是新增
-            else {
+            } else {
                 var user = $api.getStorage("user");
                 vm.groupEmployeeName = user.name;
                 vm.pageType = 'add';
@@ -369,6 +302,53 @@
             }
 
         };
+
+        var uploadTimes = 0;
+        function addPicture(file) {
+            if (uploadTimes == 0) {
+                api.showProgress({ title: "上传", text: "进度：0%" });
+            } else {
+                api.showProgress({ title: "上传", text: "进度：100%" });
+            }
+            api.ajax({
+                url: $api.getStorage("interface_url") + api_url.fileUpload + "?access_token=" + $api.getStorage("access_token"),
+                method: "post",
+                timeout: 30000,
+                report: true,
+                data: {
+                    files: {
+                        file
+                    }
+                }
+            }, function (ret, err) {
+                if (ret.status == 0) {  //上传中
+                    api.showProgress({ title: "上传", text: "进度：" + ret.progress + "%" });
+                } else if (ret.status == 1 && ret.body.success) {  //上传完成
+                    //重置上次文件错误执行次数
+                    uploadTimes = 0;
+                    vm.imageList.push({
+                        id: ret.body.data.id,
+                        path: file,
+                        thumbPath: file
+                    })
+                } else {  //上传失败
+                    if (uploadTimes < 4) {  //5次上次失败机会
+                        //上次文件错误执行次数+1
+                        uploadTimes += 1;
+                        addPicture(file);  //递归上传
+                    } else {
+                        api.hideProgress();
+                        if (ret.statusCode == 500) {
+                            api.alert({ title: "错误", msg: "上传失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                        } else {
+                            api.alert({ title: "错误", msg: "上传失败：网络错误，请检查网络设置！", buttons: ["确定"] });
+                        }
+
+                    }
+
+                }
+            }
+        }
 
         //获取工地列表
         function getSiteList() {
@@ -456,7 +436,8 @@
                     access_token: $api.getStorage("access_token"),
                     "group.id": vm.pickedSite,
                     subject: vm.subject,
-                    address: vm.address
+                    address: vm.address,
+                    dateTimeStarted: vm.beginTimeShow.replace('T', ' ').substring(0, 19)
                 },
                 beforeSend: function () {
                     vm.loading = true;
@@ -469,6 +450,134 @@
                         api.alert({
                             title: "提示",
                             msg: "提交成功！",
+                            buttons: ["确定"]
+                        });
+                    } else {
+                        vm.loadingFail = true; //加载失败
+                    }
+
+                }
+            });
+        }
+
+        function start() {
+            var url = $api.getStorage("interface_url") + api_url.startSafetyTraining;
+            Ajax({
+                type: "post",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    id: vm.id,
+                },
+                beforeSend: function () {
+                    vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+                    if (data.success) {
+                        api.alert({
+                            title: "提示",
+                            msg: "开始成功！",
+                            buttons: ["确定"]
+                        });
+                    } else {
+                        vm.loadingFail = true; //加载失败
+                    }
+
+                }
+            });
+        }
+
+        function end() {
+            if (!vm.imageList || vm.imageList.length === 0) {
+                api.alert({
+                    title: "提示",
+                    msg: "请上传培训图片",
+                    buttons: ["确定"]
+                });
+                return;
+            }
+            var url = $api.getStorage("interface_url") + api_url.endSafetyTraining;
+            Ajax({
+                type: "post",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    id: vm.id
+                },
+                beforeSend: function () {
+                    vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+                    if (data.success) {
+                        api.alert({
+                            title: "提示",
+                            msg: "结束成功！",
+                            buttons: ["确定"]
+                        });
+                    } else {
+                        vm.loadingFail = true; //加载失败
+                    }
+
+                }
+            });
+        }
+
+        function join() {
+            var url = $api.getStorage("interface_url") + api_url.joinSafetyTraining;
+            Ajax({
+                type: "post",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    id: vm.id
+                },
+                beforeSend: function () {
+                    vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+                    if (data.success) {
+                        api.alert({
+                            title: "提示",
+                            msg: "参加成功！",
+                            buttons: ["确定"]
+                        });
+                    } else {
+                        vm.loadingFail = true; //加载失败
+                    }
+
+                }
+            });
+        }
+
+        function leave() {
+            var url = $api.getStorage("interface_url") + api_url.leaveSafetyTraining;
+            Ajax({
+                type: "post",
+                url: url,
+                data: {
+                    access_token: $api.getStorage("access_token"),
+                    id: vm.id
+                },
+                beforeSend: function () {
+                    vm.loading = true;
+                },
+                complete: function () {
+                    vm.loading = false;
+                },
+                success: function (data) {
+                    if (data.success) {
+                        api.alert({
+                            title: "提示",
+                            msg: "请假成功！",
                             buttons: ["确定"]
                         });
                     } else {

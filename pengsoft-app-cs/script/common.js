@@ -114,6 +114,10 @@
     getEmployeesByCheckpointGroup: "service/event/checkpoint-group-employee/employees-by-checkpoint-group", //工地员工
 
     submitSafetyTraining: "service/const/checkpoint-group-safety-training/submit", // 提交安全培训
+    startSafetyTraining: "service/const/checkpoint-group-safety-training/start", // 提交安全培训
+    endSafetyTraining: "service/const/checkpoint-group-safety-training/end", // 提交安全培训
+    joinSafetyTraining: "service/const/checkpoint-group-safety-training-participant/join", // 提交安全培训
+    leaveSafetyTraining: "service/const/checkpoint-group-safety-training-participant/leave", // 提交安全培训
     mySafetyTrainings: "service/const/checkpoint-group-safety-training/my-safety-trainings",  //安全培训列表
 };
 

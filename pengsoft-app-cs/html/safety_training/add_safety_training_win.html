@@ -28,7 +28,7 @@
             <a class="aui-btn aui-btn-custom aui-btn-block" tapmode @click="submit();">提交</a>
         </template>
 
-        <template v-if="pageType === 'detail' && userRole === 'ROL_WORKER'">
+        <template v-if="pageType === 'detail' && userRole === 'ROL_WORKER' && !api.pageParam.item.dateEnded">
             <div class="aui-col-xs-6 aui-padded-5">
                 <a class="aui-btn aui-btn-block aui-btn-success" v-effect="light" tapmode @click="join();">参加</a>
             </div>
@@ -37,10 +37,10 @@
             </div>
         </template>
 
-        <template v-if="pageType === 'detail' && userRole === 'ROL_SECURITY_OFFICER'">
+        <template v-if="pageType === 'detail' && userRole === 'ROL_SECURITY_OFFICER' && !item.dateActualStarted">
             <a class="aui-btn aui-btn-block aui-btn-success" v-effect="light" tapmode @click="start();">开始</a>
         </template>
-        <template v-if="pageType === 'detail' && userRole === 'ROL_SECURITY_OFFICER'">
+        <template v-if="pageType === 'detail' && userRole === 'ROL_SECURITY_OFFICER' && !item.dateEnded && item.dateActualStarted">
             <a class="aui-btn aui-btn-block aui-btn-danger" v-effect="light" tapmode @click="end();">结束</a>
         </template>
     </footer>
@@ -53,6 +53,7 @@
             data: {
                 pageType: 'add', // 页面类型 add | detail
                 userRole: 'ROL_SECURITY_OFFICER',   // ROL_WORKER | ROL_SECURITY_OFFICER
+                item: {}
             },
             methods: {
                 submit() {
@@ -62,16 +63,41 @@
                         script: "submit();"
                     });
                 },
-                join() { },
-                leave() { },
-                start() { },
-                end() { },
+                join() { 
+                    api.execScript({
+                        name: "safety_training/add_safety_training_win",
+                        frameName: "safety_training/add_safety_training_frm",
+                        script: "join();"
+                    });
+                },
+                leave() { 
+                    api.execScript({
+                        name: "safety_training/add_safety_training_win",
+                        frameName: "safety_training/add_safety_training_frm",
+                        script: "leave();"
+                    });
+                },
+                start() { 
+                    api.execScript({
+                        name: "safety_training/add_safety_training_win",
+                        frameName: "safety_training/add_safety_training_frm",
+                        script: "start();"
+                    });
+                },
+                end() { 
+                    api.execScript({
+                        name: "safety_training/add_safety_training_win",
+                        frameName: "safety_training/add_safety_training_frm",
+                        script: "end();"
+                    });
+                },
             },
         });
 
         apiready = function () {
             api.parseTapmode();
             setStatusBarStyle("light");
+            vm.item = api.pageParam.item;
             // 状态更新
             vm.pageType = api.pageParam.item ? 'detail' : 'add';
 

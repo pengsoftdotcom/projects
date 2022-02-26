@@ -63,13 +63,13 @@
                     <button class="state-back" :class="statusObj[item.status].statusClass"
                         v-text="statusObj[item.status].statusName"></button>
                     <div class="f-fs14 aui-text-999">
-                        地址: {{item.address}}
+                        建筑工地: {{item.group.name}}
                     </div>
                     <div class="f-fs14 aui-text-999">
-                        项目: {{item.group.name}}
+                        培训地点: {{item.address}}
                     </div>
                     <div class="f-fs14 aui-text-999">
-                        培训人: {{item.trainer.employee.user.name}}
+                        <span style="letter-spacing: 0.5em; margin-right: -0.5em">培训人</span>: {{item.trainer.employee.user.name}}
                     </div>
                     <div class="f-fs14 aui-text-999">
                         开始时间: {{item.dateStarted}}
@@ -212,11 +212,16 @@
                                 vm.noData = true;
                                 return false;
                             }
-                            console.log(JSON.stringify(data))
                             //向界面依次添加列表
                             for (var i = 0; i < data.page.content.length; i++) {
                                 var dataDetail = data.page.content[i];
-                                dataDetail.status = '1';
+                                if (dataDetail.dateEnded) {
+                                    dataDetail.status = "3";
+                                } else if (dataDetail.dateActualStarted) {
+                                    dataDetail.status = "2";
+                                } else {
+                                    dataDetail.status = "1";
+                                }
                                 vm.lists.push(dataDetail);
                             }
 
