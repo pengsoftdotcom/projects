@@ -1,0 +1,279 @@
+﻿<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport"
+        content="maximum-scale=1.0,minimum-scale=1.0,user-scalable=0,width=device-width,initial-scale=1.0" />
+    <meta name="format-detection" content="telephone=no,email=no,date=no,address=no">
+    <title>列表——frm</title>
+    <link rel="stylesheet" type="text/css" href="../../css/aui.css" />
+    <link rel="stylesheet" type="text/css" href="../../css/custom.css" />
+    <style type="text/css">
+        .card-list-wrap {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .card-list-item {
+            width: 45%;
+            margin: 4px;
+            padding: 8px;
+            flex: none;
+            background: #fff;
+            border-radius: 8px;
+        }
+
+        .state-back {
+            position: absolute;
+            right: 10px;
+            top: 8px;
+            color: #ffffff;
+            text-align: center;
+            padding: 3px;
+            height: 26px;
+            line-height: 16px;
+        }
+
+        .unstarted {
+            background-color: #e74c3c;
+        }
+
+        .taining {
+            background-color: #2ecc71;
+        }
+
+        .ended {
+            background-color: #e7e7e7;
+        }
+    </style>
+</head>
+
+<body class="bg-gray">
+    <script type="text/javascript">
+        var ele = document.getElementsByTagName("html")[0],
+            size = document.body.clientWidth / 320 * 100;
+        ele.style.fontSize = size + "px";
+    </script>
+    <div class="loading-wrap bg-gray" v-show="loading">
+        <div class="spinner"></div>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="loadingFail" style="display:none;">
+        <p class="fail-info">加载失败</p>
+    </div>
+    <div class="fail-wrap bg-gray" v-show="noData" style="display:none;">
+        <p class="fail-info">暂无数据</p>
+    </div>
+    <div class="aui-content wui-news-wrap" style="padding-top: 10px;">
+
+        <div class="card-list-wrap">
+            <template v-for="item in lists">
+                <div class="card-list-item" v-on:click="openDetail(item)">
+                    <div class="aui-text-333 text-all-center">{{item.title}}</div>
+                    <div class="f-fs14 aui-text-success text-all-center" style="padding: 8px;">{{item.total}}</div>
+                    <div class="f-fs14 aui-col-xs-6">
+                        已填报: <span class="aui-text-success">{{item.num1}}</span>
+                    </div>
+                    <div class="f-fs14 aui-col-xs-6">
+                        未填报: <span class="aui-text-danger">{{item.num2}}</span>
+                    </div>
+                </div>
+            </template>
+        </div>
+    </div>
+    <script src="../../script/api.js"></script>
+    <script src="../../script/vue.js"></script>
+    <script src="../../script/common.js"></script>
+    <script>
+        var vm = new Vue({
+            el: "body",
+            data: {
+                //界面相关参数
+                loading: false, //是否显示：全局加载
+                loadingFail: false, //是否显示：全局加载失败
+                noData: false, //是否显示：全局暂无数据
+                noMore: false, //是否显示：没有更多数据
+                loadTips: "", //1.没有更多数据了  2.正在加载中...  3.上拉加载更多
+                pullDownRefresh: false, //下拉刷新
+
+                //列表相关参数
+                isResult: true, //判断上次ajax是否返回
+                pageCount: 0, //当前页数
+                lists: [
+                    { title: '技术中心技术中心技术中心技术中心', total: '123', num1: '11', num2: '22' },
+                    { title: '技术中心', total: '123', num1: '11', num2: '22' },
+                    { title: '技术中心', total: '123', num1: '11', num2: '22' },
+                    { title: '技术中心', total: '123', num1: '11', num2: '22' },
+                ], //列表数组
+
+                statusObj: {
+                    '1': {
+                        statusName: '未开始',
+                        statusClass: 'unstarted'
+                    },
+                    '2': {
+                        statusName: '进行中',
+                        statusClass: 'taining'
+                    },
+                    '3': {
+                        statusName: '已结束',
+                        statusClass: 'ended'
+                    },
+                }
+            },
+            methods: {
+                openDetail: function (item) { //打开详情
+                    openWin("safety_training/add_safety_training_win", {
+                        item: item
+                    });
+                },
+            }
+        });
+
+
+        apiready = function () {
+
+            api.parseTapmode();
+
+            setTimeout(function () {
+
+                vm.$nextTick(function () {
+
+                    getListData();
+
+                    //下拉刷新
+                    api.setRefreshHeaderInfo({
+                        bgColor: "#efefef",
+                        textColor: "#333",
+                        textDown: "下拉刷新",
+                        textUp: "释放立即刷新",
+                    }, function (ret, err) {
+
+                        vm.pullDownRefresh = true;
+                        vm.pageCount = 0;
+                        getListData();
+
+                    });
+
+                    //上拉加载
+                    api.addEventListener({
+                        name: "scrolltobottom",
+                        extra: {
+                            threshold: 0
+                        }
+                    }, function (ret, err) {
+
+                        if (!vm.noMore) {
+
+                            vm.loadTips = "正在加载中...";
+                            getListData();
+
+                        }
+
+                    });
+
+                });
+
+            }, 300);
+
+        };
+
+
+        //页面初始化
+        function getListData() {
+            // if (vm && vm.isResult) {
+
+            //     //拼接接口地址：分页获取新闻
+            //     var url = $api.getStorage("interface_url") + api_url.mySafetyTrainings;
+
+            //     Ajax({
+            //         type: "get",
+            //         url: url,
+            //         data: {
+            //             type: "CONST_NEWS",
+            //             page: vm.pageCount,
+            //             access_token: $api.getStorage("access_token"),
+            //             size: 5
+            //         },
+            //         beforeSend: function () {
+            //             vm.isResult = false;
+            //         },
+            //         complete: function () {
+            //             vm.isResult = true;
+            //             vm.loading = false;
+            //             vm.loadingFail = false;
+            //             vm.noData = false;
+            //             api.refreshHeaderLoadDone();
+            //         },
+            //         success: function (data) {
+            //             if (data.success) {
+
+
+            //                 //如果是下拉刷新，则需要清空列表
+            //                 if (vm.pullDownRefresh) {
+            //                     vm.lists.splice(0, vm.lists.length);
+            //                 }
+
+            //                 //如果一条数据都没有，将在界面显示“暂无数据”
+            //                 if (data.page.content.length == 0 && vm.lists.length == 0) {
+            //                     vm.noData = true;
+            //                     return false;
+            //                 }
+            //                 //向界面依次添加列表
+            //                 for (var i = 0; i < data.page.content.length; i++) {
+            //                     var dataDetail = data.page.content[i];
+            //                     if (dataDetail.dateEnded) {
+            //                         dataDetail.status = "3";
+            //                     } else if (dataDetail.dateActualStarted) {
+            //                         dataDetail.status = "2";
+            //                     } else {
+            //                         dataDetail.status = "1";
+            //                     }
+            //                     vm.lists.push(dataDetail);
+            //                 }
+
+            //                 //判断是否还有未加载到界面的数据
+            //                 if (data.page.content.length < 5) {
+            //                     vm.loadTips = "没有更多数据了";
+            //                     vm.noMore = true;
+            //                 } else {
+            //                     vm.loadTips = "上拉加载更多";
+            //                     vm.noMore = false;
+            //                 }
+            //                 vm.pageCount += 1;
+
+            //             } else {
+            //                 vm.loadingFail = true;  //加载失败
+            //             }
+
+            //             vm.pullDownRefresh = false;
+
+            //         }
+            //     });
+
+            // }
+
+        };
+
+
+        //格式化时间
+        function formatDatetime(datetime) {
+
+            var time = new Date(datetime);
+            var year = time.getFullYear();
+            var month = p(time.getMonth() + 1);
+            var day = p(time.getDate());
+
+            return year + "/" + month + "/" + day;
+
+            function p(s) {
+                return s < 10 ? "0" + s : s;
+            };
+
+        };
+
+    </script>
+</body>
+
+</html>
