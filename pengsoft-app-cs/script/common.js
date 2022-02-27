@@ -271,9 +271,9 @@ function Ajax(obj) {
 
                 } else {
                     if (obj.error) {
-                        obj.error(err);  //error
+                        obj.error(err);  //error  
                     } else {
-                        switch (err.statusCode) {
+                        switch (err.statusCode) { 
 
                             case 0:
                                 if (vm && vm.timeOut) { vm.timeOut = true; }
@@ -283,7 +283,11 @@ function Ajax(obj) {
                                 api.alert({ title: "错误", msg: "请求地址错误！", buttons: ["确定"] });
                                 break;
                             default:
-                                api.alert({ title: "错误", msg: JSON.stringify(err), buttons: ["确定"] });
+                                if (err.body && err.body.error && err.body.error.message) {
+                                    api.alert({ title: "错误", msg: err.body.error.message, buttons: ["确定"] });
+                                } else {
+                                    api.alert({ title: "错误", msg: JSON.stringify(err), buttons: ["确定"] });
+                                }
                                 break;
                         }
 

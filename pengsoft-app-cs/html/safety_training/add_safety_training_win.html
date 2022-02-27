@@ -28,7 +28,7 @@
             <a class="aui-btn aui-btn-custom aui-btn-block" tapmode @click="submit();">提交</a>
         </template>
 
-        <template v-if="pageType === 'detail' && userRole === 'ROL_WORKER' && !item.dateEnded">
+        <template v-if="item.workButtonsVisible">
             <div class="aui-col-xs-6 aui-padded-5">
                 <a class="aui-btn aui-btn-block aui-btn-success" v-effect="light" tapmode @click="join();">参加</a>
             </div>
@@ -40,7 +40,8 @@
         <template v-if="pageType === 'detail' && userRole === 'ROL_SECURITY_OFFICER' && !item.dateActualStarted">
             <a class="aui-btn aui-btn-block aui-btn-success" v-effect="light" tapmode @click="start();">开始</a>
         </template>
-        <template v-if="pageType === 'detail' && userRole === 'ROL_SECURITY_OFFICER' && !item.dateEnded && item.dateActualStarted">
+        <template
+            v-if="pageType === 'detail' && userRole === 'ROL_SECURITY_OFFICER' && !item.dateEnded && item.dateActualStarted">
             <a class="aui-btn aui-btn-block aui-btn-danger" v-effect="light" tapmode @click="end();">完成</a>
         </template>
     </footer>
@@ -63,28 +64,28 @@
                         script: "submit();"
                     });
                 },
-                join() { 
+                join() {
                     api.execScript({
                         name: "safety_training/add_safety_training_win",
                         frameName: "safety_training/add_safety_training_frm",
                         script: "join();"
                     });
                 },
-                leave() { 
+                leave() {
                     api.execScript({
                         name: "safety_training/add_safety_training_win",
                         frameName: "safety_training/add_safety_training_frm",
                         script: "leave();"
                     });
                 },
-                start() { 
+                start() {
                     api.execScript({
                         name: "safety_training/add_safety_training_win",
                         frameName: "safety_training/add_safety_training_frm",
                         script: "start();"
                     });
                 },
-                end() { 
+                end() {
                     api.execScript({
                         name: "safety_training/add_safety_training_win",
                         frameName: "safety_training/add_safety_training_frm",
@@ -99,13 +100,22 @@
             setStatusBarStyle("light");
             vm.item = api.pageParam.item;
             // 状态更新
-            vm.pageType = api.pageParam.item ? 'detail' : 'add';
+            vm.pageType = vm.item ? 'detail' : 'add';
 
             var user = $api.getStorage("user");
             if (user.roleList.find(i => i.code === 'ROL_SECURITY_OFFICER')) {
                 vm.userRole = 'ROL_SECURITY_OFFICER';
             } else if (user.roleList.find(i => i.code === 'ROL_WORKER')) {
                 vm.userRole = 'ROL_WORKER';
+            }
+            if (pageType === 'detail' && userRole === 'ROL_WORKER' && !vm.item.dateEnded) {
+                if (vm.item.participants) {
+                    vm.item.participants.forEach(participant => {
+                        if (participant.employee.user.id === user.id && participant.dateConfirmed) {
+                            vm.item.workButtonsVisible = true;
+                        }
+                    });
+                }
             }
 
             vm.$nextTick(() => {
@@ -121,7 +131,7 @@
                         h: api.winHeight - $api.offset($api.byId("header")).h - $api.offset($api.byId("footer")).h
                     },
                     pageParam: {
-                        item: api.pageParam.item,
+                        item: vm.item,
                     }
                 });
             })
