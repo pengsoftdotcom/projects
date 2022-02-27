@@ -1948,6 +1948,9 @@ a.waves-effect .waves-ripple {
 .index-nav li.active-summary {
 	background-image: url(../image/active-summary.png);
 }
+.index-nav li.safety-training {
+	background-image: url(../image/safety-training.png);
+}
 .index-nav li.active {
 	background-color: #1e64b5;
 }
@@ -1965,6 +1968,9 @@ a.waves-effect .waves-ripple {
 }
 .index-nav li.active-summary.active {
 	background-image: url(../image/active-summary2.png);
+}
+.index-nav li.safety-training.active {
+	background-image: url(../image/safety-training2.png);
 }
 /* 按钮 */
 .index-scan-btn {
