@@ -200,13 +200,10 @@
                     },
                     success: function (data) {
                         if (data.success) {
-
-
                             //如果是下拉刷新，则需要清空列表
                             if (vm.pullDownRefresh) {
                                 vm.lists.splice(0, vm.lists.length);
                             }
-
                             //如果一条数据都没有，将在界面显示“暂无数据”
                             if (data.page.content.length == 0 && vm.lists.length == 0) {
                                 vm.noData = true;

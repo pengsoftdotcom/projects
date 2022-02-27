@@ -188,7 +188,7 @@
                 <template v-for="image in imageList">
                     <div class="img-item">
                         <div class="img-div text-all-center" :style="{backgroundImage: 'url('+image.thumbPath+')'}">
-                            <span class="del-btn" @click.stop="delPic($index)">
+                            <span v-if="!endTimeShow" class="del-btn" @click.stop="delPic($index)">
                                 <i class="aui-iconfont aui-icon-close"></i>
                             </span>
                         </div>
@@ -261,7 +261,7 @@
                             quality: 50
                         }, function (ret, err) {
                             if (ret && ret.data != "") {
-                                addPicture(ret.data);
+                                uploadPicture(ret.data);
                             }
                         });
 
@@ -284,7 +284,6 @@
 
 
         apiready = function () {
-
             api.parseTapmode();
             vm.subject = "测试培训-" + new Date().getTime();
             vm.address = "测试地点";
@@ -296,13 +295,14 @@
                 vm.pageType = 'detail';
                 vm.mySite = itemDetail.group.name;
                 vm.groupEmployeeName = itemDetail.trainer.employee.user.name;
-                vm.participants = itemDetail.participants.map(i => i.employee.user.name + ' - ' + i.employee.job.name);
+                vm.participants = itemDetail.participants.map(i => i.participant.employee.user.name + ' - ' + i.participant.employee.job.name + (i.status ? ' - ' + i.status.name : ''));
                 vm.beginTimeShow = itemDetail.dateStarted;
                 vm.endTimeShow = itemDetail.dateEnded;
                 vm.dateActualStarted = itemDetail.dateActualStarted;
                 vm.address = itemDetail.address;
                 vm.subject = itemDetail.subject;
                 vm.imageList = itemDetail.files;
+                vm.imageList.forEach(image => image.thumbPath = image.file.accessAddress);
             } else {
                 var user = $api.getStorage("user");
                 vm.groupEmployeeName = user.name;
@@ -339,7 +339,8 @@
                         id: ret.body.data.id,
                         path: file,
                         thumbPath: file
-                    })
+                    });
+                    api.hideProgress();
                 } else {  //上传失败
                     if (uploadTimes < 4) {  //5次上次失败机会
                         //上次文件错误执行次数+1
@@ -352,11 +353,9 @@
                         } else {
                             api.alert({ title: "错误", msg: "上传失败：网络错误，请检查网络设置！", buttons: ["确定"] });
                         }
-
                     }
-
                 }
-            }
+            })
         }
 
         //获取工地列表
@@ -460,6 +459,9 @@
                             title: "提示",
                             msg: "提交成功！",
                             buttons: ["确定"]
+                        }, function () {
+                            closeWin('safety_training/safety_training_list_win');
+                            closeWin('safety_training/add_safety_training_win');
                         });
                     } else {
                         vm.loadingFail = true; //加载失败
@@ -490,6 +492,9 @@
                             title: "提示",
                             msg: "开始成功！",
                             buttons: ["确定"]
+                        }, function () {
+                            closeWin('safety_training/safety_training_list_win');
+                            closeWin('safety_training/add_safety_training_win');
                         });
                     } else {
                         vm.loadingFail = true; //加载失败
@@ -509,6 +514,8 @@
                 return;
             }
             var url = $api.getStorage("interface_url") + api_url.endSafetyTraining;
+            url += '?';
+            vm.imageList.forEach(image => url += 'file.id=' + image.id + '&')
             Ajax({
                 type: "post",
                 url: url,
@@ -528,6 +535,9 @@
                             title: "提示",
                             msg: "结束成功！",
                             buttons: ["确定"]
+                        }, function () {
+                            closeWin('safety_training/safety_training_list_win');
+                            closeWin('safety_training/add_safety_training_win');
                         });
                     } else {
                         vm.loadingFail = true; //加载失败
@@ -544,7 +554,7 @@
                 url: url,
                 data: {
                     access_token: $api.getStorage("access_token"),
-                    id: vm.id
+                    trainingId: vm.id
                 },
                 beforeSend: function () {
                     vm.loading = true;
@@ -558,6 +568,9 @@
                             title: "提示",
                             msg: "参加成功！",
                             buttons: ["确定"]
+                        }, function () {
+                            closeWin('safety_training/safety_training_list_win');
+                            closeWin('safety_training/add_safety_training_win');
                         });
                     } else {
                         vm.loadingFail = true; //加载失败
@@ -574,7 +587,7 @@
                 url: url,
                 data: {
                     access_token: $api.getStorage("access_token"),
-                    id: vm.id
+                    trainingId: vm.id
                 },
                 beforeSend: function () {
                     vm.loading = true;
@@ -588,6 +601,9 @@
                             title: "提示",
                             msg: "请假成功！",
                             buttons: ["确定"]
+                        }, function () {
+                            closeWin('safety_training/safety_training_list_win');
+                            closeWin('safety_training/add_safety_training_win');
                         });
                     } else {
                         vm.loadingFail = true; //加载失败

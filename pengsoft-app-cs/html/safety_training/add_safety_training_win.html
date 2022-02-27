@@ -28,7 +28,7 @@
             <a class="aui-btn aui-btn-custom aui-btn-block" tapmode @click="submit();">提交</a>
         </template>
 
-        <template v-if="pageType === 'detail' && userRole === 'ROL_WORKER' && !api.pageParam.item.dateEnded">
+        <template v-if="pageType === 'detail' && userRole === 'ROL_WORKER' && !item.dateEnded">
             <div class="aui-col-xs-6 aui-padded-5">
                 <a class="aui-btn aui-btn-block aui-btn-success" v-effect="light" tapmode @click="join();">参加</a>
             </div>
@@ -41,7 +41,7 @@
             <a class="aui-btn aui-btn-block aui-btn-success" v-effect="light" tapmode @click="start();">开始</a>
         </template>
         <template v-if="pageType === 'detail' && userRole === 'ROL_SECURITY_OFFICER' && !item.dateEnded && item.dateActualStarted">
-            <a class="aui-btn aui-btn-block aui-btn-danger" v-effect="light" tapmode @click="end();">结束</a>
+            <a class="aui-btn aui-btn-block aui-btn-danger" v-effect="light" tapmode @click="end();">完成</a>
         </template>
     </footer>
     <script src="../../script/api.js"></script>
